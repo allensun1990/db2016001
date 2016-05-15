@@ -219,4 +219,7 @@
   <ItemGroup>
     <None Include="Procedures\Sales\P_CloseOpportunity.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Procedures\MichauxAlter.sql" />
+  </ItemGroup>
 </Project>

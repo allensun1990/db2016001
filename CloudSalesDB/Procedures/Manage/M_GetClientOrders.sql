@@ -1,10 +1,15 @@
-﻿Use [CloudSales1.0_dev]
+﻿
+USE [CloudSales1.0_dev]
 GO
 IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'M_GetClientOrders')
 BEGIN
 	DROP  Procedure  M_GetClientOrders
 END
-
+go
+/****** Object:  StoredProcedure [dbo].[M_GetClientOrders]    Script Date: 05/11/2016 18:41:14 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
 GO
 /***********************************************************
 过程名称： M_GetClientOrders
@@ -14,7 +19,7 @@ GO
 程序作者： MU
 调试记录： exec M_GetClientOrders 
 ************************************************************/
-CREATE PROCEDURE [dbo].M_GetClientOrders
+Create PROCEDURE [dbo].[M_GetClientOrders]
 @Status int=-1,
 @Type int=-1,
 @BeginDate nvarchar(100),
@@ -50,7 +55,7 @@ AS
 	if(@BeginDate<>'')
 		set @condition=@condition+' and createtime>='''+@BeginDate+''''
 	if(@EndDate<>'')
-		set @condition+=' and createtime<='''+dateadd(day, 1, @EndDate)+''''
+		set @condition+=' and createtime<='''+cast(dateadd(day, 1, @EndDate) as varchar)+''''
 
 
 	declare @total int,@page int
