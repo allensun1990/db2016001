@@ -530,4 +530,7 @@
   <ItemGroup>
     <None Include="Procedures\Manage\Report\M_Get_Report_AgentAction_Day.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Procedures\MichauxAlter.sql" />
+  </ItemGroup>
 </Project>
