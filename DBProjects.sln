@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "CloudSalesDB", "CloudSalesDB\CloudSalesDB.sqlproj", "{86994CB6-735C-43CC-99F9-0E461EFB21A1}"
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "ErDandJiaDB", "CloudSalesDB\ErDandJiaDB.sqlproj", "{86994CB6-735C-43CC-99F9-0E461EFB21A1}"
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "IntFactoryDB", "YXDB\IntFactoryDB.sqlproj", "{44D829EF-6464-4BC3-ADB7-E6B80BF2AF7B}"
 EndProject
