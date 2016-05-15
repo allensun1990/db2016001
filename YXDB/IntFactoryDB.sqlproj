@@ -72,7 +72,6 @@
     <Folder Include="Procedures\Planwork" />
     <Folder Include="Procedures\RepotLog" />
     <Folder Include="Procedures\Task" />
-    <Folder Include="Table" />
     <Folder Include="Procedures\AliOrder" />
     <Folder Include="Procedures\Manage\Report" />
   </ItemGroup>
