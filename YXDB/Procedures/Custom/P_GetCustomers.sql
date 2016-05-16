@@ -1,4 +1,4 @@
-﻿Use IntFactory
+﻿Use IntFactory_dev
 GO
 IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'P_GetCustomers')
 BEGIN
@@ -26,6 +26,7 @@ CREATE PROCEDURE [dbo].[P_GetCustomers]
 	@SearchUserID nvarchar(64)='',
 	@SearchTeamID nvarchar(64)='',
 	@SearchAgentID nvarchar(64)='',
+	@FirstName nvarchar(10)='',
 	@Keywords nvarchar(4000),
 	@BeginTime nvarchar(50)='',
 	@EndTime nvarchar(50)='',
@@ -126,9 +127,12 @@ AS
 	if(@EndTime<>'')
 		set @condition +=' and cus.CreateTime <=  '''+@EndTime+' 23:59:59'''
 
+	if(@FirstName<>'')
+	set @condition +=' and FirstName = '''+@FirstName+''''
+
 	if(@keyWords <> '')
 	begin
-		set @condition +=' and (cus.Name like ''%'+@keyWords+'%'' or cus.MobilePhone like ''%'+@keyWords+'%'')'
+		set @condition +=' and (cus.Name like ''%'+@keyWords+'%'' or cus.MobilePhone like ''%'+@keyWords+'%'''+' or cus.FirstName = '''+@keyWords+''' )'
 	end
 
 	declare @total int,@page int

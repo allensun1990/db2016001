@@ -74,6 +74,7 @@
     <Folder Include="Procedures\Task" />
     <Folder Include="Procedures\AliOrder" />
     <Folder Include="Procedures\Manage\Report" />
+    <Folder Include="function" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\InitDatabase.sql" />
@@ -530,6 +531,7 @@
     <None Include="Procedures\Manage\Report\M_Get_Report_AgentAction_Day.sql" />
   </ItemGroup>
   <ItemGroup>
+    <Build Include="function\fun_getFirstPY.sql" />
     <PostDeploy Include="Procedures\MichauxAlter.sql" />
   </ItemGroup>
 </Project>

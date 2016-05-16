@@ -18,7 +18,7 @@ CREATE PROCEDURE [dbo].[M_InsertClient]
 @ClientID nvarchar(64),
 @LoginName nvarchar(50)='',
 @ClientCode nvarchar(20),
-@CompanyName nvarchar(200),
+@CompanyName nvarchar(200)='',
 @MobilePhone nvarchar(64)='',
 @Industry nvarchar(64)='',
 @CityCode nvarchar(10)='',

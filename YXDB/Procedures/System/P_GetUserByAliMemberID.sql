@@ -20,7 +20,7 @@ AS
 
 declare @UserID nvarchar(64),@ClientID nvarchar(64),@AgentID nvarchar(64),@RoleID nvarchar(64)
 
-select @UserID = UserID,@ClientID=ClientID,@AgentID=AgentID,@RoleID=RoleID from Users where AliMemberID=@AliMemberID  and Status=1
+select @UserID = UserID,@ClientID=ClientID,@AgentID=AgentID,@RoleID=RoleID from Users where AliMemberID=@AliMemberID
 
 if(@UserID is not null)
 begin
