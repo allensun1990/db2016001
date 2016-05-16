@@ -15,8 +15,9 @@ GO
 调试记录： exec P_CreateDHOrder 'a0020b2d-e2b2-4f7f-9774-628759f3513f',
 ************************************************************/
 CREATE PROCEDURE [dbo].[P_CreateDHOrder]
-	@OldOrderID nvarchar(64),
+	@OriginalID nvarchar(64),
 	@OrderID nvarchar(64),
+	@Discount decimal(18,4)=1,
 	@OrderCode nvarchar(50),
 	@OperateID nvarchar(64)='',
 	@ClientID nvarchar(64)
@@ -24,7 +25,7 @@ AS
 	
 declare @Status int,@OwnerID nvarchar(64),@ProcessID nvarchar(64)
 
-select @Status=Status,@OwnerID=OwnerID,@ProcessID=ProcessID from Orders where OrderID=@OldOrderID and ClientID=@ClientID
+select @Status=Status,@OwnerID=OwnerID,@ProcessID=ProcessID from Orders where OrderID=@OriginalID and ClientID=@ClientID
 
 if(@Status<>3)
 begin
@@ -37,12 +38,12 @@ select @ProcessID=ProcessID,@OwnerID=OwnerID from OrderProcess where ClientID=@C
 insert into Orders(OrderID,OrderCode,CategoryID,TypeID,OrderType,SourceType,Status,ProcessID,PlanPrice,FinalPrice,PlanQuantity,PlanType,TaskCount,TaskOver,OrderImage,OriginalID,OriginalCode ,
 					Price,CostPrice,ProfitPrice,TotalMoney,CityCode,Address,PersonName,MobileTele,Remark,CustomerID,OwnerID,CreateTime,AgentID,ClientID,Platemaking,PlateRemark,
 					GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,Discount,OriginalPrice,IntGoodsCode,GoodsName)
-select @OrderID,@OrderCode,CategoryID,TypeID,2,1,4,@ProcessID,PlanPrice,FinalPrice,0,PlanType,0,0,OrderImage,OrderID,OrderCode,
+select @OrderID,@OrderCode,CategoryID,TypeID,2,1,4,@ProcessID,PlanPrice,FinalPrice*@Discount,0,PlanType,0,0,OrderImage,OrderID,OrderCode,
 		Price,CostPrice,ProfitPrice,0,CityCode,Address,PersonName,MobileTele,Remark,CustomerID,@OwnerID,getdate(),AgentID,ClientID,Platemaking,PlateRemark,
-		GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,1,FinalPrice,IntGoodsCode,GoodsName from Orders where OrderID=@OldOrderID
+		GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,@Discount,FinalPrice,IntGoodsCode,GoodsName from Orders where OrderID=@OriginalID
 	
 --复制打样材料列表
 insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProdiverID )
-select @OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProdiverID  from OrderDetail where OrderID=@OldOrderID
+select @OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProdiverID  from OrderDetail where OrderID=@OriginalID
 
 Insert into OrderStatusLog(OrderID,Status,CreateUserID) values(@OrderID,4,@OperateID)

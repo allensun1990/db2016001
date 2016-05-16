@@ -72,7 +72,6 @@
     <Folder Include="Procedures\Planwork" />
     <Folder Include="Procedures\RepotLog" />
     <Folder Include="Procedures\Task" />
-    <Folder Include="Table" />
     <Folder Include="Procedures\AliOrder" />
     <Folder Include="Procedures\Manage\Report" />
     <Folder Include="function" />
@@ -533,5 +532,6 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="function\fun_getFirstPY.sql" />
+    <PostDeploy Include="Procedures\MichauxAlter.sql" />
   </ItemGroup>
 </Project>

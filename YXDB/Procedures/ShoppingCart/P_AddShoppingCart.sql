@@ -18,7 +18,7 @@ CREATE PROCEDURE [dbo].[P_AddShoppingCart]
 @OrderType int,
 @ProductDetailID nvarchar(64),
 @ProductID nvarchar(64),
-@Quantity int=1,
+@Quantity decimal(18,4)=1,
 @UnitID nvarchar(64),
 @IsBigUnit int=0,
 @GUID nvarchar(64)='',

@@ -18,7 +18,7 @@ CREATE PROCEDURE [dbo].[P_AddShoppingCartBatchOut]
 @OrderType int,
 @ProductDetailID nvarchar(64),
 @ProductID nvarchar(64),
-@Quantity int=1,
+@Quantity decimal(18,4)=1,
 @DepotID nvarchar(64),
 @BatchCode nvarchar(50)='',
 @GUID nvarchar(64)='',

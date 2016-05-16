@@ -1,4 +1,4 @@
-﻿Use IntFactory
+﻿Use IntFactory_dev
 GO
 IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'P_UpdateOrderDiscount')
 BEGIN
@@ -34,7 +34,7 @@ begin
 	return
 end
 
-Update Orders set Discount=@Discount/100,FinalPrice=OriginalPrice*@Discount/100,TotalMoney=OriginalPrice*PlanQuantity*@Discount/100 where OrderID=@OrderID
+Update Orders set Discount=@Discount,FinalPrice=OriginalPrice*@Discount,TotalMoney=OriginalPrice*PlanQuantity*@Discount where OrderID=@OrderID
 
 set @Err+=@@error
 

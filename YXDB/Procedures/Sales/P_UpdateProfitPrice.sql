@@ -1,4 +1,4 @@
-﻿Use IntFactory
+﻿Use IntFactory_dev
 GO
 IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'P_UpdateProfitPrice')
 BEGIN
@@ -34,7 +34,7 @@ begin
 	return
 end
 
-Update Orders set ProfitPrice=@Profit/100 where OrderID=@OrderID
+Update Orders set ProfitPrice=@Profit where OrderID=@OrderID
 
 set @Err+=@@error
 

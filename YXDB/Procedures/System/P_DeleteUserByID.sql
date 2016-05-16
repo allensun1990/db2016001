@@ -1,4 +1,4 @@
-﻿Use IntFactory
+﻿Use IntFactory_dev
 GO
 IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'P_DeleteUserByID')
 BEGIN
@@ -24,10 +24,16 @@ begin tran
 
 set @Result=0
 
-declare @Err int=0,@RoleID nvarchar(64)
+declare @Err int=0,@RoleID nvarchar(64),@AliID nvarchar(200)
 
 --防止自杀式删除用户，管理员至少保留一个
-select @RoleID from Users where UserID=@UserID and AgentID=@AgentID
+select @RoleID=RoleID,@AliID=AliMemberID from Users where UserID=@UserID and AgentID=@AgentID
+if(@AliID is not null and @AliID<>'')
+begin
+	set @Result=0
+	rollback tran
+	return
+end
 if exists (select AutoID from Role where RoleID=@RoleID and IsDefault=1)
 begin
 	if not exists(select UserID from Users where RoleID=@RoleID and Status=1 and UserID<>@UserID)
