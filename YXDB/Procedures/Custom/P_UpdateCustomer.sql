@@ -1,4 +1,4 @@
-﻿Use IntFactory
+﻿Use IntFactory_dev
 GO
 IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'P_UpdateCustomer')
 BEGIN
@@ -37,7 +37,7 @@ declare @Err int=0
 
 
 Update Customer set Name=@Name,Type=@Type,IndustryID=@IndustryID,Extent=@Extent,CityCode=@CityCode,Address=@Address,MobilePhone=@MobilePhone,OfficePhone=@OfficePhone,
-					Email=@Email,Jobs=@Jobs,Description=@Description,FirstName=dbo.fun_getFirstPY(left(name,1)) where CustomerID=@CustomerID
+					Email=@Email,Jobs=@Jobs,Description=@Description,FirstName=dbo.fun_getFirstPY(left(@Name,1)) where CustomerID=@CustomerID
 
 set @Err+=@@error
 if(@Err>0)
