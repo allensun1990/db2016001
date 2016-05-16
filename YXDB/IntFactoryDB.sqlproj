@@ -533,7 +533,6 @@
   <ItemGroup>
     <Build Include="function\fun_getFirstPY.sql" />
     <PostDeploy Include="Procedures\MichauxAlter.sql" />
-    <Build Include="M_GetM_UserToLogin.sql" />
     <Build Include="Procedures\Manage\M_GetM_UserToLogin.sql" />
     <Build Include="Procedures\Manage\M_Get_Report_AgentAction_Day.sql" />
   </ItemGroup>
