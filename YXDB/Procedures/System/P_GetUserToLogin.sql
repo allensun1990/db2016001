@@ -26,7 +26,7 @@ IF  EXISTS(select UserID from Users where (LoginName=@LoginName or BindMobilePho
 begin
 
 	select @UserID = UserID,@ClientID=ClientID,@AgentID=AgentID,@RoleID=RoleID from Users 
-	where (LoginName=@LoginName or BindMobilePhone=@LoginName) and LoginPWD=@LoginPWD and Status=1
+	where (LoginName=@LoginName or BindMobilePhone=@LoginName) and LoginPWD=@LoginPWD
 
 	if(@UserID is not null)
 	begin
