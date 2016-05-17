@@ -84,6 +84,13 @@ begin
 		--发货
 		else if(@DocType=2)
 		begin
+			--大于最大可发货
+			if exists(select AutoID from OrderGoods where OrderID=@OrderID and AutoID=@GoodsAutoID and SendQuantity+@Quantity>Complete)
+			begin
+				rollback tran
+				return
+			end
+
 			Update OrderGoods set SendQuantity=SendQuantity+@Quantity where OrderID=@OrderID and AutoID=@GoodsAutoID
 
 			insert into GoodsDocDetail(DocID,GoodsDetailID,GoodsID,ProdiverID,UnitID,Quantity,Complete,SurplusQuantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID)
@@ -93,6 +100,13 @@ begin
 		--车缝
 		else if(@DocType=11)
 		begin
+			--大于最大可完成
+			if exists(select AutoID from OrderGoods where OrderID=@OrderID and AutoID=@GoodsAutoID and Complete+@Quantity>CutQuantity)
+			begin
+				rollback tran
+				return
+			end
+
 			Update OrderGoods set Complete=Complete+@Quantity where OrderID=@OrderID and AutoID=@GoodsAutoID
 
 			insert into GoodsDocDetail(DocID,GoodsDetailID,GoodsID,ProdiverID,UnitID,Quantity,Complete,SurplusQuantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID)

@@ -48,7 +48,7 @@ AS
 
 	select @tableName='Orders o left join Customer cus on o.CustomerID=cus.CustomerID',
 	@columns='o.OrderID,o.OrderCode,o.OrderImage,o.OwnerID,o.OrderType,o.Status,o.TaskCount,o.TaskOver,o.PlanQuantity,o.FinalPrice,o.TotalMoney,o.Price,o.CustomerID,
-			o.OrderStatus,o.CreateTime,o.PersonName,o.PlanPrice,o.PlanType,o.ProfitPrice,cus.Name CustomerName,o.AgentID,o.EntrustTime,o.SourceType,o.Mark,o.PlanTime,o.GoodsCode ',
+			o.OrderStatus,o.CreateTime,o.PersonName,o.PlanPrice,o.PlanType,o.ProfitPrice,cus.Name CustomerName,o.AgentID,o.EntrustTime,o.SourceType,o.Mark,o.PlanTime,o.GoodsCode,o.OrderTime ',
 	@key='o.AutoID',
 	@isAsc=0
 
