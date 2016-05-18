@@ -47,7 +47,7 @@ AS
 	@isAsc int
 
 	select @tableName='Orders o left join Customer cus on o.CustomerID=cus.CustomerID',
-	@columns='o.OrderID,o.OrderCode,o.OrderImage,o.OwnerID,o.OrderType,o.Status,o.TaskCount,o.TaskOver,o.PlanQuantity,o.FinalPrice,o.TotalMoney,o.Price,o.CustomerID,
+	@columns='o.OrderID,o.OrderCode,o.OrderImage,o.OwnerID,o.OrderType,o.Status,o.TaskCount,o.TaskOver,o.PlanQuantity,o.FinalPrice,o.TotalMoney,o.Price,o.CustomerID,o.IntGoodsCode,o.EndTime,o.GoodsName,
 			o.OrderStatus,o.CreateTime,o.PersonName,o.PlanPrice,o.PlanType,o.ProfitPrice,cus.Name CustomerName,o.AgentID,o.EntrustTime,o.SourceType,o.Mark,o.PlanTime,o.GoodsCode,o.OrderTime ',
 	@key='o.AutoID',
 	@isAsc=0
@@ -169,7 +169,7 @@ AS
 
 	if(@keyWords <> '')
 	begin
-		set @condition +=' and (o.OrderCode like ''%'+@keyWords+'%'' or o.Title like ''%'+@keyWords+'%'' or o.PersonName like ''%'+@keyWords+'%''  or o.GoodsCode like ''%'+@keyWords+'%''  or o.IntGoodsCode like ''%'+@keyWords+'%''  or o.GoodsName like ''%'+@keyWords+'%'')'
+		set @condition +=' and (o.OrderCode like ''%'+@keyWords+'%'' or o.Title like ''%'+@keyWords+'%'' or o.PersonName like ''%'+@keyWords+'%''  or o.GoodsCode like ''%'+@keyWords+'%''  or o.IntGoodsCode like ''%'+@keyWords+'%''  or o.GoodsName like ''%'+@keyWords+'%'' or o.MobileTele like ''%'+@keyWords+'%'')'
 	end
 
 	declare @total int,@page int
