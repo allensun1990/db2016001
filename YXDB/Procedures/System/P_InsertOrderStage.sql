@@ -1,4 +1,4 @@
-﻿Use IntFactory
+﻿Use IntFactory_dev
 GO
 IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'P_InsertOrderStage')
 BEGIN
@@ -18,6 +18,7 @@ CREATE PROCEDURE [dbo].[P_InsertOrderStage]
 @StageID nvarchar(64),
 @StageName nvarchar(100),
 @Sort int=1,
+@Mark int=0,
 @PID nvarchar(64)='',
 @ProcessID nvarchar(64)='',
 @CreateUserID nvarchar(64)='',
@@ -34,7 +35,7 @@ declare @Err int=0
 update  OrderStage set Sort=Sort+1 where ProcessID=@ProcessID and Sort>=@Sort
 
 insert into OrderStage(StageID,StageName,Sort,Status,Mark,PID,CreateUserID,ClientID,ProcessID,OwnerID)
-                                values(@StageID,@StageName,@Sort,1,0,@PID,@CreateUserID,@ClientID,@ProcessID,@CreateUserID)
+                                values(@StageID,@StageName,@Sort,1,@Mark,@PID,@CreateUserID,@ClientID,@ProcessID,@CreateUserID)
 set @Err+=@@error
 
 if(@Err>0)
