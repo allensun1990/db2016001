@@ -39,10 +39,10 @@ begin tran
 
 set @Result=0
 
-declare @Err int ,@DepartID nvarchar(64),@RoleID nvarchar(64),@UserID nvarchar(64),@AgentID nvarchar(64),@WareID nvarchar(64),
-@ProcessIDDY nvarchar(64),@ProcessIDDH nvarchar(64)
+declare @Err int ,@DepartID nvarchar(64),@RoleID nvarchar(64),@UserID nvarchar(64),@AgentID nvarchar(64),@WareID nvarchar(64)
 
-select @Err=0,@DepartID=NEWID(),@RoleID=NEWID(),@UserID=NEWID(),@AgentID=@ClientID,@WareID=NEWID(),@ProcessIDDY=NEWID(),@ProcessIDDH=NEWID()
+
+select @Err=0,@DepartID=NEWID(),@RoleID=NEWID(),@UserID=NEWID(),@AgentID=@ClientID,@WareID=NEWID()
 
 
 if(@AliMemberID<>'' and exists(select AutoID from Clients where AliMemberID=@AliMemberID))
@@ -121,21 +121,6 @@ values(NEWID(),'Depot001',@WareID,'主货位',1,@UserID,@ClientID)
 insert into Providers(ProviderID,Name,Contact,MobileTele,Email,Website,CityCode,Address,Remark,CreateTime,CreateUserID,AgentID,ClientID)
 			 values (NEWID(),'公司直营',@CompanyName,@MobilePhone,@Email,'',@CityCode,@Address,'',GETDATE(),@UserID,@AgentID,@ClientID)
 
---订单打样流程
-Insert into OrderProcess(ProcessID,ProcessName,ProcessType,IsDefault,Status,PlanDays,OwnerID,CreateUserID,ClientID)
-values(@ProcessIDDY,'打样流程',1,1,1,0,@UserID,@UserID,@ClientID)
-
-insert into [OrderStage] (StageID,StageName,ProcessID,Probability,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-values (NEWID(),'材料',@ProcessIDDY,0,1,1,1,'',@UserID,@UserID,@ClientID)
-insert into [OrderStage] (StageID,StageName,ProcessID,Probability,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-values (NEWID(),'制版',@ProcessIDDY,0,2,1,2,'',@UserID,@UserID,@ClientID)
-
---订单大货流程
-Insert into OrderProcess(ProcessID,ProcessName,ProcessType,IsDefault,Status,PlanDays,OwnerID,CreateUserID,ClientID)
-values(@ProcessIDDH,'大货流程',2,1,1,0,@UserID,@UserID,@ClientID)
-
-insert into [OrderStage] (StageID,StageName,ProcessID,Probability,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-values (NEWID(),'材料',@ProcessIDDH,0,1,1,3,'',@UserID,@UserID,@ClientID)
 
 if(@Err>0)
 begin
