@@ -23,9 +23,10 @@ GO
 程序作者： MU
 调试记录： exec M_GetClientOrders 
 修 改 人:  Michaux
-修改信息:  添加公司名称
+修改信息:  添加公司名称 公司编码
 ************************************************************/
 Create PROCEDURE [M_GetClientOrders]
+@KeyWords nvarchar(500)='',
 @Status int=-1,
 @Type int=-1,
 @BeginDate nvarchar(100),
@@ -44,11 +45,14 @@ AS
 	@key nvarchar(100)
 	
 	set @tableName='ClientOrder a left join Clients b on a.ClientId=b.ClientId'
-	set @columns='a.*,b.CompanyName '
+	set @columns='a.*,b.ClientCode,b.CompanyName '
 	set @key='a.AutoID'
 	set @orderColumn=' a.createtime desc '
 	set @condition=' 1=1 '
-
+	if(LEN(@KeyWords)>0)
+	begin
+		set @condition+=' and ( charindex ('''+@KeyWords+''',b.CompanyName)>0 or  charindex ('''+@KeyWords+''',b.ClientCode)>0 )'
+	end
 	if(@AgentID<>'')
 		set @condition+=' and a.AgentID='''+@AgentID+''''
 	if(@ClientID<>'')
