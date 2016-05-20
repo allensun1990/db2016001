@@ -1,4 +1,13 @@
-﻿alter table ClientOrder Add CheckUserID varchar(50)
+﻿/*
+M_GetClientOrders
+M_PayOrderAndAuthorizeClient
+M_AddClientOrder
+
+M_AddClientOrderAccount
+M_UpdateClientOrderAccountStatus
+*/
+
+alter table ClientOrder Add CheckUserID varchar(50)
 alter table ClientOrder Add CheckTime DateTime
 alter table ClientOrder Add PayFee decimal(18,4) default(0.0000)
 Alter table ClientOrder add PayStatus int default(0)
