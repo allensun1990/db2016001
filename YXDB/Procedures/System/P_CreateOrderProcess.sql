@@ -46,7 +46,7 @@ begin
 	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
 	values (NEWID(),'面料/辅料',@ProcessID,1,1,11,'',@UserID,@UserID,@ClientID)
 	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-	values (NEWID(),'制版',@ProcessID,2,1,12,'',@UserID,@UserID,@ClientID)
+	values (NEWID(),'制版/工艺',@ProcessID,2,1,12,'',@UserID,@UserID,@ClientID)
 	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
 	values (NEWID(),'做样衣',@ProcessID,3,1,0,'',@UserID,@UserID,@ClientID)
 	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 

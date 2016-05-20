@@ -15,3 +15,7 @@ update OrderTask set Mark=21 where Mark=3
 --材料耗损率
 alter table OrderDetail add LossRate decimal(18,4) default 0
 update OrderDetail set LossRate=Loss/Quantity
+
+--引导步骤
+alter table Clients add GuideStep int default 1
+update Clients set GuideStep=1
