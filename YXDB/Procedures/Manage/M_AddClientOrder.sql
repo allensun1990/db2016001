@@ -1,4 +1,4 @@
-﻿Use IntFactory
+﻿Use IntFactory_dev
 GO
 IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'M_AddClientOrder')
 BEGIN
@@ -13,6 +13,7 @@ GO
 编写日期： 2015/11/9
 程序作者： MU
 调试记录： exec M_AddClientOrder 
+修改信息: Michaux 2016/05/18 添加订单来源
 ************************************************************/
 CREATE PROCEDURE [dbo].M_AddClientOrder
 @OrderID nvarchar(64),
@@ -25,12 +26,13 @@ CREATE PROCEDURE [dbo].M_AddClientOrder
 @SystemType int =2,
 @AgentID nvarchar(64),
 @ClientiD nvarchar(64),
-@CreateUserID nvarchar(64)
+@CreateUserID nvarchar(64),
+@SourceType int=0
 AS
 
 --添加客户订单
-insert into ClientOrder(OrderID,UserQuantity,Years,Amount,RealAmount,Type,AgentID,ClientiD,CreateUserID,PayType,SystemType)
-values(@OrderID,@UserQuantity,@Years,@Amount,@RealAmount,@Type,@AgentID,@ClientiD,@CreateUserID,@PayType,@SystemType)
+insert into ClientOrder(OrderID,UserQuantity,Years,Amount,RealAmount,Type,AgentID,ClientiD,CreateUserID,PayType,SystemType,SourceType)
+values(@OrderID,@UserQuantity,@Years,@Amount,@RealAmount,@Type,@AgentID,@ClientiD,@CreateUserID,@PayType,@SystemType,@SourceType)
 
 
 

@@ -1,24 +1,24 @@
-﻿USE [IntFactory_dev]
-GO
+﻿
 
-/****** Object:  Table [dbo].[TaskMember]    Script Date: 05/18/2016 13:36:19 ******/
-SET ANSI_NULLS ON
-GO
+--流程阶段
+alter table orderprocess add CategoryType int default 1
+update orderprocess set CategoryType=1
 
-SET QUOTED_IDENTIFIER ON
-GO
+update OrderStage set Mark=11 where Mark=1
+update OrderStage set Mark=12 where Mark=2
+update OrderStage set Mark=21 where Mark=3
 
-CREATE TABLE [dbo].[TaskMember](
-	[AutoID] [int] IDENTITY(1,1) NOT NULL,
-	[MemberID] [nvarchar](64) NOT NULL,
-	[TaskID] [nvarchar](64) NOT NULL,
-	[Status] [int] NOT NULL,
-	[PermissionType] [int] NOT NULL,
-	[AgentID] [nvarchar](64) NOT NULL,
-	[CreateUserID] [nvarchar](64) NOT NULL,
-	[CreateTime] [datetime] NOT NULL
-	)
-GO
+update OrderTask set Mark=11 where Mark=1
+update OrderTask set Mark=12 where Mark=2
+update OrderTask set Mark=21 where Mark=3
+
+--材料耗损率
+alter table OrderDetail add LossRate decimal(18,4) default 0
+update OrderDetail set LossRate=Loss/Quantity
+
+--引导步骤
+alter table Clients add GuideStep int default 1
+update Clients set GuideStep=1
 
 
 insert into TaskMember(MemberID,TaskID,Status,PermissionType,AgentID,CreateUserID,CreateTime)
@@ -48,7 +48,7 @@ GO
 ALTER TABLE [dbo].[PlateMaking] ADD  CONSTRAINT [DF_PlateMaking_Status]  DEFAULT ((1)) FOR [Status]
 GO
 
-alter table OrderGoods add TaskID varchar(64)  null
+alter table GoodsDoc add TaskID varchar(64)  null
 
 
 

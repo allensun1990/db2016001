@@ -67,11 +67,11 @@ begin
 			set @Stock=0
 		end
 
-		if(@Stock<0)
-		begin
-			set @Stock=0
-		end
-
+		--if(@Stock<0)
+		--begin
+		--	set @Stock=0
+		--end
+		set @Stock=0
 		if(@Quantity>@Stock)
 		begin
 			insert into StorageDetail(DocID,ProductDetailID,ProductID,ProdiverID,UnitID,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS )

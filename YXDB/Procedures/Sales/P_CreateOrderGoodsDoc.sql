@@ -84,6 +84,13 @@ begin
 		--发货
 		else if(@DocType=2)
 		begin
+			--大于最大可发货
+			if exists(select AutoID from OrderGoods where OrderID=@OrderID and AutoID=@GoodsAutoID and SendQuantity+@Quantity>Complete)
+			begin
+				rollback tran
+				return
+			end
+
 			Update OrderGoods set SendQuantity=SendQuantity+@Quantity where OrderID=@OrderID and AutoID=@GoodsAutoID
 
 			insert into GoodsDocDetail(DocID,GoodsDetailID,GoodsID,ProdiverID,UnitID,Quantity,Complete,SurplusQuantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID)
@@ -93,6 +100,13 @@ begin
 		--车缝
 		else if(@DocType=11)
 		begin
+			--大于最大可完成
+			if exists(select AutoID from OrderGoods where OrderID=@OrderID and AutoID=@GoodsAutoID and Complete+@Quantity>CutQuantity)
+			begin
+				rollback tran
+				return
+			end
+
 			Update OrderGoods set Complete=Complete+@Quantity where OrderID=@OrderID and AutoID=@GoodsAutoID
 
 			insert into GoodsDocDetail(DocID,GoodsDetailID,GoodsID,ProdiverID,UnitID,Quantity,Complete,SurplusQuantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID)
@@ -161,8 +175,8 @@ begin
 
 	select @TotalMoney=sum(TotalMoney) from GoodsDocDetail where DocID=@DocID
 
-	insert into GoodsDoc(DocID,DocCode,DocType,DocImage,DocImages,Status,TotalMoney,CityCode,Address,Remark,ExpressID,ExpressCode,WareID,CreateUserID,CreateTime,OperateIP,ClientID,OriginalID,OriginalCode)
-			values(@DocID,@DocCode,@DocType,@DocImage,@DocImages,2,@TotalMoney,'','',@Remark,@ExpressID,@ExpressCode,'',@OperateID,GETDATE(),'',@ClientID,@OrderID,@OrderCode)
+	insert into GoodsDoc(DocID,DocCode,DocType,DocImage,DocImages,Status,TotalMoney,Quantity,CityCode,Address,Remark,ExpressID,ExpressCode,WareID,CreateUserID,CreateTime,OperateIP,ClientID,OriginalID,OriginalCode)
+			values(@DocID,@DocCode,@DocType,@DocImage,@DocImages,2,@TotalMoney,@TotalQuantity,'','',@Remark,@ExpressID,@ExpressCode,'',@OperateID,GETDATE(),'',@ClientID,@OrderID,@OrderCode)
 
 	set @Err+=@@error
 end

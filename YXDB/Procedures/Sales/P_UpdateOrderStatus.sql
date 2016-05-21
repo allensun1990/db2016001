@@ -37,12 +37,12 @@ select @OldStatus=Status,@OrderCode=OrderCode,@OrderImg=OrderImage,@ProcessID=Pr
 @OriginalID=OriginalID ,@AliOrderCode=AliOrderCode,@AliGoodsCode=GoodsCode,@IntGoodsCode=IntGoodsCode
 from Orders where OrderID=@OrderID  and ClientID=@ClientID
 
-if(@OperateID<>@OrderOwnerID and not exists(select AutoID from OrderProcess where ProcessID=@ProcessID and OwnerID=@OperateID))
-begin
-	set @ErrorInfo='您不是订单负责人，不能进行操作'
-	rollback tran
-	return
-end
+--if(@OperateID<>@OrderOwnerID and not exists(select AutoID from OrderProcess where ProcessID=@ProcessID and OwnerID=@OperateID))
+--begin
+--	set @ErrorInfo='您不是订单负责人，不能进行操作'
+--	rollback tran
+--	return
+--end
 
 
 if(@OldStatus=0 and @Status=1 and @OrderType=1)--开始打样

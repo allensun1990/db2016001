@@ -1,4 +1,4 @@
-﻿Use IntFactory
+﻿Use IntFactory_dev
 GO
 IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'M_PayOrderAndAuthorizeClient')
 BEGIN
@@ -14,9 +14,12 @@ GO
 编写日期： 2015/11/24
 程序作者： mu
 调试记录： exec M_PayOrderAndAuthorizeClient ''
+修改信息: Michaux 2016/05/18  添加审核人审核时间
 ************************************************************/
 CREATE PROCEDURE [dbo].[M_PayOrderAndAuthorizeClient]
-@M_OrderID nvarchar(64)
+@M_OrderID nvarchar(64),
+@M_CheckUserID nvarchar(64),
+@M_PayStatus int=-1
 AS
 
 begin tran
@@ -79,7 +82,8 @@ values(@BillingID,2,1,3,@RealAmount,getdate(),getdate(),@YX_AgentID,@YX_ClientID
 set @Err+=@@error
 
 --更新后台订单状态为支付
-update ClientOrder set status=1 where OrderID=@M_OrderID
+
+update ClientOrder set status=1,CheckUserID=@M_CheckUserID,CheckTime=getdate(),payStatus=case when @M_PayStatus>-1 then @M_PayStatus else payStatus end  where OrderID=@M_OrderID
 set @Err+=@@error
 
 --更改代理商客户授权
