@@ -80,8 +80,8 @@ begin
 end
 
 --客户端
-insert into Clients(ClientID,ClientCode,CompanyName,ContactName,MobilePhone,Status,Industry,CityCode,Address,Description,AgentID,CreateUserID,UserQuantity,EndTime,AliMemberID) 
-				values(@ClientID,@ClientCode,@CompanyName,@ContactName,@MobilePhone,1,@Industry,@CityCode,@Address,@Description,@AgentID,@CreateUserID,20,dateadd(MONTH, 1, GETDATE()),@AliMemberID )
+insert into Clients(ClientID,ClientCode,CompanyName,ContactName,MobilePhone,Status,GuideStep,Industry,CityCode,Address,Description,AgentID,CreateUserID,UserQuantity,EndTime,AliMemberID) 
+				values(@ClientID,@ClientCode,@CompanyName,@ContactName,@MobilePhone,1,1,@Industry,@CityCode,@Address,@Description,@AgentID,@CreateUserID,20,dateadd(MONTH, 1, GETDATE()),@AliMemberID )
 
 set @Err+=@@error
 

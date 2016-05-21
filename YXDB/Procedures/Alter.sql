@@ -18,8 +18,15 @@ update OrderDetail set LossRate=Loss/Quantity
 
 --引导步骤
 alter table Clients add GuideStep int default 1
-update Clients set GuideStep=1
+update Clients set GuideStep=0
 
+--货位放开
+update Menu set IsHide=0 where MenuCode='108020600'
+update Menu set IsHide=1 where PCode='108020600'
+
+alter table DepotSeat add Sort int default 1
+GO
+update DepotSeat set Sort=1
 
 insert into TaskMember(MemberID,TaskID,Status,PermissionType,AgentID,CreateUserID,CreateTime)
 select u.UserID,TaskID,1,1,o.AgentID,o.OwnerID,GETDATE() from OrderTask o join Users u on o.Members like '%'+u.UserID+'%'
@@ -49,7 +56,6 @@ ALTER TABLE [dbo].[PlateMaking] ADD  CONSTRAINT [DF_PlateMaking_Status]  DEFAULT
 GO
 
 alter table GoodsDoc add TaskID varchar(64)  null
-
 
 
 

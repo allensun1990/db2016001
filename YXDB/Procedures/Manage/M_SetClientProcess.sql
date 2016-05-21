@@ -29,7 +29,7 @@ declare @Err int=0,@ProcessIDDY nvarchar(64),@ProcessIDDH nvarchar(64)
 
 select @ProcessIDDY=NEWID(),@ProcessIDDH=NEWID()
 
---角色存在员工
+--初始化状态
 if not exists(select AutoID from Clients where GuideStep=1)
 begin
 	set @Result=1
