@@ -80,6 +80,7 @@
     <None Include="Procedures\InitDatabase.sql" />
     <None Include="Procedures\P_GetPagerDataColumn.sql" />
     <None Include="Procedures\Manage\Report\M_Get_Report_AgentActionDayPageList.sql" />
+    <None Include="Procedures\Manage\Report\Rpt_AgentAction_Day.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\Manage\M_InsertClient.sql" />
@@ -539,6 +540,7 @@
     <None Include="Procedures\Manage\M_SetClientProcess.sql" />
     <Build Include="Procedures\Manage\M_AddClientOrderAccount.sql" />
     <None Include="Procedures\Manage\M_SetClientCategory.sql" />
+    <Build Include="Procedures\Manage\Report\R_GetClientsActiveReprot.sql" />
     <None Include="Procedures\System\P_DeleteDepotSeat.sql" />
     <None Include="Procedures\System\P_CreateDepotSeat.sql" />
     <None Include="Procedures\System\P_UpdateDepotSeatSort.sql" />
