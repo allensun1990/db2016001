@@ -80,6 +80,7 @@
     <None Include="Procedures\InitDatabase.sql" />
     <None Include="Procedures\P_GetPagerDataColumn.sql" />
     <None Include="Procedures\Manage\Report\M_Get_Report_AgentActionDayPageList.sql" />
+    <None Include="Procedures\Manage\Report\Rpt_AgentAction_Day.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\Manage\M_InsertClient.sql" />
@@ -538,5 +539,6 @@
     <Build Include="Procedures\Manage\M_UpdateClientOrderAccountStatus.sql" />
     <None Include="Procedures\Manage\M_SetClientProcess.sql" />
     <Build Include="Procedures\Manage\M_AddClientOrderAccount.sql" />
+    <Build Include="Procedures\Manage\Report\R_GetClientsActiveReprot.sql" />
   </ItemGroup>
 </Project>

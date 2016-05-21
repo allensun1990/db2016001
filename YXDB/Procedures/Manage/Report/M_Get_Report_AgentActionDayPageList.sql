@@ -40,9 +40,18 @@ AS
 		set @OrderBy='SUM(a.CustomerCount) desc '
 	 end 
 	set @tableName='M_Report_AgentAction_Day as a left join Clients as c on a.ClientID=c.ClientID'
-	set @columns='a.ClientID,c.CompanyName,c.createtime,SUM(a.CustomerCount) as CustomerCount,
-	  SUM(a.OrdersCount) as OrdersCount, SUM( a.ActivityCount) as ActivityCount, SUM( a.ProductCount) as ProductCount, SUM( a.UsersCount) as UsersCount,
-	  SUM( a.AgentCount) as AgentCount, SUM( a.OpportunityCount) as OpportunityCount, SUM( a.PurchaseCount) as PurchaseCount, SUM( a.WarehousingCount) as WarehousingCount '
+	set @columns='a.ClientID,c.CompanyName,c.createtime,SUM(a.CustomerCount) as CustomerCount, SUM(a.OrdersCount) as OrdersCount,
+	  SUM( a.ActivityCount) as ActivityCount, SUM( a.ProductCount) as ProductCount, SUM( a.UsersCount) as UsersCount, SUM( a.AgentCount) as AgentCount,
+	  SUM( a.OpportunityCount) as OpportunityCount, SUM( a.PurchaseCount) as PurchaseCount, SUM( a.WarehousingCount) as WarehousingCount,
+	  SUM( a.TaskCount) as TaskCount ,  SUM( a.DownOrderCount) as DownOrderCount ,SUM( a.ProductOrderCount) as ProductOrderCount,SUM(a.Vitality) '
+	  /**求活跃度均值,剔除 均值太小不要了*/
+	 --if(len(@EndDate)>0)
+	 -- begin
+		--set @columns=@columns+ ',SUM(a.Vitality)/DATEDIFF(day,'''+@BeginDate+''',dateadd(day, 1,'''+ @EndDate+''')) as Vitality '
+	 -- end
+	 -- else begin
+		--set @columns=@columns+ ',SUM(a.Vitality)/count(a.ClientID) as Vitality '
+	 -- end
 	  set @condition=' c.Status=1 '
 
 	if(@Keyword<>'')
@@ -74,7 +83,5 @@ AS
 	end
 	
 	exec (@CommandSQL)
-
-GO
 
 
