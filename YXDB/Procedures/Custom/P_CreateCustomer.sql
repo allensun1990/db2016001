@@ -1,4 +1,4 @@
-﻿Use IntFactory
+﻿Use IntFactory_dev
 GO
 IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'P_CreateCustomer')
 BEGIN
@@ -72,7 +72,7 @@ begin
 	insert into Customer(CustomerID,CustomerPoolID,Name,Type,IndustryID,Extent,CityCode,Address,MobilePhone,OfficePhone,Email,Jobs,Description,SourceID,ActivityID,OwnerID,SourceType,
 						StageID,Status,AllocationTime,OrderTime,CreateTime,CreateUserID,AgentID,ClientID,FirstName)
 	values(@CustomerID,@CustomerPoolID,@Name,@Type,@IndustryID,@Extent,@CityCode,@Address,@MobilePhone,@OfficePhone,@Email,@Jobs,@Description,@SourceID,@ActivityID,@OwnerID,3,
-						@StageID,1,@AllocationTime,null,getdate(),@CreateUserID,@AgentID,@ClientID,dbo.fun_getFirstPY(left(name,1)) )
+						@StageID,1,@AllocationTime,null,getdate(),@CreateUserID,@AgentID,@ClientID,dbo.fun_getFirstPY(left(@Name,1)) )
 end
 set @Err+=@@error
 

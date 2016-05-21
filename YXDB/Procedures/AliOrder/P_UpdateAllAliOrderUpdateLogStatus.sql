@@ -24,9 +24,9 @@ declare @Err int=0
 declare @sql varchar(2000)
 
 if(@Status=1)
-set @sql='update AliOrderUpdateLog set Status='+convert(nvarchar(2), @Status)+',UpdateTime=getdate()  where AliOrderCode in (  select AliOrderCode='''+ replace(@AliOrderCodes,'|',''' union all select ''')+''' ) '
+set @sql='update AliOrderUpdateLog set Status='+convert(nvarchar(2), @Status)+',UpdateTime=getdate()  where AliOrderCode in (  select AliOrderCode='''+ replace(@AliOrderCodes,',',''' union all select ''')+''' ) '
 else
-set @sql='update AliOrderUpdateLog set Status='+convert(nvarchar(2), @Status)+', FailCount=FailCount+1,UpdateTime=getdate()  where AliOrderCode in (  select AliOrderCode='''+ replace(@AliOrderCodes,'|',''' union all select ''')+''' ) '
+set @sql='update AliOrderUpdateLog set Status='+convert(nvarchar(2), @Status)+', FailCount=FailCount+1,UpdateTime=getdate()  where AliOrderCode in (  select AliOrderCode='''+ replace(@AliOrderCodes,',',''' union all select ''')+''' ) '
 
 exec (@sql)
 

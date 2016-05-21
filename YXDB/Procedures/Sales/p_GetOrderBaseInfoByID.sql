@@ -22,7 +22,7 @@ AS
 
 select * from Orders where OrderID=@OrderID and ClientID=@ClientID
 
-select s.AutoID,s.ProductDetailID,s.ProductID,s.Quantity,s.Remark ,s.ProductName,s.Loss,s.UnitID,s.Price,
+select s.AutoID,s.ProductDetailID,s.ProductID,s.Quantity,s.Remark ,s.ProductName,s.Loss,s.UnitID,s.Price,s.LossRate,
 s.TotalMoney,s.Imgs ,s.ApplyQuantity,s.ReturnQuantity, s.DetailsCode, s.ProductCode,ProductImage
 from OrderDetail s where s.OrderID=@OrderID 
 
