@@ -538,5 +538,9 @@
     <Build Include="Procedures\Manage\M_UpdateClientOrderAccountStatus.sql" />
     <None Include="Procedures\Manage\M_SetClientProcess.sql" />
     <Build Include="Procedures\Manage\M_AddClientOrderAccount.sql" />
+    <None Include="Procedures\Manage\M_SetClientCategory.sql" />
+    <None Include="Procedures\System\P_DeleteDepotSeat.sql" />
+    <None Include="Procedures\System\P_CreateDepotSeat.sql" />
+    <None Include="Procedures\System\P_UpdateDepotSeatSort.sql" />
   </ItemGroup>
 </Project>

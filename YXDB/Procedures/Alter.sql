@@ -18,4 +18,12 @@ update OrderDetail set LossRate=Loss/Quantity
 
 --引导步骤
 alter table Clients add GuideStep int default 1
-update Clients set GuideStep=1
+update Clients set GuideStep=0
+
+--货位放开
+update Menu set IsHide=0 where MenuCode='108020600'
+update Menu set IsHide=1 where PCode='108020600'
+
+alter table DepotSeat add Sort int default 1
+GO
+update DepotSeat set Sort=1

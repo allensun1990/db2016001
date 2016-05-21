@@ -1,4 +1,4 @@
-﻿Use IntFactory
+﻿Use IntFactory_dev
 GO
 IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'P_GetDepotSeats')
 BEGIN
@@ -30,7 +30,7 @@ AS
 	@orderColumn nvarchar(4000),
 	@isAsc int
 
-	select @tableName='DepotSeat d join WareHouse w on d.WareID=w.WareID',@columns='d.*,w.Name as WareName',@key='d.AutoID',@orderColumn='d.CreateTime desc',@isAsc=0
+	select @tableName='DepotSeat d join WareHouse w on d.WareID=w.WareID',@columns='d.*,w.Name as WareName',@key='d.AutoID',@orderColumn='d.Sort',@isAsc=0
 	set @condition=' w.ClientID='''+@ClientID+''' and d.Status<>9 and  w.Status<>9 '
 	if(@keyWords <> '')
 	begin
