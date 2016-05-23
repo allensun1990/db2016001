@@ -546,5 +546,6 @@
     <None Include="Procedures\System\P_DeleteDepotSeat.sql" />
     <None Include="Procedures\System\P_CreateDepotSeat.sql" />
     <None Include="Procedures\System\P_UpdateDepotSeatSort.sql" />
+    <Build Include="Procedures\Manage\Report\M_Get_Report_AgentActionDayReport.sql" />
   </ItemGroup>
 </Project>
