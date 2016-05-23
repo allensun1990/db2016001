@@ -39,7 +39,7 @@ begin
 			
 	declare @DocID nvarchar(64)=NEWID(),@WareID nvarchar(64),@DepotID nvarchar(64),@TotalMoney decimal(18,4)
 
-	select @WareID=WareID,@DepotID=DepotID from DepotSeat where ClientID=@ClientID
+	select @WareID=WareID from WareHouse where ClientID=@ClientID and Status<>9
 
 	--参数
 	declare @AutoID int=1,@ProductID nvarchar(64),@ProductDetailID nvarchar(64),@Quantity decimal(18,2),@BatchCode nvarchar(50),
@@ -56,16 +56,25 @@ begin
 		@UnitID=UnitID,@ProviderID= ProdiverID
 		from #TempProducts where AutoID=@AutoID
 
-		if exists(select AutoID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID and DepotID=@DepotID and ClientID=@ClientID)
+		if exists(select AutoID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID)
 		begin
-			select @Stock=StockIn-StockOut from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID and DepotID=@DepotID and ClientID=@ClientID
+			select top 1 @DepotID= DepotID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID  order by AutoID desc
 		end
 		else
 		begin
-			insert into ProductStock(ProductDetailID,ProductID,StockIn,StockOut,LogicOut,BatchCode,WareID,DepotID,ClientID)
-							values (@ProductDetailID,@ProductID,0,0,0,'',@WareID,@DepotID,@ClientID)
-			set @Stock=0
+			select top 1 @DepotID = DepotID from DepotSeat where WareID=@WareID and Status=1 order by Sort 
 		end
+
+		--if exists(select AutoID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID and DepotID=@DepotID and ClientID=@ClientID)
+		--begin
+		--	select @Stock=StockIn-StockOut from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID and DepotID=@DepotID and ClientID=@ClientID
+		--end
+		--else
+		--begin
+		--	insert into ProductStock(ProductDetailID,ProductID,StockIn,StockOut,LogicOut,BatchCode,WareID,DepotID,ClientID)
+		--					values (@ProductDetailID,@ProductID,0,0,0,'',@WareID,@DepotID,@ClientID)
+		--	set @Stock=0
+		--end
 
 		--if(@Stock<0)
 		--begin
