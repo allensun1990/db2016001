@@ -39,22 +39,35 @@ begin
 	--按天统计
 	if(@DateType=1)
 	begin	
-		set @SqlText=@SqlText+'select sum(Vitality),convert(varchar(8),ReportDate,112) AS ReportDate  from M_Report_AgentAction_Day a left join Clients b on a.ClientID=b.ClientID '
-		set @SqlText+=@SqlWhere+'  group by  convert(varchar(8),ReportDate,112)'		
+		set @SqlText=@SqlText+'select SUM(a.CustomerCount) as CustomerCount,
+	  SUM(a.OrdersCount) as OrdersCount,
+	  SUM( a.ActivityCount) as ActivityCount,
+	  SUM( a.ProductCount) as ProductCount,
+	  SUM( a.UsersCount) as UsersCount,
+	  SUM( a.AgentCount) as AgentCount,
+	  SUM( a.OpportunityCount) as OpportunityCount,
+	  SUM( a.PurchaseCount) as PurchaseCount,
+	  SUM( a.WarehousingCount) as WarehousingCount ,
+	  SUM( a.TaskCount) as TaskCount ,
+	  SUM( a.DownOrderCount) as DownOrderCount ,
+	  SUM( a.ProductOrderCount) as ProductOrderCount,
+	  sum( a.Vitality) as Vitality	  ,
+	  convert(varchar(8),a.ReportDate,112) AS ReportDate  from M_Report_AgentAction_Day a '
+		set @SqlText+=@SqlWhere+'  group by  convert(varchar(8),a.ReportDate,112)'		
 		exec(@SqlText);
 	end
 	--按周统计
 	else if(@DateType=2)
 	begin
-		set @SqlText=@SqlText+',datename(year,ReportDate)+datename(week,ReportDate) as ReportDate from M_Report_AgentAction_Day a left join Clients b on a.ClientID=b.ClientID '
-		set @SqlText+=@SqlWhere+' group by   datename(year,ReportDate)+datename(week,ReportDate)'		
+		set @SqlText=@SqlText+',datename(year,a.ReportDate)+datename(week,a.ReportDate) as ReportDate from M_Report_AgentAction_Day a left join Clients b on a.ClientID=b.ClientID '
+		set @SqlText+=@SqlWhere+' group by   datename(year,a.ReportDate)+datename(week,a.ReportDate)'		
 		exec(@SqlText);		
 	end
 	--按月统计
 	else if(@DateType=3)
 	begin	
-		set @SqlText=@SqlText+', convert(varchar(6),ReportDate,112) as ReportDate  from M_Report_AgentAction_Day a left join Clients b on a.ClientID=b.ClientID '
-		set @SqlText+=@SqlWhere+' group by   convert(varchar(6),ReportDate,112)'		
+		set @SqlText=@SqlText+', convert(varchar(6),a.ReportDate,112) as ReportDate  from M_Report_AgentAction_Day a left join Clients b on a.ClientID=b.ClientID '
+		set @SqlText+=@SqlWhere+' group by   convert(varchar(6),a.ReportDate,112)'		
 		exec(@SqlText);
 	end 
 end

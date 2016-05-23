@@ -17,6 +17,7 @@ GO
 CREATE PROCEDURE [dbo].[P_CreateOrderGoodsDoc]
 	@DocID nvarchar(64),
 	@OrderID nvarchar(64),
+	@TaskID nvarchar(64)='',
 	@DocType int,
 	@DocCode nvarchar(50),
 	@GoodDetails nvarchar(4000),
@@ -46,8 +47,8 @@ begin
 		return
 	end
 
-	insert into GoodsDoc(DocID,DocCode,DocType,DocImage,DocImages,Status,TotalMoney,CityCode,Address,Remark,ExpressID,ExpressCode,WareID,CreateUserID,CreateTime,OperateIP,ClientID,OriginalID,OriginalCode)
-			values(@DocID,@DocCode,@DocType,@DocImage,@DocImages,2,0,'','',@Remark,@ExpressID,@ExpressCode,'',@OperateID,GETDATE(),'',@ClientID,@OrderID,@OrderCode)
+	insert into GoodsDoc(DocID,DocCode,DocType,DocImage,DocImages,Status,TotalMoney,CityCode,Address,Remark,ExpressID,ExpressCode,WareID,CreateUserID,CreateTime,OperateIP,ClientID,OriginalID,OriginalCode,TaskID)
+			values(@DocID,@DocCode,@DocType,@DocImage,@DocImages,2,0,'','',@Remark,@ExpressID,@ExpressCode,'',@OperateID,GETDATE(),'',@ClientID,@OrderID,@OrderCode,@TaskID)
 
 	commit tran
 	return
@@ -175,8 +176,8 @@ begin
 
 	select @TotalMoney=sum(TotalMoney) from GoodsDocDetail where DocID=@DocID
 
-	insert into GoodsDoc(DocID,DocCode,DocType,DocImage,DocImages,Status,TotalMoney,Quantity,CityCode,Address,Remark,ExpressID,ExpressCode,WareID,CreateUserID,CreateTime,OperateIP,ClientID,OriginalID,OriginalCode)
-			values(@DocID,@DocCode,@DocType,@DocImage,@DocImages,2,@TotalMoney,@TotalQuantity,'','',@Remark,@ExpressID,@ExpressCode,'',@OperateID,GETDATE(),'',@ClientID,@OrderID,@OrderCode)
+	insert into GoodsDoc(DocID,DocCode,DocType,DocImage,DocImages,Status,TotalMoney,Quantity,CityCode,Address,Remark,ExpressID,ExpressCode,WareID,CreateUserID,CreateTime,OperateIP,ClientID,OriginalID,OriginalCode,TaskID)
+			values(@DocID,@DocCode,@DocType,@DocImage,@DocImages,2,@TotalMoney,@TotalQuantity,'','',@Remark,@ExpressID,@ExpressCode,'',@OperateID,GETDATE(),'',@ClientID,@OrderID,@OrderCode,@TaskID)
 
 	set @Err+=@@error
 end
