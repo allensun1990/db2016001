@@ -36,9 +36,10 @@ AS
 	@key nvarchar(100)
 
 	select @tableName='ProductStock s 
+					join DepotSeat ds on s.DepotID=ds.DepotID
 					join Products p on s.ProductID=p.ProductID 
 					join ProductDetail d on s.ProductDetailID=d.ProductDetailID',
-	@columns='s.ProductDetailID,s.ProductID,p.ProductCode,d.DetailsCode,p.ProductName,d.SaleAttrValue,s.BatchCode,s.StockIn,s.StockOut,s.LogicOut,d.Description ',@key='s.AutoID'
+	@columns='s.ProductDetailID,s.ProductID,p.ProductCode,d.DetailsCode,p.ProductName,d.SaleAttrValue,s.BatchCode,s.StockIn,s.StockOut,s.LogicOut,d.Description ,ds.DepotCode',@key='s.AutoID'
 	set @condition=' s.ClientID='''+@ClientID+''' and P.Status<>9 '
 
 	if(@WareID<>'')
@@ -48,7 +49,7 @@ AS
 
 	if(@keyWords <> '')
 	begin
-		set @condition +=' and (p.ProductName like ''%'+@keyWords+'%'' or  p.ProductCode like ''%'+@keyWords+'%'' or  d.DetailsCode like ''%'+@keyWords+'%'') '
+		set @condition +=' and (p.ProductName like ''%'+@keyWords+'%'' or  p.ProductCode like ''%'+@keyWords+'%'' or  d.DetailsCode like ''%'+@keyWords+'%''  or  ds.DepotCode like ''%'+@keyWords+'%'') '
 	end
 
 	declare @total int,@page int

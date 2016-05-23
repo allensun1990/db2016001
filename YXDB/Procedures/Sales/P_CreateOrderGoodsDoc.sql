@@ -127,15 +127,18 @@ begin
 	if(@DocType=1)
 	begin
 		--参数
-		declare @ProductID nvarchar(64),@ProductDetailID nvarchar(64),@UseQuantity decimal(18,2),@BatchCode nvarchar(50),
+		declare @ProductID nvarchar(64),@ProductDetailID nvarchar(64),@UseQuantity decimal(18,2),@BatchCode nvarchar(50),@BatchAutoID int,@BatchQuantity decimal(18,4),
 		@DRemark nvarchar(4000),@Price decimal(18,4),@UnitID nvarchar(64),@ProviderID nvarchar(64)='',@WareID nvarchar(64),@DepotID nvarchar(64)
 
-		select @AutoID=1,@WareID=WareID,@DepotID=DepotID from DepotSeat where ClientID=@ClientID
+		select @AutoID=1,@WareID=WareID from WareHouse where ClientID=@ClientID and Status<>9
 
 		select identity(int,1,1) as AutoID,ProductDetailID,ProductID, UnitID,Quantity+Loss Quantity,Price,'' BatchCode,Remark,ProdiverID,
 		ProductName,ProductCode,DetailsCode,ProductImage,ImgS 
 		into #TempProducts 
 		from OrderDetail where OrderID=@OrderID 
+
+		--批次临时库存表
+		create table #BatchStock(AutoID int identity(1,1),DepotID nvarchar(64),BatchCode nvarchar(50),Quantity int)
 
 		while exists(select AutoID from #TempProducts where AutoID=@AutoID)
 		begin
@@ -143,21 +146,72 @@ begin
 			@UnitID=UnitID,@ProviderID= ProdiverID
 			from #TempProducts where AutoID=@AutoID
 
+			truncate table #BatchStock
 
-			if exists(select AutoID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID and DepotID=@DepotID and ClientID=@ClientID)
+			insert into #BatchStock(DepotID,BatchCode,Quantity) 
+			select p.DepotID,BatchCode,StockIn-StockOut from ProductStock p join DepotSeat d on p.DepotID=d.DepotID
+			where p.WareID=@WareID and ProductID=@ProductID and ProductDetailID=@ProductDetailID and StockIn-StockOut>0 order by d.Sort
+
+			set @BatchAutoID=1
+
+			--遍历货位材料库存
+			while exists(select AutoID from #BatchStock where AutoID=@BatchAutoID)
 			begin
-				update ProductStock set StockOut=StockOut+@UseQuantity where ProductDetailID=@ProductDetailID and WareID=@WareID and DepotID=@DepotID and ClientID=@ClientID
+				select @DepotID=DepotID,@BatchCode=BatchCode,@BatchQuantity=Quantity from #BatchStock where AutoID=@BatchAutoID 
+
+				if(@BatchQuantity>=@UseQuantity)
+				begin
+
+					insert into StorageDetail(DocID,ProductDetailID,ProductID,ProdiverID,UnitID,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS )
+					select @DocID,@ProductDetailID,@ProductID,@ProviderID,@UnitID,0,@UseQuantity,@Price,@Price*@UseQuantity,@WareID,@DepotID,@BatchCode,0,@DRemark,@ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS 
+					from #TempProducts where AutoID=@AutoID
+
+					update ProductStock set StockOut=StockOut+@UseQuantity where ProductDetailID=@ProductDetailID  and DepotID=@DepotID 
+					--处理产品流水
+					insert into ProductStream(ProductDetailID,ProductID,DocID,DocCode,BatchCode,DocDate,DocType,Mark,Quantity,WareID,DepotID,CreateUserID,ClientID)
+							values(@ProductDetailID,@ProductID,@DocID,@DocCode,@BatchCode,CONVERT(varchar(100), GETDATE(), 112),2,1,@UseQuantity,@WareID,@DepotID,@OperateID,@ClientID)
+			
+					set @UseQuantity=0
+					break;
+				end
+				else
+				begin
+					insert into StorageDetail(DocID,ProductDetailID,ProductID,ProdiverID,UnitID,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS )
+					select @DocID,@ProductDetailID,@ProductID,@ProviderID,@UnitID,0,@BatchQuantity,@Price,@Price*@BatchQuantity,@WareID,@DepotID,@BatchCode,0,@DRemark,@ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS 
+					from #TempProducts where AutoID=@AutoID
+
+					update ProductStock set StockOut=StockOut+@BatchQuantity where ProductDetailID=@ProductDetailID  and DepotID=@DepotID 
+					--处理产品流水
+					insert into ProductStream(ProductDetailID,ProductID,DocID,DocCode,BatchCode,DocDate,DocType,Mark,Quantity,WareID,DepotID,CreateUserID,ClientID)
+							values(@ProductDetailID,@ProductID,@DocID,@DocCode,@BatchCode,CONVERT(varchar(100), GETDATE(), 112),2,1,@BatchQuantity,@WareID,@DepotID,@OperateID,@ClientID)
+			
+					set @UseQuantity=@UseQuantity-@BatchQuantity
+				end
+
+				set @BatchAutoID=@BatchAutoID+1
+
 			end
-			else
+
+			if(@UseQuantity > 0)
 			begin
-				insert into ProductStock(ProductDetailID,ProductID,StockIn,StockOut,LogicOut,BatchCode,WareID,DepotID,ClientID)
+				select top 1 @DepotID=p.DepotID from ProductStock p join DepotSeat d on p.DepotID=d.DepotID
+				where p.WareID=@WareID and ProductID=@ProductID and ProductDetailID=@ProductDetailID order by d.Sort 
+
+				if exists(select AutoID from ProductStock where  ProductDetailID=@ProductDetailID and DepotID=@DepotID)
+				begin
+					update ProductStock set StockOut=StockOut+@UseQuantity where ProductDetailID=@ProductDetailID  and DepotID=@DepotID 
+				end
+				else
+				begin
+					insert into ProductStock(ProductDetailID,ProductID,StockIn,StockOut,LogicOut,BatchCode,WareID,DepotID,ClientID)
 								values (@ProductDetailID,@ProductID,0,@UseQuantity,0,'',@WareID,@DepotID,@ClientID)
+				end
+				
 
+				--处理产品流水
+				insert into ProductStream(ProductDetailID,ProductID,DocID,DocCode,BatchCode,DocDate,DocType,Mark,Quantity,WareID,DepotID,CreateUserID,ClientID)
+							values(@ProductDetailID,@ProductID,@DocID,@DocCode,'',CONVERT(varchar(100), GETDATE(), 112),2,1,@UseQuantity,@WareID,@DepotID,@OperateID,@ClientID)
 			end
-
-			insert into StorageDetail(DocID,ProductDetailID,ProductID,ProdiverID,UnitID,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS )
-			select @DocID,@ProductDetailID,@ProductID,@ProviderID,@UnitID,0,@UseQuantity,@Price,@Price*@UseQuantity,@WareID,@DepotID,@BatchCode,0,@DRemark,@ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS 
-			from #TempProducts where AutoID=@AutoID
 
 			set @Err+=@@Error
 
