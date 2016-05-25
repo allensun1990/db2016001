@@ -20,6 +20,7 @@ GO
 调试记录： exec M_GetClientOrders 
 ************************************************************/
 Create PROCEDURE [dbo].[M_GetClientOrders]
+@KeyWords nvarchar(500)='',
 @Status int=-1,
 @Type int=-1,
 @BeginDate nvarchar(100),
@@ -37,27 +38,30 @@ AS
 	@orderColumn nvarchar(100),
 	@key nvarchar(100)
 	
-	set @tableName='ClientOrder'
-	set @columns='*'
-	set @key='AutoID'
-	set @orderColumn='createtime desc'
+	set @tableName='ClientOrder a left join Clients b on a.ClientId=b.ClientId'
+	set @columns='a.*,b.CompanyName '
+	set @key='a.AutoID'
+	set @orderColumn=' a.createtime desc '
 	set @condition=' 1=1 '
-
+	if(LEN(@KeyWords)>0)
+	begin
+		set @condition+=' and ( charindex ('''+@KeyWords+''',b.CompanyName)>0)'
+	end
 	if(@AgentID<>'')
-		set @condition+=' and AgentID='''+@AgentID+''''
+		set @condition+=' and a.AgentID='''+@AgentID+''''
 	if(@ClientID<>'')
-		set @condition+=' and clientID='''+@ClientID+''''
+		set @condition+=' and a.clientID='''+@ClientID+''''
 
 	if(@Status<>-1)
-		set @condition=@condition+' and status='+str(@Status)
+		set @condition=@condition+' and a.status='+str(@Status)
 	if(@Type<>-1)
-		set @condition=@condition+' and Type='+str(@Type)
+		set @condition=@condition+' and a.Type='+str(@Type)
 	if(@BeginDate<>'')
-		set @condition=@condition+' and createtime>='''+@BeginDate+''''
+		set @condition=@condition+' and a.createtime>='''+@BeginDate+''''
 	if(@EndDate<>'')
-		set @condition+=' and createtime<='''+cast(dateadd(day, 1, @EndDate) as varchar)+''''
+	    set @condition+=' and a.createtime<='''+cast(dateadd(day, 1, @EndDate) as varchar)+''''
 
-
+ 
 	declare @total int,@page int
 
 	exec P_GetPagerData @tableName,@columns,@condition,@key,@orderColumn,@pageSize,@pageIndex,@total out,@page out,0
@@ -65,7 +69,6 @@ AS
 	set @totalCount=@total
 	set @pageCount =@page
 
+ 
 
-
-
-
+GO
