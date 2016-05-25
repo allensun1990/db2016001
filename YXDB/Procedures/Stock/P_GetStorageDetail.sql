@@ -12,7 +12,7 @@ GO
 参数说明：	 
 编写日期： 2015/5/19
 程序作者： Allen
-调试记录： exec P_GetStorageDetail '719218bb-9505-4578-915a-b6d7c11d4a5b',''
+调试记录： exec P_GetStorageDetail 'c2d6e4e4-8ea4-49ad-b17a-c98963f57628',''
 ************************************************************/
 CREATE PROCEDURE [dbo].[P_GetStorageDetail]
 	@DocID nvarchar(64),
@@ -21,14 +21,6 @@ AS
 
 select * from StorageDoc where DocID=@DocID 
 
-if exists(select AutoID from StorageDoc where DocID=@DocID and DocType=2 )
-begin
-	select * from StorageDetail where DocID=@DocID 
-end
-else
-begin
-	select * from StorageDetail 
-	where DocID=@DocID 
-end
+select s.*,d.DepotCode from StorageDetail s join DepotSeat d on s.DepotID=d.DepotID where DocID=@DocID 
  
 

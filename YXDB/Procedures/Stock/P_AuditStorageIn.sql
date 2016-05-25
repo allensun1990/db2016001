@@ -58,9 +58,11 @@ begin
 	begin
 		set @GoodsAutoID= convert(int, SUBSTRING (@GoodsQuantity , 1 , CHARINDEX ('-' , @GoodsQuantity )-1))
 
-		set @Quantity=convert(decimal(18,4), SUBSTRING (@GoodsQuantity , CHARINDEX ('-' , @GoodsQuantity)+1 ,LEN(@GoodsQuantity)- CHARINDEX ('-' , @GoodsQuantity)))
+		set @Quantity=convert(decimal(18,4), SUBSTRING (@GoodsQuantity , CHARINDEX ('-' , @GoodsQuantity)+1 ,CHARINDEX (':' , @GoodsQuantity)- CHARINDEX ('-' , @GoodsQuantity)-1))
 
-		select @ProductID=ProductID,@ProductDetailID=ProductDetailID,@BatchCode=BatchCode,@DepotID=DepotID from StorageDetail where AutoID=@GoodsAutoID
+		set @DepotID=SUBSTRING (@GoodsQuantity , CHARINDEX (':' , @GoodsQuantity)+1 ,LEN(@GoodsQuantity)- CHARINDEX (':' , @GoodsQuantity))
+
+		select @ProductID=ProductID,@ProductDetailID=ProductDetailID,@BatchCode=BatchCode from StorageDetail where DocID=@DocID and AutoID=@GoodsAutoID
 
 		if exists(select AutoID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID and DepotID=@DepotID  and ClientID=@ClientID)
 		begin
@@ -85,10 +87,10 @@ begin
 		set @Err+=@@Error
 
 		--更新已入库数量
-		Update StorageDetail set Complete=Complete+@Quantity where  AutoID=@GoodsAutoID and DocID=@DocID
+		Update StorageDetail set Complete=Complete+@Quantity,DepotID=@DepotID where  AutoID=@GoodsAutoID and DocID=@DocID
 
 		insert into StorageDetail(DocID,ProductDetailID,ProductID,ProdiverID,UnitID,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS )
-			select @NewDocID,ProductDetailID,ProductID,ProdiverID,UnitID,0,@Quantity,Price,Price*@Quantity,WareID,DepotID,BatchCode,0,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS 
+			select @NewDocID,ProductDetailID,ProductID,ProdiverID,UnitID,0,@Quantity,Price,Price*@Quantity,WareID,@DepotID,BatchCode,0,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS 
 			from StorageDetail where AutoID=@GoodsAutoID and DocID=@DocID
 		
 	end

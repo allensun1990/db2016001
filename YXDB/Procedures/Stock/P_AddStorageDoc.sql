@@ -52,7 +52,7 @@ begin
 		end
 		else
 		begin
-			select top 1 @DepotID = DepotID from DepotSeat where WareID=@WareID and Status=1
+			select top 1 @DepotID = DepotID from DepotSeat where WareID=@WareID and Status=1 order by Sort 
 		end
 
 		insert into StorageDetail(DocID,ProductDetailID,ProductID,ProdiverID,UnitID,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS)
