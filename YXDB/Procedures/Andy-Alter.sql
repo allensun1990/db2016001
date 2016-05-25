@@ -44,6 +44,15 @@ GO
 --大货明细表新增字段：TaskID
 alter table GoodsDoc add TaskID varchar(64)  null
 
+--任务操作权限不放在角色权限中控制
+update Menu set IsLimit=0,IsHide=1
+where MenuCode in
+(
+'109010101','109010102','109010103','109010104','109010105','109010106','109010107'
+)
+
+
+
 
 
 

@@ -546,5 +546,6 @@
     <None Include="Procedures\System\P_DeleteDepotSeat.sql" />
     <None Include="Procedures\System\P_CreateDepotSeat.sql" />
     <None Include="Procedures\System\P_UpdateDepotSeatSort.sql" />
+    <None Include="Procedures\Andy-Alter.sql" />
   </ItemGroup>
 </Project>
