@@ -71,6 +71,7 @@
     <Folder Include="Procedures\ShoppingCart" />
     <Folder Include="Procedures\Stock" />
     <Folder Include="Procedures\System" />
+    <Folder Include="Procedures\Manage\Report" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\Agents\P_GetAgentOrderByID.sql" />
@@ -200,6 +201,8 @@
     <None Include="Procedures\AlterSql.sql" />
     <None Include="Procedures\InitDatabase.sql" />
     <None Include="Procedures\P_GetPagerData.sql" />
+    <None Include="Procedures\EDJMichauxAlter.sql" />
+    <None Include="Procedures\Manage\M_AddClientOrderAccount.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\Sales\P_CreateOpportunity.sql" />
@@ -221,5 +224,8 @@
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Procedures\MichauxAlter.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="Procedures\Manage\M_UpdateClientOrderAccountStatus.sql" />
   </ItemGroup>
 </Project>
