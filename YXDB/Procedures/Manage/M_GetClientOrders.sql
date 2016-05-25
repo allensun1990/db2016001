@@ -75,12 +75,7 @@ AS
 	set @totalCount=@total
 	set @pageCount =@page
 
-
-
-
-
-
-
+ 
 
 GO
 

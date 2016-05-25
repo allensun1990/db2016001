@@ -48,11 +48,13 @@ AS
 	set @condition=' 1=1 '
 
 	if(@IsParticipate=1)
-		set @condition +='and Members like ''%'+@OwnerID+'%'' '
+	begin
+		set @condition+=' and TaskID in( select distinct TaskID from TaskMember where Status<>9 and MemberID='''+@OwnerID+''' )'
+	end
 	else
 	begin
 		if(@OwnerID<>'')
-			set @condition+=' and OwnerID='''+@OwnerID+''''
+			set @condition +='and OwnerID='''+@OwnerID+''' '
 	end
 
 	if(@ClientID<>'')
