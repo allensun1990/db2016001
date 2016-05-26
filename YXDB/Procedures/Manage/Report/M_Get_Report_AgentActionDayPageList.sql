@@ -26,6 +26,7 @@ CREATE PROCEDURE [M_Get_Report_AgentActionDayPageList]
 @BeginDate nvarchar(100)='',
 @EndDate nvarchar(100)='',
 @OrderBy nvarchar(100)='',
+@Type int=-1,
 @pageSize int,
 @pageIndex int,
 @totalCount int output,
@@ -40,7 +41,7 @@ AS
 		set @OrderBy='SUM(a.CustomerCount) desc '
 	 end 
 	set @tableName='M_Report_AgentAction_Day as a left join Clients as c on a.ClientID=c.ClientID'
-	set @columns='a.ClientID,c.ClientCode,c.CompanyName,c.createtime,SUM(a.CustomerCount) as CustomerCount, SUM(a.OrdersCount) as OrdersCount,
+	set @columns='a.ClientID,c.ClientCode,c.CompanyName,c.AliMemberID,c.createtime,SUM(a.CustomerCount) as CustomerCount, SUM(a.OrdersCount) as OrdersCount,
 	  SUM( a.ActivityCount) as ActivityCount, SUM( a.ProductCount) as ProductCount, SUM( a.UsersCount) as UsersCount, SUM( a.AgentCount) as AgentCount,
 	  SUM( a.OpportunityCount) as OpportunityCount, SUM( a.PurchaseCount) as PurchaseCount, SUM( a.WarehousingCount) as WarehousingCount,
 	  SUM( a.TaskCount) as TaskCount ,  SUM( a.DownOrderCount) as DownOrderCount ,SUM( a.ProductOrderCount) as ProductOrderCount '
@@ -55,13 +56,21 @@ AS
 	  set @condition=' c.Status=1 '
 
 	if(@Keyword<>'')
-		set @condition+=' and c.CompanyName like''%'+@Keyword+'%'''
+		set @condition+=' and ( c.CompanyName like''%'+@Keyword+'%'' OR  c.ClientCode LIKE ''%'+@Keyword+'%''  or c.AliMemberID  LIKE ''%'+@Keyword+'%'' )'
 	if(@BeginDate<>'')
 		set @condition+=' and a.ReportDate>='''+@BeginDate+''''
 	if(@EndDate<>'')
 		set @condition+=' and a.ReportDate<='''+CONVERT(varchar(100), dateadd(day, 1, @EndDate), 23)+''''
+	if(@Type=0)
+	begin
+		set @condition+=' and  len(c.AliMemberID)=0 '
+	end
+	else if(@Type=1)
+	begin
+		set @condition+=' and  len(c.AliMemberID)>0 '
+	end
 
-	set @condition+=' group by a.ClientID,c.CompanyName,c.createtime,c.ClientCode'
+	set @condition+=' group by a.ClientID,c.CompanyName,c.createtime,c.ClientCode,c.AliMemberID'
 
  
 	declare @CommandSQL nvarchar(4000)

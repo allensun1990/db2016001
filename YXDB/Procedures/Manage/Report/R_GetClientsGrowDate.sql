@@ -31,21 +31,21 @@ begin
 	--按天统计
 	if(@DateType=1)
 	begin	
-		set @SqlText+='select convert(varchar(8),CreateTime,112) as CreateTime,COUNT(1)as TotalNum from Customer '
+		set @SqlText+='select convert(varchar(8),CreateTime,112) as CreateTime,COUNT(1)as TotalNum from Clients '
 		set @SqlText+=' where CreateTime between '''+@BeginTime+''' and dateadd(day,1,'''+@EndTime+''')  group by  convert(varchar(8),CreateTime,112)'		
 		exec(@SqlText);
 	end
 	--按周统计
 	else if(@DateType=2)
 	begin
-		set @SqlText+='select datename(year,CreateTime)+datename(week,CreateTime) as CreateTime,COUNT(1)as TotalNum from Customer '
+		set @SqlText+='select datename(year,CreateTime)+datename(week,CreateTime) as CreateTime,COUNT(1)as TotalNum from Clients '
 		set @SqlText+=' where CreateTime between '''+@BeginTime+''' and dateadd(day,1,'''+@EndTime+''')  group by   datename(year,CreateTime)+datename(week,CreateTime)'		
 		exec(@SqlText);		
 	end
 	--按月统计
 	else if(@DateType=3)
 	begin	
-		set @SqlText+='select convert(varchar(6),CreateTime,112) as CreateTime,COUNT(1)as TotalNum from Customer '
+		set @SqlText+='select convert(varchar(6),CreateTime,112) as CreateTime,COUNT(1)as TotalNum from Clients '
 		set @SqlText+=' where CreateTime between '''+@BeginTime+''' and dateadd(day,1,'''+@EndTime+''')  group by   convert(varchar(6),CreateTime,112)'		
 		exec(@SqlText);
 	end
