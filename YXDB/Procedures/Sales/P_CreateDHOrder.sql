@@ -18,6 +18,7 @@ CREATE PROCEDURE [dbo].[P_CreateDHOrder]
 	@OriginalID nvarchar(64),
 	@OrderID nvarchar(64),
 	@Discount decimal(18,4)=1,
+	@Price decimal(18,4)=0,
 	@OrderCode nvarchar(50),
 	@OperateID nvarchar(64)='',
 	@ClientID nvarchar(64)
@@ -38,7 +39,7 @@ select @ProcessID=ProcessID,@OwnerID=OwnerID from OrderProcess where ClientID=@C
 insert into Orders(OrderID,OrderCode,CategoryID,TypeID,OrderType,SourceType,Status,ProcessID,PlanPrice,FinalPrice,PlanQuantity,PlanType,TaskCount,TaskOver,OrderImage,OriginalID,OriginalCode ,
 					Price,CostPrice,ProfitPrice,TotalMoney,CityCode,Address,PersonName,MobileTele,Remark,CustomerID,OwnerID,CreateTime,AgentID,ClientID,Platemaking,PlateRemark,
 					GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,Discount,OriginalPrice,IntGoodsCode,GoodsName)
-select @OrderID,@OrderCode,CategoryID,TypeID,2,1,4,@ProcessID,PlanPrice,FinalPrice*@Discount,0,PlanType,0,0,OrderImage,OrderID,OrderCode,
+select @OrderID,@OrderCode,CategoryID,TypeID,2,1,4,@ProcessID,PlanPrice,@Price,0,PlanType,0,0,OrderImage,OrderID,OrderCode,
 		Price,CostPrice,ProfitPrice,0,CityCode,Address,PersonName,MobileTele,Remark,CustomerID,@OwnerID,getdate(),AgentID,ClientID,Platemaking,PlateRemark,
 		GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,@Discount,FinalPrice,IntGoodsCode,GoodsName from Orders where OrderID=@OriginalID
 	
