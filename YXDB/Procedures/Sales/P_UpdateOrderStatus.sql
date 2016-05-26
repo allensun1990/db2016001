@@ -47,8 +47,8 @@ from Orders where OrderID=@OrderID  and ClientID=@ClientID
 
 if(@OldStatus=0 and @Status=1 and @OrderType=1)--开始打样
 begin
-	insert into OrderTask(TaskID,Title,ProductName,OrderType,TaskCode,OrderID,OrderImg,ProcessID,StageID,EndTime,OwnerID,Mark,Status,FinishStatus,CreateTime,CreateUserID,ClientID,AgentID,Sort,OrderCode)
-	select NEWID(),StageName,@Title,@OrderType,@OrderCode+convert(nvarchar(2),Sort),@OrderID,@OrderImg,ProcessID,StageID,null,OwnerID,Mark,1,0,GETDATE(),OwnerID,ClientID,@AgentID,Sort,@OrderCode from OrderStage
+	insert into OrderTask(TaskID,Title,ProductName,OrderType,TaskCode,OrderID,OrderImg,ProcessID,StageID,EndTime,OwnerID,Mark,Status,FinishStatus,CreateTime,CreateUserID,ClientID,AgentID,Sort,OrderCode,MaxHours)
+	select NEWID(),StageName,@Title,@OrderType,@OrderCode+convert(nvarchar(2),Sort),@OrderID,@OrderImg,ProcessID,StageID,null,OwnerID,Mark,1,0,GETDATE(),OwnerID,ClientID,@AgentID,Sort,@OrderCode,MaxHours from OrderStage
 	where ProcessID =@ProcessID and status<>9
 	order by Sort
 
@@ -92,8 +92,8 @@ begin
 		return
 	end
 
-	insert into OrderTask(TaskID,Title,ProductName,OrderType,TaskCode,OrderID,OrderImg,ProcessID,StageID,EndTime,OwnerID,Mark,Status,FinishStatus,CreateTime,CreateUserID,ClientID,AgentID,Sort,OrderCode)
-	select NEWID(),StageName,@Title,@OrderType,@OrderCode+convert(nvarchar(2),Sort),@OrderID,@OrderImg,ProcessID,StageID,null,OwnerID,Mark,1,0,GETDATE(),OwnerID,ClientID,@AgentID,Sort,@OrderCode from OrderStage
+	insert into OrderTask(TaskID,Title,ProductName,OrderType,TaskCode,OrderID,OrderImg,ProcessID,StageID,EndTime,OwnerID,Mark,Status,FinishStatus,CreateTime,CreateUserID,ClientID,AgentID,Sort,OrderCode,MaxHours)
+	select NEWID(),StageName,@Title,@OrderType,@OrderCode+convert(nvarchar(2),Sort),@OrderID,@OrderImg,ProcessID,StageID,null,OwnerID,Mark,1,0,GETDATE(),OwnerID,ClientID,@AgentID,Sort,@OrderCode,MaxHours from OrderStage
 	where ProcessID =@ProcessID and status<>9
 	order by Sort
 

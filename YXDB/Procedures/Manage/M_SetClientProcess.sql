@@ -48,13 +48,13 @@ begin
 	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
 	values (NEWID(),'面料/辅料',@ProcessIDDY,1,1,11,'',@UserID,@UserID,@ClientID)
 	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-	values (NEWID(),'制版/工艺',@ProcessIDDY,2,1,12,'',@UserID,@UserID,@ClientID)
+	values (NEWID(),'制版',@ProcessIDDY,2,1,12,'',@UserID,@UserID,@ClientID)
 	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
 	values (NEWID(),'做样衣',@ProcessIDDY,3,1,0,'',@UserID,@UserID,@ClientID)
 	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
 	values (NEWID(),'审版',@ProcessIDDY,4,1,0,'',@UserID,@UserID,@ClientID)
 	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-	values (NEWID(),'核价',@ProcessIDDY,5,1,0,'',@UserID,@UserID,@ClientID)
+	values (NEWID(),'核价',@ProcessIDDY,5,1,16,'',@UserID,@UserID,@ClientID)
 	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
 	values (NEWID(),'发货',@ProcessIDDY,6,1,15,'',@UserID,@UserID,@ClientID)
 
@@ -63,7 +63,7 @@ begin
 	values(@ProcessIDDH,'梭织大货流程',2,1,1,1,0,@UserID,@UserID,@ClientID)
 
 	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-	values (NEWID(),'推码/工艺单',@ProcessIDDH,1,1,0,'',@UserID,@UserID,@ClientID)
+	values (NEWID(),'推码/工艺单',@ProcessIDDH,1,1,22,'',@UserID,@UserID,@ClientID)
 	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
 	values (NEWID(),'面料/辅料',@ProcessIDDH,2,1,21,'',@UserID,@UserID,@ClientID)
 	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
@@ -94,7 +94,7 @@ begin
 	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
 	values (NEWID(),'审版',@ProcessIDDY,5,1,0,'',@UserID,@UserID,@ClientID)
 	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-	values (NEWID(),'核价',@ProcessIDDY,6,1,0,'',@UserID,@UserID,@ClientID)
+	values (NEWID(),'核价',@ProcessIDDY,6,1,16,'',@UserID,@UserID,@ClientID)
 	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
 	values (NEWID(),'发货',@ProcessIDDY,7,1,15,'',@UserID,@UserID,@ClientID)
 
@@ -103,7 +103,7 @@ begin
 	values(@ProcessIDDH,'毛织大货流程',2,1,1,1,0,@UserID,@UserID,@ClientID)
 
 	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-	values (NEWID(),'推码/工艺单',@ProcessIDDH,1,1,0,'',@UserID,@UserID,@ClientID)
+	values (NEWID(),'推码/工艺单',@ProcessIDDH,1,1,22,'',@UserID,@UserID,@ClientID)
 	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
 	values (NEWID(),'纱线/辅料',@ProcessIDDH,2,1,21,'',@UserID,@UserID,@ClientID)
 	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 

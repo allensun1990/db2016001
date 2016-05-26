@@ -17,6 +17,7 @@ GO
 CREATE PROCEDURE [dbo].[P_UpdateOrderDiscount]
 	@OrderID nvarchar(64),
 	@Discount decimal(18,4)=0 ,
+	@Price decimal(18,4)=0,
 	@OperateID nvarchar(64)='',
 	@AgentID nvarchar(64)='',
 	@ClientID nvarchar(64)=''
@@ -34,7 +35,9 @@ begin
 	return
 end
 
-Update Orders set Discount=@Discount,FinalPrice=OriginalPrice*@Discount,TotalMoney=OriginalPrice*PlanQuantity*@Discount where OrderID=@OrderID
+Update Orders set Discount=@Discount,FinalPrice=@Price,TotalMoney=PlanQuantity*@Price where OrderID=@OrderID
+
+Update OrderGoods set Price=@Price,TotalMoney=@Price*Quantity where OrderID=@OrderID
 
 set @Err+=@@error
 

@@ -31,7 +31,7 @@ GO
 	declare @SqlWhere nvarchar(4000)
 	declare @i int
 	set @SqlText=''
-	set @ObjTypes='1,2,4,5,8,'
+	set @ObjTypes='1,2,3,4,5,6,7,8,9,10,11,12'
 	set @i=charindex(',',@ObjTypes)
 	while @i>0
 	begin

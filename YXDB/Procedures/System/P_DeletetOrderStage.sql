@@ -1,4 +1,4 @@
-﻿Use IntFactory
+﻿Use IntFactory_dev
 GO
 IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'P_DeletetOrderStage')
 BEGIN
@@ -26,7 +26,7 @@ begin tran
 declare @Err int=0,@Sort int=0,@Mark int=0,@Status int=1,@PrevStageID nvarchar(64)
 
 select @Sort=Sort,@Mark=Mark,@Status=Status from OrderStage where StageID=@StageID and ProcessID=@ProcessID
-if(@Mark=0 and @Status=1)
+if(@Status=1)
 begin
 	--取得上个客户阶段
 	select @PrevStageID=StageID from OrderStage where ProcessID=@ProcessID and Sort=@Sort-1 and Status<>9
