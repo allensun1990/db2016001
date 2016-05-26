@@ -32,7 +32,7 @@ Create PROCEDURE [dbo].[M_UpdateClient]
 AS
 
 --客户端
-if(isnull(@Logo,'')<>'')
+if(len(@Logo)>0)
 begin
 	update Clients set CompanyName=@CompanyName,
 	MobilePhone=@MobilePhone,Industry=@Industry, CityCode=@CityCode, 
