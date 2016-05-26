@@ -1,20 +1,20 @@
-﻿Use IntFactory_dev
+﻿Use IntFactory
 GO
-IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'P_GetTaskDetail')
+IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'P_AddTaskMembers')
 BEGIN
-	DROP  Procedure  P_GetTaskDetail
+	DROP  Procedure  P_AddTaskMembers
 END
 
 GO
 /***********************************************************
-过程名称： P_GetTaskDetail
+过程名称： P_AddTaskMembers
 功能描述： 添加任务成员
 参数说明：	 
 编写日期： 2016/5/18
 程序作者： MU
-调试记录： declare @Result exec P_GetTaskDetail @TaskID='0B9E8812-2F90-4C5F-B879-860E54D81C39',@OwnerID='',@Result=@Result output
+调试记录： declare @Result exec P_AddTaskMembers @TaskID='0B9E8812-2F90-4C5F-B879-860E54D81C39',@OwnerID='',@Result=@Result output
 ************************************************************/
-CREATE PROCEDURE [dbo].P_GetTaskDetail
+CREATE PROCEDURE [dbo].P_AddTaskMembers
 @TaskID nvarchar(64),
 @AgentID nvarchar(64),
 @UserID nvarchar(64),

@@ -30,3 +30,10 @@ D:\YunXiaoProjects\DBProjects\YXDB\obj\Debug\CloudSalesDB.dll
 D:\YunXiaoProjects\DBProjects\YXDB\obj\Debug\CloudSalesDB.pdb
 D:\YunXiaoProjects\DBProjects\YXDB\bin\Debug\CloudSalesDB.dll
 D:\YunXiaoProjects\DBProjects\YXDB\bin\Debug\CloudSalesDB.pdb
+C:\yunxiaokeji\DB\YXDB\bin\Debug\IntFactoryDB.dacpac
+C:\yunxiaokeji\DB\YXDB\obj\Debug\Model.xml
+C:\yunxiaokeji\DB\YXDB\obj\Debug\refactor.xml
+C:\yunxiaokeji\DB\YXDB\obj\Debug\postdeploy.sql
+C:\yunxiaokeji\DB\YXDB\obj\Debug\predeploy.sql
+C:\yunxiaokeji\DB\YXDB\obj\Debug\CloudSalesDB.dll
+C:\yunxiaokeji\DB\YXDB\obj\Debug\CloudSalesDB.pdb

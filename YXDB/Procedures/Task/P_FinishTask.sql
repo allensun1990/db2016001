@@ -53,7 +53,7 @@ as
 	end
 
 	--任务标记为制版时 制版信息为空；任务标记为材料时 订单没有产品详情
-	if(@Mark=2)
+	if(@Mark=12)
 	begin
 		if(exists( select orderid from orders where orderid=@OrderID and ( (cast(Platemaking as varchar(max))='' or cast(Platemaking as varchar(max)) is  null) ) ) )
 		begin
@@ -61,7 +61,7 @@ as
 			return;
 		end
 	end
-	else if(@Mark=1 or @Mark=3)
+	else if(@Mark=11 or @Mark=21)
 	begin
 		if(not exists( select AutoID from OrderDetail where orderid=@OrderID) )
 		begin
