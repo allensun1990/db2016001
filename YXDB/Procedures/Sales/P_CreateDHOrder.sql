@@ -47,4 +47,7 @@ select @OrderID,@OrderCode,CategoryID,TypeID,2,1,4,@ProcessID,PlanPrice,@Price,0
 insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProdiverID )
 select @OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProdiverID  from OrderDetail where OrderID=@OriginalID
 
+
+
+
 Insert into OrderStatusLog(OrderID,Status,CreateUserID) values(@OrderID,4,@OperateID)

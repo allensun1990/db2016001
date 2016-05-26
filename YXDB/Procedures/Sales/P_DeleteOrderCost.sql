@@ -34,11 +34,6 @@ begin
 	return
 end
 
-if(@OperateID<>@OwnerID and not exists(select AutoID from OrderProcess where ProcessID=@ProcessID and OwnerID=@OperateID))
-begin
-	rollback tran
-	return
-end
 
 Update OrderCosts set Status=9 where OrderID=@OrderID and AutoID=@AutoID
 
