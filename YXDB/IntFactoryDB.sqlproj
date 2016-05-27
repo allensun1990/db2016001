@@ -550,5 +550,6 @@
     <Build Include="Procedures\Manage\Report\M_Get_Report_AgentActionDayReport.sql" />
     <None Include="Procedures\Task\P_LockTask.sql" />
     <None Include="Procedures\Task\P_UnLockTask.sql" />
+    <None Include="Procedures\Sales\P_GetOrderForFentReport.sql" />
   </ItemGroup>
 </Project>
