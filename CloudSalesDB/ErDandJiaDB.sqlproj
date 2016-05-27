@@ -203,6 +203,10 @@
     <None Include="Procedures\P_GetPagerData.sql" />
     <None Include="Procedures\EDJMichauxAlter.sql" />
     <None Include="Procedures\Manage\M_AddClientOrderAccount.sql" />
+    <None Include="Procedures\Manage\M_UpdateRolePermission.sql" />
+    <None Include="Procedures\Manage\M_DeleteRole.sql" />
+    <None Include="Procedures\Manage\P_UpdateUserRole.sql" />
+    <None Include="Procedures\Manage\M_GetM_UserToLogin.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\Sales\P_CreateOpportunity.sql" />
