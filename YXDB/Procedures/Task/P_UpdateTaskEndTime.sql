@@ -1,4 +1,4 @@
-﻿Use IntFactory
+﻿Use IntFactory_dev
 GO
 IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'P_UpdateTaskEndTime')
 BEGIN
@@ -17,13 +17,14 @@ GO
 CREATE PROCEDURE [dbo].P_UpdateTaskEndTime
 @TaskID nvarchar(64),
 @UserID nvarchar(64),
-@EndTime datetime,
+@EndTime datetime=null,
 @Result int output --0：失败，1：成功，2: 任务已接受,3:没有权限
 as
 declare @OwnerID nvarchar(64)
+declare @MaxHours int
 set @Result=0
 
-select @OwnerID=OwnerID from OrderTask where TaskID=@TaskID
+select @OwnerID=OwnerID,@MaxHours=MaxHours from OrderTask where TaskID=@TaskID
 
 --任务不是负责人操作
 if(@OwnerID<>@UserID)
@@ -39,7 +40,11 @@ begin
 	return
 end
 
-update OrderTask set endTime=@EndTime,FinishStatus=1,AcceptTime=GETDATE() where TaskID=@TaskID
+if(@MaxHours=0)
+	update OrderTask set endTime=@EndTime,FinishStatus=1,AcceptTime=GETDATE() where TaskID=@TaskID
+else
+	update OrderTask set endTime=DATEADD(HH,@MaxHours,GETDATE()),FinishStatus=1,AcceptTime=GETDATE() where TaskID=@TaskID
+
 set @Result=1
 		 
 

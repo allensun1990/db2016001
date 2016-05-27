@@ -71,7 +71,7 @@ as
 	end
 
 	--更新任务进行状态为完成
-	update OrderTask set FinishStatus=2,CompleteTime=GETDATE() where TaskID=@TaskID
+	update OrderTask set FinishStatus=2,CompleteTime=GETDATE(),LockStatus=1 where TaskID=@TaskID
 
 	--更新任务对应的订单的任务完成数
 	update Orders set TaskOver=TaskOver+1 where OrderID=@OrderID

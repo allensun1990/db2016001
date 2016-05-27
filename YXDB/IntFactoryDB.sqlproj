@@ -548,5 +548,7 @@
     <None Include="Procedures\System\P_UpdateDepotSeatSort.sql" />
     <None Include="Procedures\Andy-Alter.sql" />
     <Build Include="Procedures\Manage\Report\M_Get_Report_AgentActionDayReport.sql" />
+    <None Include="Procedures\Task\P_LockTask.sql" />
+    <None Include="Procedures\Task\P_UnLockTask.sql" />
   </ItemGroup>
 </Project>
