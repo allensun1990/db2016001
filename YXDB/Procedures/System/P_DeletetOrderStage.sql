@@ -21,6 +21,11 @@ CREATE PROCEDURE [dbo].[P_DeletetOrderStage]
 @ClientID nvarchar(64)=''
 AS
 
+if not exists(select AutoID from OrderStage where ProcessID=@ProcessID and StageID<>@StageID and Status=1)
+begin
+	return
+end
+
 begin tran
 
 declare @Err int=0,@Sort int=0,@Mark int=0,@Status int=1,@PrevStageID nvarchar(64)
