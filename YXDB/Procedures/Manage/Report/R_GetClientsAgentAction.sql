@@ -65,6 +65,6 @@ GO
 			set @SqlText+=' ,convert(varchar(6),ReportDate,112) as ReportDate from M_Report_AgentAction_Day a  '
 			set @SqlText+=@SqlWhere;
 			set @SqlText+=' group by convert(varchar(6),ReportDate,112); '
-		end¡¡
+		end
 		exec(@SqlText)
 end
