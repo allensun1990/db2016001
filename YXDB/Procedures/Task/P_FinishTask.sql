@@ -70,7 +70,7 @@ as
 		end
 	end
 
-	--更新任务进行状态为完成
+	--更新任务进行状态为完成且加锁
 	update OrderTask set FinishStatus=2,CompleteTime=GETDATE(),LockStatus=1 where TaskID=@TaskID
 
 	--更新任务对应的订单的任务完成数

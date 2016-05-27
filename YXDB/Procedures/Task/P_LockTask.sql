@@ -32,13 +32,13 @@ as
 		return
 	end
 
-	select @OrderOwnerID=OwnerID from Orders where OrderID=@OrderID
-	--没权限操作
-	if(@OwnerID<>@UserID and @OrderOwnerID<>@UserID)
-	begin
-		set @Result=3
-		return
-	end
+	--select @OrderOwnerID=OwnerID from Orders where OrderID=@OrderID
+	----没权限操作
+	--if(@OwnerID<>@UserID and @OrderOwnerID<>@UserID)
+	--begin
+	--	set @Result=3
+	--	return
+	--end
 
 	--将任务锁定
 	update OrderTask set LockStatus=1 where TaskID=@TaskID
