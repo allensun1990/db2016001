@@ -1,1 +1,2 @@
-﻿
+﻿insert into Menu(MenuCode,Name,Area,Controller,[View],IcoPath,IcoHover,Type,IsHide,PCode,Sort,Layer,IsMenu,IsLimit,Remark) 
+values ('102019034','解锁/锁定任务','','Orders','UpdateTaskLockStatus','','',1,0,'102010500',1034,4,0,1,'')
