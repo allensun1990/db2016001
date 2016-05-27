@@ -147,6 +147,19 @@ AS
 		set @condition +=' and o.OrderStatus =  '+convert(nvarchar(2), @OrderStatus)
 	end
 
+	if(@InvoiceStatus=2)
+	begin
+		set @condition +=' and o.OrderStatus = 1 and o.PlanTime< GetDate() '
+	end
+	else if(@InvoiceStatus=1)
+	begin
+		set @condition +=' and o.OrderStatus = 1 and o.PlanTime > GetDate() and datediff(hour,o.Ordertime,o.PlanTime) > datediff(hour,GetDate(),o.PlanTime)*3 '
+	end
+	else if(@InvoiceStatus=0)
+	begin
+		set @condition +=' and o.OrderStatus = 1 and o.PlanTime > GetDate() and datediff(hour,o.Ordertime,o.PlanTime) <= datediff(hour,GetDate(),o.PlanTime)*3 '
+	end
+
 	if(@Mark<>-1)
 	begin
 		set @condition +=' and o.Mark = '+convert(nvarchar(2), @Mark)
