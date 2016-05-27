@@ -1,4 +1,4 @@
-﻿Use IntFactory
+﻿Use IntFactory_dev
 GO
 IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'P_GetFilterProducts')
 BEGIN
@@ -95,7 +95,7 @@ AS
 
 	if(@SaleWhere!='')
 	begin
-		set @condition += ' and pd.AutoID in (select AutoID from ProductDetail where  Status=1'+@SaleWhere+'  group by ProductID )'
+		set @condition += ' and pd.AutoID in (select AutoID from ProductDetail where  Status=1'+@SaleWhere+' )'
 	end
 
 	declare @total int,@page int

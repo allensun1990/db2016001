@@ -29,41 +29,42 @@ GO
 	declare @SqlText nvarchar(4000)
 	declare @ObjTypes varchar(50)
 	declare @SqlWhere nvarchar(4000)
-	declare @i int
-	set @SqlText=''
-	set @ObjTypes='1,2,3,4,5,6,7,8,9,10,11,12'
-	set @i=charindex(',',@ObjTypes)
-	while @i>0
+
+	set @SqlText='select SUM(a.CustomerCount) as CustomerCount,
+					SUM(a.OrdersCount) as OrdersCount,
+					--SUM( a.ActivityCount) as ActivityCount, 
+					SUM( a.ProductCount) as ProductCount, 
+					SUM( a.UsersCount) as UsersCount, 
+					--SUM( a.AgentCount) as AgentCount,
+					--SUM( a.OpportunityCount) as OpportunityCount, 
+					SUM( a.PurchaseCount) as PurchaseCount, 
+					SUM( a.WarehousingCount) as WarehousingCount,
+					SUM( a.TaskCount) as TaskCount ,  
+					SUM( a.DownOrderCount) as DownOrderCount ,
+					SUM( a.ProductOrderCount) as ProductOrderCount'
+	set @SqlWhere=' where ReportDate between '''+@BeginTime+''' and dateadd(day,1,'''+@EndTime+''') '
+	if(len(@Clientid)>0)
 	begin
-		set @SqlWhere= ' where objectType='+SUBSTRING(@ObjTypes,1,@i-1)+' and ReportDate between '''+@BeginTime+''' and dateadd(day,1,'''+@EndTime+''') '
-		if(len(@Clientid)>0)
+		set @SqlWhere+=' and ClientID='''+@Clientid+''' '
+	end
+
+	if(@DateType=1)
 		begin
-			set @SqlWhere+=' and ClientID='''+@Clientid+''' '
-		end
-		if(@DateType=1)
-		begin
-			set @SqlText+=' select convert(varchar(8),ReportDate,112) as ReportDate,Sum(cast(ReportValue as decimal)) as ReportValue from Report_AgentAction_Day  '
+			set @SqlText+='  ,convert(varchar(8),ReportDate,112) as ReportDate from M_Report_AgentAction_Day a '
 			set @SqlText+=@SqlWhere;
 			set @SqlText+=' group by convert(varchar(8),ReportDate,112); '
 		end
 		else if(@DateType=2)
 		begin
-			set @SqlText+=' select datename(year,ReportDate)+datename(week,ReportDate) as ReportDate,Sum(cast(ReportValue as decimal)) as ReportValue from Report_AgentAction_Day  '
+			set @SqlText+=' ,datename(year,ReportDate)+datename(week,ReportDate) as ReportDate from M_Report_AgentAction_Day a '
 			set @SqlText+=@SqlWhere;
 			set @SqlText+=' group by datename(year,ReportDate)+datename(week,ReportDate); '
 		end
 		else if(@DateType=3)
 		begin
-			set @SqlText+=' select convert(varchar(6),ReportDate,112) as ReportDate,Sum(cast(ReportValue as decimal)) as ReportValue from Report_AgentAction_Day  '
+			set @SqlText+=' ,convert(varchar(6),ReportDate,112) as ReportDate from M_Report_AgentAction_Day a  '
 			set @SqlText+=@SqlWhere;
 			set @SqlText+=' group by convert(varchar(6),ReportDate,112); '
 		end
-		set @ObjTypes=SUBSTRING(@ObjTypes,@i+1,LEN(@ObjTypes))
-		set @i=charindex(',',@ObjTypes,0)
-	end
-	if(@SqlText<>'')
-	begin
 		exec(@SqlText)
-	end
-
 end

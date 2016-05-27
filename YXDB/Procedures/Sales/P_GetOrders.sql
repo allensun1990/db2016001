@@ -146,6 +146,10 @@ AS
 	begin
 		set @condition +=' and o.OrderStatus =  '+convert(nvarchar(2), @OrderStatus)
 	end
+	else
+	begin
+		set @condition +=' and o.OrderStatus <> 8  '
+	end
 
 	if(@InvoiceStatus=2)
 	begin
