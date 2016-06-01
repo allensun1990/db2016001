@@ -40,11 +40,7 @@ AS
 	end
 
 	declare @total int,@page int
-	insert into #Attrs exec P_GetPagerData @tableName,@columns,@condition,@key,@orderColumn,@pageSize,@pageIndex,@total out,@page out,@isAsc
-	
-	select * from #Attrs
-	select * from AttrValue where AttrID in (select AttrID from #Attrs) and Status<>9
-	
+	exec P_GetPagerData @tableName,@columns,@condition,@key,@orderColumn,@pageSize,@pageIndex,@total out,@page out,@isAsc
 	select @totalCount=@total,@pageCount =@page
  
 
