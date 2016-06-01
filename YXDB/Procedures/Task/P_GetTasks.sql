@@ -82,7 +82,9 @@ AS
 		set @condition+=' and ColorMark='+ convert(nvarchar(2), @ColorMark)
 
 	if(@TaskType<>-1)
-		set @condition+=' and Mark='+ convert(nvarchar(2), @TaskType)
+	begin
+		set @condition+=' and right(Mark,1)='+ convert(nvarchar(2), @TaskType)
+	end
 
 	if(@BeginDate<>'')
 		set @condition+=' and createtime>='''+@BeginDate+''''
