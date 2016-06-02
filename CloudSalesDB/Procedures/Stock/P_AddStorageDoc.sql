@@ -39,7 +39,7 @@ begin
 	declare @AutoID int=1,@ProductID nvarchar(64),@ProductDetailID nvarchar(64),@Quantity int,@BatchCode nvarchar(50),@DepotID nvarchar(64),
 	@DRemark nvarchar(4000),@Price decimal(18,4),@UnitID nvarchar(64)
 
-	select identity(int,1,1) as AutoID,ProductDetailID,s.ProductID,p.SmallUnitiD UnitID,Quantity,s.Price,BatchCode,Remark into #TempProducts 
+	select identity(int,1,1) as AutoID,ProductDetailID,s.ProductID,p.UnitID UnitID,Quantity,s.Price,BatchCode,Remark into #TempProducts 
 	from ShoppingCart s join Products p on s.ProductID=p.ProductID
 	where UserID=@UserID and [GUID]=@WareID and OrderType=@DocType
 

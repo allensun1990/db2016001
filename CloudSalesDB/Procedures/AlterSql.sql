@@ -1,7 +1,8 @@
 ﻿
 alter table M_Report_AgentAction_Day add ActionType int not null default(1)
 
---ProdiverID 改 ProviderID
+--产品表
+--ProdiverID 改 ProviderID，SmallUnitID 改 UnitID
 
 --城市描述
 alter table City  Add [Description] nvarchar(1000) default ''

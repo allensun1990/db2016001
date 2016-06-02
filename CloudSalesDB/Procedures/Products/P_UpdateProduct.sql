@@ -22,7 +22,7 @@ CREATE PROCEDURE [dbo].[P_UpdateProduct]
 @IsCombineProduct int,
 @BrandID nvarchar(64),
 @BigUnitID nvarchar(64),
-@SmallUnitID nvarchar(64),
+@UnitID nvarchar(64),
 @BigSmallMultiple int,
 @Status int,
 @CategoryID nvarchar(64),
@@ -53,7 +53,7 @@ set @Err=0
 
 select @PIDList=PIDList,@SaleAttr=SaleAttr from Category where CategoryID=@CategoryID
 
-if(@BigUnitID=@SmallUnitID)
+if(@BigUnitID=@UnitID)
 begin
 	set @BigSmallMultiple=1
 end
@@ -61,7 +61,7 @@ end
 select @Multiple=BigSmallMultiple from [Products] where ProductID=@ProductID
 
 Update [Products] set [ProductName]=@ProductName,ProductCode=@ProductCode,[GeneralName]=@GeneralName,[IsCombineProduct]=@IsCombineProduct,[BrandID]=@BrandID,
-						[BigUnitID]=@BigUnitID,[SmallUnitID]=@SmallUnitID,[BigSmallMultiple]=@BigSmallMultiple ,
+						[BigUnitID]=@BigUnitID,[UnitID]=@UnitID,[BigSmallMultiple]=@BigSmallMultiple ,
 						[CategoryIDList]=@PIDList,[SaleAttr]=@SaleAttr,[AttrList]=@AttrList,[ValueList]=@ValueList,[AttrValueList]=@AttrValueList,
 						[CommonPrice]=@CommonPrice,[Price]=@Price,[PV]=0,[Status]=@Status,ProductImage=@ProductImg,
 						[IsNew]=@Isnew,[IsRecommend]=@IsRecommend ,[DiscountValue]=@DiscountValue,[Weight]=@Weight ,[EffectiveDays]=@EffectiveDays,
