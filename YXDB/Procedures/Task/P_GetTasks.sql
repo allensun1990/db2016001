@@ -42,7 +42,7 @@ AS
 	@key nvarchar(100)
 	
 	set @tableName='OrderTask'
-	set @columns='*'
+	set @columns='TaskID'
 	set @key='TaskID'
 	set @orderColumn='createtime'
 	set @condition=' 1=1 '
@@ -107,8 +107,45 @@ AS
 	set @orderColumn+=',sort asc'
 
 	declare @total int,@page int
+	declare @orderby nvarchar(20)
+	if(@isAsc=0)
+	begin
+		set @orderby='desc'
+	end
+	else
+	begin
+		set @orderby='asc'
+	end
+	declare @CommandSQL nvarchar(4000)
+	set @CommandSQL= 'select @total=count(0) from '+@tableName+' where '+@condition
+	exec sp_executesql @CommandSQL,N'@total int output',@total output
+	set @page=CEILING(@total * 1.0/@pageSize)
 
-	exec P_GetPagerData @tableName,@columns,@condition,@key,@orderColumn,@pageSize,@PageIndex,@total out,@page out,0
+	if(@pageIndex=0 or @pageIndex=1)
+	begin 
+		if @orderColumn!=''
+		begin
+			set	@orderColumn=@orderColumn+','
+		end
+		set @CommandSQL='select TaskID into #tmp from (select top '+str(@pageSize)+' '+@columns+' from '+@tableName+' where '+@condition+' order by '+@orderColumn+@key+' '+@orderby+' ) as tids'
+	end
+	else
+	begin
+		if(@pageIndex>@pageCount)
+		begin
+			set @pageIndex=@pageCount
+		end
+		if @orderColumn!=''
+		begin
+			set	@orderColumn=@orderColumn+','
+		end
+		set @CommandSQL='select TaskID into #tmp from ( select * from (select row_number() over( order by '+@orderColumn+@key+' '+@orderby+') as rowid , '+@columns+' from '+@tableName+' where '+@condition+'  ) as dt where rowid between '+str((@pageIndex-1) * @pageSize + 1)+' and '+str(@pageIndex* @pageSize)+'	) as tids'
+	end
+		set @CommandSQL=@CommandSQL+'	select t1.*,t2.FinishStatus as PreFinishStatus from OrderTask t1 left join OrderTask t2 on t1.OrderID=t2.OrderID
+where t1.TaskID in (select * from #tmp) and t2.Sort=t1.Sort-1 '
+
+	exec (@CommandSQL)
+	--exec P_GetPagerData @tableName,@columns,@condition,@key,@orderColumn,@pageSize,@PageIndex,@totalCount out,@pageCount out,0
 
 	set @TotalCount=@total
 	set @PageCount =@page
