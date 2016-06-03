@@ -18,21 +18,46 @@ CREATE PROCEDURE [dbo].[P_GetOrdersByPlanTime]
 	@StartPlanTime nvarchar(100)='',
 	@EndPlanTime nvarchar(100)='',
 	@UserID nvarchar(64)='',
+	@FilterType int =-1,
 	@ClientID nvarchar(64)
 AS
 	declare @sql nvarchar(1000)
 
-	set @sql='select * from orders where status<>9 and ClientID='''+@ClientID+''''
+	set @sql='select cus.Name CustomerName,o.* from Orders o left join Customer cus on o.CustomerID=cus.CustomerID where o.status<>9 and o.OrderStatus in(1,2) and o.ClientID='''+@ClientID+''''
 
 	if(@UserID<>'')
-		set @sql+=' and OwnerID='''+@UserID+''''
+		set @sql+=' and o.OwnerID='''+@UserID+''''
 
 	if(@StartPlanTime<>'')
-		set @sql+=' and PlanTime>='''+@StartPlanTime+''''
+		set @sql+=' and o.PlanTime>='''+@StartPlanTime+''''
 
 	if(@EndPlanTime<>'')
-		set @sql+=' and PlanTime<='''+CONVERT(varchar(100), dateadd(day, 1, @EndPlanTime), 23)+''''
+		set @sql+=' and o.PlanTime<='''+CONVERT(varchar(100), dateadd(day, 1, @EndPlanTime), 23)+''''
 
+	if(@FilterType<>-1)
+	begin
+		if(@FilterType=1)
+			begin
+				set @sql+=' and o.PlanTime<GETDATE() and o.OrderStatus=1 '
+			end
+		else if(@FilterType=3 or @FilterType=2)
+		begin
+			set @sql+=' and o.PlanTime>GETDATE() and o.OrderStatus=1 '
+
+			if(@FilterType=2)
+			begin
+				set @sql+='and DateDiff(HH,GETDATE(),o.PlanTime)*3< DateDiff(HH,o.OrderTime,o.PlanTime)'
+			end
+			else
+			begin
+				set @sql+='and DateDiff(HH,GETDATE(),o.PlanTime)*3>= DateDiff(HH,o.OrderTime,o.PlanTime)'
+			end
+		end
+		else if(@FilterType=4)
+		begin
+			set @sql+=' and o.OrderStatus=2 '
+		end
+	end
 	exec(@sql)
 
 
