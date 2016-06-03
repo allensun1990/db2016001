@@ -12,7 +12,7 @@ GO
 参数说明：	 
 编写日期： 2015/6/1
 程序作者： Allen
-调试记录： exec P_GetCategoryDetailByID '67BBEF88-0B38-49C1-BAE3-75E94266EEF2'
+调试记录： exec P_GetCategoryDetailByID 'B27D6489-3B3C-4A78-B28C-E334AD776B61'
 ************************************************************/
 CREATE PROCEDURE [dbo].[P_GetCategoryDetailByID]
 	@CategoryID nvarchar(64)
@@ -20,12 +20,8 @@ AS
 
 select * from Category where CategoryID=@CategoryID
 
-select p.AttrID,AttrName,Description,p.CategoryID,c.Type into #AttrTable from ProductAttr p join CategoryAttr c on p.AttrID=c.AttrID 
-where c.Status=1 and c.CategoryID= @CategoryID and p.Status=1 order by p.AutoID
---属性
-select * from #AttrTable
---属性值
-select ValueID,ValueName,AttrID from AttrValue  where AttrID in (select AttrID from #AttrTable) and Status<>9
+select AttrID,[Type] from CategoryAttr where Status=1 and CategoryID= @CategoryID 
+
 
 
  

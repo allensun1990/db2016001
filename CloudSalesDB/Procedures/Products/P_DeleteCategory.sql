@@ -34,6 +34,13 @@ begin
 	return
 end
 
+if exists(select AutoID from Products where CategoryID=@CategoryID and Status<>9)
+begin
+	set @Result=10002
+	rollback tran
+	return
+end
+
 set @Err+=@@error
 
 Update Category set Status=9 where CategoryID=@CategoryID 

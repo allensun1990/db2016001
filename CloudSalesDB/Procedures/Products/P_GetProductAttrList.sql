@@ -33,7 +33,7 @@ AS
 	create table #Attrs(AttrID nvarchar(64),AttrName nvarchar(200),Description nvarchar(4000),CreateTime datetime,CreateUserID nvarchar(64))
 	
 	select @tableName=' ProductAttr ',@columns='AttrID,AttrName,Description,CreateTime,CreateUserID',@key='AutoID',@orderColumn='',@isAsc=0
-	set @condition=' ClientID='''+@ClientID+''' and CategoryID='''+@CategoryID+''' and Status<>9 '
+	set @condition=' ClientID='''+@ClientID+''' and Status<>9 '
 	if(@keyWords <> '')
 	begin
 		set @condition +=' and AttrName like ''%'+@keyWords+'%'' or  Description like ''%'+@keyWords+'%'''

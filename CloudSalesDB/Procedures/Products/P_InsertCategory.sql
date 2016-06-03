@@ -44,6 +44,13 @@ end
 
 insert into Category(CategoryID,CategoryCode,CategoryName,PID,PIDList,Layers,SaleAttr,AttrList,Status,Description,CreateUserID,ClientID)
 				values(@CategoryID,@CategoryCode,@CategoryName,@PID,@PIDList,@Layers,@SaleAttr,@AttrList,@Status,@Description,@CreateUserID,@ClientID)
+
+insert into CategoryAttr(CategoryID,AttrID,Status,Type,CreateUserID,CreateTime)
+select @CategoryID,AttrID,1,1,@CreateUserID,getdate() from ProductAttr where ClientID=ClientID and Status<>9 and @AttrList like '%'+AttrID+'%'
+
+insert into CategoryAttr(CategoryID,AttrID,Status,Type,CreateUserID,CreateTime)
+select @CategoryID,AttrID,1,2,@CreateUserID,getdate() from ProductAttr where ClientID=ClientID and Status<>9 and @SaleAttr like '%'+AttrID+'%'
+
 set @Err+=@@error
 
 if(@Err>0)
