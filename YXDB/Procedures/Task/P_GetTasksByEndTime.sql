@@ -18,46 +18,66 @@ CREATE PROCEDURE [dbo].[P_GetTasksByEndTime]
 	@StartEndTime nvarchar(100)='',
 	@EndEndTime nvarchar(100)='',
 	@UserID nvarchar(64)='',
+	@OrderType int =-1,
 	@FilterType int =-1,
-	@ClientID nvarchar(64)
+	@ClientID nvarchar(64),
+	@PageSize int=20,
+	@PageIndex int=1,
+	@TotalCount int output,
+	@PageCount int output
 AS
-	declare @sql nvarchar(1000)
-
-	set @sql='select * from OrderTask where status<>8 and FinishStatus=1 and ClientID='''+@ClientID+''''
+	declare @tableName nvarchar(4000),
+	@columns nvarchar(4000),
+	@orderColumn nvarchar(100),
+	@key nvarchar(100),
+	@condition nvarchar(1000)
+	
+	set @tableName='OrderTask'
+	set @columns='*'
+	set @key='TaskID'
+	set @orderColumn='EndTime'
+	set @condition=' status<>8 and FinishStatus=1 and ClientID='''+@ClientID+''''
 
 	if(@UserID<>'')
-		set @sql+=' and OwnerID='''+@UserID+''''
+		set @condition+=' and OwnerID='''+@UserID+''''
+
+	if(@OrderType<>-1)
+		set @condition+=' and OrderType='+convert(nvarchar(2), @OrderType)
 
 	if(@StartEndTime<>'')
-		set @sql+=' and EndTime>='''+@StartEndTime+''''
+		set @condition+=' and EndTime>='''+@StartEndTime+''''
 
 	if(@EndEndTime<>'')
-		set @sql+=' and EndTime<='''+CONVERT(varchar(100), dateadd(day, 1, @EndEndTime), 23)+''''
+		set @condition+=' and EndTime<='''+CONVERT(varchar(100), dateadd(day, 1, @EndEndTime), 23)+''''
 
 	if(@FilterType<>-1)
 	begin
 		if(@FilterType=1)
 			begin
-				set @sql+=' and EndTime<GETDATE() and FinishStatus=1 '
+				set @condition+=' and EndTime<GETDATE() and FinishStatus=1 '
 			end
 		else if(@FilterType=3 or @FilterType=2)
 		begin
-			set @sql+=' and EndTime>GETDATE() and FinishStatus=1 '
+			set @condition+=' and EndTime>GETDATE() and FinishStatus=1 '
 
 			if(@FilterType=2)
 			begin
-				set @sql+='and DateDiff(HH,GETDATE(),EndTime)*3< DateDiff(HH,AcceptTime,EndTime)'
+				set @condition+='and DateDiff(HH,GETDATE(),EndTime)*3< DateDiff(HH,AcceptTime,EndTime)'
 			end
 			else
 			begin
-				set @sql+='and DateDiff(HH,GETDATE(),EndTime)*3>= DateDiff(HH,AcceptTime,EndTime)'
+				set @condition+='and DateDiff(HH,GETDATE(),EndTime)*3>= DateDiff(HH,AcceptTime,EndTime)'
 			end
 		end
 		else if(@FilterType=4)
 		begin
-			set @sql+=' and FinishStatus=2 '
+			set @condition+=' and FinishStatus=2 '
 		end
 	end
-	exec(@sql)
+
+	declare @total int,@page int
+	exec P_GetPagerData @tableName,@columns,@condition,@key,@OrderColumn,@pageSize,@pageIndex,@total out,@page out,0 
+	select @totalCount=@total,@pageCount =@page
+	
 
 
