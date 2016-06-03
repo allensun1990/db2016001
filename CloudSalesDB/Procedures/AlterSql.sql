@@ -1,12 +1,15 @@
 ﻿
+--统计表
 alter table M_Report_AgentAction_Day add ActionType int not null default(1)
+GO
+--城市描述
+alter table City  Add [Description] nvarchar(1000) default ''
+GO
+update City set [Description]=Province+' '+City+' '+Counties
 
 --产品表
 --ProdiverID 改 ProviderID，SmallUnitID 改 UnitID
 
---城市描述
-alter table City  Add [Description] nvarchar(1000) default ''
-update City set [Description]=Province+' '+City+' '+Counties
 
 --客户阶段状态
 alter table Customer add StageStatus int default 1

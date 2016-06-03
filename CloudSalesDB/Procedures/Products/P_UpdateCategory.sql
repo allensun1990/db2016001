@@ -26,14 +26,34 @@ AS
 
 begin tran
 
-declare @Err int, @Layers int=0 
+declare @Err int, @OldAttr nvarchar(4000),@OldSales nvarchar(4000)
 set @Err=0
+
+select @OldAttr=AttrList,@OldSales=SaleAttr from Category where CategoryID=@CategoryID
 
 Update Category set CategoryName=@CategoryName,Status=@Status,AttrList=@AttrList,SaleAttr=@SaleAttr,Description=@Description,UpdateTime=getdate() 
 where CategoryID=@CategoryID
+
 set @Err+=@@error
 
+if(@AttrList<>@OldAttr)
+begin
+	Update CategoryAttr set Status=9,UpdateTime=getdate() where CategoryID=@CategoryID and Type=1 -- and CHARINDEX(AttrID,@AttrList)=0
 
+	insert into CategoryAttr(CategoryID,AttrID,Status,Type,CreateUserID,CreateTime)
+	select @CategoryID,AttrID,1,1,@UserID,getdate() from ProductAttr 
+	where ClientID=ClientID and Status<>9 and CHARINDEX(AttrID,@AttrList)>0
+
+end
+
+if(@SaleAttr<>@OldSales)
+begin
+	Update CategoryAttr set Status=9,UpdateTime=getdate() where CategoryID=@CategoryID and Type=2 --and CHARINDEX(AttrID,@SaleAttr)=0
+
+	insert into CategoryAttr(CategoryID,AttrID,Status,Type,CreateUserID,CreateTime)
+	select @CategoryID,AttrID,1,2,@UserID,getdate() from ProductAttr 
+	where ClientID=ClientID and Status<>9 and CHARINDEX(AttrID,@SaleAttr)>0
+end
 
 if(@Err>0)
 begin
