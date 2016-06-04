@@ -19,45 +19,62 @@ CREATE PROCEDURE [dbo].[P_GetOrdersByPlanTime]
 	@EndPlanTime nvarchar(100)='',
 	@UserID nvarchar(64)='',
 	@FilterType int =-1,
-	@ClientID nvarchar(64)
+	@OrderType int =-1,
+	@ClientID nvarchar(64),
+	@PageSize int=20,
+	@PageIndex int=1,
+	@TotalCount int output,
+	@PageCount int output
 AS
-	declare @sql nvarchar(1000)
-
-	set @sql='select cus.Name CustomerName,o.* from Orders o left join Customer cus on o.CustomerID=cus.CustomerID where o.status<>9 and o.OrderStatus in(1,2) and o.ClientID='''+@ClientID+''''
+	declare @tableName nvarchar(4000),
+	@columns nvarchar(4000),
+	@orderColumn nvarchar(100),
+	@key nvarchar(100),
+	@condition nvarchar(1000)
+	
+	set @tableName='Orders o left join Customer cus on o.CustomerID=cus.CustomerID'
+	set @columns='cus.Name CustomerName,o.*'
+	set @key='OrderID'
+	set @orderColumn='PlanTime'
+	set @condition='o.status<>9 and o.OrderStatus in(1,2) and o.ClientID='''+@ClientID+''''
 
 	if(@UserID<>'')
-		set @sql+=' and o.OwnerID='''+@UserID+''''
+		set @condition+=' and o.OwnerID='''+@UserID+''''
+	if(@OrderType<>-1)
+		set @condition+=' and o.OrderType='+convert(nvarchar(2), @OrderType)
 
 	if(@StartPlanTime<>'')
-		set @sql+=' and o.PlanTime>='''+@StartPlanTime+''''
+		set @condition+=' and o.PlanTime>='''+@StartPlanTime+''''
 
 	if(@EndPlanTime<>'')
-		set @sql+=' and o.PlanTime<='''+CONVERT(varchar(100), dateadd(day, 1, @EndPlanTime), 23)+''''
+		set @condition+=' and o.PlanTime<='''+CONVERT(varchar(100), dateadd(day, 1, @EndPlanTime), 23)+''''
 
 	if(@FilterType<>-1)
 	begin
 		if(@FilterType=1)
 			begin
-				set @sql+=' and o.PlanTime<GETDATE() and o.OrderStatus=1 '
+				set @condition+=' and o.PlanTime<GETDATE() and o.OrderStatus=1 '
 			end
 		else if(@FilterType=3 or @FilterType=2)
 		begin
-			set @sql+=' and o.PlanTime>GETDATE() and o.OrderStatus=1 '
+			set @condition+=' and o.PlanTime>GETDATE() and o.OrderStatus=1 '
 
 			if(@FilterType=2)
 			begin
-				set @sql+='and DateDiff(HH,GETDATE(),o.PlanTime)*3< DateDiff(HH,o.OrderTime,o.PlanTime)'
+				set @condition+='and DateDiff(HH,GETDATE(),o.PlanTime)*3< DateDiff(HH,o.OrderTime,o.PlanTime)'
 			end
 			else
 			begin
-				set @sql+='and DateDiff(HH,GETDATE(),o.PlanTime)*3>= DateDiff(HH,o.OrderTime,o.PlanTime)'
+				set @condition+='and DateDiff(HH,GETDATE(),o.PlanTime)*3>= DateDiff(HH,o.OrderTime,o.PlanTime)'
 			end
 		end
 		else if(@FilterType=4)
 		begin
-			set @sql+=' and o.OrderStatus=2 '
+			set @condition+=' and o.OrderStatus=2 '
 		end
 	end
-	exec(@sql)
+	declare @total int,@page int
+	exec P_GetPagerData @tableName,@columns,@condition,@key,@OrderColumn,@pageSize,@pageIndex,@total out,@page out,0 
+	select @totalCount=@total,@pageCount =@page
 
 
