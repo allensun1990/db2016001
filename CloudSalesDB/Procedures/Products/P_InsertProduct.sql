@@ -48,48 +48,44 @@ AS
 
 begin tran
 
-declare @Err int,@PIDList nvarchar(max),@SaleAttr  nvarchar(max)
+declare @Err int,@PIDList nvarchar(max),@SaleAttr  nvarchar(max),@HasDetails int=0
 set @Err=0
 set @ProductID=NEWID()
 
 select @PIDList=PIDList,@SaleAttr=SaleAttr from Category where CategoryID=@CategoryID
 
-if(@BigUnitID=@UnitID)
-begin
-	set @BigSmallMultiple=1
-end
-
-IF(NOT EXISTS(SELECT 1 FROM [Products] WHERE [ProductCode]=@ProductCode and ClientID=@ClientID))--产品编号唯一，编号不存在时才能执行插入
-BEGIN
-		INSERT INTO [Products]([ProductID],[ProductCode],[ProductName],[GeneralName],[IsCombineProduct],[BrandID],[BigUnitID],[UnitID],[BigSmallMultiple] ,
-						[CategoryID],[CategoryIDList],[SaleAttr],[AttrList],[ValueList],[AttrValueList],[CommonPrice],[Price],[PV],[TaxRate],[Status],
-						[OnlineTime],[UseType],[IsNew],[IsRecommend] ,[IsDiscount],[DiscountValue],[SaleCount],[Weight] ,[ProductImage],[EffectiveDays],
-						[ShapeCode] ,[ProviderID],[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID],IsAllow,IsAutoSend)
-				 VALUES(@ProductID,@ProductCode,@ProductName,@GeneralName,@IsCombineProduct,@BrandID,@BigUnitID,@UnitID,@BigSmallMultiple,
-						@CategoryID,@PIDList,@SaleAttr,@AttrList,@ValueList,@AttrValueList,@CommonPrice,@Price,@Price,0,@Status,
-						getdate(),0,@Isnew,@IsRecommend,1,@DiscountValue,0,@Weight,@ProductImg,@EffectiveDays,@ShapeCode,'',@Description,@CreateUserID,
-						getdate(),getdate(),'',@ClientID,@IsAllow,@IsAutoSend);
-
-						set @Err+=@@Error
-
-		--不存在规格，插入默认子产品
-		if not exists (select AutoID from CategoryAttr where CategoryID=@CategoryID and Type=2 and Status=1)
-		begin
-			INSERT INTO ProductDetail(ProductDetailID,[ProductID],DetailsCode ,[SaleAttr],[AttrValue],[SaleAttrValue],[Price],[BigPrice],[Status],
-					Weight,ImgS,[ShapeCode] ,[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID])
-				VALUES(NEWID(),@ProductID,'','','','',@Price,@Price*@BigSmallMultiple,1,
-					@Weight,'','','',@CreateUserID,getdate(),getdate(),'',@ClientID);
-			set @Err+=@@Error
-		end
-
-
-		set @Result=1;
-END
-ELSE
+IF EXISTS(SELECT AutoID FROM [Products] WHERE [ProductCode]=@ProductCode and ClientID=@ClientID and Status<>9)--产品编号唯一，编号不存在时才能执行插入
 BEGIN
 	set @ProductID='';
 	set @Result=0;
+	rollback tran
+	return
 END
+
+--不存在规格，插入默认子产品
+if exists (select AutoID from CategoryAttr where CategoryID=@CategoryID and Type=2 and Status=1)
+begin
+	set @HasDetails=1
+end
+else
+begin
+	INSERT INTO ProductDetail(ProductDetailID,[ProductID],DetailsCode ,[SaleAttr],[AttrValue],[SaleAttrValue],[Price],[BigPrice],[Status],
+					Weight,ImgS,[ShapeCode] ,[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID],IsDefault)
+				VALUES(NEWID(),@ProductID,'','','','',@Price,@Price*@BigSmallMultiple,1,
+					@Weight,@ProductImg,'','',@CreateUserID,getdate(),getdate(),'',@ClientID,1);
+			set @Err+=@@Error
+end
+
+INSERT INTO [Products]([ProductID],[ProductCode],[ProductName],[GeneralName],[IsCombineProduct],[BrandID],[BigUnitID],[UnitID],[BigSmallMultiple] ,
+						[CategoryID],[CategoryIDList],[SaleAttr],[AttrList],[ValueList],[AttrValueList],[CommonPrice],[Price],[PV],[TaxRate],[Status],
+						[OnlineTime],[UseType],[IsNew],[IsRecommend] ,[IsDiscount],[DiscountValue],[SaleCount],[Weight] ,[ProductImage],[EffectiveDays],
+						[ShapeCode] ,[ProviderID],[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID],IsAllow,IsAutoSend,HasDetails)
+			VALUES(@ProductID,@ProductCode,@ProductName,@GeneralName,@IsCombineProduct,@BrandID,@BigUnitID,@UnitID,@BigSmallMultiple,
+				@CategoryID,@PIDList,@SaleAttr,@AttrList,@ValueList,@AttrValueList,@CommonPrice,@Price,@Price,0,@Status,
+				getdate(),0,@Isnew,@IsRecommend,1,@DiscountValue,0,@Weight,@ProductImg,@EffectiveDays,@ShapeCode,'',@Description,@CreateUserID,
+				getdate(),getdate(),'',@ClientID,@IsAllow,@IsAutoSend,@HasDetails);
+
+set @Result=1;
 
 set @Err+=@@Error
 
