@@ -47,7 +47,7 @@ AS
 
 begin tran
 
-declare @Err int,@PIDList nvarchar(max),@SaleAttr  nvarchar(max),@Multiple int
+declare @Err int,@PIDList nvarchar(max),@SaleAttr  nvarchar(max),@HasDetails int=0
 
 set @Err=0
 
@@ -58,7 +58,7 @@ begin
 	set @BigSmallMultiple=1
 end
 
-select @Multiple=BigSmallMultiple from [Products] where ProductID=@ProductID
+select @HasDetails=HasDetails from [Products] where ProductID=@ProductID
 
 Update [Products] set [ProductName]=@ProductName,ProductCode=@ProductCode,[GeneralName]=@GeneralName,[IsCombineProduct]=@IsCombineProduct,[BrandID]=@BrandID,
 						[BigUnitID]=@BigUnitID,[UnitID]=@UnitID,[BigSmallMultiple]=@BigSmallMultiple ,
@@ -70,16 +70,9 @@ Update [Products] set [ProductName]=@ProductName,ProductCode=@ProductCode,[Gener
 where ProductID=@ProductID
 
 --处理子产品大单位价格
-if(@Multiple<>@BigSmallMultiple)
+if(@HasDetails=0)
 begin
-	if(@BigSmallMultiple=1)
-	begin
-		update ProductDetail set BigPrice=Price where ProductID=@ProductID
-	end
-	else
-	begin
-		update ProductDetail set BigPrice=BigPrice/@Multiple*@BigSmallMultiple where ProductID=@ProductID
-	end
+	update ProductDetail set Price=@Price,ImgS=@ProductImg,DetailsCode=@ProductCode,[Weight]=@Weight where ProductID=@ProductID and IsDefault=1
 	set @Err+=@@Error
 end
 

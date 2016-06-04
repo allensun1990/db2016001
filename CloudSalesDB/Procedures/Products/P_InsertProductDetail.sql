@@ -24,6 +24,7 @@ CREATE PROCEDURE [dbo].[P_InsertProductDetail]
 @Price decimal(18,2),
 @Weight decimal(18,2),
 @ProductImg nvarchar(4000),
+@Remark nvarchar(4000)='', 
 @Description text,
 @ShapeCode nvarchar(50),
 @CreateUserID nvarchar(64),
@@ -47,9 +48,9 @@ begin
 	return
 end
 
-INSERT INTO ProductDetail(ProductDetailID,[ProductID],DetailsCode,BigPrice ,[SaleAttr],[AttrValue],[SaleAttrValue],[Price],[Status],
+INSERT INTO ProductDetail(ProductDetailID,[ProductID],DetailsCode,BigPrice ,[SaleAttr],[AttrValue],[SaleAttrValue],[Price],[Status],Remark,
 					Weight,ImgS,[ShapeCode] ,[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID])
-				VALUES(@DetailID,@ProductID,@ProductCode,@BigPrice,@AttrList,@ValueList,@AttrValueList,@Price,1,
+				VALUES(@DetailID,@ProductID,@ProductCode,@BigPrice,@AttrList,@ValueList,@AttrValueList,@Price,1,@Remark,
 					@Weight,@ProductImg,@ShapeCode,@Description,@CreateUserID,getdate(),getdate(),'',@ClientID);
 set @Result=1;
 

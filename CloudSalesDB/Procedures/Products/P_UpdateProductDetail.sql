@@ -24,6 +24,7 @@ CREATE PROCEDURE [dbo].[P_UpdateProductDetail]
 @AttrValueList nvarchar(max),
 @Price decimal(18,2),
 @Weight decimal(18,2),
+@Remark nvarchar(4000)='',
 @Description text,
 @ShapeCode nvarchar(50),
 @ImgS nvarchar(500),
@@ -43,7 +44,7 @@ begin
 end
 
 update ProductDetail set DetailsCode=@ProductCode ,[SaleAttr]=@AttrList,[AttrValue]=@ValueList,[SaleAttrValue]=@AttrValueList,[Price]=@Price,
-					[Weight]=@Weight,[ShapeCode]=@ShapeCode ,BigPrice=@BigPrice,ImgS=@ImgS,[Description]=@Description ,[UpdateTime]=getdate()
+					[Weight]=@Weight,[ShapeCode]=@ShapeCode ,BigPrice=@BigPrice,ImgS=@ImgS,Remark=@Remark,[Description]=@Description ,[UpdateTime]=getdate()
 where ProductDetailID=@DetailID
 
 set @Err+=@@Error

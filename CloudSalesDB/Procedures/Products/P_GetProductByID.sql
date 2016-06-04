@@ -18,14 +18,9 @@ CREATE PROCEDURE [dbo].[P_GetProductByID]
 	@ProductID nvarchar(64)
 AS
 
-declare @BigUnit nvarchar(64),@Unit nvarchar(64)
-
-select @BigUnit=BigUnitID,@Unit=UnitID from Products where ProductID=@ProductID
-
 select * from Products where ProductID=@ProductID 
 
-select * from ProductDetail where ProductID=@ProductID
+select * from ProductDetail where ProductID=@ProductID and Status<>9
 
-select UnitID,UnitName from ProductUnit where UnitID=@BigUnit or UnitID=@Unit
  
 

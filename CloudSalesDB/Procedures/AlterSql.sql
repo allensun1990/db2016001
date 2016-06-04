@@ -8,7 +8,28 @@ GO
 update City set [Description]=Province+' '+City+' '+Counties
 
 --产品表
+alter table Products add HasDetails int default 0
 --ProdiverID 改 ProviderID，SmallUnitID 改 UnitID
+GO
+Update Products set HasDetails=0
+
+update Products set HasDetails=1 where CategoryID in(
+select CategoryID from CategoryAttr where Type=2 and Status<>9 group by CategoryID
+)
+
+--产品明细
+alter table ProductDetail add Remark nvarchar(400) default ''
+alter table ProductDetail add IsDefault int default 0
+GO
+update ProductDetail set IsDefault=0,Remark=SaleAttrValue
+update ProductDetail set IsDefault=1 where SaleAttr=''
+--重复执行
+Update p set Remark=REPLACE(Remark,AttrID,AttrName) from ProductDetail p join ProductAttr a on CHARINDEX(a.AttrID, p.Remark)>0
+Update p set Remark=REPLACE(Remark,ValueID,ValueName) from ProductDetail p join AttrValue a on CHARINDEX(a.ValueID, p.Remark)>0
+
+update ProductDetail set Remark='['+Remark+']'
+update ProductDetail set Remark=REPLACE(Remark,':','：')
+update ProductDetail set Remark=REPLACE(Remark,',','] [')
 
 
 --客户阶段状态
@@ -16,9 +37,6 @@ alter table Customer add StageStatus int default 1
 update Customer set StageStatus=1
 update Customer set StageStatus=2 where CustomerID in (select CustomerID from Orders)
 update Customer set StageStatus=3 where CustomerID in (select CustomerID from Orders where Status>=2)
-
---产品明细
-alter table ProductDetail add Remark nvarchar(400) default ''
 
 --机会表
 alter table Opportunity add TypeID nvarchar(64) default ''
