@@ -27,9 +27,12 @@ CREATE PROCEDURE [dbo].P_GetTasks
 @TaskType int=-1,
 @BeginDate nvarchar(100)='',
 @EndDate nvarchar(100)='',
+@BeginEndDate nvarchar(100)='',
+@EndEndDate nvarchar(100)='',
 @TaskOrderColumn int=0,
 @IsAsc int=0,
 @ClientID nvarchar(64),
+@InvoiceStatus int=-1,
 @PageSize int=20,
 @PageIndex int=1,
 @TotalCount int output,
@@ -92,6 +95,24 @@ AS
 	if(@EndDate<>'')
 		set @condition+=' and createtime<='''+CONVERT(varchar(100), dateadd(day, 1, @EndDate), 23)+''''
 
+	if(@BeginEndDate<>'')
+		set @condition+=' and endtime>='''+@BeginEndDate+''''
+
+	if(@EndEndDate<>'')
+		set @condition+=' and endtime<='''+CONVERT(varchar(100), dateadd(day, 1, @EndEndDate), 23)+''''
+
+	if(@InvoiceStatus=2)
+	begin
+		set @condition +=' and FinishStatus = 1 and EndTime< GetDate() '
+	end
+	else if(@InvoiceStatus=1)
+	begin
+		set @condition +=' and FinishStatus = 1 and EndTime > GetDate() and datediff(hour,accepttime,EndTime) > datediff(hour,GetDate(),EndTime)*3 '
+	end
+	else if(@InvoiceStatus=0)
+	begin
+		set @condition +=' and FinishStatus = 1 and EndTime > GetDate() and datediff(hour,accepttime,EndTime) <= datediff(hour,GetDate(),EndTime)*3 '
+	end
 
 	if(@TaskOrderColumn<>0)
 	begin
