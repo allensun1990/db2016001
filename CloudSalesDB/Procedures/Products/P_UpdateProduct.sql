@@ -58,7 +58,6 @@ begin
 	set @BigSmallMultiple=1
 end
 
-select @HasDetails=HasDetails from [Products] where ProductID=@ProductID
 
 Update [Products] set [ProductName]=@ProductName,ProductCode=@ProductCode,[GeneralName]=@GeneralName,[IsCombineProduct]=@IsCombineProduct,[BrandID]=@BrandID,
 						[BigUnitID]=@BigUnitID,[UnitID]=@UnitID,[BigSmallMultiple]=@BigSmallMultiple ,
@@ -69,15 +68,10 @@ Update [Products] set [ProductName]=@ProductName,ProductCode=@ProductCode,[Gener
 						[ShapeCode]=@ShapeCode ,[Description]=@Description ,[UpdateTime]=getdate()
 where ProductID=@ProductID
 
---处理子产品大单位价格
-if(@HasDetails=0)
-begin
-	update ProductDetail set Price=@Price,ImgS=@ProductImg,DetailsCode=@ProductCode,[Weight]=@Weight where ProductID=@ProductID and IsDefault=1
-	set @Err+=@@Error
-end
+set @Err+=@@Error
 
-
-
+update ProductDetail set Price=@Price,ImgS=@ProductImg,DetailsCode=@ProductCode,[Weight]=@Weight where ProductID=@ProductID and IsDefault=1
+	
 set @Err+=@@Error
 
 if(@Err>0)

@@ -67,14 +67,6 @@ if exists (select AutoID from CategoryAttr where CategoryID=@CategoryID and Type
 begin
 	set @HasDetails=1
 end
-else
-begin
-	INSERT INTO ProductDetail(ProductDetailID,[ProductID],DetailsCode ,[SaleAttr],[AttrValue],[SaleAttrValue],[Price],[BigPrice],[Status],
-					Weight,ImgS,[ShapeCode] ,[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID],IsDefault)
-				VALUES(NEWID(),@ProductID,'','','','',@Price,@Price*@BigSmallMultiple,1,
-					@Weight,@ProductImg,'','',@CreateUserID,getdate(),getdate(),'',@ClientID,1);
-			set @Err+=@@Error
-end
 
 INSERT INTO [Products]([ProductID],[ProductCode],[ProductName],[GeneralName],[IsCombineProduct],[BrandID],[BigUnitID],[UnitID],[BigSmallMultiple] ,
 						[CategoryID],[CategoryIDList],[SaleAttr],[AttrList],[ValueList],[AttrValueList],[CommonPrice],[Price],[PV],[TaxRate],[Status],
@@ -84,6 +76,12 @@ INSERT INTO [Products]([ProductID],[ProductCode],[ProductName],[GeneralName],[Is
 				@CategoryID,@PIDList,@SaleAttr,@AttrList,@ValueList,@AttrValueList,@CommonPrice,@Price,@Price,0,@Status,
 				getdate(),0,@Isnew,@IsRecommend,1,@DiscountValue,0,@Weight,@ProductImg,@EffectiveDays,@ShapeCode,'',@Description,@CreateUserID,
 				getdate(),getdate(),'',@ClientID,@IsAllow,@IsAutoSend,@HasDetails);
+
+INSERT INTO ProductDetail(ProductDetailID,[ProductID],DetailsCode ,[SaleAttr],[AttrValue],[SaleAttrValue],[Price],[BigPrice],[Status],
+					Weight,ImgS,[ShapeCode] ,[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID],IsDefault)
+				VALUES(NEWID(),@ProductID,'','','','',@Price,@Price*@BigSmallMultiple,1,
+					@Weight,@ProductImg,'','',@CreateUserID,getdate(),getdate(),'',@ClientID,1);
+			set @Err+=@@Error
 
 set @Result=1;
 
