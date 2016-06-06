@@ -17,12 +17,19 @@ update Products set HasDetails=1 where CategoryID in(
 select CategoryID from CategoryAttr where Type=2 and Status<>9 group by CategoryID
 )
 
---产品明细
+--处理产品明细
 alter table ProductDetail add Remark nvarchar(400) default ''
 alter table ProductDetail add IsDefault int default 0
 GO
 update ProductDetail set IsDefault=0,Remark=SaleAttrValue
 update ProductDetail set IsDefault=1 where SaleAttr=''
+
+INSERT INTO ProductDetail(ProductDetailID,[ProductID],DetailsCode ,[SaleAttr],[AttrValue],[SaleAttrValue],[Price],[BigPrice],[Status],
+					Weight,ImgS,[ShapeCode] ,[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID],IsDefault)
+select NEWID(),ProductID,'','','','',Price,Price,1,
+					Weight,ProductImage,'','',CreateUserID,getdate(),getdate(),'',ClientID,1 from Products
+					where ProductID not in(select ProductID from ProductDetail where IsDefault=1)
+
 --重复执行
 Update p set Remark=REPLACE(Remark,AttrID,AttrName) from ProductDetail p join ProductAttr a on CHARINDEX(a.AttrID, p.Remark)>0
 Update p set Remark=REPLACE(Remark,ValueID,ValueName) from ProductDetail p join AttrValue a on CHARINDEX(a.ValueID, p.Remark)>0

@@ -236,5 +236,7 @@
     <None Include="Procedures\Products\P_DeleteProductAttr.sql" />
     <None Include="Procedures\Products\P_DeleteAttrValue.sql" />
     <None Include="Procedures\Products\P_DeleteProvider.sql" />
+    <None Include="Procedures\Products\P_DeleteProduct.sql" />
+    <None Include="Procedures\Products\P_DeleteProductDetail.sql" />
   </ItemGroup>
 </Project>

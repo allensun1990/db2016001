@@ -41,7 +41,7 @@ set @Result=0
 set @DetailID=NEWID()
 
 
-if exists(select AutoID from ProductDetail where ProductID=@ProductID  and [AttrValue]=@ValueList)
+if exists(select AutoID from ProductDetail where ProductID=@ProductID  and [AttrValue]=@ValueList and Status<>9)
 begin
 	set @DetailID=''
 	rollback tran
