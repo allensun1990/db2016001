@@ -111,20 +111,18 @@ insert into CustomSource(SourceID,SourceCode,SourceName,IsSystem,IsChoose,Status
 --客户阶段
 insert into CustomStage(StageID,StageName,Sort,Status,Mark,PID,CreateUserID,ClientID)
 values(NEWID(),'新客户',1,1,1,'',@UserID,@ClientID)
-
 insert into CustomStage(StageID,StageName,Sort,Status,Mark,PID,CreateUserID,ClientID)
 values(NEWID(),'机会客户',2,1,2,'',@UserID,@ClientID)
-
 insert into CustomStage(StageID,StageName,Sort,Status,Mark,PID,CreateUserID,ClientID)
 values(NEWID(),'成交客户',3,1,3,'',@UserID,@ClientID)
 
 --机会阶段
 insert into [OpportunityStage] (StageID,StageName,Probability,Sort,Status,Mark,PID,CreateUserID,ClientID) 
-values (NEWID(),'初步沟通',0.10,0,1,1,'',@UserID,@ClientID)
+values (NEWID(),'初步沟通',0.10,1,1,1,'',@UserID,@ClientID)
 insert into [OpportunityStage] (StageID,StageName,Probability,Sort,Status,Mark,PID,CreateUserID,ClientID)
-values (NEWID(),'合同确认',0.5,0,1,0,'',@UserID,@ClientID) 
+values (NEWID(),'合同确认',0.5,2,1,0,'',@UserID,@ClientID) 
 insert into [OpportunityStage] (StageID,StageName,Probability,Sort,Status,Mark,PID,CreateUserID,ClientID)
-values (NEWID(),'转为订单',1,0,1,2,'',@UserID,@ClientID) 
+values (NEWID(),'转为订单',1,3,1,2,'',@UserID,@ClientID) 
 
 --仓库
 insert into WareHouse(WareID,WareCode,Name,Status,CreateUserID,ClientID)
@@ -144,8 +142,6 @@ values(NEWID(),'Normal','普通订单',1,@UserID,@ClientID)
 --供应商
 insert into Providers(ProviderID,Name,Contact,MobileTele,Email,Website,CityCode,Address,Remark,CreateTime,CreateUserID,AgentID,ClientID)
 			 values (NEWID(),'公司直营',@CompanyName,@MobilePhone,@Email,'',@CityCode,@Address,'',GETDATE(),@UserID,@AgentID,@ClientID)
-
-
 			 
 
 --将客户端作为云销客户插入客户表
