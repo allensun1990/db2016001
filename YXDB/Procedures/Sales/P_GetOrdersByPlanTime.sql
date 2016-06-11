@@ -1,4 +1,4 @@
-﻿Use IntFactory_dev
+﻿Use IntFactory
 GO
 IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'P_GetOrdersByPlanTime')
 BEGIN
@@ -47,7 +47,7 @@ AS
 		set @condition+=' and o.PlanTime>='''+@StartPlanTime+''''
 
 	if(@EndPlanTime<>'')
-		set @condition+=' and o.PlanTime<='''+CONVERT(varchar(100), dateadd(day, 1, @EndPlanTime), 23)+''''
+		set @condition+=' and o.PlanTime<'''+CONVERT(varchar(100), dateadd(day, 1, @EndPlanTime), 23)+''''
 
 	if(@FilterType<>-1)
 	begin
