@@ -239,5 +239,7 @@
     <None Include="Procedures\Products\P_DeleteProduct.sql" />
     <None Include="Procedures\Products\P_DeleteProductDetail.sql" />
     <None Include="Procedures\System\P_CreateOpportunityStage.sql" />
+    <None Include="Procedures\Sales\P_UpdateOpportunityProductPrice.sql" />
+    <None Include="Procedures\Sales\P_UpdateOpportunityProductQuantity.sql" />
   </ItemGroup>
 </Project>

@@ -26,19 +26,21 @@ begin tran
 
 declare @Err int=0,@OldStages nvarchar(64)
 
+select @OldStages=StageID from Opportunity where OpportunityID=@OpportunityID and Status=1 and StageID<>@StageID
 
-select @OldStages=StageID from Opportunity where OpportunityID=@OpportunityID 
-
-if(@OldStages<>@StageID)
+if(@OldStages is null or @StageID<>@OldStages)
 begin
+	
 	update Opportunity set StageID=@StageID where OpportunityID=@OpportunityID and Status=1
+
+	--处理记录
+	insert into OpportunityStageLog(OpportunityID,StageID,OldStageID,Status,Type,CreateUserID,AgentID,ClientID)
+		values(@OpportunityID,@StageID,@OldStages,1,1,@OperateID,@AgentID,@ClientID)
 end
 
 set @Err+=@@error
 
---处理记录
-insert into OpportunityStageLog(OpportunityID,StageID,OldStageID,Status,Type,CreateUserID,AgentID,ClientID)
-		values(@OpportunityID,@StageID,@OldStages,1,1,@OperateID,@AgentID,@ClientID)
+
 
 if(@Err>0)
 begin
