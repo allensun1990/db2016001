@@ -24,7 +24,8 @@ CREATE PROCEDURE [dbo].[P_GetOrders]
 	@SearchUserID nvarchar(64)='',
 	@SearchTeamID nvarchar(64)='',
 	@SearchAgentID nvarchar(64)='',
-	@Keywords nvarchar(4000),
+	@Keywords nvarchar(4000)='',
+	@OrderBy nvarchar(500)='',
 	@BeginTime nvarchar(50)='',
 	@EndTime nvarchar(50)='',
 	@pageSize int,
@@ -45,7 +46,6 @@ AS
 	select @tableName='Orders o join Customer cus on o.CustomerID=cus.CustomerID left join Billing b on o.OrderID=b.OrderID',
 	@columns='o.*,cus.Name CustomerName,b.PayMoney,b.PayStatus,b.InvoiceStatus ',
 	@key='o.AutoID',
-	@orderColumn='o.OrderTime desc',
 	@isAsc=0
 
 	set @condition='o.ClientID='''+@ClientID+''' and o.Status<>9 '
@@ -123,10 +123,10 @@ AS
 	end
 
 	if(@BeginTime<>'')
-		set @condition +=' and o.OrderTime >= '''+@BeginTime+' 0:00:00'''
+		set @condition +=' and o.CreateTime >= '''+@BeginTime+' 0:00:00'''
 
 	if(@EndTime<>'')
-		set @condition +=' and o.OrderTime <=  '''+@EndTime+' 23:59:59'''
+		set @condition +=' and o.CreateTime <=  '''+@EndTime+' 23:59:59'''
 
 	if(@keyWords <> '')
 	begin
@@ -134,7 +134,7 @@ AS
 	end
 
 	declare @total int,@page int
-	exec P_GetPagerData @tableName,@columns,@condition,@key,@orderColumn,@pageSize,@pageIndex,@total out,@page out,@isAsc 
+	exec P_GetPagerData @tableName,@columns,@condition,@key,@OrderBy,@pageSize,@pageIndex,@total out,@page out,@isAsc 
 	select @totalCount=@total,@pageCount =@page
  
 
