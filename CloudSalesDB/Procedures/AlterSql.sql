@@ -26,7 +26,7 @@ update ProductDetail set IsDefault=1 where SaleAttr=''
 
 INSERT INTO ProductDetail(ProductDetailID,[ProductID],DetailsCode ,[SaleAttr],[AttrValue],[SaleAttrValue],[Price],[BigPrice],[Status],
 					Weight,ImgS,[ShapeCode] ,[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID],IsDefault)
-select NEWID(),ProductID,'','','','',Price,Price,1,
+select NEWID(),ProductID,ProductCode,'','','',Price,Price,1,
 					Weight,ProductImage,'','',CreateUserID,getdate(),getdate(),'',ClientID,1 from Products
 					where ProductID not in(select ProductID from ProductDetail where IsDefault=1)
 

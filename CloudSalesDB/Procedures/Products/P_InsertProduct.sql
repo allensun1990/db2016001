@@ -79,7 +79,7 @@ INSERT INTO [Products]([ProductID],[ProductCode],[ProductName],[GeneralName],[Is
 
 INSERT INTO ProductDetail(ProductDetailID,[ProductID],DetailsCode ,[SaleAttr],[AttrValue],[SaleAttrValue],[Price],[BigPrice],[Status],
 					Weight,ImgS,[ShapeCode] ,[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID],IsDefault)
-				VALUES(NEWID(),@ProductID,'','','','',@Price,@Price*@BigSmallMultiple,1,
+				VALUES(NEWID(),@ProductID,@ProductCode,'','','',@Price,@Price,1,
 					@Weight,@ProductImg,'','',@CreateUserID,getdate(),getdate(),'',@ClientID,1);
 			set @Err+=@@Error
 

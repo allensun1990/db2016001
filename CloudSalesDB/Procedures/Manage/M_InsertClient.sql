@@ -120,9 +120,9 @@ values(NEWID(),'成交客户',3,1,3,'',@UserID,@ClientID)
 insert into [OpportunityStage] (StageID,StageName,Probability,Sort,Status,Mark,PID,CreateUserID,ClientID) 
 values (NEWID(),'初步沟通',0.10,1,1,1,'',@UserID,@ClientID)
 insert into [OpportunityStage] (StageID,StageName,Probability,Sort,Status,Mark,PID,CreateUserID,ClientID)
-values (NEWID(),'合同确认',0.5,2,1,0,'',@UserID,@ClientID) 
+values (NEWID(),'达成意向',0.5,2,1,0,'',@UserID,@ClientID) 
 insert into [OpportunityStage] (StageID,StageName,Probability,Sort,Status,Mark,PID,CreateUserID,ClientID)
-values (NEWID(),'转为订单',1,3,1,2,'',@UserID,@ClientID) 
+values (NEWID(),'合同签订',1,3,1,0,'',@UserID,@ClientID) 
 
 --仓库
 insert into WareHouse(WareID,WareCode,Name,Status,CreateUserID,ClientID)
@@ -145,7 +145,6 @@ insert into Providers(ProviderID,Name,Contact,MobileTele,Email,Website,CityCode,
 			 
 
 --将客户端作为云销客户插入客户表
-
 declare @DefaultClientID nvarchar(64),@DefaultAgentID nvarchar(64),@SourceID nvarchar(64),@StageID nvarchar(64)
 
 select @DefaultClientID=ClientID,@DefaultAgentID=AgentID from Clients where IsDefault=1

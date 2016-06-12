@@ -15,26 +15,29 @@ GO
 调试记录： exec P_DeleteCart 
 ************************************************************/
 CREATE PROCEDURE [dbo].[P_DeleteCart]
-@AutoID int,
+@ProductID nvarchar(64)='',
+@OrderType int,
 @GUID nvarchar(64)=''
 AS
 begin tran
 
-declare @Err int=0,@TotalMoney decimal(18,4)=0,@OrderType int
+declare @Err int=0,@TotalMoney decimal(18,4)=0
 
-if exists(select AutoID from ShoppingCart where AutoID=@AutoID)
+if(@OrderType=10 and exists(select AutoID from Opportunity where  OpportunityID=@GUID and Status=1)) --机会
 begin
-	select @OrderType=OrderType,@GUID=[GUID] from ShoppingCart where AutoID=@AutoID
+	delete from OpportunityProduct where OpportunityID=@GUID and ProductDetailID=@ProductID
 
-	delete from ShoppingCart  where AutoID=@AutoID and [GUID]=@GUID
+	select @TotalMoney=sum(TotalMoney) from OpportunityProduct where OpportunityID=@GUID
 
-	if(@OrderType=11)
-	begin
-		select @TotalMoney=sum(Quantity*Price) from ShoppingCart where OrderType=@OrderType and [GUID]=@GUID
+	update Opportunity set TotalMoney=isnull(@TotalMoney,0) where OpportunityID=@GUID
+end
+else if(@OrderType=11 and exists(select AutoID from Orders where  OrderID=@GUID and Status=1)) --订单
+begin
+	delete from OrderDetail where OrderID=@GUID and ProductDetailID=@ProductID
 
-		update Orders set TotalMoney=isnull(@TotalMoney,0) where OrderID=@GUID
-	end
+	select @TotalMoney=sum(TotalMoney) from OrderDetail where OrderID=@GUID
 
+	update Orders set TotalMoney=isnull(@TotalMoney,0) where OrderID=@GUID
 end
 
 set @Err+=@@error
