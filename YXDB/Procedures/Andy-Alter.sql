@@ -1,3 +1,4 @@
 ﻿
 
-alter table PlateMaking add Type int default(1) not null
+use IntFactory
+ALTER TABLE [dbo].[PlateMaking] ADD Type int  DEFAULT (1) not null
