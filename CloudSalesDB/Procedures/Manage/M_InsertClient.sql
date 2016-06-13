@@ -13,6 +13,7 @@ GO
 编写日期： 2015/4/10
 程序作者： Allen
 调试记录： exec M_InsertClient 
+修改信息:  Michaux 2016-05-30 添加来源类型
 ************************************************************/
 CREATE PROCEDURE [dbo].[M_InsertClient]
 @ClientID nvarchar(64),
@@ -29,6 +30,7 @@ CREATE PROCEDURE [dbo].[M_InsertClient]
 @MDUserID nvarchar(64)='',
 @MDProjectID nvarchar(64)='',
 @CreateUserID nvarchar(64)='',
+@Type int=1,--1 前台手机注册 2 后台创建
 @Result int output --0：失败，1：成功，2 账号已存在
 AS
 
@@ -90,9 +92,16 @@ insert into Role(RoleID,Name,Status,IsDefault,CreateUserID,AgentID,ClientID) val
 
 set @Err+=@@error
 
-insert into Users(UserID,BindMobilePhone,LoginPWD,Name,MobilePhone,Email,Allocation,Status,IsDefault,DepartID,RoleID,CreateUserID,MDUserID,MDProjectID,AgentID,ClientID)
-             values(@UserID,@BindMobilePhone,@LoginPWD,@ContactName,@MobilePhone,@Email,1,1,1,@DepartID,@RoleID,@UserID,@MDUserID,@MDProjectID,@AgentID,@ClientID)
-
+if(@Type=1)
+begin
+	insert into Users(UserID,BindMobilePhone,LoginPWD,Name,MobilePhone,Email,Allocation,Status,IsDefault,DepartID,RoleID,CreateUserID,MDUserID,MDProjectID,AgentID,ClientID)
+				 values(@UserID,@BindMobilePhone,@LoginPWD,@ContactName,@MobilePhone,@Email,1,1,1,@DepartID,@RoleID,@UserID,@MDUserID,@MDProjectID,@AgentID,@ClientID)
+end
+else
+begin
+	insert into Users(UserID,LoginName,LoginPWD,Name,MobilePhone,Email,Allocation,Status,IsDefault,DepartID,RoleID,CreateUserID,MDUserID,MDProjectID,AgentID,ClientID)
+				 values(@UserID,@BindMobilePhone,@LoginPWD,@ContactName,@MobilePhone,@Email,1,1,1,@DepartID,@RoleID,@UserID,@MDUserID,@MDProjectID,@AgentID,@ClientID)
+end
 --部门关系
 insert into UserDepart(UserID,DepartID,CreateUserID,ClientID) values(@UserID,@DepartID,@UserID,@ClientID)  
 set @Err+=@@error

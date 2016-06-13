@@ -81,6 +81,7 @@
     <None Include="Procedures\P_GetPagerDataColumn.sql" />
     <None Include="Procedures\Manage\Report\M_Get_Report_AgentActionDayPageList.sql" />
     <None Include="Procedures\Manage\Report\Rpt_AgentAction_Day.sql" />
+    <None Include="Procedures\System\P_InsertCustomerColor.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\Manage\M_InsertClient.sql" />

@@ -8,6 +8,12 @@ M_UpdateRolePermission
 P_UpdateUserRole
 M_DeleteRole
 M_GetM_UserToLogin
+R_GetClientsActiveReprot
+M_InsertClient
+E_ImportCustomer
+E_ImportContact 
+P_GetCustomers
+P_InsertCustomerColor
 */
 alter table FeedBack add Content varchar(1000)
 alter table ClientOrder Add CheckUserID varchar(50)
@@ -25,6 +31,17 @@ CheckUserID=case Status when 1 then CreateUserID else Null end,
 CheckTime=case Status when 1 then CreateTime else Null end,
 SourceType=0,
 ReFundFee=0.0000
+ 
+
+ 
+/****** Object:  Index [UQ__M_Users__DB8464FF5165187F]    Script Date: 05/30/2016 14:48:53 ******/
+IF  EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[M_Users]') AND name = N'UQ__M_Users__DB8464FF5165187F')
+ALTER TABLE [dbo].[M_Users] DROP CONSTRAINT [UQ__M_Users__DB8464FF5165187F]
+GO
+
+
+
+
 
 /**ClientOrderAccount（订单账单表）*/
 Create table ClientOrderAccount
@@ -101,3 +118,19 @@ GO
 
 ALTER TABLE [dbo].[M_RolePermission] ADD  CONSTRAINT [DF__M_RolePer__Creat__1B9317B3]  DEFAULT (getdate()) FOR [CreateTime]
 GO
+
+
+create  table CustomerColor
+(
+[AutoID] [int] IDENTITY(1,1) NOT NULL,
+[ColorID] int NOT NULL,
+[ColorName] [nvarchar](50) NULL,
+[ColorValue] [nvarchar](20) NULL,
+Status int default(0),
+[CreateUserID] [nvarchar](64) NULL,
+[CreateTime] [datetime] NULL,
+[UpdateTime] [datetime] NULL,
+[UpdateUserID] [nvarchar](64) NULL, 
+[AgentID] [nvarchar](64) NULL,
+[ClientID] [nvarchar](64) NULL,
+)
