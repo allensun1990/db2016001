@@ -72,6 +72,7 @@
     <Folder Include="Procedures\Stock" />
     <Folder Include="Procedures\System" />
     <Folder Include="Procedures\Manage\Report" />
+    <Folder Include="Procedures\Excel" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\Agents\P_GetAgentOrderByID.sql" />
@@ -207,6 +208,10 @@
     <None Include="Procedures\Manage\M_DeleteRole.sql" />
     <None Include="Procedures\Manage\P_UpdateUserRole.sql" />
     <None Include="Procedures\Manage\M_GetM_UserToLogin.sql" />
+    <None Include="Procedures\Manage\Report\M_Get_Report_AgentActionDayReport.sql" />
+    <None Include="Procedures\Manage\Report\R_GetClientsActiveReprot.sql" />
+    <None Include="Procedures\Excel\E_ImportCustomer.sql" />
+    <None Include="Procedures\Excel\E_ImportContact.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\Sales\P_CreateOpportunity.sql" />
