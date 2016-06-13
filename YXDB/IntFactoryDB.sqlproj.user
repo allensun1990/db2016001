@@ -3,7 +3,7 @@
   <PropertyGroup>
     <StartupScript>(空白)</StartupScript>
     <StartAction>StartNone</StartAction>
-    <TargetConnectionString>Data Source=120.55.164.107;Initial Catalog=IntFactory_dev;Persist Security Info=True;User ID=yx;Pooling=False</TargetConnectionString>
-    <TargetDatabase>IntFactory_dev</TargetDatabase>
+    <TargetConnectionString>Data Source=120.55.164.107;Initial Catalog=IntFactory;Persist Security Info=True;User ID=yx;Pooling=False</TargetConnectionString>
+    <TargetDatabase>IntFactory</TargetDatabase>
   </PropertyGroup>
 </Project>

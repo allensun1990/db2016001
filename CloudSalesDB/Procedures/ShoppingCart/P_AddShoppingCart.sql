@@ -19,8 +19,6 @@ CREATE PROCEDURE [dbo].[P_AddShoppingCart]
 @ProductDetailID nvarchar(64),
 @ProductID nvarchar(64),
 @Quantity int=1,
-@UnitID nvarchar(64),
-@IsBigUnit int=0,
 @GUID nvarchar(64)='',
 @UserID nvarchar(64),
 @Remark nvarchar(max),
@@ -37,7 +35,7 @@ begin
 	if not exists(select AutoID from OpportunityProduct where ProductDetailID=@ProductDetailID  and OpportunityID=@GUID)
 	begin
 		insert into OpportunityProduct(OpportunityID,ProductDetailID,ProductID,UnitID,Quantity,Price,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,CreateUserID)
-		select @GUID,@ProductDetailID,@ProductID,@UnitID,@Quantity,d.Price,@Quantity*d.Price,d.Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,@UserID
+		select @GUID,@ProductDetailID,@ProductID,UnitID,@Quantity,d.Price,@Quantity*d.Price,d.Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,@UserID
 	    from ProductDetail d join Products p  on d.ProductID=p.ProductID where d.ProductDetailID=@ProductDetailID
 	end
 	else 

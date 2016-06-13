@@ -67,7 +67,7 @@ begin
 	begin
 		--订单明细和产品信息
 		select @ProductID=ProductID,@ProductDetailID=ProductDetailID,@Quantity=Quantity,@ProductAmount=TotalMoney,@Remark=Remark from #TempProducts where AutoID=@AutoID
-		select @IsAllow=IsAllow,@UnitID=SmallUnitID,@BigSmallMultiple=BigSmallMultiple from Products where ProductID=@ProductID
+		select @IsAllow=IsAllow,@UnitID=UnitID,@BigSmallMultiple=BigSmallMultiple from Products where ProductID=@ProductID
 		select @StockIn=StockIn,@SaleCount=SaleCount,@LogicOut=LogicOut,@Price=Price,@BigPrice=BigPrice from ProductDetail where ProductDetailID=@ProductDetailID
 
 		--库存不足

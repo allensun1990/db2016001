@@ -22,7 +22,7 @@ CREATE PROCEDURE [dbo].[P_UpdateProduct]
 @IsCombineProduct int,
 @BrandID nvarchar(64),
 @BigUnitID nvarchar(64),
-@SmallUnitID nvarchar(64),
+@UnitID nvarchar(64),
 @BigSmallMultiple int,
 @Status int,
 @CategoryID nvarchar(64),
@@ -47,21 +47,20 @@ AS
 
 begin tran
 
-declare @Err int,@PIDList nvarchar(max),@SaleAttr  nvarchar(max),@Multiple int
+declare @Err int,@PIDList nvarchar(max),@SaleAttr  nvarchar(max),@HasDetails int=0
 
 set @Err=0
 
 select @PIDList=PIDList,@SaleAttr=SaleAttr from Category where CategoryID=@CategoryID
 
-if(@BigUnitID=@SmallUnitID)
+if(@BigUnitID=@UnitID)
 begin
 	set @BigSmallMultiple=1
 end
 
-select @Multiple=BigSmallMultiple from [Products] where ProductID=@ProductID
 
 Update [Products] set [ProductName]=@ProductName,ProductCode=@ProductCode,[GeneralName]=@GeneralName,[IsCombineProduct]=@IsCombineProduct,[BrandID]=@BrandID,
-						[BigUnitID]=@BigUnitID,[SmallUnitID]=@SmallUnitID,[BigSmallMultiple]=@BigSmallMultiple ,
+						[BigUnitID]=@BigUnitID,[UnitID]=@UnitID,[BigSmallMultiple]=@BigSmallMultiple ,
 						[CategoryIDList]=@PIDList,[SaleAttr]=@SaleAttr,[AttrList]=@AttrList,[ValueList]=@ValueList,[AttrValueList]=@AttrValueList,
 						[CommonPrice]=@CommonPrice,[Price]=@Price,[PV]=0,[Status]=@Status,ProductImage=@ProductImg,
 						[IsNew]=@Isnew,[IsRecommend]=@IsRecommend ,[DiscountValue]=@DiscountValue,[Weight]=@Weight ,[EffectiveDays]=@EffectiveDays,
@@ -69,22 +68,10 @@ Update [Products] set [ProductName]=@ProductName,ProductCode=@ProductCode,[Gener
 						[ShapeCode]=@ShapeCode ,[Description]=@Description ,[UpdateTime]=getdate()
 where ProductID=@ProductID
 
---处理子产品大单位价格
-if(@Multiple<>@BigSmallMultiple)
-begin
-	if(@BigSmallMultiple=1)
-	begin
-		update ProductDetail set BigPrice=Price where ProductID=@ProductID
-	end
-	else
-	begin
-		update ProductDetail set BigPrice=BigPrice/@Multiple*@BigSmallMultiple where ProductID=@ProductID
-	end
-	set @Err+=@@Error
-end
+set @Err+=@@Error
 
-
-
+update ProductDetail set Price=@Price,ImgS=@ProductImg,DetailsCode=@ProductCode,[Weight]=@Weight where ProductID=@ProductID and IsDefault=1
+	
 set @Err+=@@Error
 
 if(@Err>0)

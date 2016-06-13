@@ -20,7 +20,7 @@ AS
 
 declare @BigUnit nvarchar(64),@Unit nvarchar(64),@CategoryID nvarchar(64)
 
-select @BigUnit=BigUnitID,@Unit=SmallUnitID,@CategoryID=CategoryID from Products where ProductID=@ProductID
+select @BigUnit=BigUnitID,@Unit=UnitID,@CategoryID=CategoryID from Products where ProductID=@ProductID
 
 select * from Products where ProductID=@ProductID 
 

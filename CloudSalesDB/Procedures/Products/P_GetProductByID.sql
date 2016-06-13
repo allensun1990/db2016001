@@ -18,14 +18,16 @@ CREATE PROCEDURE [dbo].[P_GetProductByID]
 	@ProductID nvarchar(64)
 AS
 
-declare @BigUnit nvarchar(64),@Unit nvarchar(64)
-
-select @BigUnit=BigUnitID,@Unit=SmallUnitID from Products where ProductID=@ProductID
-
 select * from Products where ProductID=@ProductID 
 
-select * from ProductDetail where ProductID=@ProductID
+if exists(select AutoID from Products where ProductID=@ProductID and HasDetails=1)
+begin
+	select * from ProductDetail where ProductID=@ProductID and Status<>9 and IsDefault=0
+end
+else
+begin
+	select * from ProductDetail where ProductID=@ProductID and Status<>9 and IsDefault=1
+end
 
-select UnitID,UnitName from ProductUnit where UnitID=@BigUnit or UnitID=@Unit
  
 

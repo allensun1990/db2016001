@@ -236,6 +236,15 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="Procedures\Manage\M_UpdateClientOrderAccountStatus.sql" />
-    <None Include="Procedures\System\P_InsertCustomerColor.sql" />
+    <None Include="Procedures\Products\P_DeleteBrand.sql" />
+    <None Include="Procedures\Products\P_DeleteUnit.sql" />
+    <None Include="Procedures\Products\P_DeleteProductAttr.sql" />
+    <None Include="Procedures\Products\P_DeleteAttrValue.sql" />
+    <None Include="Procedures\Products\P_DeleteProvider.sql" />
+    <None Include="Procedures\Products\P_DeleteProduct.sql" />
+    <None Include="Procedures\Products\P_DeleteProductDetail.sql" />
+    <None Include="Procedures\System\P_CreateOpportunityStage.sql" />
+    <None Include="Procedures\Sales\P_UpdateOpportunityProductPrice.sql" />
+    <None Include="Procedures\Sales\P_UpdateOpportunityProductQuantity.sql" />
   </ItemGroup>
 </Project>
