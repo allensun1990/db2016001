@@ -47,6 +47,10 @@ alter table OpportunityProduct add CreateUserID nvarchar(64)
 alter table OpportunityProduct add CreateTime datetime default getdate()
 alter table OpportunityProduct add ImgS nvarchar(500) default ''
 
+--订单表
+alter table Orders add OpportunityID nvarchar(64) default ''
+alter table Orders add OpportunityCode nvarchar(50) default ''
+
 insert into Opportunity(OpportunityID,OpportunityCode,Status,TypeID,StageID,TotalMoney,CityCode,Address,PostalCode,PersonName,MobileTele,Remark,CustomerID,OwnerID,CreateTime,OrderTime,OrderID,CreateUserID,AgentID,ClientID)
 select NEWID(),OrderCode,1,TypeID,StageID,TotalMoney,CityCode,Address,PostalCode,PersonName,MobileTele,Remark,CustomerID,OwnerID,CreateTime,OrderTime,OrderID,CreateUserID,AgentID,ClientID from Orders
 
@@ -84,11 +88,6 @@ update Customer set StageStatus=2 where CustomerID in (select CustomerID from Or
 update Customer set StageStatus=3 where CustomerID in (select CustomerID from Orders where Status>=2)
 
 
-
---订单表
-alter table Orders add OpportunityID nvarchar(64) default ''
-alter table Orders add OpportunityCode nvarchar(50) default ''
-
 --订单明细
 alter table OrderDetail add ProductName nvarchar(100) default ''
 alter table OrderDetail add ProductCode nvarchar(100) default ''
@@ -105,6 +104,7 @@ alter table AgentsOrderDetail add ProductName nvarchar(100) default ''
 alter table AgentsOrderDetail add ProductCode nvarchar(100) default ''
 alter table AgentsOrderDetail add DetailsCode nvarchar(100) default ''
 alter table AgentsOrderDetail add ProductImage nvarchar(200) default ''
+alter table AgentsOrderDetail add ImgS nvarchar(500) default ''
 alter table AgentsOrderDetail add ProviderID nvarchar(64) default ''
 alter table AgentsOrderDetail add ProviderName nvarchar(100) default ''
 
@@ -115,6 +115,15 @@ alter table StorageDetail add DetailsCode nvarchar(100) default ''
 alter table StorageDetail add ProductImage nvarchar(200) default ''
 alter table StorageDetail add ProviderID nvarchar(64) default ''
 alter table StorageDetail add ProviderName nvarchar(100) default ''
+
+--产品流水表
+alter table AgentsStream add Remark nvarchar(4000) default ''
+alter table AgentsStream add ProductName nvarchar(100) default ''
+alter table AgentsStream add ProductCode nvarchar(100) default ''
+alter table AgentsStream add DetailsCode nvarchar(100) default ''
+alter table AgentsStream add ProductImage nvarchar(200) default ''
+alter table AgentsStream add ProviderID nvarchar(64) default ''
+alter table AgentsStream add ProviderName nvarchar(100) default ''
 
 
 

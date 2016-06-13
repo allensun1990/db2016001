@@ -30,7 +30,7 @@ declare @Err int=0,@Price decimal(18,4)=0,@TotalMoney decimal(18,4)=0
 
 select @Price=Price from ProductDetail where ProductDetailID=@ProductDetailID
 
-if(@OrderType=10 and exists(select AutoID from Opportunity where OpportunityID=@GUID and Status=1))
+if(@OrderType=10 and exists(select AutoID from Opportunity where OpportunityID=@GUID and Status=1)) --机会
 begin
 	if not exists(select AutoID from OpportunityProduct where ProductDetailID=@ProductDetailID  and OpportunityID=@GUID)
 	begin
@@ -40,18 +40,34 @@ begin
 	end
 	else 
 	begin
-		update OpportunityProduct set Quantity=Quantity+@Quantity,Remark=@Remark where ProductDetailID=@ProductDetailID and OpportunityID=@GUID
+		update OpportunityProduct set Quantity=Quantity+@Quantity,Remark=@Remark,TotalMoney=(Quantity+@Quantity)*Price where ProductDetailID=@ProductDetailID and OpportunityID=@GUID
 	end
 
-	select @TotalMoney=sum(Quantity*Price) from OpportunityProduct where  OpportunityID=@GUID
+	select @TotalMoney=sum(TotalMoney) from OpportunityProduct where  OpportunityID=@GUID
 
 	update Opportunity set TotalMoney=isnull(@TotalMoney,0) where OpportunityID=@GUID
+end
+else if(@OrderType=11 and exists(select AutoID from Orders where OrderID=@GUID and Status=1)) --订单
+begin
+	if not exists(select AutoID from OrderDetail where ProductDetailID=@ProductDetailID  and OrderID=@GUID)
+	begin
+		insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,CreateUserID)
+		select @GUID,@ProductDetailID,@ProductID,UnitID,@Quantity,d.Price,@Quantity*d.Price,d.Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,@UserID
+	    from ProductDetail d join Products p  on d.ProductID=p.ProductID where d.ProductDetailID=@ProductDetailID
+	end
+	else 
+	begin
+		update OrderDetail set Quantity=Quantity+@Quantity,Remark=@Remark,TotalMoney=(Quantity+@Quantity)*Price where ProductDetailID=@ProductDetailID and OrderID=@GUID
+	end
+
+	select @TotalMoney=sum(TotalMoney) from OrderDetail where OrderID=@GUID
+
+	update Orders set TotalMoney=isnull(@TotalMoney,0) where OrderID=@GUID
 
 end
 
 --if not exists(select AutoID from ShoppingCart where ProductDetailID=@ProductDetailID  and IsBigUnit=@IsBigUnit and OrderType=@OrderType and [GUID]=@GUID)
 --begin
-
 --	insert into ShoppingCart(OrderType,ProductDetailID,ProductID,UnitID,IsBigUnit,Quantity,Price,Remark,CreateTime,UserID,OperateIP,[GUID])
 --	values(@OrderType,@ProductDetailID,@ProductID,@UnitID,@IsBigUnit,@Quantity,@Price,@Remark,GETDATE(),@UserID,@OperateIP,@GUID)
 --end
