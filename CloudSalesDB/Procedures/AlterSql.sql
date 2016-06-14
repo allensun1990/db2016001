@@ -88,6 +88,19 @@ update Customer set StageStatus=2 where CustomerID in (select CustomerID from Or
 update Customer set StageStatus=3 where CustomerID in (select CustomerID from Orders where Status>=2)
 
 
+--购物车
+alter table ShoppingCart add ProductName nvarchar(100) default ''
+alter table ShoppingCart add ProductCode nvarchar(100) default ''
+alter table ShoppingCart add DetailsCode nvarchar(100) default ''
+alter table ShoppingCart add ProductImage nvarchar(200) default ''
+alter table ShoppingCart add ImgS nvarchar(500) default ''
+alter table ShoppingCart add ProviderID nvarchar(64) default ''
+alter table ShoppingCart add ProviderName nvarchar(100) default ''
+
+update s set ProductName=p.ProductName,ProductCode=p.ProductCode,DetailsCode=d.DetailsCode,ProductImage=p.ProductImage,ImgS=d.ImgS,Remark=d.Remark,UnitID=p.UnitID 
+from ShoppingCart s join Products p on s.ProductID=p.ProductID 
+join ProductDetail d on s.ProductDetailID=d.ProductDetailID
+
 --订单明细
 alter table OrderDetail add ProductName nvarchar(100) default ''
 alter table OrderDetail add ProductCode nvarchar(100) default ''
@@ -116,7 +129,24 @@ alter table StorageDetail add ProductImage nvarchar(200) default ''
 alter table StorageDetail add ProviderID nvarchar(64) default ''
 alter table StorageDetail add ProviderName nvarchar(100) default ''
 
+update s set ProductName=p.ProductName,ProductCode=p.ProductCode,DetailsCode=d.DetailsCode,ProductImage=p.ProductImage,Remark=d.Remark,UnitID=p.UnitID 
+from StorageDetail s join Products p on s.ProductID=p.ProductID 
+join ProductDetail d on s.ProductDetailID=d.ProductDetailID
+
+
 --产品流水表
+alter table ProductStream add Remark nvarchar(4000) default ''
+alter table ProductStream add ProductName nvarchar(100) default ''
+alter table ProductStream add ProductCode nvarchar(100) default ''
+alter table ProductStream add DetailsCode nvarchar(100) default ''
+alter table ProductStream add ProductImage nvarchar(200) default ''
+alter table ProductStream add ProviderID nvarchar(64) default ''
+alter table ProductStream add ProviderName nvarchar(100) default ''
+
+update s set ProductName=p.ProductName,ProductCode=p.ProductCode,DetailsCode=d.DetailsCode,ProductImage=p.ProductImage,Remark=d.Remark 
+from ProductStream s join Products p on s.ProductID=p.ProductID 
+join ProductDetail d on s.ProductDetailID=d.ProductDetailID
+
 alter table AgentsStream add Remark nvarchar(4000) default ''
 alter table AgentsStream add ProductName nvarchar(100) default ''
 alter table AgentsStream add ProductCode nvarchar(100) default ''
@@ -125,5 +155,7 @@ alter table AgentsStream add ProductImage nvarchar(200) default ''
 alter table AgentsStream add ProviderID nvarchar(64) default ''
 alter table AgentsStream add ProviderName nvarchar(100) default ''
 
-
+update s set ProductName=p.ProductName,ProductCode=p.ProductCode,DetailsCode=d.DetailsCode,ProductImage=p.ProductImage,Remark=d.Remark 
+from AgentsStream s join Products p on s.ProductID=p.ProductID 
+join ProductDetail d on s.ProductDetailID=d.ProductDetailID
 

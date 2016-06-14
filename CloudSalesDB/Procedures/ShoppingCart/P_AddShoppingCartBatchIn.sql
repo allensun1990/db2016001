@@ -28,18 +28,16 @@ begin tran
 
 declare @Err int=0,@TotalMoney decimal(18,4)=0
 
-if not exists(select AutoID from ShoppingCart where ProductDetailID=@ProductDetailID  and OrderType=@OrderType and [GUID]=@GUID)
+if not exists(select AutoID from ShoppingCart where ProductDetailID=@ProductDetailID  and OrderType=@OrderType and [GUID]=@GUID and UserID=@UserID)
 begin
-	declare @Price decimal(18,4)=0
-	select @Price=Price from ProductDetail where ProductDetailID=@ProductDetailID
-
-	insert into ShoppingCart(OrderType,ProductDetailID,ProductID,DepotID,BatchCode,Quantity,Price,Remark,CreateTime,UserID,OperateIP,[GUID])
-	values(@OrderType,@ProductDetailID,@ProductID,'','',@Quantity,@Price,@Remark,GETDATE(),@UserID,@OperateIP,@GUID)
+	insert into ShoppingCart(OrderType,ProductDetailID,ProductID,UnitID,IsBigUnit,BatchCode,Quantity,Price,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,CreateTime,UserID,OperateIP,[GUID])
+	select @OrderType,@ProductDetailID,@ProductID,p.UnitID,0,'',@Quantity,d.Price,d.Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,GETDATE(),@UserID,@OperateIP,@GUID 
+	from ProductDetail d join Products p on d.ProductID=p.ProductID where d.ProductDetailID=@ProductDetailID 
 end
 else 
 begin
 	update ShoppingCart set Quantity=Quantity+@Quantity,Remark=@Remark 
-	where  ProductDetailID=@ProductDetailID  and OrderType=@OrderType and [GUID]=@GUID
+	where  ProductDetailID=@ProductDetailID  and OrderType=@OrderType and [GUID]=@GUID and UserID=@UserID
 end
 
 

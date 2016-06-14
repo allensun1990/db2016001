@@ -248,5 +248,6 @@
     <None Include="Procedures\Sales\P_UpdateOpportunityProductQuantity.sql" />
     <None Include="Procedures\Sales\P_UpdateOrderProductPrice.sql" />
     <None Include="Procedures\Sales\P_UpdateOrderProductQuantity.sql" />
+    <None Include="Procedures\Stock\P_GetPurchases.sql" />
   </ItemGroup>
 </Project>

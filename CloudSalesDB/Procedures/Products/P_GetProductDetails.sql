@@ -23,9 +23,9 @@ CREATE PROCEDURE [dbo].[P_GetProductDetails]
 AS
 	declare @sqlText nvarchar(4000)
 
-	set @sqlText='select d.ProductDetailID,d.ProductID,p.ProductCode,p.ProductName,d.SaleAttrValue,d.StockIn,d.SaleCount from '
+	set @sqlText='select d.ProductDetailID,d.ProductID,p.ProductCode,p.ProductName,d.SaleAttrValue,d.StockIn,d.SaleCount,d.Remark from '
 
-	set @sqlText+=' Products p join ProductDetail d on p.ProductID=d.ProductID '
+	set @sqlText+=' Products p join ProductDetail d on p.ProductID=d.ProductID and ((p.HasDetails=1 and d.IsDefault=0) or (p.HasDetails=0 and d.IsDefault=1)) '
 
 	set @sqlText+='where p.ClientID='''+@ClientID+''' and P.Status<>9 and d.Status<>9 '
 

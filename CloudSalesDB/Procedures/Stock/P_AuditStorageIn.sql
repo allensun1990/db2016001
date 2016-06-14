@@ -26,7 +26,7 @@ AS
 begin tran
 
 declare @Err int,@DetailID nvarchar(64),@BatchCode nvarchar(50),@WareID nvarchar(64),@DepotID nvarchar(64),@ProductID nvarchar(64),@Quantity int,@IsBig int,
-		@DocID nvarchar(64),@DocCode nvarchar(20),@Desc nvarchar(500),@TotalMoney decimal(18,4)
+		@DocID nvarchar(64),@DocCode nvarchar(20),@Desc nvarchar(500),@TotalMoney decimal(18,4),@ProductName nvarchar(200),@ProductCode nvarchar(200),@DetailsCode nvarchar(64)
 set @Err=0
 
 if exists(select AutoID from StorageDetail where AutoID=@AutoID and Status=1)
@@ -35,17 +35,11 @@ begin
 	return
 end
 
-select @ProductID=ProductID,@DetailID=ProductDetailID,@BatchCode=BatchCode,@WareID=WareID,@DepotID=DepotID,@Quantity=Quantity,@IsBig=IsBigUnit ,@DocID=DocID,@Desc=Remark
+select @ProductID=ProductID,@DetailID=ProductDetailID,@BatchCode=BatchCode,@WareID=WareID,@DepotID=DepotID,@Quantity=Quantity,@IsBig=IsBigUnit ,@DocID=DocID,@Desc=Remark,
+		@ProductName=ProductName,@ProductCode=ProductCode,@DetailsCode=DetailsCode
 from StorageDetail where AutoID=@AutoID 
 
 select @DocCode=DocCode,@TotalMoney=TotalMoney from StorageDoc where DocID=@DocID
-
---大单位
-if(@IsBig=1)
-begin
-	select @Quantity=BigSmallMultiple*@Quantity from Products where ProductID=@ProductID
-	set @Err+=@@Error
-end
 
 --处理库存
 if exists(select AutoID from ProductStock where ProductDetailID=@DetailID and WareID=@WareID and DepotID=@DepotID and BatchCode=@BatchCode)
@@ -60,8 +54,8 @@ end
 set @Err+=@@Error
 
 --处理产品流水
-insert into ProductStream(ProductDetailID,ProductID,DocID,DocCode,BatchCode,DocDate,DocType,Mark,Quantity,WareID,DepotID,CreateUserID,ClientID)
-					values(@DetailID,@ProductID,@DocID,@DocCode,@BatchCode,CONVERT(varchar(100), GETDATE(), 112),1,0,@Quantity,@WareID,@DepotID,@UserID,@ClientID)
+insert into ProductStream(ProductDetailID,ProductID,DocID,DocCode,BatchCode,DocDate,DocType,Mark,Quantity,WareID,DepotID,CreateUserID,ClientID,ProductName,ProductCode,DetailsCode,Remark)
+					values(@DetailID,@ProductID,@DocID,@DocCode,@BatchCode,CONVERT(varchar(100), GETDATE(), 112),1,0,@Quantity,@WareID,@DepotID,@UserID,@ClientID,@ProductName,@ProductCode,@DetailsCode,@Desc)
 
 --修改单据明细状态
 update StorageDetail set Status=1 where  AutoID=@AutoID 

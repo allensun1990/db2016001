@@ -34,6 +34,13 @@ begin
 	return
 end
 
+if exists(select AutoID from StorageDoc where ClientID=@ClientID and Status<>9 and ProviderID=@ProviderID)
+begin
+	set @Result=10002
+	rollback tran
+	return
+end
+
 set @Err+=@@error
 
 Update Providers set Status=9  where ProviderID=@ProviderID
