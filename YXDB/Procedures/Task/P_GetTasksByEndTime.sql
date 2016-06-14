@@ -20,6 +20,8 @@ CREATE PROCEDURE [dbo].[P_GetTasksByEndTime]
 	@UserID nvarchar(64)='',
 	@OrderType int =-1,
 	@FilterType int =-1,
+	@FinishStatus int =-1,
+	@PreFinishStatus int=-1,
 	@ClientID nvarchar(64),
 	@PageSize int=20,
 	@PageIndex int=1,
@@ -32,46 +34,54 @@ AS
 	@key nvarchar(100),
 	@condition nvarchar(1000)
 	
-	set @tableName='OrderTask'
-	set @columns='*'
-	set @key='TaskID'
-	set @orderColumn='EndTime'
-	set @condition=' status<>8 and FinishStatus=1 and ClientID='''+@ClientID+''''
+	set @tableName='OrderTask t left join OrderTask t2 on t.OrderID=t2.OrderID and t2.Sort=t.Sort-1'
+	set @columns='t.*,t2.FinishStatus as PreFinishStatus'
+	set @key='t.TaskID'
+	set @orderColumn='t.EndTime'
+	set @condition=' t.status<>8  and t.ClientID='''+@ClientID+''''
 
 	if(@UserID<>'')
-		set @condition+=' and OwnerID='''+@UserID+''''
+		set @condition+=' and t.OwnerID='''+@UserID+''''
 
 	if(@OrderType<>-1)
-		set @condition+=' and OrderType='+convert(nvarchar(2), @OrderType)
+		set @condition+=' and t.OrderType='+convert(nvarchar(2), @OrderType)
+
+	if(@FinishStatus<>-1)
+		set @condition+=' and t.FinishStatus='+convert(nvarchar(2), @FinishStatus)
+	else
+		set @condition+=' and t.FinishStatus>0'
+
+	if(@PreFinishStatus<>-1)
+		set @condition+=' and t2.FinishStatus='+ str(@PreFinishStatus)
 
 	if(@StartEndTime<>'')
-		set @condition+=' and EndTime>='''+@StartEndTime+''''
+		set @condition+=' and t.EndTime>='''+@StartEndTime+''''
 
 	if(@EndEndTime<>'')
-		set @condition+=' and EndTime<='''+CONVERT(varchar(100), dateadd(day, 1, @EndEndTime), 23)+''''
+		set @condition+=' and t.EndTime<='''+CONVERT(varchar(100), dateadd(day, 1, @EndEndTime), 23)+''''
 
 	if(@FilterType<>-1)
 	begin
 		if(@FilterType=1)
 			begin
-				set @condition+=' and EndTime<GETDATE() and FinishStatus=1 '
+				set @condition+=' and t.EndTime<GETDATE() and t.FinishStatus=1 '
 			end
 		else if(@FilterType=3 or @FilterType=2)
 		begin
-			set @condition+=' and EndTime>GETDATE() and FinishStatus=1 '
+			set @condition+=' and t.EndTime>GETDATE() and t.FinishStatus=1 '
 
 			if(@FilterType=2)
 			begin
-				set @condition+='and DateDiff(HH,GETDATE(),EndTime)*3< DateDiff(HH,AcceptTime,EndTime)'
+				set @condition+='and DateDiff(HH,GETDATE(),t.EndTime)*3< DateDiff(HH,t.AcceptTime,t.EndTime)'
 			end
 			else
 			begin
-				set @condition+='and DateDiff(HH,GETDATE(),EndTime)*3>= DateDiff(HH,AcceptTime,EndTime)'
+				set @condition+='and DateDiff(HH,GETDATE(),t.EndTime)*3>= DateDiff(HH,t.AcceptTime,t.EndTime)'
 			end
 		end
 		else if(@FilterType=4)
 		begin
-			set @condition+=' and FinishStatus=2 '
+			set @condition+=' and t.FinishStatus=2 '
 		end
 	end
 
