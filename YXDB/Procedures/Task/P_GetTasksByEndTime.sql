@@ -52,7 +52,12 @@ AS
 		set @condition+=' and t.FinishStatus>0'
 
 	if(@PreFinishStatus<>-1)
-		set @condition+=' and t2.FinishStatus='+ str(@PreFinishStatus)
+	begin
+		if(@PreFinishStatus<>9)
+			set @condition+=' and t2.FinishStatus='+ str(@PreFinishStatus)
+		else
+			set @condition+=' and t.Sort=1'
+	end
 
 	if(@StartEndTime<>'')
 		set @condition+=' and t.EndTime>='''+@StartEndTime+''''
