@@ -24,11 +24,13 @@ if(@OrderType=10)
 begin
 	select * from OpportunityProduct where OpportunityID=@GUID
 end
+else if(@OrderType=11)
+begin
+	select * from OrderDetail where OrderID=@GUID
+end
 else
 begin
-	if(@UserID='')
-	begin
-		select s.AutoID,s.ProductDetailID,s.ProductID,s.Quantity,s.Remark Description,p.ProductName,u.UnitID,u.UnitName,
+	select s.AutoID,s.ProductDetailID,s.ProductID,s.Quantity,s.Remark Description,p.ProductName,u.UnitID,u.UnitName,
 			s.Price,d.Imgs,s.BatchCode,s.DepotID,ds.DepotCode 
 		from ShoppingCart s 
 		join ProductDetail d on d.ProductDetailID=s.ProductDetailID
@@ -36,18 +38,6 @@ begin
 		left join ProductUnit u on s.UnitID=u.UnitID
 		left join DepotSeat ds on s.DepotID=ds.DepotID and s.DepotID<>''
 		where s.[GUID]=@GUID and s.OrderType=@OrderType
-	end
-	else
-	begin
-		select s.AutoID,s.ProductDetailID,s.ProductID,s.Quantity,s.Remark Description,p.ProductName,u.UnitID,u.UnitName,
-			 s.Price,d.Imgs,s.BatchCode,s.DepotID ,ds.DepotCode
-		from ShoppingCart s 
-		join ProductDetail d on d.ProductDetailID=s.ProductDetailID
-		join Products p  on s.ProductID=p.ProductID
-		left join ProductUnit u on s.UnitID=u.UnitID
-		left join DepotSeat ds on s.DepotID=ds.DepotID and s.DepotID<>''
-		where s.[GUID]=@GUID and s.OrderType=@OrderType and s.UserID=@UserID
-	end
 end
 
 

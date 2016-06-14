@@ -43,20 +43,18 @@ select @IsDefault=IsDefault,@levelMoney=TotalIn-TotalOut-FreezeMoney,@FreezeMone
 
 
 --代理商订单信息
-declare @AutoID int=1,@ProductID nvarchar(64),@ProductDetailID nvarchar(64),@Quantity int,@ProductAmount decimal(18,4),@Remark nvarchar(4000),
+declare @AutoID int=1,@ProductID nvarchar(64),@ProductDetailID nvarchar(64),@Quantity int,@ProductAmount decimal(18,4),@ProductImage nvarchar(4000),@ImgS nvarchar(4000),
 		@AgentOrderID nvarchar(64),@AgentOrderMoney decimal(18,4)=0,@LevelStock int, @ShortQuantity int
 
 set @AgentOrderID=NEWID()
 
 --产品信息
-declare @Price decimal(18,4),@BigPrice decimal(18,4),@BigSmallMultiple int,@IsAllow int,@StockIn int,@SaleCount int,@LogicOut int,@UnitID nvarchar(64)
+declare @Price decimal(18,4),@BigSmallMultiple int,@IsAllow int,@StockIn int,@SaleCount int,@LogicOut int
 
 
 --汇总产品明细库存
-select identity(int,1,1) as AutoID,ProductID,ProductDetailID,SUM(Quantity) Quantity,sum(TotalMoney) TotalMoney,Remark into #TempProducts from(
-select o.ProductID,ProductDetailID,case o.IsBigUnit when 0 then Quantity else Quantity*p.BigSmallMultiple end Quantity,o.TotalMoney,o.Remark
-from OrderDetail o join Products p on o.ProductID=p.ProductID  where OrderID=@OrderID) r
-group by ProductID,ProductDetailID,Remark
+select identity(int,1,1) as AutoID,ProductDetailID,ProductID,UnitID,Quantity,Price,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID into #TempProducts 
+from OrderDetail where OrderID=@OrderID
 
 set @Err+=@@error
 
@@ -66,9 +64,14 @@ begin
 	while exists(select AutoID from #TempProducts where AutoID=@AutoID)
 	begin
 		--订单明细和产品信息
-		select @ProductID=ProductID,@ProductDetailID=ProductDetailID,@Quantity=Quantity,@ProductAmount=TotalMoney,@Remark=Remark from #TempProducts where AutoID=@AutoID
-		select @IsAllow=IsAllow,@UnitID=UnitID,@BigSmallMultiple=BigSmallMultiple from Products where ProductID=@ProductID
-		select @StockIn=StockIn,@SaleCount=SaleCount,@LogicOut=LogicOut,@Price=Price,@BigPrice=BigPrice from ProductDetail where ProductDetailID=@ProductDetailID
+		select @ProductID=ProductID,@ProductDetailID=ProductDetailID,@Quantity=Quantity,@ProductAmount=TotalMoney,@ProductImage=ProductImage,@ImgS=ImgS from #TempProducts where AutoID=@AutoID
+		if(@ImgS is null or @ImgS='')
+		begin
+			set @ImgS=@ProductImage
+		end
+		select @IsAllow=IsAllow,@BigSmallMultiple=BigSmallMultiple from Products where ProductID=@ProductID
+
+		select @StockIn=StockIn,@SaleCount=SaleCount,@LogicOut=LogicOut,@Price=Price from ProductDetail where ProductDetailID=@ProductDetailID
 
 		--库存不足
 		if(@IsAllow=0 and @StockIn-@SaleCount<@Quantity)
@@ -93,18 +96,17 @@ begin
 		end
 		
 		--代理商库存流水
+		insert into AgentsStream(ProductDetailID,ProductID,OrderID,OrderCode,OrderDate,Mark,Quantity,SurplusQuantity,AgentID,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,Remark)
+						select @ProductDetailID,@ProductID,@AgentOrderID,@OrderCode,CONVERT(varchar(100), GETDATE(), 112),0,@Quantity,0,@OrderAgentID,@ClientID,ProductName,ProductCode,DetailsCode,@ImgS,Remark from #TempProducts where AutoID=@AutoID
 
-		insert into AgentsStream(ProductDetailID,ProductID,OrderID,OrderCode,OrderDate,Mark,Quantity,SurplusQuantity,AgentID,ClientID)
-						values(@ProductDetailID,@ProductID,@AgentOrderID,@OrderCode,CONVERT(varchar(100), GETDATE(), 112),0,@Quantity,0,@OrderAgentID,@ClientID)
-
-		insert into AgentsStream(ProductDetailID,ProductID,OrderID,OrderCode,OrderDate,Mark,Quantity,SurplusQuantity,AgentID,ClientID)
-						values(@ProductDetailID,@ProductID,@OrderID,@OrderCode,CONVERT(varchar(100), GETDATE(), 112),1,@Quantity,0,@OrderAgentID,@ClientID)
+		insert into AgentsStream(ProductDetailID,ProductID,OrderID,OrderCode,OrderDate,Mark,Quantity,SurplusQuantity,AgentID,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,Remark)
+						select @ProductDetailID,@ProductID,@OrderID,@OrderCode,CONVERT(varchar(100), GETDATE(), 112),1,@Quantity,0,@OrderAgentID,@ClientID,ProductName,ProductCode,DetailsCode,@ImgS,Remark from #TempProducts where AutoID=@AutoID
 
 		set @Err+=@@error
 
 		--代理商采购明细
-		insert into AgentsOrderDetail(OrderID,ProductDetailID,ProductID,UnitID,IsBigUnit,Quantity,Price,TotalMoney,Remark,ClientID)
-							values(@AgentOrderID,@ProductDetailID,@ProductID,@UnitID,0,@Quantity,@Price,@ProductAmount,@Remark,@ClientID)
+		insert into AgentsOrderDetail(OrderID,ProductDetailID,ProductID,UnitID,IsBigUnit,Quantity,Price,TotalMoney,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,Imgs)
+							select @AgentOrderID,ProductDetailID,ProductID,UnitID,0,Quantity,Price,TotalMoney,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,Imgs from #TempProducts where AutoID=@AutoID
 		
 		--产品库存处理
 		update Products set LogicOut=LogicOut+@Quantity where ProductID=@ProductID
@@ -154,22 +156,7 @@ insert into Billing(BillingID,BillingCode,OrderID,OrderCode,TotalMoney,Status,Pa
 						values(NEWID(),@BillingCode,@OrderID,@OrderCode,@TotalMoney,1,0,0,@OwnerID,@OrderAgentID,@ClientID)
 
 --处理客户阶段
-declare @StageID nvarchar(64),@Sort int,@OldStageID nvarchar(64),@OldSort int
-select @StageID=StageID,@Sort=Sort from CustomStage where ClientID=@ClientID and Mark=3
-select @OldStageID=StageID from Customer where CustomerID=@CustomerID
-select @OldSort=Sort from CustomStage where StageID=@OldStageID
-
-if(@StageID<>@OldStageID and @OldSort< @Sort)
-begin
-	update Customer set StageID=@StageID,OrderTime=isnull(OrderTime,getdate()) where CustomerID=@CustomerID
-
-	insert into CustomerStageLog(CustomerID,StageID,OldStageID,Status,Type,CreateUserID,AgentID,ClientID)
-					values( @CustomerID,@StageID,@OldStageID,1,1,@OperateID,@AgentID,@ClientID)
-end
-else
-begin
-	update Customer set OrderTime=getdate() where CustomerID=@CustomerID and OrderTime is null
-end
+update Customer set StageStatus=3,OrderTime=isnull(OrderTime,getdate()) where CustomerID=@CustomerID and StageStatus<3
 
 if(@Err>0)
 begin
