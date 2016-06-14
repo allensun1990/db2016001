@@ -26,9 +26,7 @@ CREATE PROCEDURE [dbo].[P_AddShoppingCart]
 AS
 begin tran
 
-declare @Err int=0,@Price decimal(18,4)=0,@TotalMoney decimal(18,4)=0
-
-select @Price=Price from ProductDetail where ProductDetailID=@ProductDetailID
+declare @Err int=0, @TotalMoney decimal(18,4)=0
 
 if(@OrderType=10 and exists(select AutoID from Opportunity where OpportunityID=@GUID and Status=1)) --机会
 begin
@@ -65,16 +63,19 @@ begin
 	update Orders set TotalMoney=isnull(@TotalMoney,0) where OrderID=@GUID
 
 end
-
---if not exists(select AutoID from ShoppingCart where ProductDetailID=@ProductDetailID  and IsBigUnit=@IsBigUnit and OrderType=@OrderType and [GUID]=@GUID)
---begin
---	insert into ShoppingCart(OrderType,ProductDetailID,ProductID,UnitID,IsBigUnit,Quantity,Price,Remark,CreateTime,UserID,OperateIP,[GUID])
---	values(@OrderType,@ProductDetailID,@ProductID,@UnitID,@IsBigUnit,@Quantity,@Price,@Remark,GETDATE(),@UserID,@OperateIP,@GUID)
---end
---else 
---begin
---	update ShoppingCart set Quantity=Quantity+@Quantity,Remark=@Remark where ProductDetailID=@ProductDetailID and [GUID]=@GUID and OrderType=@OrderType and IsBigUnit=@IsBigUnit 
---end
+else if(@OrderType=1) 
+begin
+	if not exists(select AutoID from ShoppingCart where ProductDetailID=@ProductDetailID and UserID=@UserID and OrderType=@OrderType and [GUID]=@GUID)
+	begin
+		insert into ShoppingCart(OrderType,ProductDetailID,ProductID,UnitID,IsBigUnit,Quantity,Price,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,CreateTime,UserID,OperateIP,[GUID])
+		select @OrderType,@ProductDetailID,@ProductID,p.UnitID,0,@Quantity,d.Price,d.Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,GETDATE(),@UserID,@OperateIP,@GUID 
+		from ProductDetail d join Products p on d.ProductID=p.ProductID where d.ProductDetailID=@ProductDetailID 
+	end
+	else
+	begin
+		update ShoppingCart set Quantity=Quantity+@Quantity,Remark=@Remark where ProductDetailID=@ProductDetailID and [GUID]=@GUID and OrderType=@OrderType and UserID=@UserID
+	end
+end
 
 set @Err+=@@error
 

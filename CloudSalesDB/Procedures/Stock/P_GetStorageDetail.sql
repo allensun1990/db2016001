@@ -21,11 +21,6 @@ AS
 
 select * from StorageDoc where DocID=@DocID 
 
-select s.*,p.ProductName,u.UnitName,d.Imgs
-from StorageDetail s 
-join ProductDetail d on d.ProductDetailID=s.ProductDetailID
-join Products p  on s.ProductID=p.ProductID
-join ProductUnit u on s.UnitID=u.UnitID
-where s.DocID=@DocID 
+select * from StorageDetail where DocID=@DocID 
  
 

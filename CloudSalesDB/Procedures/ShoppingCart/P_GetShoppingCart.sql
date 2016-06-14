@@ -30,14 +30,9 @@ begin
 end
 else
 begin
-	select s.AutoID,s.ProductDetailID,s.ProductID,s.Quantity,s.Remark Description,p.ProductName,u.UnitID,u.UnitName,
-			s.Price,d.Imgs,s.BatchCode,s.DepotID,ds.DepotCode 
-		from ShoppingCart s 
-		join ProductDetail d on d.ProductDetailID=s.ProductDetailID
-		join Products p  on s.ProductID=p.ProductID
-		left join ProductUnit u on s.UnitID=u.UnitID
-		left join DepotSeat ds on s.DepotID=ds.DepotID and s.DepotID<>''
-		where s.[GUID]=@GUID and s.OrderType=@OrderType
+	select s.*,ds.DepotCode from ShoppingCart s 
+	left join DepotSeat ds on s.DepotID=ds.DepotID and s.DepotID<>''
+	where s.[GUID]=@GUID and s.OrderType=@OrderType and UserID=@UserID
 end
 
 

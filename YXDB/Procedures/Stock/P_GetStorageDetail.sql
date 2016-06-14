@@ -21,6 +21,6 @@ AS
 
 select * from StorageDoc where DocID=@DocID 
 
-select s.*,d.DepotCode from StorageDetail s join DepotSeat d on s.DepotID=d.DepotID where DocID=@DocID 
+select s.*,d.DepotCode from StorageDetail s left join DepotSeat d on s.DepotID=d.DepotID where DocID=@DocID 
  
 
