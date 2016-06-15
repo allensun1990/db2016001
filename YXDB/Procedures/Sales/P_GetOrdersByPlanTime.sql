@@ -20,6 +20,7 @@ CREATE PROCEDURE [dbo].[P_GetOrdersByPlanTime]
 	@UserID nvarchar(64)='',
 	@FilterType int =-1,
 	@OrderType int =-1,
+	@OrderStatus int=-1,
 	@ClientID nvarchar(64),
 	@PageSize int=20,
 	@PageIndex int=1,
@@ -36,12 +37,18 @@ AS
 	set @columns='cus.Name CustomerName,o.*'
 	set @key='OrderID'
 	set @orderColumn='PlanTime'
-	set @condition='o.status<>9 and o.OrderStatus in(1,2) and o.ClientID='''+@ClientID+''''
+	set @condition='o.status<>9  and o.ClientID='''+@ClientID+''''
 
 	if(@UserID<>'')
 		set @condition+=' and o.OwnerID='''+@UserID+''''
+
 	if(@OrderType<>-1)
 		set @condition+=' and o.OrderType='+convert(nvarchar(2), @OrderType)
+
+	if(@OrderStatus=-1)
+		set @condition+=' and o.OrderStatus in(1,2)'
+	else
+		set @condition+=' and o.OrderStatus='+convert(nvarchar(2), @OrderStatus)
 
 	if(@StartPlanTime<>'')
 		set @condition+=' and o.PlanTime>='''+@StartPlanTime+''''

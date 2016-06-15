@@ -1,4 +1,4 @@
-﻿Use IntFactory_dev
+﻿Use IntFactory
 GO
 IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'P_FinishTask')
 BEGIN
@@ -21,6 +21,8 @@ CREATE PROCEDURE [dbo].P_FinishTask
 as
 	declare @IsShow int
 	declare @OrderID nvarchar(64)
+	declare @ClientID nvarchar(64)
+	declare @OrderType int
 	declare @Sort int
 	declare @FinishStatus int
 	declare @Mark int
@@ -37,7 +39,7 @@ as
 		return
 	end
 
-	select @OrderID=OrderID,@ProcessID=ProcessID,@Sort=Sort,@OwnerID=OwnerID,@Mark=Mark,@FinishStatus=FinishStatus from OrderTask where TaskID=@TaskID
+	select @OrderID=OrderID,@OrderType=OrderType,@ProcessID=ProcessID,@Sort=Sort,@OwnerID=OwnerID,@Mark=Mark,@FinishStatus=FinishStatus,@ClientID=ClientID from OrderTask where TaskID=@TaskID
 
 	--任务已标记完成
 	if(@FinishStatus=2)
@@ -70,20 +72,61 @@ as
 		end
 	end
 
+	begin tran
+	declare @Err int=0
 	--更新任务进行状态为完成且加锁
 	update OrderTask set FinishStatus=2,CompleteTime=GETDATE(),LockStatus=1 where TaskID=@TaskID
+	set @Err+=@@ERROR
 
 	--更新任务对应的订单的任务完成数
 	update Orders set TaskOver=TaskOver+1 where OrderID=@OrderID
+	set @Err+=@@ERROR
 
+	--若订单对应的任务全部完成 自动更改订单状态
+	if(not exists( select taskid from ordertask where orderid=@OrderID and status<>8 and FinishStatus<>2 ))
+	begin
+		declare @AliOrderCode nvarchar(50)
 
-	--update OrderTask set Status=1 
-	--	where TaskID in
-	--	(
-	--		select top 1 TaskID from OrderTask where OrderID=@OrderID and ProcessID=@ProcessID and Status<>9 and  Sort>@Sort order by Sort asc
-	--	)
+		select @AliOrderCode=AliOrderCode from Orders where OrderID=@OrderID  and ClientID=@ClientID
+		if(@OrderType=1)
+		begin
+			update orders set status=2 where orderid=@OrderID
 
-	set @Result=1
+			--通知阿里待处理日志
+			if(@AliOrderCode is not null and @AliOrderCode<>'')
+			begin
+				insert into AliOrderUpdateLog(LogID,OrderID,AliOrderCode,OrderType,Status,OrderStatus,OrderPrice,FailCount,UpdateTime,CreateTime,Remark,AgentID,ClientID)
+				values(NEWID(),@OrderID,@AliOrderCode,1,0,2,0,0,getdate(),getdate(),'完成打样',@ClientID,@ClientID)
+				set @Err+=@@error
+			end
+			set @Err+=@@ERROR
+		end
+		else
+		begin
+			update orders set status=6 where orderid=@OrderID
+			set @Err+=@@ERROR
+
+			--通知阿里待处理日志
+			if(@AliOrderCode is not null and @AliOrderCode<>'')
+			begin
+				insert into AliOrderUpdateLog(LogID,OrderID,AliOrderCode,OrderType,Status,OrderStatus,OrderPrice,FailCount,UpdateTime,CreateTime,Remark,AgentID,ClientID)
+				values(NEWID(),@OrderID,@AliOrderCode,2,0,6,0,0,getdate(),getdate(),'大货单生产完成，发货完毕',@ClientID,@ClientID)
+				set @Err+=@@error
+			end
+		end
+	end
+
+	if(@Err>0)
+	begin
+		rollback tran
+	end 
+	else
+	begin
+		set @Result=1
+		commit tran
+	end
+
+	
 		 
 
 
