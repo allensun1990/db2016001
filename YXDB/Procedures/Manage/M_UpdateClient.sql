@@ -1,4 +1,4 @@
-﻿USE [IntFactory_dev]
+﻿USE [IntFactory]
 GO
 IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'M_UpdateClient')
 BEGIN

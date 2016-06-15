@@ -1,4 +1,4 @@
-﻿USE [IntFactory_dev]
+﻿USE [IntFactory]
 GO
 /****** Object:  StoredProcedure [dbo].[M_Get_Report_AgentActionDayReport]    Script Date: 05/23/2016 13:05:16 ******/
 SET ANSI_NULLS ON

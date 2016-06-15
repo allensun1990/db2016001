@@ -80,12 +80,15 @@ update o set Sort=4 from OpportunityStage o join
 (select min(Probability) Probability,ClientID from OpportunityStage
 where Status=1 and Sort=0  group by ClientID ) op on o.ClientID=op.ClientID and o.Probability=op.Probability
 
-
 --客户阶段状态
 alter table Customer add StageStatus int default 1
+alter table Customer add OpportunityTime datetime
 update Customer set StageStatus=1
-update Customer set StageStatus=2 where CustomerID in (select CustomerID from Orders)
+update Customer set StageStatus=2 where CustomerID in (select CustomerID from Opportunity)
 update Customer set StageStatus=3 where CustomerID in (select CustomerID from Orders where Status>=2)
+
+update c set OpportunityTime= o.CreateTime from Customer c join 
+(select CustomerID,min(CreateTime) CreateTime from Opportunity where Status<>9 group by CustomerID ) o on c.CustomerID=o.CustomerID
 
 
 --购物车

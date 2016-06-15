@@ -1,4 +1,4 @@
-﻿use IntFactory_dev
+﻿use IntFactory
 GO
 IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'M_UpdateClientOrderAccountStatus')
 BEGIN

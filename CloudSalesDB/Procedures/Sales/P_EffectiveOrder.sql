@@ -156,7 +156,7 @@ insert into Billing(BillingID,BillingCode,OrderID,OrderCode,TotalMoney,Status,Pa
 						values(NEWID(),@BillingCode,@OrderID,@OrderCode,@TotalMoney,1,0,0,@OwnerID,@OrderAgentID,@ClientID)
 
 --处理客户阶段
-update Customer set StageStatus=3,OrderTime=isnull(OrderTime,getdate()) where CustomerID=@CustomerID and StageStatus<3
+update Customer set StageStatus=3,OrderTime=getdate() where CustomerID=@CustomerID and StageStatus<3
 
 if(@Err>0)
 begin
