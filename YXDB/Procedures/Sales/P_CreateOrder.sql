@@ -1,4 +1,4 @@
-﻿Use IntFactory_dev
+﻿Use IntFactory
 GO
 IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'P_CreateOrder')
 BEGIN
@@ -69,7 +69,31 @@ begin
 	set @OrderCode=@OrderCode+'1'
 end
 
-select @ProcessID=ProcessID,@OwnerID=OwnerID from OrderProcess where ClientID=@ClientID and ProcessType=@OrderType and IsDefault=1
+if(@UserID<>'')
+begin
+	declare @ProcessTotal int 
+	select @ProcessTotal=COUNT(ProcessID) from OrderProcess
+	where  ClientID=@ClientID and ProcessType=@OrderType and OwnerID=@UserID
+
+	if(@ProcessTotal<>1)
+	begin
+		select @ProcessTotal=COUNT(ProcessID) from OrderProcess
+		where  ClientID=@ClientID and ProcessType=@OrderType and OwnerID=@UserID and IsDefault=1
+
+		if(@ProcessTotal<>1)
+			select @ProcessID=ProcessID,@OwnerID=OwnerID from OrderProcess where ClientID=@ClientID and ProcessType=@OrderType and IsDefault=1
+		else
+			select @ProcessID=ProcessID,@OwnerID=OwnerID from OrderProcess
+			where  ClientID=@ClientID and ProcessType=@OrderType and OwnerID=@UserID and IsDefault=1
+	end
+	else
+		select @ProcessID=ProcessID,@OwnerID=OwnerID from OrderProcess
+		where  ClientID=@ClientID and ProcessType=@OrderType and OwnerID=@UserID
+end
+else
+begin
+	select @ProcessID=ProcessID,@OwnerID=OwnerID from OrderProcess where ClientID=@ClientID and ProcessType=@OrderType and IsDefault=1
+end
 
 --款号已存在打样单
 if(@SourceType=3 and @GoodsCode<>'' and @OrderType=2 and exists(select AutoID from Orders where OrderType=1 and Status=3 and GoodsCode=@GoodsCode and ClientID=@ClientID))
