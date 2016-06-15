@@ -60,7 +60,7 @@ begin
 	return
 end
 
-if(@CustomerID='' and exists (select AutoID from Customer where MobilePhone=@Mobile and ClientID=@ClientID))
+if(@CustomerID='' and @Mobile<>'' and @Mobile is not null and exists (select AutoID from Customer where MobilePhone=@Mobile and ClientID=@ClientID))
 begin
 	select @CustomerID=CustomerID from  Customer where MobilePhone=@Mobile and ClientID=@ClientID
 end

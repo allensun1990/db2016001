@@ -1,5 +1,5 @@
 
-Use IntFactory_dev
+Use IntFactory
 GO
 IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'R_GetClientsGrowDate')
 BEGIN

@@ -1,4 +1,4 @@
-﻿Use IntFactory_dev
+﻿Use IntFactory
 GO
 IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'M_Get_Report_AgentAction_Day')
 BEGIN
