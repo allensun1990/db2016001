@@ -40,7 +40,7 @@ AS
 					join ProductDetail d on s.ProductDetailID=d.ProductDetailID
 					join WareHouse w on s.WareID=w.WareID
 					join DepotSeat dm on s.DepotID=dm.DepotID',
-	@columns='s.ProductDetailID,s.ProductID,p.ProductCode,p.ProductName,d.SaleAttrValue,s.BatchCode,s.StockIn,s.StockOut,w.Name WareName,dm.DepotCode ',@key='s.AutoID'
+	@columns='s.ProductDetailID,s.ProductID,p.ProductCode,p.ProductName,d.SaleAttrValue,s.BatchCode,s.StockIn,s.StockOut,w.Name WareName,dm.DepotCode,d.Remark ',@key='s.AutoID'
 	set @condition=' s.ClientID='''+@ClientID+''' and P.Status<>9 '
 
 	if(@WareID<>'')

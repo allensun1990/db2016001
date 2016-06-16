@@ -18,21 +18,23 @@ CREATE PROCEDURE [dbo].[P_GetProductByIDForDetails]
 	@ProductID nvarchar(64)
 AS
 
-declare @BigUnit nvarchar(64),@Unit nvarchar(64),@CategoryID nvarchar(64)
+declare @CategoryID nvarchar(64),@HasDetails int
 
-select @BigUnit=BigUnitID,@Unit=UnitID,@CategoryID=CategoryID from Products where ProductID=@ProductID
+select @HasDetails=HasDetails,@CategoryID=CategoryID from Products where ProductID=@ProductID
 
 select * from Products where ProductID=@ProductID 
 
-select * from ProductDetail where ProductID=@ProductID
+if (@HasDetails=1)
+begin
+	select * from ProductDetail where ProductID=@ProductID and Status<>9 and IsDefault=0 order by Remark
+end
+else
+begin
+	select * from ProductDetail where ProductID=@ProductID and Status<>9 and IsDefault=1 order by Remark
+end
 
-select UnitID,UnitName from ProductUnit where UnitID=@BigUnit or UnitID=@Unit
-
-select p.AttrID,p.AttrName,c.Type into #AttrTable from ProductAttr p join CategoryAttr c on p.AttrID=c.AttrID 
+select p.AttrID,p.AttrName,c.Type from ProductAttr p join CategoryAttr c on p.AttrID=c.AttrID 
 where c.Status=1 and c.CategoryID= @CategoryID and p.Status=1 order by p.AutoID
---属性
-select * from #AttrTable
---属性值
-select ValueID,ValueName,AttrID from AttrValue  where AttrID in (select AttrID from #AttrTable) and Status<>9
+
  
 
