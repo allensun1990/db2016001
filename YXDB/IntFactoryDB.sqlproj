@@ -554,5 +554,7 @@
     <None Include="Procedures\Sales\P_GetOrderForFentReport.sql" />
     <None Include="Procedures\Sales\P_GetOrdersByPlanTime.sql" />
     <None Include="Procedures\Task\P_GetTasksByEndTime.sql" />
+    <None Include="Procedures\Task\P_AddTaskReplyAttachment.sql" />
+    <None Include="Procedures\Task\P_GetTaskReplys.sql" />
   </ItemGroup>
 </Project>
