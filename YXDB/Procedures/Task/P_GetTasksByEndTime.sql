@@ -63,7 +63,7 @@ AS
 		set @condition+=' and t.EndTime>='''+@StartEndTime+''''
 
 	if(@EndEndTime<>'')
-		set @condition+=' and t.EndTime<='''+CONVERT(varchar(100), dateadd(day, 1, @EndEndTime), 23)+''''
+		set @condition+=' and t.EndTime<'''+CONVERT(varchar(100), dateadd(day, 1, @EndEndTime), 23)+''''
 
 	if(@FilterType<>-1)
 	begin
