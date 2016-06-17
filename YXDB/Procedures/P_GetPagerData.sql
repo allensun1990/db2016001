@@ -55,7 +55,7 @@ begin
 	begin
 		set	@orderColumn=@orderColumn+','
 	end
-	set @CommandSQL='select top '+str(@pageSize)+' '+@columns+' from '+@tableName+' where '+@condition+' order by '+@orderColumn+@key+' '+@orderby
+	set @CommandSQL='select top '+str(@pageSize)+'  0 as rowid, '+@columns+' from '+@tableName+' where '+@condition+' order by '+@orderColumn+@key+' '+@orderby
 end
 else
 begin
