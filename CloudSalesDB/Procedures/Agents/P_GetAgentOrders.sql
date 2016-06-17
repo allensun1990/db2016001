@@ -16,6 +16,7 @@ GO
 ************************************************************/
 CREATE PROCEDURE [dbo].[P_GetAgentOrders]
 	@Status int=-1,
+	@OutStatus int=-1,
 	@SendStatus int=-1,
 	@ReturnStatus int=-1,
 	@SearchAgentID nvarchar(64)='',
@@ -54,18 +55,20 @@ AS
 		set @condition +=' and o.Status = '+convert(nvarchar(2), @Status)
 	end
 
-	if(@SendStatus<>-1 and @SendStatus<10)
+	if(@OutStatus<>-1)
+	begin
+		set @condition +=' and o.OutStatus = '+convert(nvarchar(2), @OutStatus)
+	end
+
+	if(@SendStatus=1)
+	begin
+		set @condition +=' and o.SendStatus <= '+convert(nvarchar(2), @SendStatus)
+	end
+	else if(@SendStatus=2)
 	begin
 		set @condition +=' and o.SendStatus = '+convert(nvarchar(2), @SendStatus)
 	end
-	else if(@SendStatus=11)
-	begin
-		set @condition +=' and o.SendStatus > 0'
-	end
-	else if(@SendStatus=12)
-	begin
-		set @condition +=' and o.SendStatus > 1'
-	end
+	
 
 	if(@ReturnStatus<>-1 and @ReturnStatus<10)
 	begin

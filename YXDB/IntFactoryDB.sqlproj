@@ -556,5 +556,6 @@
     <None Include="Procedures\Task\P_GetTasksByEndTime.sql" />
     <None Include="Procedures\Task\P_AddTaskReplyAttachment.sql" />
     <None Include="Procedures\Task\P_GetTaskReplys.sql" />
+    <None Include="Procedures\System\P_DeleteOrderProcess.sql" />
   </ItemGroup>
 </Project>

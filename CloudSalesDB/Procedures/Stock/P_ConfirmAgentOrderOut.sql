@@ -54,7 +54,7 @@ end
 
 set @DocID=NEWID() 
 
-select identity(int,1,1) as AutoID,ProductID,ProductDetailID, Quantity,Price ,Remark,UnitID into #TempProducts 
+select identity(int,1,1) as AutoID,ProductID,ProductDetailID, Quantity,Price ,Remark,UnitID,ProductName,ProductCode,DetailsCode into #TempProducts 
 from AgentsOrderDetail where OrderID=@OrderID
 
 create table #BatchStock(AutoID int identity(1,1),DepotID nvarchar(64),BatchCode nvarchar(50),Quantity int)
@@ -83,14 +83,16 @@ begin
 
 		if(@BatchQuantity>=@Quantity)
 		begin
-			insert into StorageDetail(DocID,ProductDetailID,ProductID,UnitID,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID)
-			values( @DocID,@ProductDetailID,@ProductID,@UnitID,0,@Quantity,@Price,@Quantity*@Price,@WareID,@DepotID,@BatchCode,1,@Remark,@ClientID )
+			insert into StorageDetail(DocID,ProductDetailID,ProductID,UnitID,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode)
+			select @DocID,@ProductDetailID,@ProductID,@UnitID,0,@Quantity,@Price,@Quantity*@Price,@WareID,@DepotID,@BatchCode,1,@Remark,@ClientID,ProductName,ProductCode,DetailsCode 
+			from #TempProducts where AutoID=@AutoID
 
 			update ProductStock set StockOut=StockOut+@Quantity where DepotID=@DepotID and BatchCode=@BatchCode and ProductID=@ProductID and ProductDetailID=@ProductDetailID
 
 			--处理产品流水
-			insert into ProductStream(ProductDetailID,ProductID,DocID,DocCode,BatchCode,DocDate,DocType,Mark,Quantity,WareID,DepotID,CreateUserID,ClientID)
-					values(@ProductDetailID,@ProductID,@DocID,@DocCode,@BatchCode,CONVERT(varchar(100), GETDATE(), 112),2,1,@Quantity,@WareID,@DepotID,@UserID,@ClientID)
+			insert into ProductStream(ProductDetailID,ProductID,DocID,DocCode,BatchCode,DocDate,DocType,Mark,Quantity,WareID,DepotID,CreateUserID,ClientID,Remark,ProductName,ProductCode,DetailsCode)
+					select @ProductDetailID,@ProductID,@DocID,@DocCode,@BatchCode,CONVERT(varchar(100), GETDATE(), 112),2,1,@Quantity,@WareID,@DepotID,@UserID,@ClientID,Remark,ProductName,ProductCode,DetailsCode
+					from #TempProducts where AutoID=@AutoID
 			
 			set @Quantity=0
 			break;
@@ -98,15 +100,17 @@ begin
 		end
 		else
 		begin
-			insert into StorageDetail(DocID,ProductDetailID,ProductID,UnitID,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID)
-			values( @DocID,@ProductDetailID,@ProductID,@UnitID,0,@BatchQuantity,@Price,@BatchQuantity*@Price,@WareID,@DepotID,@BatchCode,1,@Remark,@ClientID )
+			insert into StorageDetail(DocID,ProductDetailID,ProductID,UnitID,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode)
+			select  @DocID,@ProductDetailID,@ProductID,@UnitID,0,@BatchQuantity,@Price,@BatchQuantity*@Price,@WareID,@DepotID,@BatchCode,1,@Remark,@ClientID,ProductName,ProductCode,DetailsCode
+			from #TempProducts where AutoID=@AutoID
 
 			update ProductStock set StockOut=StockOut+@BatchQuantity where DepotID=@DepotID and BatchCode=@BatchCode and ProductID=@ProductID and ProductDetailID=@ProductDetailID
 
 			--处理产品流水
-			insert into ProductStream(ProductDetailID,ProductID,DocID,DocCode,BatchCode,DocDate,DocType,Mark,Quantity,WareID,DepotID,CreateUserID,ClientID)
-					values(@ProductDetailID,@ProductID,@DocID,@DocCode,@BatchCode,CONVERT(varchar(100), GETDATE(), 112),2,1,@BatchQuantity,@WareID,@DepotID,@UserID,@ClientID)
-			
+			insert into ProductStream(ProductDetailID,ProductID,DocID,DocCode,BatchCode,DocDate,DocType,Mark,Quantity,WareID,DepotID,CreateUserID,ClientID,Remark,ProductName,ProductCode,DetailsCode)
+					select @ProductDetailID,@ProductID,@DocID,@DocCode,@BatchCode,CONVERT(varchar(100), GETDATE(), 112),2,1,@BatchQuantity,@WareID,@DepotID,@UserID,@ClientID,Remark,ProductName,ProductCode,DetailsCode
+					from #TempProducts where AutoID=@AutoID
+
 			set @Quantity=@Quantity-@BatchQuantity
 			
 		end
@@ -138,9 +142,9 @@ end
 insert into StorageDoc(DocID,DocCode,DocType,Status,TotalMoney,CityCode,Address,PostalCode,Remark,OriginalID,OriginalCode ,WareID,ExpressID,ExpressCode,CreateUserID,CreateTime,OperateIP,ClientID)
 select @DocID,@DocCode,2,2,TotalMoney,CityCode,Address,PostalCode,Remark,@OrderID,@OrderCode,@WareID,@ExpressID,@ExpressCode,@UserID,GETDATE(),'',@ClientID from AgentsOrders where OrderID=@OrderID
 
-Update AgentsOrders set SendStatus=@SendStatus,ExpressID=@ExpressID,ExpressCode=@ExpressCode,DocID=@DocID,DocCode=@DocCode where OrderID=@OrderID
+Update AgentsOrders set OutStatus=1,SendStatus=@SendStatus,ExpressID=@ExpressID,ExpressCode=@ExpressCode,DocID=@DocID,DocCode=@DocCode where OrderID=@OrderID
 
-update Orders set SendStatus=@SendStatus,ExpressID=@ExpressID,ExpressCode=@ExpressCode where OrderID=@OldOrderID
+update Orders set OutStatus=1,SendStatus=@SendStatus,ExpressID=@ExpressID,ExpressCode=@ExpressCode where OrderID=@OldOrderID
 
 drop table #BatchStock
 drop table #TempProducts
