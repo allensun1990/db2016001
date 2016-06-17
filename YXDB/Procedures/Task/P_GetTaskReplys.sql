@@ -31,22 +31,23 @@ as
 	@condition nvarchar(4000),
 	@orderColumn nvarchar(100),
 	@key nvarchar(100)
-	declare @tmp table(ReplyID nvarchar(64))
+
+	declare @tmp table(rowid nvarchar(50) default('0') null ,ReplyID nvarchar(64))
 	declare @total int,@page int
 
 	set @tableName='OrderReply'
 	set @columns='ReplyID'
 	set @key='ReplyID'
 	set @orderColumn='createtime'
-	set @condition=' 1=1 '
+	set @condition=' guid='''+@OrderID+''' and  StageID='''+@StageID+''''
 
-	insert into @tmp exec P_GetPagerData @tableName,@columns,@condition,@key,@OrderColumn,@pageSize,@pageIndex,@total out,@page out,0 
+	insert into @tmp exec P_GetPagerData @tableName,@columns,@condition,@key,@OrderColumn,@PageSize,@PageIndex,@total out,@page out,0 
 
 	select @totalCount=@total,@pageCount =@page
 
 	select * from OrderReply where ReplyID in( select ReplyID from  @tmp )
 
-	select a.* from TaskReplyAttachmentRelation t left join Attachment a on t.AttachmentID=a.AttachmentID
+	select a.*,t.ReplyID as Guid from TaskReplyAttachmentRelation t left join Attachment a on t.AttachmentID=a.AttachmentID
 	where t.status<>9 and t.ReplyID in ( select ReplyID from  @tmp )
 		 
 
