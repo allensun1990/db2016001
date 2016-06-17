@@ -47,7 +47,7 @@ set @DocID=NEWID()
 declare @AutoID int=1,@ProductID nvarchar(64),@ProductDetailID nvarchar(64),@Quantity int,@Price decimal(18,4),@UnitID nvarchar(64),@Remark nvarchar(500)
 
 
-select identity(int,1,1) as AutoID,ProductID,ProductDetailID,ApplyQuantity,Price,UnitID,Remark into #TempProducts 
+select identity(int,1,1) as AutoID,ProductID,ProductDetailID,ApplyQuantity,Price,UnitID,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS into #TempProducts 
 from AgentsOrderDetail where OrderID=@OrderID and ApplyQuantity>0
 
 --代理商信息
@@ -61,18 +61,20 @@ begin
 	
 		select @ProductID=ProductID,@ProductDetailID=ProductDetailID,@Quantity=ApplyQuantity,@Price=Price,@UnitID=UnitID,@Remark=Remark from #TempProducts where AutoID=@AutoID
 
-		insert into AgentsStream(ProductDetailID,ProductID,OrderID,OrderCode,OrderDate,Mark,Quantity,SurplusQuantity,AgentID,ClientID)
-							values(@ProductDetailID,@ProductID,@OrderID,@OrderCode,CONVERT(varchar(100), GETDATE(), 112),1,@Quantity,0,@OrderAgentID,@ClientID)
+		insert into AgentsStream(ProductDetailID,ProductID,OrderID,OrderCode,OrderDate,Mark,Quantity,SurplusQuantity,AgentID,ClientID,ProductName,ProductCode,DetailsCode)
+						select @ProductDetailID,@ProductID,@OrderID,@OrderCode,CONVERT(varchar(100), GETDATE(), 112),1,@Quantity,0,@OrderAgentID,@ClientID,ProductName,ProductCode,DetailsCode
+						from #TempProducts where AutoID=@AutoID
 
-		insert into AgentsStream(ProductDetailID,ProductID,OrderID,OrderCode,OrderDate,Mark,Quantity,SurplusQuantity,AgentID,ClientID)
-							values(@ProductDetailID,@ProductID,@OldOrderID,@OrderCode,CONVERT(varchar(100), GETDATE(), 112),0,@Quantity,0,@OrderAgentID,@ClientID)
+		insert into AgentsStream(ProductDetailID,ProductID,OrderID,OrderCode,OrderDate,Mark,Quantity,SurplusQuantity,AgentID,ClientID,ProductName,ProductCode,DetailsCode)
+						select @ProductDetailID,@ProductID,@OldOrderID,@OrderCode,CONVERT(varchar(100), GETDATE(), 112),0,@Quantity,0,@OrderAgentID,@ClientID,ProductName,ProductCode,DetailsCode
+							from #TempProducts where AutoID=@AutoID
 		set @Err+=@@Error
 
 		Update AgentsStock set TotalInWay=TotalInWay-@Quantity,TotalOut=TotalOut-@Quantity where ProductDetailID=@ProductDetailID and AgentID=@OrderAgentID
 
 		set @Err+=@@Error
-		--生成退货单明细
 
+		--生成退货单明细
 		if exists(select AutoID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID)
 		begin
 			select top 1 @DepotID=DepotID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID order by BatchCode desc
@@ -82,8 +84,9 @@ begin
 			select top 1 @DepotID = DepotID from DepotSeat where WareID=@WareID and Status=1
 		end
 
-		insert into StorageDetail(DocID,ProductDetailID,ProductID,UnitID,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID)
-			values( @DocID,@ProductDetailID,@ProductID,@UnitID,0,@Quantity,@Price,@Quantity*@Price,@WareID,@DepotID,'',0,@Remark,@ClientID )
+		insert into StorageDetail(DocID,ProductDetailID,ProductID,UnitID,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage)
+			select  @DocID,@ProductDetailID,@ProductID,@UnitID,0,@Quantity,@Price,@Quantity*@Price,@WareID,@DepotID,'',0,@Remark,@ClientID,ProductName,ProductCode,DetailsCode,ProductImage 
+			from #TempProducts where AutoID=@AutoID
 
 		set @TotalMoney+=@Quantity*@Price
 

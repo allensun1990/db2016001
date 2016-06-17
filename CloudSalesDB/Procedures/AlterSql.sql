@@ -124,13 +124,21 @@ alter table AgentsOrderDetail add ImgS nvarchar(500) default ''
 alter table AgentsOrderDetail add ProviderID nvarchar(64) default ''
 alter table AgentsOrderDetail add ProviderName nvarchar(100) default ''
 
+update s set ProductName=p.ProductName,ProductCode=p.ProductCode,DetailsCode=d.DetailsCode,ProductImage=p.ProductImage,Remark=d.Remark,UnitID=p.UnitID 
+from AgentsOrderDetail s join Products p on s.ProductID=p.ProductID 
+join ProductDetail d on s.ProductDetailID=d.ProductDetailID
+
+
 --单据表明细
+alter table StorageDetail add Complete int default 0
 alter table StorageDetail add ProductName nvarchar(100) default ''
 alter table StorageDetail add ProductCode nvarchar(100) default ''
 alter table StorageDetail add DetailsCode nvarchar(100) default ''
 alter table StorageDetail add ProductImage nvarchar(200) default ''
 alter table StorageDetail add ProviderID nvarchar(64) default ''
 alter table StorageDetail add ProviderName nvarchar(100) default ''
+
+update StorageDetail set Complete=Quantity*Status
 
 update s set ProductName=p.ProductName,ProductCode=p.ProductCode,DetailsCode=d.DetailsCode,ProductImage=p.ProductImage,Remark=d.Remark,UnitID=p.UnitID 
 from StorageDetail s join Products p on s.ProductID=p.ProductID 
@@ -161,4 +169,13 @@ alter table AgentsStream add ProviderName nvarchar(100) default ''
 update s set ProductName=p.ProductName,ProductCode=p.ProductCode,DetailsCode=d.DetailsCode,ProductImage=p.ProductImage,Remark=d.Remark 
 from AgentsStream s join Products p on s.ProductID=p.ProductID 
 join ProductDetail d on s.ProductDetailID=d.ProductDetailID
+
+-- 处理订单
+alter table Orders add OutStatus int default 0
+update Orders set OutStatus=0 where SendStatus=0
+update Orders set OutStatus=1 where SendStatus>0
+
+alter table AgentsOrders add OutStatus int default 0
+update AgentsOrders set OutStatus=0 
+update AgentsOrders set OutStatus=1 where SendStatus>0
 
