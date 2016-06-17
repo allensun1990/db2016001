@@ -179,3 +179,14 @@ alter table AgentsOrders add OutStatus int default 0
 update AgentsOrders set OutStatus=0 
 update AgentsOrders set OutStatus=1 where SendStatus>0
 
+--处理部分入库单据
+insert into StorageDocPart(DocID,DocCode,DocType,Status,TotalMoney,CityCode,Address,Remark,WareID,CreateUserID,CreateTime,OperateIP,ClientID,OriginalID,OriginalCode)
+		select NEWID(),DocCode,1,2,TotalMoney,CityCode,Address,'',WareID,CreateUserID,GETDATE(),'',ClientID,DocID,DocCode from StorageDoc where DocType=1 and Status between 1 and 2
+
+insert into StoragePartDetail(DocID,ProductDetailID,ProductID,UnitID,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage )
+			select s.DocID,ProductDetailID,ProductID,UnitID,0,Quantity,Price,Price*Quantity,s.WareID,DepotID,BatchCode,0,d.Remark,s.ClientID,ProductName,ProductCode,DetailsCode,ProductImage 
+			from StorageDocPart s join StorageDetail d on s.OriginalID=d.DocID where d.Status=1
+
+update s set TotalMoney=n.TotalMoney from StorageDocPart s join
+(select DocID,SUM(TotalMoney) TotalMoney from StoragePartDetail group by DocID) n on s.DocID=n.DocID
+

@@ -1,20 +1,20 @@
 ﻿Use [CloudSales1.0_dev]
 GO  
-IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'P_UpdateUserRole')
+IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'M_UpdateUserRole')
 BEGIN
-	DROP  Procedure  P_UpdateUserRole
+	DROP  Procedure  M_UpdateUserRole
 END
 
 GO
 /***********************************************************
-过程名称： P_UpdateUserRole
+过程名称： M_UpdateUserRole
 功能描述： 编辑员工角色
 参数说明：	 
 编写日期： 2016/05/21
 程序作者： Michaux
-调试记录： exec P_UpdateUserRole 
+调试记录： exec M_UpdateUserRole 
 ************************************************************/
-CREATE PROCEDURE [dbo].[P_UpdateUserRole]
+CREATE PROCEDURE [dbo].[M_UpdateUserRole]
 @UserID nvarchar(64),
 @RoleID nvarchar(64),
 @OpreateID nvarchar(64)
