@@ -38,16 +38,19 @@ begin
 end
 
 --代理商订单信息
-declare @AutoID int=1,@ProductID nvarchar(64),@ProductDetailID nvarchar(64),@Quantity int,@BatchCode nvarchar(50),@DepotID nvarchar(64),@Remark nvarchar(4000)
+declare @AutoID int=1,@ProductID nvarchar(64),@ProductDetailID nvarchar(64),@Quantity int,@BatchCode nvarchar(50),@DepotID nvarchar(64),@Remark nvarchar(4000),
+		@ProductName nvarchar(200),@ProductCode nvarchar(200),@DetailsCode nvarchar(64)
 
 
-select identity(int,1,1) as AutoID,ProductID,ProductDetailID,Quantity,BatchCode,DepotID,Remark into #TempProducts 
+select identity(int,1,1) as AutoID,ProductID,ProductDetailID,Quantity,BatchCode,DepotID,Remark,ProductName,ProductCode,DetailsCode into #TempProducts 
 from StorageDetail where DocID=@DocID
 
 while exists(select AutoID from #TempProducts where AutoID=@AutoID)
 begin
 	
-	select @ProductID=ProductID,@ProductDetailID=ProductDetailID,@Quantity=Quantity,@BatchCode=BatchCode,@DepotID=DepotID,@Remark=Remark from #TempProducts where AutoID=@AutoID
+	select @ProductID=ProductID,@ProductDetailID=ProductDetailID,@Quantity=Quantity,@BatchCode=BatchCode,@DepotID=DepotID,@Remark=Remark,
+	@ProductName=ProductName,@ProductCode=ProductCode,@DetailsCode=DetailsCode 
+	from #TempProducts where AutoID=@AutoID
 
 	if exists(select AutoID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID and DepotID=@DepotID and BatchCode=@BatchCode and StockIn-StockOut>@Quantity)
 	begin
@@ -63,8 +66,8 @@ begin
 	set @Err+=@@Error
 
 	--处理产品流水
-	insert into ProductStream(ProductDetailID,ProductID,DocID,DocCode,BatchCode,DocDate,DocType,Mark,Quantity,WareID,DepotID,CreateUserID,ClientID)
-						values(@ProductDetailID,@ProductID,@DocID,@DocCode,@BatchCode,CONVERT(varchar(100), GETDATE(), 112),@DocType,1,@Quantity,@WareID,@DepotID,@UserID,@ClientID)
+	insert into ProductStream(ProductDetailID,ProductID,DocID,DocCode,BatchCode,DocDate,DocType,Mark,Quantity,WareID,DepotID,CreateUserID,ClientID,ProductName,ProductCode,DetailsCode,Remark)
+						values(@ProductDetailID,@ProductID,@DocID,@DocCode,@BatchCode,CONVERT(varchar(100), GETDATE(), 112),@DocType,1,@Quantity,@WareID,@DepotID,@UserID,@ClientID,@ProductName,@ProductCode,@DetailsCode,@Remark)
 
 	--修改产品入库数
 	update Products set LogicOut=LogicOut+@Quantity,SaleCount=SaleCount+@Quantity where ProductID=@ProductID

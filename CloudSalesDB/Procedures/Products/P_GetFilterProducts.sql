@@ -49,7 +49,7 @@ AS
 	set @tableName='Products P join Brand B on P.BrandID=B.BrandID 
 					join ProductDetail pd on p.ProductID=pd.ProductID and pd.Status<>9 and ((p.HasDetails=1 and pd.IsDefault=0) or (p.HasDetails=0 and pd.IsDefault=1)) '
 	set @columns='P.ProductID,P.ProductName,p.CommonPrice,pd.price,B.Name BrandName,
-				  p.ProductImage,p.SaleCount,pd.ProductDetailID,pd.ImgS '
+				  p.ProductImage,pd.SaleCount,pd.ProductDetailID,pd.ImgS ,pd.StockIn,pd.LogicOut '
 	set @key='pd.AutoID'
 	set @condition=' P.ClientID='''+@ClientID+''' and P.Status<>9 '
 

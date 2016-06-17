@@ -23,7 +23,7 @@ CREATE PROCEDURE [dbo].[P_GetProductsByKeywords_Stock]
 AS
 	declare @sqlText nvarchar(4000)
 
-	set @sqlText='select s.ProductDetailID,s.ProductID,p.ProductCode,p.ProductName,d.SaleAttrValue,s.BatchCode,s.StockIn,s.StockOut,w.Name WareName,dm.DepotCode,s.DepotID from '
+	set @sqlText='select s.ProductDetailID,s.ProductID,p.ProductCode,p.ProductName,d.SaleAttrValue,s.BatchCode,s.StockIn,s.StockOut,w.Name WareName,dm.DepotCode,s.DepotID,d.Remark from '
 
 	set @sqlText+=' ProductStock s 
 					join Products p on s.ProductID=p.ProductID 

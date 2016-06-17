@@ -41,7 +41,7 @@ end
 declare @AutoID int=1,@ProductID nvarchar(64),@ProductDetailID nvarchar(64),@Quantity int,@BatchCode nvarchar(50),@DepotID nvarchar(64)
 
 
-select identity(int,1,1) as AutoID,ProductID,ProductDetailID,Quantity,BatchCode,DepotID into #TempProducts 
+select identity(int,1,1) as AutoID,ProductID,ProductDetailID,Quantity,BatchCode,DepotID,Remark,ProductName,ProductCode,DetailsCode into #TempProducts 
 from StorageDetail where DocID=@DocID
 
 while exists(select AutoID from #TempProducts where AutoID=@AutoID)
@@ -61,8 +61,9 @@ begin
 	set @Err+=@@Error
 
 	--处理产品流水
-	insert into ProductStream(ProductDetailID,ProductID,DocID,DocCode,BatchCode,DocDate,DocType,Mark,Quantity,WareID,DepotID,CreateUserID,ClientID)
-						values(@ProductDetailID,@ProductID,@DocID,@DocCode,@BatchCode,CONVERT(varchar(100), GETDATE(), 112),@DocType,0,@Quantity,@WareID,@DepotID,@UserID,@ClientID)
+	insert into ProductStream(ProductDetailID,ProductID,DocID,DocCode,BatchCode,DocDate,DocType,Mark,Quantity,WareID,DepotID,CreateUserID,ClientID,Remark,ProductName,ProductCode,DetailsCode)
+					 select @ProductDetailID,@ProductID,@DocID,@DocCode,@BatchCode,CONVERT(varchar(100), GETDATE(), 112),@DocType,0,@Quantity,@WareID,@DepotID,@UserID,@ClientID,Remark,ProductName,ProductCode,DetailsCode
+					 from #TempProducts where AutoID=@AutoID
 
 	--修改产品入库数
 	update Products set StockIn=StockIn+@Quantity where ProductID=@ProductID
