@@ -45,7 +45,7 @@ as
 
 	select @totalCount=@total,@pageCount =@page
 
-	select * from OrderReply where ReplyID in( select ReplyID from  @tmp )
+	select * from OrderReply where ReplyID in( select ReplyID from  @tmp ) order by createtime desc
 
 	select a.*,t.ReplyID as Guid from TaskReplyAttachmentRelation t left join Attachment a on t.AttachmentID=a.AttachmentID
 	where t.status<>9 and t.ReplyID in ( select ReplyID from  @tmp )
