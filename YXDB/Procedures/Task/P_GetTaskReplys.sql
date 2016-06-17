@@ -37,11 +37,12 @@ as
 
 	set @tableName='OrderReply'
 	set @columns='ReplyID'
-	set @key='ReplyID'
-	set @orderColumn='createtime'
+	set @key='createtime'
+	set @orderColumn='ReplyID'
 	set @condition=' guid='''+@OrderID+''' and  StageID='''+@StageID+''''
 
-	insert into @tmp exec P_GetPagerData @tableName,@columns,@condition,@key,@OrderColumn,@PageSize,@PageIndex,@total out,@page out,0 
+
+	insert into @tmp exec P_GetPagerData @tableName,@columns,@condition,@key,@orderColumn,@PageSize,@PageIndex,@total out,@page out,0 
 
 	select @totalCount=@total,@pageCount =@page
 
