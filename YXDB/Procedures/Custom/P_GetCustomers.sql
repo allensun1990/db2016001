@@ -32,6 +32,7 @@ CREATE PROCEDURE [dbo].[P_GetCustomers]
 	@EndTime nvarchar(50)='',
 	@pageSize int,
 	@pageIndex int,
+	@OrderBy nvarchar(4000)='cus.CreateTime desc',
 	@totalCount int output ,
 	@pageCount int output,
 	@UserID nvarchar(64)='',
@@ -42,13 +43,11 @@ AS
 	@columns nvarchar(4000),
 	@condition nvarchar(4000),
 	@key nvarchar(100),
-	@orderColumn nvarchar(4000),
 	@isAsc int
 
 	select @tableName='Customer cus',
 	@columns='cus.* ',
 	@key='cus.AutoID',
-	@orderColumn='cus.CreateTime desc',
 	@isAsc=0
 
 	set @condition='cus.ClientID='''+@ClientID+''' and cus.Status<>9 '
@@ -136,7 +135,7 @@ AS
 	end
 
 	declare @total int,@page int
-	exec P_GetPagerData @tableName,@columns,@condition,@key,@orderColumn,@pageSize,@pageIndex,@total out,@page out,@isAsc 
+	exec P_GetPagerData @tableName,@columns,@condition,@key,@OrderBy,@pageSize,@pageIndex,@total out,@page out,@isAsc 
 	select @totalCount=@total,@pageCount =@page
  
 
