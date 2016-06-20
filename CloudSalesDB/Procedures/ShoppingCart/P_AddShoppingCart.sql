@@ -32,8 +32,8 @@ if(@OrderType=10 and exists(select AutoID from Opportunity where OpportunityID=@
 begin
 	if not exists(select AutoID from OpportunityProduct where ProductDetailID=@ProductDetailID  and OpportunityID=@GUID)
 	begin
-		insert into OpportunityProduct(OpportunityID,ProductDetailID,ProductID,UnitID,Quantity,Price,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,CreateUserID)
-		select @GUID,@ProductDetailID,@ProductID,UnitID,@Quantity,d.Price,@Quantity*d.Price,d.Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,@UserID
+		insert into OpportunityProduct(OpportunityID,ProductDetailID,ProductID,UnitID,Quantity,Price,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,CreateUserID,ClientID)
+		select @GUID,@ProductDetailID,@ProductID,UnitID,@Quantity,d.Price,@Quantity*d.Price,d.Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,@UserID,p.ClientID
 	    from ProductDetail d join Products p  on d.ProductID=p.ProductID where d.ProductDetailID=@ProductDetailID
 	end
 	else 
@@ -49,8 +49,8 @@ else if(@OrderType=11 and exists(select AutoID from Orders where OrderID=@GUID a
 begin
 	if not exists(select AutoID from OrderDetail where ProductDetailID=@ProductDetailID  and OrderID=@GUID)
 	begin
-		insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,CreateUserID)
-		select @GUID,@ProductDetailID,@ProductID,UnitID,@Quantity,d.Price,@Quantity*d.Price,d.Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,@UserID
+		insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,CreateUserID,ClientID)
+		select @GUID,@ProductDetailID,@ProductID,UnitID,@Quantity,d.Price,@Quantity*d.Price,d.Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,@UserID,p.ClientID
 	    from ProductDetail d join Products p  on d.ProductID=p.ProductID where d.ProductDetailID=@ProductDetailID
 	end
 	else 

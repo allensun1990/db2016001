@@ -106,7 +106,7 @@ begin
 
 		--代理商采购明细
 		insert into AgentsOrderDetail(OrderID,ProductDetailID,ProductID,UnitID,IsBigUnit,Quantity,Price,TotalMoney,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,Imgs)
-							select @AgentOrderID,ProductDetailID,ProductID,UnitID,0,Quantity,Price,TotalMoney,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,Imgs from #TempProducts where AutoID=@AutoID
+							select @AgentOrderID,ProductDetailID,ProductID,UnitID,0,Quantity,Price,TotalMoney,Remark,@ClientID,ProductName,ProductCode,DetailsCode,ProductImage,Imgs from #TempProducts where AutoID=@AutoID
 		
 		--产品库存处理
 		update Products set LogicOut=LogicOut+@Quantity where ProductID=@ProductID
