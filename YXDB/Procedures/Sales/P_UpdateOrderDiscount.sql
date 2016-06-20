@@ -29,7 +29,7 @@ declare @Err int=0,@Status int
 
 select @Status=Status from Orders where OrderID=@OrderID  and ClientID=@ClientID
 
-if(@Status>4)
+if(@Status>6)
 begin
 	rollback tran
 	return
