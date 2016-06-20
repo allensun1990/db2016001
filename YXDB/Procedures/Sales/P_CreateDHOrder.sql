@@ -24,9 +24,9 @@ CREATE PROCEDURE [dbo].[P_CreateDHOrder]
 	@ClientID nvarchar(64)
 AS
 	
-declare @Status int,@OwnerID nvarchar(64),@ProcessID nvarchar(64)
+declare @Status int,@OwnerID nvarchar(64),@ProcessID nvarchar(64),@CustomerID nvarchar(64)
 
-select @Status=Status,@OwnerID=OwnerID,@ProcessID=ProcessID from Orders where OrderID=@OriginalID and ClientID=@ClientID
+select @Status=Status,@OwnerID=OwnerID,@ProcessID=ProcessID,@CustomerID=CustomerID from Orders where OrderID=@OriginalID and ClientID=@ClientID
 
 if(@Status<>3)
 begin
@@ -47,7 +47,7 @@ select @OrderID,@OrderCode,CategoryID,TypeID,2,1,4,@ProcessID,PlanPrice,@Price,0
 insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProdiverID )
 select @OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProdiverID  from OrderDetail where OrderID=@OriginalID
 
-
-
-
 Insert into OrderStatusLog(OrderID,Status,CreateUserID) values(@OrderID,4,@OperateID)
+
+--处理客户需求单数
+Update Customer set DemandCount=DemandCount+1 where CustomerID=@CustomerID

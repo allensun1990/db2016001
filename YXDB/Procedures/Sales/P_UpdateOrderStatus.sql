@@ -30,11 +30,11 @@ begin tran
 
 declare @Err int=0,@OldStatus int,@OwnerID nvarchar(64),@IsShow int=1,@OrderCode nvarchar(20), @ProcessID nvarchar(64), @OrderImg nvarchar(400),@CategoryID nvarchar(64),
 @NewProcessID nvarchar(64),@OrderType int,@TaskCount int=0,@NewOrderID nvarchar(64),@Title nvarchar(200),@OrderOwnerID nvarchar(64),@OriginalID nvarchar(64),@AliOrderCode nvarchar(50),
-@AliGoodsCode nvarchar(50),@IntGoodsCode nvarchar(100)
+@AliGoodsCode nvarchar(50),@IntGoodsCode nvarchar(100),@CustomerID nvarchar(64)
 
 
 select @OldStatus=Status,@OrderCode=OrderCode,@OrderImg=OrderImage,@ProcessID=ProcessID,@OrderType=OrderType,@Title=GoodsName,@OrderOwnerID=OwnerID,@CategoryID=CategoryID,
-@OriginalID=OriginalID ,@AliOrderCode=AliOrderCode,@AliGoodsCode=GoodsCode,@IntGoodsCode=IntGoodsCode
+@OriginalID=OriginalID ,@AliOrderCode=AliOrderCode,@AliGoodsCode=GoodsCode,@IntGoodsCode=IntGoodsCode,@CustomerID=CustomerID
 from Orders where OrderID=@OrderID  and ClientID=@ClientID
 
 --if(@OperateID<>@OrderOwnerID and not exists(select AutoID from OrderProcess where ProcessID=@ProcessID and OwnerID=@OperateID))
@@ -55,6 +55,9 @@ begin
 	select @TaskCount=count(0) from OrderStage where ProcessID =@ProcessID and status<>9
 
 	Update Orders set Status=@Status,TaskCount=@TaskCount,OrderTime=GetDate(),OrderStatus=1,PlanTime=@PlanTime where OrderID=@OrderID
+
+	--处理客户订单数
+	Update Customer set DemandCount=DemandCount-1,DYCount=DYCount+1 where CustomerID=@CustomerID
 
 	set @Err+=@@error
 end 
@@ -100,6 +103,9 @@ begin
 	select @TaskCount=count(0) from OrderStage where ProcessID =@ProcessID and status<>9
 
 	Update Orders set Status=@Status,OrderTime=GetDate(),TaskCount=@TaskCount,OrderStatus=1,PlanTime=@PlanTime where OrderID=@OrderID
+
+	--处理客户订单数
+	Update Customer set DemandCount=DemandCount-1,DHCount=DHCount+1 where CustomerID=@CustomerID
 
 	set @Err+=@@error
 end

@@ -23,9 +23,9 @@ AS
 	
 begin tran
 
-declare @Err int=0,@Status int,@AliOrderCode nvarchar(64),@OrderType int
+declare @Err int=0,@Status int,@AliOrderCode nvarchar(64),@OrderType int,@CustomerID nvarchar(64)
 
-select @Status=Status,@AliOrderCode=AliOrderCode,@OrderType=OrderType from Orders where OrderID=@OrderID  and ClientID=@ClientID
+select @Status=Status,@AliOrderCode=AliOrderCode,@OrderType=OrderType,@CustomerID=CustomerID from Orders where OrderID=@OrderID  and ClientID=@ClientID
 
 if(@Status <> 0 and @Status<>4)
 begin
@@ -35,6 +35,9 @@ end
 
 
 Update Orders set Status=9,OrderStatus=9 where OrderID=@OrderID
+
+--处理客户需求单数
+Update Customer set DemandCount=DemandCount-1 where CustomerID=@CustomerID and DemandCount>0
 
 if(@AliOrderCode is not null and @AliOrderCode<>'')
 begin

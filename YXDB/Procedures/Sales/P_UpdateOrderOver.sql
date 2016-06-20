@@ -23,9 +23,9 @@ AS
 	
 begin tran
 
-declare @Err int=0,@Status int,@AliOrderCode nvarchar(64),@OrderType int
+declare @Err int=0,@Status int,@AliOrderCode nvarchar(64),@OrderType int,@CustomerID nvarchar(64)
 
-select @Status=OrderStatus,@AliOrderCode=AliOrderCode,@OrderType=OrderType from Orders where OrderID=@OrderID  and ClientID=@ClientID
+select @Status=OrderStatus,@AliOrderCode=AliOrderCode,@OrderType=OrderType,@CustomerID=CustomerID from Orders where OrderID=@OrderID  and ClientID=@ClientID
 
 if(@Status <> 1)
 begin
@@ -37,6 +37,15 @@ end
 Update Orders set OrderStatus=8 where OrderID=@OrderID
 
 Update OrderTask set Status=8 where OrderID=@OrderID
+
+if(@OrderType=1)
+begin
+	Update Customer set DYCount=DYCount-1 where CustomerID=@CustomerID and DYCount>0
+end
+else
+begin
+	Update Customer set DHCount=DHCount-1 where CustomerID=@CustomerID and DHCount>0
+end
 
 set @Err+=@@error
 

@@ -60,10 +60,13 @@ begin
 	return
 end
 
+--处理客户需求单数
 if(@CustomerID='' and @Mobile<>'' and @Mobile is not null and exists (select AutoID from Customer where MobilePhone=@Mobile and ClientID=@ClientID))
 begin
 	select @CustomerID=CustomerID from  Customer where MobilePhone=@Mobile and ClientID=@ClientID
+	Update Customer set DemandCount=DemandCount+1 where CustomerID=@CustomerID
 end
+
 if exists (select AutoID from Orders where OrderCode=@OrderCode and ClientID=@ClientID)
 begin
 	set @OrderCode=@OrderCode+'1'

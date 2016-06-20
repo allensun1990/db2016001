@@ -35,6 +35,12 @@ begin
 	return
 end
 
+if(@MobileTele is null or @MobileTele='')
+begin
+	rollback tran
+	return
+end
+
 if not exists(select AutoID from Customer where MobilePhone=@MobileTele and ClientID=@ClientID)
 begin
 	set @CustomerID=NEWID()
@@ -45,8 +51,8 @@ begin
 	end
 
 	insert into Customer(CustomerID,CustomerPoolID,Name,Type,IndustryID,Extent,CityCode,Address,MobilePhone,OfficePhone,Email,Jobs,Description,SourceID,ActivityID,OwnerID,SourceType,
-							StageID,Status,AllocationTime,OrderTime,CreateTime,CreateUserID,AgentID,ClientID)
-				select @CustomerID,'',PersonName,1,'',0,CityCode,Address,MobileTele,'','','','通过订单联系人创建','','',OwnerID,@SourceType,'',1,getdate(),getdate(),getdate(),@OperateID,AgentID,ClientID
+							StageID,Status,AllocationTime,OrderTime,CreateTime,CreateUserID,AgentID,ClientID,DemandCount)
+				select @CustomerID,'',PersonName,1,'',0,CityCode,Address,MobileTele,'','','','通过订单联系人创建','','',OwnerID,@SourceType,'',1,getdate(),getdate(),getdate(),@OperateID,AgentID,ClientID,1
 				from Orders where OrderID=@OrderID and ClientID=@ClientID
 
 	Update Orders set CustomerID=@CustomerID where OrderID=@OrderID and ClientID=@ClientID
