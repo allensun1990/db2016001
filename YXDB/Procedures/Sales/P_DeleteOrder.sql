@@ -27,7 +27,7 @@ declare @Err int=0,@Status int,@AliOrderCode nvarchar(64),@OrderType int,@Custom
 
 select @Status=Status,@AliOrderCode=AliOrderCode,@OrderType=OrderType,@CustomerID=CustomerID from Orders where OrderID=@OrderID  and ClientID=@ClientID
 
-if(@Status <> 0 and @Status<>4)
+if(@Status <> 0)
 begin
 	rollback tran
 	return

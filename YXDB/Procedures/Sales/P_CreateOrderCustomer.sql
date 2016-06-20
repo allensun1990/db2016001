@@ -25,9 +25,9 @@ begin tran
 
 set @CustomerID=''
 	
-declare @Status int,@Err int=0,@MobileTele nvarchar(20),@AliOrderCode nvarchar(100),@SourceType int=2
+declare @Status int,@Err int=0,@MobileTele nvarchar(20),@AliOrderCode nvarchar(100),@SourceType int=2,@DemandCount int=0,@DYCount int=0,@DHCount int=0,@OrderType int
 
-select @Status=Status,@CustomerID=CustomerID,@MobileTele=MobileTele,@AliOrderCode=AliOrderCode from Orders where OrderID=@OrderID and ClientID=@ClientID
+select @Status=Status,@CustomerID=CustomerID,@MobileTele=MobileTele,@AliOrderCode=AliOrderCode,@OrderType=OrderType from Orders where OrderID=@OrderID and ClientID=@ClientID
 
 if(@CustomerID is not null and @CustomerID<>'')
 begin
@@ -50,9 +50,22 @@ begin
 		set @SourceType=1
 	end
 
+	if(@Status=0)
+	begin
+		set @DemandCount=1
+	end
+	else if(@OrderType=1)
+	begin
+		set @DYCount=1
+	end
+	else
+	begin
+		set @DHCount=1
+	end
+
 	insert into Customer(CustomerID,CustomerPoolID,Name,Type,IndustryID,Extent,CityCode,Address,MobilePhone,OfficePhone,Email,Jobs,Description,SourceID,ActivityID,OwnerID,SourceType,
-							StageID,Status,AllocationTime,OrderTime,CreateTime,CreateUserID,AgentID,ClientID,DemandCount)
-				select @CustomerID,'',PersonName,1,'',0,CityCode,Address,MobileTele,'','','','通过订单联系人创建','','',OwnerID,@SourceType,'',1,getdate(),getdate(),getdate(),@OperateID,AgentID,ClientID,1
+							StageID,Status,AllocationTime,OrderTime,CreateTime,CreateUserID,AgentID,ClientID,DemandCount,DYCount,DHCount)
+				select @CustomerID,'',PersonName,1,'',0,CityCode,Address,MobileTele,'','','','通过订单联系人创建','','',OwnerID,@SourceType,'',1,getdate(),getdate(),getdate(),@OperateID,AgentID,ClientID,@DemandCount,@DYCount,@DHCount
 				from Orders where OrderID=@OrderID and ClientID=@ClientID
 
 	Update Orders set CustomerID=@CustomerID where OrderID=@OrderID and ClientID=@ClientID

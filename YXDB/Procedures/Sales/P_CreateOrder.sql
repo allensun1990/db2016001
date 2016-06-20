@@ -64,7 +64,6 @@ end
 if(@CustomerID='' and @Mobile<>'' and @Mobile is not null and exists (select AutoID from Customer where MobilePhone=@Mobile and ClientID=@ClientID))
 begin
 	select @CustomerID=CustomerID from  Customer where MobilePhone=@Mobile and ClientID=@ClientID
-	Update Customer set DemandCount=DemandCount+1 where CustomerID=@CustomerID
 end
 
 if exists (select AutoID from Orders where OrderCode=@OrderCode and ClientID=@ClientID)
@@ -102,13 +101,23 @@ insert into Orders(OrderID,OrderCode,AliOrderCode,Status,CustomerID,OrderImage,O
 if(@OriginalID<>'')
 begin
 	update o set OriginalCode=od.OrderCode,BigCategoryID=od.BigCategoryID,CategoryID=od.CategoryID,FinalPrice=od.FinalPrice,TotalMoney=od.FinalPrice*o.PlanQuantity,IntGoodsCode=od.IntGoodsCode,GoodsName=od.GoodsName,
-			 Price=od.Price,ProfitPrice=od.ProfitPrice,CostPrice=od.CostPrice,Platemaking=od.Platemaking,PlateRemark=od.PlateRemark,Status=4,GoodsID=od.GoodsID,OriginalPrice=od.FinalPrice from Orders o join Orders od on o.OriginalID=od.OrderID where o.OrderID=@OrderID
+			 Price=od.Price,ProfitPrice=od.ProfitPrice,CostPrice=od.CostPrice,Platemaking=od.Platemaking,PlateRemark=od.PlateRemark,OrderStatus=1,Status=4,GoodsID=od.GoodsID,OriginalPrice=od.FinalPrice from Orders o join Orders od on o.OriginalID=od.OrderID where o.OrderID=@OrderID
 
 	--复制打样材料列表
 	insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProdiverID )
 	select @OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProdiverID  from OrderDetail where OrderID=@OriginalID
 
+	if(@CustomerID is not null and @CustomerID<>'')
+	begin
+		Update Customer set DHCount=DHCount+1 where CustomerID=@CustomerID
+	end
+	
+
 	Insert into OrderStatusLog(OrderID,Status,CreateUserID) values(@OrderID,4,@UserID)
+end
+else if(@CustomerID is not null and @CustomerID<>'')
+begin
+	Update Customer set DemandCount=DemandCount+1 where CustomerID=@CustomerID
 end
 
 set @Err+=@@error

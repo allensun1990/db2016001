@@ -39,7 +39,8 @@ as
 		return
 	end
 
-	select @OrderID=OrderID,@OrderType=OrderType,@ProcessID=ProcessID,@Sort=Sort,@OwnerID=OwnerID,@Mark=Mark,@FinishStatus=FinishStatus,@ClientID=ClientID from OrderTask where TaskID=@TaskID
+	select @OrderID=OrderID,@OrderType=OrderType,@ProcessID=ProcessID,@Sort=Sort,@OwnerID=OwnerID,@Mark=Mark,@FinishStatus=FinishStatus,@ClientID=ClientID 
+	from OrderTask where TaskID=@TaskID
 
 	--任务已标记完成
 	if(@FinishStatus=2)
@@ -65,7 +66,7 @@ as
 	end
 	else if(@Mark=11 or @Mark=21)
 	begin
-		if(not exists( select AutoID from OrderDetail where orderid=@OrderID) )
+		if(not exists(select AutoID from OrderDetail where orderid=@OrderID))
 		begin
 			set @Result=5;
 			return;

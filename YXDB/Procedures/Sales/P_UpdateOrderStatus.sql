@@ -104,9 +104,6 @@ begin
 
 	Update Orders set Status=@Status,OrderTime=GetDate(),TaskCount=@TaskCount,OrderStatus=1,PlanTime=@PlanTime where OrderID=@OrderID
 
-	--处理客户订单数
-	Update Customer set DemandCount=DemandCount-1,DHCount=DHCount+1 where CustomerID=@CustomerID
-
 	set @Err+=@@error
 end
 else if(@Status=7 and @OldStatus=6) --交易结束

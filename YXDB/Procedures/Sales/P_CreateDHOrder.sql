@@ -36,10 +36,10 @@ end
 
 select @ProcessID=ProcessID,@OwnerID=OwnerID from OrderProcess where ClientID=@ClientID and ProcessType=2 and IsDefault=1
 
-insert into Orders(OrderID,OrderCode,CategoryID,TypeID,OrderType,SourceType,Status,ProcessID,PlanPrice,FinalPrice,PlanQuantity,PlanType,TaskCount,TaskOver,OrderImage,OriginalID,OriginalCode ,
+insert into Orders(OrderID,OrderCode,CategoryID,TypeID,OrderType,SourceType,OrderStatus,Status,ProcessID,PlanPrice,FinalPrice,PlanQuantity,PlanType,TaskCount,TaskOver,OrderImage,OriginalID,OriginalCode ,
 					Price,CostPrice,ProfitPrice,TotalMoney,CityCode,Address,PersonName,MobileTele,Remark,CustomerID,OwnerID,CreateTime,AgentID,ClientID,Platemaking,PlateRemark,
 					GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,Discount,OriginalPrice,IntGoodsCode,GoodsName)
-select @OrderID,@OrderCode,CategoryID,TypeID,2,1,4,@ProcessID,PlanPrice,@Price,0,PlanType,0,0,OrderImage,OrderID,OrderCode,
+select @OrderID,@OrderCode,CategoryID,TypeID,2,1,1,4,@ProcessID,PlanPrice,@Price,0,PlanType,0,0,OrderImage,OrderID,OrderCode,
 		Price,CostPrice,ProfitPrice,0,CityCode,Address,PersonName,MobileTele,Remark,CustomerID,@OwnerID,getdate(),AgentID,ClientID,Platemaking,PlateRemark,
 		GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,@Discount,FinalPrice,IntGoodsCode,GoodsName from Orders where OrderID=@OriginalID
 	
@@ -50,4 +50,4 @@ select @OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,
 Insert into OrderStatusLog(OrderID,Status,CreateUserID) values(@OrderID,4,@OperateID)
 
 --处理客户需求单数
-Update Customer set DemandCount=DemandCount+1 where CustomerID=@CustomerID
+Update Customer set DHCount=DHCount+1 where CustomerID=@CustomerID

@@ -4,6 +4,8 @@ alter table Customer add DemandCount int default 0
 alter table Customer add DYCount int default 0
 alter table Customer add DHCount int default 0
 
+update Orders set OrderStatus=1 where OrderStatus=0 and Status=4
+
 update Customer set DemandCount=0,DYCount=0,DHCount=0
 
 update C set DemandCount=o.Quantity from Customer c join

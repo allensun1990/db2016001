@@ -24,9 +24,9 @@ AS
 	
 begin tran
 
-declare @Err int=0,@Status int=-1,@OrderType int
+declare @Err int=0,@Status int=-1,@OrderType int,@CustomerID nvarchar(64)
 
-select @Status=Status,@OrderType=OrderType from Orders where OrderID=@OrderID and ClientID=@ClientID and OriginalID=''
+select @Status=Status,@OrderType=OrderType,@CustomerID=CustomerID from Orders where OrderID=@OrderID and ClientID=@ClientID and OriginalID=''
 
 if(@Status<>0 or @OrderType<>2)
 begin
@@ -43,6 +43,9 @@ update o set OriginalCode=od.OrderCode,BigCategoryID=od.BigCategoryID,CategoryID
 --复制打样材料列表
 insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProdiverID )
 select @OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProdiverID  from OrderDetail where OrderID=@OriginalID
+
+--处理客户订单数
+Update Customer set DemandCount=DemandCount-1,DHCount=DHCount+1 where CustomerID=@CustomerID
 
 Insert into OrderStatusLog(OrderID,Status,CreateUserID) values(@OrderID,4,@OperateID)
 
