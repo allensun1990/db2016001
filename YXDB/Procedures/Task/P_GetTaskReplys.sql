@@ -37,8 +37,8 @@ as
 
 	set @tableName='OrderReply'
 	set @columns='ReplyID'
-	set @key='createtime'
-	set @orderColumn='ReplyID'
+	set @key='ReplyID'
+	set @orderColumn='createtime desc'
 	set @condition=' guid='''+@OrderID+''' and  StageID='''+@StageID+''''
 
 
