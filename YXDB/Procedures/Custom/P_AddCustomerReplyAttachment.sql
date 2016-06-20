@@ -23,6 +23,7 @@ CREATE PROCEDURE [dbo].[P_AddCustomerReplyAttachment]
 @FileName nvarchar(200),
 @OriginalName nvarchar(200),
 @ThumbnailName nvarchar(200),
+@Size int=0,
 @UserID nvarchar(64),
 @ClientID nvarchar(64)
 as
@@ -30,8 +31,8 @@ as
 	declare @error int=0
 	begin tran
 
-	insert into Attachment(AttachmentID,Type,ServerUrl,FilePath,FileName,OriginalName,ThumbnailName,CreateUserID,ClientID)
-	values(@AttachmentID,@Type,@ServerUrl,@FilePath,@FileName,@OriginalName,@ThumbnailName,@UserID,@ClientID)
+	insert into Attachment(AttachmentID,Type,ServerUrl,FilePath,FileName,OriginalName,ThumbnailName,Size,CreateUserID,ClientID)
+	values(@AttachmentID,@Type,@ServerUrl,@FilePath,@FileName,@OriginalName,@ThumbnailName,@Size,@UserID,@ClientID)
 	set @error+=@@ERROR
 
 	insert into CustomerReplyAttachmentRelation(CustomerID,ReplyID,AttachmentID)
