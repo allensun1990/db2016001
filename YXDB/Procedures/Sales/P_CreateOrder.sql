@@ -69,27 +69,10 @@ begin
 	set @OrderCode=@OrderCode+'1'
 end
 
-if(@UserID<>'')
+if(@UserID<>'' and exists(select ProcessID from OrderProcess where  ClientID=@ClientID and ProcessType=@OrderType and OwnerID=@UserID and status<>9 ))
 begin
-	declare @ProcessTotal int 
-	select @ProcessTotal=COUNT(ProcessID) from OrderProcess
-	where  ClientID=@ClientID and ProcessType=@OrderType and OwnerID=@UserID and status<>9
-
-	if(@ProcessTotal<>1)
-	begin
-		select @ProcessTotal=COUNT(ProcessID) from OrderProcess
-		where  ClientID=@ClientID and ProcessType=@OrderType and OwnerID=@UserID and IsDefault=1 and status<>9
-
-		if(@ProcessTotal<>1)
-			select top 1 @ProcessID=ProcessID,@OwnerID=OwnerID from OrderProcess 
-			where ClientID=@ClientID and ProcessType=@OrderType and OwnerID=@UserID  and status<>9
-		else
-			select  @ProcessID=ProcessID,@OwnerID=OwnerID from OrderProcess
-			where  ClientID=@ClientID and ProcessType=@OrderType and OwnerID=@UserID and status<>9 and IsDefault=1
-	end
-	else
-		select  @ProcessID=ProcessID,@OwnerID=OwnerID from OrderProcess
-		where  ClientID=@ClientID and ProcessType=@OrderType and OwnerID=@UserID and status<>9
+	select top 1 @ProcessID=ProcessID,@OwnerID=OwnerID from OrderProcess 
+	where ClientID=@ClientID and ProcessType=@OrderType and OwnerID=@UserID  and status<>9 order by IsDefault desc
 end
 else
 begin
