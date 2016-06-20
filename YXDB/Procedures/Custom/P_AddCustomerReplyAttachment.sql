@@ -38,6 +38,15 @@ as
 	values(@CustomerID,@ReplyID,@AttachmentID)
 	set @error+=@@ERROR
 
+	if(@error>0)
+	begin
+		rollback tran
+	end 
+	else
+	begin
+		commit tran
+	end
+
 
 
 
