@@ -12,6 +12,7 @@ GO
 参数说明：	 
 编写日期： 2015/12/2
 程序作者： Allen
+修改记录： Michaux 2016-06-13 StageID 变更为StageStatus
 调试记录： exec R_GetUserCustomers '','','','','8c9b5e24-2bb5-4d87-9a5a-b1aa4c5b81f8','eda082bc-b848-4de8-8776-70235424fc06'
 ************************************************************/
 CREATE PROCEDURE [dbo].[R_GetUserCustomers]
@@ -25,7 +26,7 @@ AS
 
 	declare @SqlText nvarchar(4000)
 
-	set @SqlText='select StageID,COUNT(0) Value,OwnerID from  Customer where ClientID='''+@ClientID+''' and Status<>9'
+	set @SqlText='select StageStatus,COUNT(0) Value,OwnerID from  Customer where ClientID='''+@ClientID+''' and Status<>9'
 
 	if(@AgentID<>'')
 	begin
@@ -53,7 +54,7 @@ AS
 		set @SqlText +=' and OwnerID in (select UserID from #UserID) '
 	end
 
-	set @SqlText+='Group by StageID,OwnerID'
+	set @SqlText+='Group by StageStatus,OwnerID'
 
 	exec(@SqlText)
 

@@ -212,6 +212,7 @@
     <None Include="Procedures\Manage\Report\R_GetClientsActiveReprot.sql" />
     <None Include="Procedures\Excel\E_ImportCustomer.sql" />
     <None Include="Procedures\Excel\E_ImportContact.sql" />
+    <None Include="Procedures\Report\R_GetCustomerStageRPT.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\Sales\P_CreateOpportunity.sql" />
