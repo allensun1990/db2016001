@@ -14,6 +14,9 @@ E_ImportCustomer
 E_ImportContact 
 P_GetCustomers
 P_InsertCustomerColor
+R_GetUserCustomers
+R_GetCustomerStageRPT
+R_GetCustomerReport
 */
 alter table FeedBack add Content varchar(1000)
 alter table ClientOrder Add CheckUserID varchar(50)
@@ -134,3 +137,14 @@ Status int default(0),
 [AgentID] [nvarchar](64) NULL,
 [ClientID] [nvarchar](64) NULL,
 )
+create table #color(ColorValue varchar(50) ,ColorName varchar(50),ColorID int)
+insert  into #color values('#ffffff','标签1',1)  
+insert  into #color values('#ff7c7c','标签2',2) 
+insert  into #color values('#3bb3ff','标签3',3)
+insert  into #color values('#9f74ff','标签4',4)  
+insert  into #color values('#ffc85d','标签5',5) 
+insert  into #color values('#fff65f','标签6',6) 
+
+insert into CustomerColor select b.ColorID,b.ColorName, b.ColorValue,0,'',GETDATE(),null,null,a.AgentID,a.ClientID from   Clients a join #color b  on  1=1
+
+drop table #color
