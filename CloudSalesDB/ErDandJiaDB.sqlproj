@@ -249,5 +249,7 @@
     <None Include="Procedures\Sales\P_UpdateOrderProductPrice.sql" />
     <None Include="Procedures\Sales\P_UpdateOrderProductQuantity.sql" />
     <None Include="Procedures\Stock\P_GetPurchases.sql" />
+    <None Include="Procedures\System\P_InsertCustomerColor.sql" />
+    <None Include="Procedures\System\P_DeleteCustomColor.sql" />
   </ItemGroup>
 </Project>

@@ -24,13 +24,13 @@ CREATE PROCEDURE [dbo].[M_InsertClient]
 @Address nvarchar(200)='',
 @Description nvarchar(200)='',
 @ContactName nvarchar(50),
+@LoginName nvarchar(200)='',
 @BindMobilePhone nvarchar(200)='',
 @LoginPWD nvarchar(64)='',
 @Email nvarchar(200)='',
 @MDUserID nvarchar(64)='',
 @MDProjectID nvarchar(64)='',
 @CreateUserID nvarchar(64)='',
-@Type int=1,--1 前台手机注册 2 后台创建
 @Result int output --0：失败，1：成功，2 账号已存在
 AS
 
@@ -43,8 +43,16 @@ declare @Err int ,@DepartID nvarchar(64),@RoleID nvarchar(64),@UserID nvarchar(6
 select @Err=0,@DepartID=NEWID(),@RoleID=NEWID(),@UserID=NEWID(),@AgentID=NEWID(),@WareID=NEWID()
 
 
+--手机已存在
+if(@BindMobilePhone<>'' and exists(select UserID from Users where  BindMobilePhone=@BindMobilePhone and Status<>9))
+begin
+	set @Result=2
+	rollback tran
+	return
+end
+
 --账号已存在
-if(@BindMobilePhone<>'' and exists(select UserID from Users where (LoginName=@BindMobilePhone or BindMobilePhone=@BindMobilePhone) and Status<>9))
+if(@LoginName<>'' and exists(select UserID from Users where LoginName=@LoginName  and Status<>9))
 begin
 	set @Result=2
 	rollback tran
@@ -92,16 +100,9 @@ insert into Role(RoleID,Name,Status,IsDefault,CreateUserID,AgentID,ClientID) val
 
 set @Err+=@@error
 
-if(@Type=1)
-begin
-	insert into Users(UserID,BindMobilePhone,LoginPWD,Name,MobilePhone,Email,Allocation,Status,IsDefault,DepartID,RoleID,CreateUserID,MDUserID,MDProjectID,AgentID,ClientID)
-				 values(@UserID,@BindMobilePhone,@LoginPWD,@ContactName,@MobilePhone,@Email,1,1,1,@DepartID,@RoleID,@UserID,@MDUserID,@MDProjectID,@AgentID,@ClientID)
-end
-else
-begin
-	insert into Users(UserID,LoginName,LoginPWD,Name,MobilePhone,Email,Allocation,Status,IsDefault,DepartID,RoleID,CreateUserID,MDUserID,MDProjectID,AgentID,ClientID)
-				 values(@UserID,@BindMobilePhone,@LoginPWD,@ContactName,@MobilePhone,@Email,1,1,1,@DepartID,@RoleID,@UserID,@MDUserID,@MDProjectID,@AgentID,@ClientID)
-end
+insert into Users(UserID,LoginName,BindMobilePhone,LoginPWD,Name,MobilePhone,Email,Allocation,Status,IsDefault,DepartID,RoleID,CreateUserID,MDUserID,MDProjectID,AgentID,ClientID)
+				 values(@UserID,@LoginName,@BindMobilePhone,@LoginPWD,@ContactName,@MobilePhone,@Email,1,1,1,@DepartID,@RoleID,@UserID,@MDUserID,@MDProjectID,@AgentID,@ClientID)
+
 --部门关系
 insert into UserDepart(UserID,DepartID,CreateUserID,ClientID) values(@UserID,@DepartID,@UserID,@ClientID)  
 set @Err+=@@error
@@ -124,6 +125,14 @@ insert into CustomStage(StageID,StageName,Sort,Status,Mark,PID,CreateUserID,Clie
 values(NEWID(),'机会客户',2,1,2,'',@UserID,@ClientID)
 insert into CustomStage(StageID,StageName,Sort,Status,Mark,PID,CreateUserID,ClientID)
 values(NEWID(),'成交客户',3,1,3,'',@UserID,@ClientID)
+
+--客户标签
+insert into CustomerColor(ColorID,ColorName,ColorValue,Status,CreateUserID,CreateTime,AgentID,ClientID)
+values(1,'合格客户','#3c78d8',0,@UserID,GETDATE(),@AgentID,@ClientID)
+insert into CustomerColor(ColorID,ColorName,ColorValue,Status,CreateUserID,CreateTime,AgentID,ClientID)
+values(2,'机会客户','#00ff00',0,@UserID,GETDATE(),@AgentID,@ClientID)
+insert into CustomerColor(ColorID,ColorName,ColorValue,Status,CreateUserID,CreateTime,AgentID,ClientID)
+values(3,'重要客户','#cc0000',0,@UserID,GETDATE(),@AgentID,@ClientID)
 
 --机会阶段
 insert into [OpportunityStage] (StageID,StageName,Probability,Sort,Status,Mark,PID,CreateUserID,ClientID) 
