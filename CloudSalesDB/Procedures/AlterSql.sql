@@ -82,13 +82,29 @@ where Status=1 and Sort=0  group by ClientID ) op on o.ClientID=op.ClientID and 
 
 --客户阶段状态
 alter table Customer add StageStatus int default 1
+alter table Customer add OpportunityID nvarchar(64)
 alter table Customer add OpportunityTime datetime
-update Customer set StageStatus=1
+alter table Customer add OrderID nvarchar(64)
+alter table Customer add  OpportunityCount int default 0
+alter table Customer add  OrderCount int default 0
+update Customer set StageStatus=1,OpportunityCount=0,OrderCount=0
 update Customer set StageStatus=2 where CustomerID in (select CustomerID from Opportunity)
 update Customer set StageStatus=3 where CustomerID in (select CustomerID from Orders where Status>=2)
 
-update c set OpportunityTime= o.CreateTime from Customer c join 
-(select CustomerID,min(CreateTime) CreateTime from Opportunity where Status<>9 group by CustomerID ) o on c.CustomerID=o.CustomerID
+update c set OpportunityID=op.OpportunityID,OpportunityTime=op.CreateTime from Customer c join 
+(select CustomerID,min(AutoID) AutoID from Opportunity where Status<>9 group by CustomerID ) o on c.CustomerID=o.CustomerID
+join Opportunity op on o.AutoID=op.AutoID
+
+update c set OrderID=op.OrderID,OrderTime=op.OrderTime from Customer c join 
+(select CustomerID,min(AutoID) AutoID from Orders where Status >=2 and Status<>9 group by CustomerID ) o on c.CustomerID=o.CustomerID
+join Orders op on o.AutoID=op.AutoID
+
+
+update c set OpportunityCount=o.Quantity from Customer c join 
+(select CustomerID,count(AutoID) Quantity from Opportunity where Status<>9 group by CustomerID ) o on c.CustomerID=o.CustomerID
+
+update c set OrderCount=o.Quantity from Customer c join 
+(select CustomerID,count(AutoID) Quantity from Orders where Status<>9 and Status>=2 group by CustomerID ) o on c.CustomerID=o.CustomerID
 
 
 --购物车
@@ -114,6 +130,10 @@ alter table OrderDetail add ProviderID nvarchar(64) default ''
 alter table OrderDetail add ProviderName nvarchar(100) default ''
 alter table OrderDetail add CreateUserID nvarchar(64)
 alter table OrderDetail add CreateTime datetime default getdate()
+
+update s set ProductName=p.ProductName,ProductCode=p.ProductCode,DetailsCode=d.DetailsCode,ProductImage=p.ProductImage,ImgS=d.ImgS,Remark=d.Remark,UnitID=p.UnitID 
+from OrderDetail s join Products p on s.ProductID=p.ProductID 
+join ProductDetail d on s.ProductDetailID=d.ProductDetailID
 
 --代理商采购单明细
 alter table AgentsOrderDetail add ProductName nvarchar(100) default ''

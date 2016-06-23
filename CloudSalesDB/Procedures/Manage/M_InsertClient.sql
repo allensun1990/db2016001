@@ -113,10 +113,12 @@ set @Err+=@@error
 
 --客户来源
 insert into CustomSource(SourceID,SourceCode,SourceName,IsSystem,IsChoose,Status,CreateUserID,ClientID)
+					values(NEWID(),'Source-Manual','手动添加',1,1,1,@UserID,@ClientID)
+
+insert into CustomSource(SourceID,SourceCode,SourceName,IsSystem,IsChoose,Status,CreateUserID,ClientID)
 					values(NEWID(),'Source-Activity','活动',1,0,1,@UserID,@ClientID)
 					
-insert into CustomSource(SourceID,SourceCode,SourceName,IsSystem,IsChoose,Status,CreateUserID,ClientID)
-					values(NEWID(),'Source-Manual','主动联系',1,1,1,@UserID,@ClientID)
+
 
 --客户阶段
 insert into CustomStage(StageID,StageName,Sort,Status,Mark,PID,CreateUserID,ClientID)

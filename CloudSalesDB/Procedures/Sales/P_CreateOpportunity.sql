@@ -48,4 +48,5 @@ select top 1 @StageID=StageID from OpportunityStage where ClientID=@ClientID and
 insert into Opportunity(OpportunityID,OpportunityCode,Status,TypeID,CustomerID,PersonName,MobileTele,CityCode,Address,OwnerID,CreateUserID,AgentID,ClientID,StageID)
 		values (@OpportunityID,@OpportunityCode,1,@TypeID,@CustomerID,@PersonName,@MobileTele,@CityCode,@Address,@OwnerID,@UserID,@AgentID,@ClientID,@StageID)
 
-update Customer set StageStatus=2,OpportunityTime=getdate() where CustomerID=@CustomerID and StageStatus<2
+update Customer set StageStatus=2,OpportunityTime=getdate(),OpportunityID=@OpportunityID where CustomerID=@CustomerID and StageStatus<2
+update Customer set OpportunityCount=OpportunityCount+1 where CustomerID=@CustomerID
