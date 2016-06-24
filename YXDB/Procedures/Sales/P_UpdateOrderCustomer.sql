@@ -26,11 +26,11 @@ begin tran
 
 declare @Err int=0,@Status int=-1,@OrderType int,@Name nvarchar(50),@MobilePhone nvarchar(20),@CityCode nvarchar(10),@Address nvarchar(500),@OldCustomerID nvarchar(64)
 
-select @Status=Status,@OrderType=OrderType,@OldCustomerID=CustomerID from Orders where OrderID=@OrderID and ClientID=@ClientID 
+select @Status=OrderStatus,@OrderType=OrderType,@OldCustomerID=CustomerID from Orders where OrderID=@OrderID and ClientID=@ClientID 
 
 select @Name=Name,@MobilePhone=MobilePhone,@CityCode=CityCode,@Address=Address from Customer where CustomerID=@CustomerID
 
-if(@Status<>0)
+if(@Status>1)
 begin
 	rollback tran
 	return
@@ -39,9 +39,24 @@ end
 Update Orders set CustomerID=@CustomerID,PersonName=@Name,MobileTele=@MobilePhone,CityCode=@CityCode,Address=@Address where OrderID=@OrderID
 
 --处理客户需求单数
-Update Customer set DemandCount=DemandCount+1 where CustomerID=@CustomerID
+if(@Status=0)
+begin
+	Update Customer set DemandCount=DemandCount+1 where CustomerID=@CustomerID
 
-Update Customer set DemandCount=DemandCount-1 where CustomerID=@OldCustomerID and DemandCount>0
+	Update Customer set DemandCount=DemandCount-1 where CustomerID=@OldCustomerID and DemandCount>0
+end
+else if(@OrderType=1)
+begin
+	Update Customer set DYCount=DYCount+1 where CustomerID=@CustomerID
+
+	Update Customer set DYCount=DYCount-1 where CustomerID=@OldCustomerID and DYCount>0
+end
+else
+begin
+	Update Customer set DHCount=DHCount+1 where CustomerID=@CustomerID
+
+	Update Customer set DHCount=DHCount-1 where CustomerID=@OldCustomerID and DHCount>0
+end
 
 set @Err+=@@error
 
