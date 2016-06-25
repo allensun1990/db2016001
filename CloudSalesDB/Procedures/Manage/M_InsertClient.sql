@@ -83,13 +83,13 @@ end
 
 --客户端
 insert into Clients(ClientID,CompanyName,ContactName,MobilePhone,Status,Industry,CityCode,Address,Description,AgentID,CreateUserID,UserQuantity,EndTime) 
-				values(@ClientID,@CompanyName,@ContactName,@MobilePhone,1,@Industry,@CityCode,@Address,@Description,@AgentID,@CreateUserID,20,dateadd(MONTH, 2, GETDATE()) )
+				values(@ClientID,@CompanyName,@ContactName,@MobilePhone,1,@Industry,@CityCode,@Address,@Description,@AgentID,@CreateUserID,20,'2016-9-30 23:59:59' )--dateadd(MONTH, 2, GETDATE())
 
 set @Err+=@@error
 
 --直营代理商
 insert into Agents(AgentID,CompanyName,Status,IsDefault,MDProjectID,ClientID,UserQuantity,EndTime) 
-			values(@AgentID,'公司直营',1,1,@MDProjectID,@ClientID,20,dateadd(MONTH, 2, GETDATE()))
+			values(@AgentID,'公司直营',1,1,@MDProjectID,@ClientID,20,'2016-9-30 23:59:59')
 
 --部门
 insert into Department(DepartID,Name,Status,CreateUserID,AgentID,ClientID) values (@DepartID,'系统管理',1,@UserID,@AgentID,@ClientID)

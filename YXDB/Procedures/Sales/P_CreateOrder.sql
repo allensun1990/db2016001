@@ -46,7 +46,7 @@ begin tran
 
 set @Result=0
 
-declare @Err int=0,@OwnerID nvarchar(64),@ProcessID nvarchar(64),@PoolID nvarchar(64),@OriginalID nvarchar(64)=''
+declare @Err int=0,@OwnerID nvarchar(64),@ProcessID nvarchar(64),@PoolID nvarchar(64),@OriginalID nvarchar(64)='',@TurnTimes int=1
 
 if(@AgentID='')
 begin
@@ -90,18 +90,23 @@ end
 if(@OrderType=1)
 begin
 	set @PlanQuantity=1
+	set @TurnTimes=0
 end
 
 insert into Orders(OrderID,OrderCode,AliOrderCode,Status,CustomerID,OrderImage,OrderImages,PersonName,MobileTele,CityCode,Address,OwnerID,CreateUserID,OriginalID,PlanTime,
-				AgentID,ClientID,ProcessID,SourceType,OrderType,PlanPrice,Remark,PlanQuantity,BigCategoryID,CategoryID,PlanType,GoodsCode,Title,ExpressCode,Discount,GoodsName)
+				AgentID,ClientID,ProcessID,SourceType,OrderType,PlanPrice,Remark,PlanQuantity,BigCategoryID,CategoryID,PlanType,GoodsCode,Title,ExpressCode,Discount,GoodsName,TurnTimes)
 		values (@OrderID,@OrderCode,@AliOrderCode,0,@CustomerID,@OrderImg,@OrderImages,@Name,@Mobile,@CityCode,@Address,@OwnerID,@UserID,@OriginalID,@PlanTime,
-				@AgentID,@ClientID,@ProcessID,@SourceType,@OrderType,@PlanPrice,@Remark,@PlanQuantity,@BigCategoryID,@CategoryID,@OrderType,@GoodsCode,@Title,@ExpressCode,1,@Title)
+				@AgentID,@ClientID,@ProcessID,@SourceType,@OrderType,@PlanPrice,@Remark,@PlanQuantity,@BigCategoryID,@CategoryID,@OrderType,@GoodsCode,@Title,@ExpressCode,1,@Title,@TurnTimes)
 
 --款号已存在打样单
 if(@OriginalID<>'')
 begin
+
+	Update Orders set TurnTimes=TurnTimes+1 where OrderID=@OriginalID
+	
 	update o set OriginalCode=od.OrderCode,BigCategoryID=od.BigCategoryID,CategoryID=od.CategoryID,FinalPrice=od.FinalPrice,TotalMoney=od.FinalPrice*o.PlanQuantity,IntGoodsCode=od.IntGoodsCode,GoodsName=od.GoodsName,
-			 Price=od.Price,ProfitPrice=od.ProfitPrice,CostPrice=od.CostPrice,Platemaking=od.Platemaking,PlateRemark=od.PlateRemark,OrderStatus=1,Status=4,GoodsID=od.GoodsID,OriginalPrice=od.FinalPrice from Orders o join Orders od on o.OriginalID=od.OrderID where o.OrderID=@OrderID
+			 Price=od.Price,ProfitPrice=od.ProfitPrice,CostPrice=od.CostPrice,Platemaking=od.Platemaking,PlateRemark=od.PlateRemark,OrderStatus=1,Status=4,GoodsID=od.GoodsID,OriginalPrice=od.FinalPrice,TurnTimes=od.TurnTimes
+			 from Orders o join Orders od on o.OriginalID=od.OrderID where o.OrderID=@OrderID
 
 	--复制打样材料列表
 	insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProdiverID )
