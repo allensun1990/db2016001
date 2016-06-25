@@ -5,7 +5,7 @@ BEGIN
 	DROP  Procedure  R_GetOpportunityStageRate
 END
 
-GO
+GO  
 /***********************************************************
 过程名称： R_GetOpportunityStageRate
 功能描述： 销售订单转化率
@@ -14,7 +14,7 @@ GO
 程序作者： Allen
 调试记录： exec R_GetOpportunityStageRate '','','8c9b5e24-2bb5-4d87-9a5a-b1aa4c5b81f8','eda082bc-b848-4de8-8776-70235424fc06'
 ************************************************************/
-CREATE PROCEDURE [dbo].[R_GetOpportunityStageRate]
+Create PROCEDURE [dbo].[R_GetOpportunityStageRate]
 	@BeginTime nvarchar(50)='',
 	@EndTime nvarchar(50)='',
 	@UserID nvarchar(64)='',
@@ -27,7 +27,7 @@ AS
 
 	create table #UserID(UserID nvarchar(64))
 
-	set @SqlText='select StageID,Sum(TotalMoney) Value,Count(0) CountValue from  Orders where ClientID='''+@ClientID+''' and Status < 3'
+	set @SqlText='select StageID,count(1) as Value,Sum(TotalMoney) iValue,Count(0) CountValue from  Opportunity where ClientID='''+@ClientID+''' and Status < 3'
 
 	if(@UserID<>'')
 	begin
