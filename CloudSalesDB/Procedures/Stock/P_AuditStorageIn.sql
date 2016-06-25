@@ -119,7 +119,7 @@ begin
 	select @TotalMoney=sum(TotalMoney) from StorageDocPart where OriginalID=@DocID
 
 	insert into StorageBilling(BillingID,BillingCode,DocID,DocCode,TotalMoney,Type,Status,PayStatus,InvoiceStatus,AgentID,ClientID,CreateUserID)
-		   values(NEWID(),@BillingCode,@DocID,@DocCode,@TotalMoney,1,1,0,0,@AgentID,@ClientID,@UserID)
+		   values(NEWID(),@BillingCode,@DocID,@DocCode,isnull(@TotalMoney,0),1,1,0,0,@AgentID,@ClientID,@UserID)
 end
 else
 begin

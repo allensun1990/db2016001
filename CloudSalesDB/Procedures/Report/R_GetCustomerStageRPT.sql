@@ -24,7 +24,7 @@ as
 
 if(@Type=1)
 begin
-	select COUNT(StageStatus) as Value,1 as StageStatus  from Customer where CreateTime>@BeginTime and CreateTime<@EndTime and ClientID=@ClientID
+	select COUNT(StageStatus) as Value,1 as StageStatus  from Customer where ClientID=@ClientID
 	union  
 	select COUNT(StageStatus) as Value,2 as StageStatus  from Customer where OpportunityTime>@BeginTime and OpportunityTime<@EndTime  and ClientID=@ClientID
 	union

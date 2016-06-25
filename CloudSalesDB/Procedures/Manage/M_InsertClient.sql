@@ -130,11 +130,11 @@ values(NEWID(),'成交客户',3,1,3,'',@UserID,@ClientID)
 
 --客户标签
 insert into CustomerColor(ColorID,ColorName,ColorValue,Status,CreateUserID,CreateTime,AgentID,ClientID)
-values(1,'合格客户','#3c78d8',0,@UserID,GETDATE(),@AgentID,@ClientID)
+values(1,'普通客户','#3c78d8',0,@UserID,GETDATE(),@AgentID,@ClientID)
 insert into CustomerColor(ColorID,ColorName,ColorValue,Status,CreateUserID,CreateTime,AgentID,ClientID)
-values(2,'机会客户','#00ff00',0,@UserID,GETDATE(),@AgentID,@ClientID)
+values(2,'重要客户','#00ff00',0,@UserID,GETDATE(),@AgentID,@ClientID)
 insert into CustomerColor(ColorID,ColorName,ColorValue,Status,CreateUserID,CreateTime,AgentID,ClientID)
-values(3,'重要客户','#cc0000',0,@UserID,GETDATE(),@AgentID,@ClientID)
+values(3,'高级客户','#cc0000',0,@UserID,GETDATE(),@AgentID,@ClientID)
 
 --机会阶段
 insert into [OpportunityStage] (StageID,StageName,Probability,Sort,Status,Mark,PID,CreateUserID,ClientID) 
