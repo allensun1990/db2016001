@@ -21,61 +21,54 @@ create proc [dbo].[R_GetCustomerStageRPT]
 @EndTime varchar(50)='',
 @Type int=0
 as
-begin
 
 if(@Type=1)
 begin
-select COUNT(StageStatus) as Value,1 as StageStatus  from Customer where CreateTime>@BeginTime and CreateTime<@EndTime and ClientID=@ClientID
- union  
-select COUNT(StageStatus) as Value,2 as StageStatus  from Customer where OpportunityTime>@BeginTime and OpportunityTime<@EndTime  and ClientID=@ClientID
-union
-select COUNT(StageStatus) as Value,3 as StageStatus  from Customer where OrderTIme>@BeginTime and OrderTime<@EndTime  and ClientID=@ClientID
+	select COUNT(StageStatus) as Value,1 as StageStatus  from Customer where CreateTime>@BeginTime and CreateTime<@EndTime and ClientID=@ClientID
+	union  
+	select COUNT(StageStatus) as Value,2 as StageStatus  from Customer where OpportunityTime>@BeginTime and OpportunityTime<@EndTime  and ClientID=@ClientID
+	union
+	select COUNT(StageStatus) as Value,3 as StageStatus  from Customer where OrderTIme>@BeginTime and OrderTime<@EndTime  and ClientID=@ClientID
 
-select COUNT(1) value ,1 as StageStatus,b.SourceCode,b.SourceName from  Customer a  left  join CustomSource  b on a.SourceID=b.SourceID 
-where a.Status<>9  and b.Status<>9  and  a.CreateTime>@BeginTime and a.CreateTime<@EndTime and a.ClientID=@ClientID
-group by b.SourceCode,b.SourceName
-union
-select COUNT(1) value ,2 as StageStatus,b.StageID as SourceCode,c.StageName as SourceName from  Customer a 
- left  join Opportunity  b on a.CustomerID=b.CustomerID  
- left join OpportunityStage c on b.StageID=c.StageID
-  and b.OpportunityID=a.OpportunityID
-where a.Status<>9  and b.Status<>9 and c.Status<>9 and a.OpportunityTime>@BeginTime and a.OpportunityTime<@EndTime  and a.ClientID=@ClientID
-group by b.StageID ,c.StageName 
-union
-select COUNT(1) value ,3 as StageStatus ,'' SourceCode,'' as SourceName from  Customer a 
- left  join Orders  b on a.CustomerID=b.CustomerID    and a.OrderID=b.OrderID
-where a.Status<>9  and b.Status<>9     and a.OrderTIme>@BeginTime and a.OrderTime<@EndTime  and a.ClientID=@ClientID
- 
-
+	select COUNT(1) value ,1 as StageStatus,b.SourceCode,b.SourceName from  Customer a  left  join CustomSource  b on a.SourceID=b.SourceID 
+	where a.Status<>9  and b.Status<>9  and  a.CreateTime>@BeginTime and a.CreateTime<@EndTime and a.ClientID=@ClientID
+	group by b.SourceCode,b.SourceName
+	union
+	select COUNT(1) value ,2 as StageStatus,b.StageID as SourceCode,c.StageName as SourceName from  Customer a 
+	 left  join Opportunity  b on a.CustomerID=b.CustomerID  
+	 left join OpportunityStage c on b.StageID=c.StageID
+	  and b.OpportunityID=a.OpportunityID
+	where a.Status<>9  and b.Status<>9 and c.Status<>9 and a.OpportunityTime>@BeginTime and a.OpportunityTime<@EndTime  and a.ClientID=@ClientID
+	group by b.StageID ,c.StageName 
+	union
+	select COUNT(1) value ,3 as StageStatus ,'' SourceCode,'' as SourceName from  Customer a 
+	 left  join Orders  b on a.CustomerID=b.CustomerID    and a.OrderID=b.OrderID
+	where a.Status<>9  and b.Status<>9     and a.OrderTIme>@BeginTime and a.OrderTime<@EndTime  and a.ClientID=@ClientID
 end
 else
 begin
-select COUNT(StageStatus) as Value,1 as StageStatus  from Customer where CreateTime>@BeginTime and CreateTime<@EndTime   and ClientID=@ClientID
- union  
-select COUNT(StageStatus) as Value,2 as StageStatus  from Customer where CreateTime>@BeginTime and CreateTime<@EndTime and OpportunityTime>@BeginTime and OpportunityTime<@EndTime  and ClientID=@ClientID
-union
-select COUNT(StageStatus) as Value,3 as StageStatus  from Customer where CreateTime>@BeginTime and CreateTime<@EndTime and OrderTIme>@BeginTime and OrderTime<@EndTime  and ClientID=@ClientID
+	select COUNT(StageStatus) as Value,1 as StageStatus  from Customer where CreateTime>@BeginTime and CreateTime<@EndTime   and ClientID=@ClientID
+	union  
+	select COUNT(StageStatus) as Value,2 as StageStatus  from Customer where CreateTime>@BeginTime and CreateTime<@EndTime and OpportunityTime>@BeginTime and OpportunityTime<@EndTime  and ClientID=@ClientID
+	union
+	select COUNT(StageStatus) as Value,3 as StageStatus  from Customer where CreateTime>@BeginTime and CreateTime<@EndTime and OrderTime>@BeginTime and OrderTime<@EndTime  and ClientID=@ClientID
 
-select COUNT(1) value ,1 as StageStatus,b.SourceCode,b.SourceName from  Customer a  left  join CustomSource  b on a.SourceID=b.SourceID 
-where a.Status<>9  and b.Status<>9  and  a.CreateTime>@BeginTime and a.CreateTime<@EndTime and a.ClientID=@ClientID
-group by b.SourceCode,b.SourceName,StageStatus
-union
-select COUNT(1) value ,2 as StageStatus,b.StageID as SourceCode,c.StageName as SourceName from  Customer a 
- left  join Opportunity  b on a.CustomerID=b.CustomerID  
- left join OpportunityStage c on b.StageID=c.StageID
-  and b.OpportunityID=a.OpportunityID
-where a.Status<>9  and b.Status<>9 and c.Status<>9 and a.CreateTime>@BeginTime and a.CreateTime<@EndTime and a.OpportunityTime>@BeginTime and a.OpportunityTime<@EndTime  and a.ClientID=@ClientID
-group by b.StageID ,c.StageName 
-union
-select COUNT(1) value ,3 as StageStatus ,'' SourceCode,'' as SourceName from  Customer a 
- left  join Orders  b on a.CustomerID=b.CustomerID   and a.OrderID=b.OrderID
-where a.Status<>9  and b.Status<>9  and a.CreateTime>@BeginTime and a.CreateTime<@EndTime  and a.OrderTIme>@BeginTime and a.OrderTime<@EndTime  and a.ClientID=@ClientID
-
-end
-
+	select COUNT(1) value ,1 as StageStatus,b.SourceCode,b.SourceName from  Customer a  left  join CustomSource  b on a.SourceID=b.SourceID 
+	where a.Status<>9  and b.Status<>9  and  a.CreateTime>@BeginTime and a.CreateTime<@EndTime and a.ClientID=@ClientID
+	group by b.SourceCode,b.SourceName,StageStatus
+	union
+	select COUNT(1) value ,2 as StageStatus,b.StageID as SourceCode,c.StageName as SourceName from  Customer a 
+	 left  join Opportunity  b on a.CustomerID=b.CustomerID  
+	 left join OpportunityStage c on b.StageID=c.StageID
+	  and b.OpportunityID=a.OpportunityID
+	where a.Status<>9  and b.Status<>9 and c.Status<>9 and a.CreateTime>@BeginTime and a.CreateTime<@EndTime and a.OpportunityTime>@BeginTime and a.OpportunityTime<@EndTime  and a.ClientID=@ClientID
+	group by b.StageID ,c.StageName 
+	union
+	select COUNT(1) value ,3 as StageStatus ,'' SourceCode,'' as SourceName from  Customer a 
+	 left  join Orders  b on a.CustomerID=b.CustomerID   and a.OrderID=b.OrderID
+	where a.Status<>9  and b.Status<>9  and a.CreateTime>@BeginTime and a.CreateTime<@EndTime  and a.OrderTIme>@BeginTime and a.OrderTime<@EndTime  and a.ClientID=@ClientID
 
 end
 
-GO
 
 
