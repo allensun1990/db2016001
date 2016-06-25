@@ -37,6 +37,7 @@ CREATE PROCEDURE [dbo].[P_UpdateProduct]
 @IsAllow int=0,
 @IsAutoSend int=0,
 @EffectiveDays int,
+@WarnCount int=0,
 @DiscountValue decimal(5,4),
 @ProductImg nvarchar(4000)='',
 @Description text,
@@ -47,16 +48,17 @@ AS
 
 begin tran
 
+IF(@ShapeCode is not null and @ShapeCode<>'' and EXISTS(SELECT AutoID FROM [Products] WHERE ShapeCode=@ShapeCode and ClientID=@ClientID and  ProductID<>@ProductID and Status<>9))--条形码唯一
+BEGIN
+	rollback tran
+	return
+END
+
 declare @Err int,@PIDList nvarchar(max),@SaleAttr  nvarchar(max),@HasDetails int=0
 
 set @Err=0
 
 select @PIDList=PIDList,@SaleAttr=SaleAttr from Category where CategoryID=@CategoryID
-
-if(@BigUnitID=@UnitID)
-begin
-	set @BigSmallMultiple=1
-end
 
 
 Update [Products] set [ProductName]=@ProductName,ProductCode=@ProductCode,[GeneralName]=@GeneralName,[IsCombineProduct]=@IsCombineProduct,[BrandID]=@BrandID,
@@ -64,7 +66,7 @@ Update [Products] set [ProductName]=@ProductName,ProductCode=@ProductCode,[Gener
 						[CategoryIDList]=@PIDList,[SaleAttr]=@SaleAttr,[AttrList]=@AttrList,[ValueList]=@ValueList,[AttrValueList]=@AttrValueList,
 						[CommonPrice]=@CommonPrice,[Price]=@Price,[PV]=0,[Status]=@Status,ProductImage=@ProductImg,
 						[IsNew]=@Isnew,[IsRecommend]=@IsRecommend ,[DiscountValue]=@DiscountValue,[Weight]=@Weight ,[EffectiveDays]=@EffectiveDays,
-						IsAllow=@IsAllow,IsAutoSend=@IsAutoSend,
+						IsAllow=@IsAllow,IsAutoSend=@IsAutoSend,WarnCount=@WarnCount,
 						[ShapeCode]=@ShapeCode ,[Description]=@Description ,[UpdateTime]=getdate()
 where ProductID=@ProductID
 

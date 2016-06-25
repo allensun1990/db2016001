@@ -35,11 +35,12 @@ CREATE PROCEDURE [dbo].[P_InsertProduct]
 @IsRecommend int,
 @IsAllow int=0,
 @IsAutoSend int=0,
+@WarnCount int=0,
 @EffectiveDays int,
 @DiscountValue decimal(5,4),
 @ProductImg nvarchar(4000),
 @Description text,
-@ShapeCode nvarchar(50),
+@ShapeCode nvarchar(50)='',
 @CreateUserID nvarchar(64),
 @ClientID nvarchar(64),
 @ProductID nvarchar(64) output,
@@ -62,6 +63,15 @@ BEGIN
 	return
 END
 
+IF(@ShapeCode is not null and @ShapeCode<>'' and EXISTS(SELECT AutoID FROM [Products] WHERE ShapeCode=@ShapeCode and ClientID=@ClientID and Status<>9))--条形码唯一
+BEGIN
+	set @ProductID='';
+	set @Result=0;
+	rollback tran
+	return
+END
+
+
 --不存在规格，插入默认子产品
 if exists (select AutoID from CategoryAttr where CategoryID=@CategoryID and Type=2 and Status=1)
 begin
@@ -71,11 +81,11 @@ end
 INSERT INTO [Products]([ProductID],[ProductCode],[ProductName],[GeneralName],[IsCombineProduct],[BrandID],[BigUnitID],[UnitID],[BigSmallMultiple] ,
 						[CategoryID],[CategoryIDList],[SaleAttr],[AttrList],[ValueList],[AttrValueList],[CommonPrice],[Price],[PV],[TaxRate],[Status],
 						[OnlineTime],[UseType],[IsNew],[IsRecommend] ,[IsDiscount],[DiscountValue],[SaleCount],[Weight] ,[ProductImage],[EffectiveDays],
-						[ShapeCode] ,[ProviderID],[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID],IsAllow,IsAutoSend,HasDetails)
+						[ShapeCode] ,[ProviderID],[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID],IsAllow,IsAutoSend,HasDetails,WarnCount)
 			VALUES(@ProductID,@ProductCode,@ProductName,@GeneralName,@IsCombineProduct,@BrandID,@BigUnitID,@UnitID,@BigSmallMultiple,
 				@CategoryID,@PIDList,@SaleAttr,@AttrList,@ValueList,@AttrValueList,@CommonPrice,@Price,@Price,0,@Status,
 				getdate(),0,@Isnew,@IsRecommend,1,@DiscountValue,0,@Weight,@ProductImg,@EffectiveDays,@ShapeCode,'',@Description,@CreateUserID,
-				getdate(),getdate(),'',@ClientID,@IsAllow,@IsAutoSend,@HasDetails);
+				getdate(),getdate(),'',@ClientID,@IsAllow,@IsAutoSend,@HasDetails,@WarnCount);
 
 INSERT INTO ProductDetail(ProductDetailID,[ProductID],DetailsCode ,[SaleAttr],[AttrValue],[SaleAttrValue],[Price],[BigPrice],[Status],
 					Weight,ImgS,[ShapeCode] ,[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID],IsDefault)

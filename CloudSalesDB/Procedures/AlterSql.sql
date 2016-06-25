@@ -9,9 +9,11 @@ update City set [Description]=Province+' '+City+' '+Counties
 
 --处理产品表
 alter table Products add HasDetails int default 0
+alter table Products add WarnCount int default 0
+
 --ProdiverID 改 ProviderID，SmallUnitID 改 UnitID
 GO
-Update Products set HasDetails=0
+Update Products set HasDetails=0,WarnCount=0
 
 update Products set HasDetails=1 where CategoryID in(
 select CategoryID from CategoryAttr where Type=2 and Status<>9 group by CategoryID
@@ -104,7 +106,7 @@ update c set OpportunityCount=o.Quantity from Customer c join
 (select CustomerID,count(AutoID) Quantity from Opportunity where Status<>9 group by CustomerID ) o on c.CustomerID=o.CustomerID
 
 update c set OrderCount=o.Quantity from Customer c join 
-(select CustomerID,count(AutoID) Quantity from Orders where Status<>9 and Status>=2 group by CustomerID ) o on c.CustomerID=o.CustomerID
+(select CustomerID,count(AutoID) Quantity from Orders where Status<>9 group by CustomerID ) o on c.CustomerID=o.CustomerID
 
 
 --购物车

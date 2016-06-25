@@ -24,7 +24,9 @@ CREATE PROCEDURE [dbo].[P_CreateOrder]
 @ClientID nvarchar(64)
 AS
 
-declare @PersonName nvarchar(50),@MobileTele nvarchar(20),@CityCode nvarchar(20),@Address nvarchar(200),@OwnerID nvarchar(64),@Type int
+begin tran
+
+declare @Err int=0,@PersonName nvarchar(50),@MobileTele nvarchar(20),@CityCode nvarchar(20),@Address nvarchar(200),@OwnerID nvarchar(64),@Type int
 
 select @PersonName=Name,@MobileTele=MobilePhone,@CityCode=CityCode,@Address=Address,@OwnerID=OwnerID,@Type=Type from Customer where CustomerID=@CustomerID
 if(@Type=1)
@@ -45,4 +47,15 @@ end
 insert into Orders(OrderID,OrderCode,Status,CustomerID,PersonName,MobileTele,CityCode,Address,OwnerID,CreateUserID,AgentID,ClientID,TypeID)
 		values (@OrderID,@OrderCode,1,@CustomerID,@PersonName,@MobileTele,@CityCode,@Address,@OwnerID,@UserID,@AgentID,@ClientID,@TypeID)
 
+update Customer set OrderCount=OrderCount+1 where CustomerID=@CustomerID
 
+set @Err+=@@error
+
+if(@Err>0)
+begin
+	rollback tran
+end 
+else
+begin
+	commit tran
+end
