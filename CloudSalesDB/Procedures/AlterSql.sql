@@ -1,4 +1,7 @@
-﻿
+﻿Update Clients set EndTime='2016-9-30 23:59:59' where EndTime<'2016-9-30 23:59:59'
+Update Agents set EndTime='2016-9-30 23:59:59' where EndTime<'2016-9-30 23:59:59'
+
+
 --统计表
 alter table M_Report_AgentAction_Day add ActionType int not null default(1)
 GO
@@ -202,6 +205,9 @@ update AgentsOrders set OutStatus=0
 update AgentsOrders set OutStatus=1 where SendStatus>0
 
 --处理部分入库单据
+alter table StorageDoc add RealMoney decimal(18,4) default 0
+Update StorageDoc set RealMoney=0
+
 insert into StorageDocPart(DocID,DocCode,DocType,Status,TotalMoney,CityCode,Address,Remark,WareID,CreateUserID,CreateTime,OperateIP,ClientID,OriginalID,OriginalCode)
 		select NEWID(),DocCode,1,2,TotalMoney,CityCode,Address,'',WareID,CreateUserID,GETDATE(),'',ClientID,DocID,DocCode from StorageDoc where DocType=1 and Status between 1 and 2
 
@@ -211,4 +217,7 @@ insert into StoragePartDetail(DocID,ProductDetailID,ProductID,UnitID,IsBigUnit,Q
 
 update s set TotalMoney=n.TotalMoney from StorageDocPart s join
 (select DocID,SUM(TotalMoney) TotalMoney from StoragePartDetail group by DocID) n on s.DocID=n.DocID
+
+Update s set RealMoney=sd.TotalMoney from StorageDoc s join
+(select OriginalID,SUM(TotalMoney) TotalMoney from StorageDocPart group by OriginalID) sd on s.DocID=sd.OriginalID
 
