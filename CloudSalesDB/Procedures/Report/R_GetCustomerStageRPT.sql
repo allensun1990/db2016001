@@ -22,6 +22,11 @@ create proc [dbo].[R_GetCustomerStageRPT]
 @Type int=0
 as
 
+if(@EndTime<>'')
+begin
+set @EndTime= @EndTime+' 23:59:59'
+end
+
 if(@Type=1)
 begin
 	select COUNT(StageStatus) as Value,1 as StageStatus  from Customer where CreateTime>@BeginTime and CreateTime<@EndTime and ClientID=@ClientID
