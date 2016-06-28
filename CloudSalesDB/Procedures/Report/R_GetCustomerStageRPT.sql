@@ -51,12 +51,14 @@ begin
 	select COUNT(1) value ,2 as StageStatus,b.StageID as SourceID,c.StageName as SourceName from  Customer a 
 	left join Opportunity  b on a.CustomerID=b.CustomerID  
 	left join OpportunityStage c on b.StageID=c.StageID and b.OpportunityID=a.OpportunityID
-	where a.Status<>9  and b.Status<>9 and c.Status<>9 and a.OpportunityTime>@BeginTime and a.OpportunityTime<@EndTime  and a.ClientID=@ClientID
+	where a.Status<>9  and b.Status<>9 and c.Status<>9 and a.OpportunityTime>@BeginTime 
+	and a.OpportunityTime<@EndTime  and a.ClientID=@ClientID
 	group by b.StageID ,c.StageName 
 	union
 	select COUNT(1) value ,3 as StageStatus ,'' SourceID,'' as SourceName from  Customer a 
 	join Orders  b on a.CustomerID=b.CustomerID   and a.OrderID=b.OrderID
-	where a.Status<>9  and b.Status<>9   and a.OrderTIme>@BeginTime and a.OrderTime<@EndTime  and a.ClientID=@ClientID
+	where a.Status<>9  and b.Status<>9   and a.OrderTIme>@BeginTime 
+	and a.OrderTime<@EndTime  and a.ClientID=@ClientID
 end
 else
 begin
@@ -73,12 +75,16 @@ begin
 	select COUNT(1) value ,2 as StageStatus,b.StageID as SourceID,c.StageName as SourceName from  Customer a 
 	left join Opportunity  b on a.CustomerID=b.CustomerID  
 	left join OpportunityStage c on b.StageID=c.StageID and b.OpportunityID=a.OpportunityID
-	where a.Status<>9  and b.Status<>9 and c.Status<>9 and a.CreateTime>@BeginTime and a.CreateTime<@EndTime and a.OpportunityTime>@BeginTime and a.OpportunityTime<@EndTime  and a.ClientID=@ClientID
+	where a.Status<>9  and b.Status<>9 and c.Status<>9 and a.CreateTime>@BeginTime and a.CreateTime<@EndTime 
+	and a.OpportunityTime>@BeginTime and a.OpportunityTime<@EndTime  and a.ClientID=@ClientID
+	and a.ClientID in (select distinct ClientID  from Customer where CreateTime>@BeginTime and CreateTime<@EndTime   and ClientID=@ClientID)
 	group by b.StageID ,c.StageName 
 	union
 	select COUNT(1) value ,3 as StageStatus ,'' SourceID,'' as SourceName from  Customer a 
 	join Orders  b on a.CustomerID=b.CustomerID   and a.OrderID=b.OrderID
-	where a.Status<>9  and b.Status<>9  and a.CreateTime>@BeginTime and a.CreateTime<@EndTime  and a.OrderTIme>@BeginTime and a.OrderTime<@EndTime  and a.ClientID=@ClientID
+	where a.Status<>9  and b.Status<>9  and a.CreateTime>@BeginTime and a.CreateTime<@EndTime  
+	and a.OrderTIme>@BeginTime and a.OrderTime<@EndTime  and a.ClientID=@ClientID
+	and a.ClientID in (select distinct ClientID  from Customer where CreateTime>@BeginTime and CreateTime<@EndTime   and ClientID=@ClientID)
 end
 
 
