@@ -55,7 +55,7 @@ begin
 	set @AutoID+=1
 end
 
-Update Clients set GuideStep=0 where ClientID=@ClientID
+Update Clients set GuideStep=3 where ClientID=@ClientID
 
 set @Err+=@@error
 
