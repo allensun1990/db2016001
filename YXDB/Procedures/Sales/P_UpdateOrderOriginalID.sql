@@ -51,6 +51,13 @@ Update Customer set DemandCount=DemandCount-1,DHCount=DHCount+1 where CustomerID
 
 Insert into OrderStatusLog(OrderID,Status,CreateUserID) values(@OrderID,4,@OperateID)
 
+--复制工艺说明
+insert into PlateMaking(PlateID,OrderID,Title,Remark,Icon,Status,AgentID,CreateTime,CreateUserID,Type,OriginalID,OriginalPlateID)
+select NEWID() as PlateID,@OrderID,p.Title,p.Remark,p.Icon,p.Status,p.AgentID,p.CreateTime,p.CreateUserID,p.Type,p.OrderID,p.PlateID from PlateMaking p
+where p.OrderID=@OriginalID and p.status<>9
+
+
+
 set @Err+=@@error
 
 if(@Err>0)

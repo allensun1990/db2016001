@@ -249,5 +249,6 @@
     <None Include="Procedures\Stock\P_GetPurchases.sql" />
     <None Include="Procedures\System\P_InsertCustomerColor.sql" />
     <None Include="Procedures\System\P_DeleteCustomColor.sql" />
+    <Build Include="Procedures\Products\P_InsertProductExcel.sql" />
   </ItemGroup>
 </Project>

@@ -117,8 +117,13 @@ begin
 		Update Customer set DHCount=DHCount+1 where CustomerID=@CustomerID
 	end
 	
-
 	Insert into OrderStatusLog(OrderID,Status,CreateUserID) values(@OrderID,4,@UserID)
+
+	--复制工艺说明
+	insert into PlateMaking(PlateID,OrderID,Title,Remark,Icon,Status,AgentID,CreateTime,CreateUserID,Type,OriginalID,OriginalPlateID)
+	select NEWID() as PlateID,@OrderID,p.Title,p.Remark,p.Icon,p.Status,p.AgentID,p.CreateTime,p.CreateUserID,p.Type,p.OrderID,p.PlateID from PlateMaking p
+	where p.OrderID=@OriginalID and p.status<>9
+
 end
 else if(@CustomerID is not null and @CustomerID<>'')
 begin
