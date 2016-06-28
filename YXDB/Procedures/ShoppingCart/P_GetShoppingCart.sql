@@ -22,7 +22,7 @@ AS
 
 if(@OrderType=11)
 begin
-	select s.AutoID,s.ProductDetailID,s.ProductID,s.Quantity,s.Loss,s.Remark Description,s.ProductName,s.UnitID,
+	select s.AutoID,s.ProductDetailID,s.ProductID,s.Quantity,s.Loss,s.Remark Description,s.ProductName,s.UnitID,s.ProductCode,
 			s.Price,s.Imgs,s.ProductImage,s.BatchCode,s.DepotID,B.Name ProviderName 
 		from OrderDetail s 
 		join Providers b on s.ProdiverID=B.ProviderID
@@ -32,18 +32,20 @@ else
 begin
 	if(@UserID='')
 	begin
-		select s.AutoID,s.ProductDetailID,s.ProductID,s.Quantity,s.Remark Description,s.ProductName,s.UnitID,
-			 s.Price, s.Imgs,s.ProductImage,s.BatchCode,s.DepotID ,B.Name ProviderName
+		select s.AutoID,s.ProductDetailID,s.ProductID,s.Quantity,s.Remark Description,s.ProductName,s.UnitID,s.ProductCode,
+			 s.Price, s.Imgs,s.ProductImage,s.BatchCode,s.DepotID ,B.Name ProviderName,dm.DepotCode
 		from ShoppingCart s 
 		join Providers b on s.ProdiverID=B.ProviderID
+		left join DepotSeat dm on s.DepotID=dm.DepotID 
 		where s.[GUID]=@GUID and s.OrderType=@OrderType
 	end
 	else
 	begin
-		select s.AutoID,s.ProductDetailID,s.ProductID,s.Quantity,s.Remark Description,s.ProductName,s.UnitID,
-			 s.Price, s.Imgs,s.ProductImage,s.BatchCode,s.DepotID ,B.Name ProviderName
+		select s.AutoID,s.ProductDetailID,s.ProductID,s.Quantity,s.Remark Description,s.ProductName,s.UnitID,s.ProductCode,
+			 s.Price, s.Imgs,s.ProductImage,s.BatchCode,s.DepotID ,B.Name ProviderName,dm.DepotCode
 		from ShoppingCart s 
 		join Providers b on s.ProdiverID=B.ProviderID
+		left join DepotSeat dm on s.DepotID=dm.DepotID 
 		where s.[GUID]=@GUID and s.OrderType=@OrderType and s.UserID=@UserID
 	end
 end

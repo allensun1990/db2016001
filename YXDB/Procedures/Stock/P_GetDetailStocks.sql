@@ -39,7 +39,8 @@ AS
 					join DepotSeat ds on s.DepotID=ds.DepotID
 					join Products p on s.ProductID=p.ProductID 
 					join ProductDetail d on s.ProductDetailID=d.ProductDetailID',
-	@columns='s.ProductDetailID,s.ProductID,p.ProductCode,d.DetailsCode,p.ProductName,d.SaleAttrValue,s.BatchCode,s.StockIn,s.StockOut,s.LogicOut,d.Description ,ds.DepotCode',@key='s.AutoID'
+	@columns='s.ProductDetailID,s.ProductID,p.ProductCode,d.DetailsCode,p.ProductName,d.SaleAttrValue,s.BatchCode,s.StockIn,s.StockOut,s.LogicOut,d.Description ,ds.DepotCode',
+	@key='s.AutoID'
 	set @condition=' s.ClientID='''+@ClientID+''' and P.Status<>9 '
 
 	if(@WareID<>'')
@@ -53,7 +54,7 @@ AS
 	end
 
 	declare @total int,@page int
-	exec P_GetPagerData @tableName,@columns,@condition,@key,'',@pageSize,@pageIndex,@total out,@page out,0 
+	exec P_GetPagerData @tableName,@columns,@condition,@key,'p.ProductID,s.ProductDetailID',@pageSize,@pageIndex,@total out,@page out,0 
 	select @totalCount=@total,@pageCount =@page
  
 
