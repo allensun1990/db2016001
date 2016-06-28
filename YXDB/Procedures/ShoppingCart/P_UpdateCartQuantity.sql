@@ -16,7 +16,7 @@ GO
 ************************************************************/
 CREATE PROCEDURE [dbo].[P_UpdateCartQuantity]
 @AutoID int,
-@Quantity int=1,
+@Quantity decimal(18,4)=1,
 @GUID nvarchar(64)=''
 AS
 begin tran

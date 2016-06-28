@@ -24,9 +24,14 @@ CREATE PROCEDURE [dbo].[P_CreateOpportunity]
 @ClientID nvarchar(64)
 AS
 
-declare @PersonName nvarchar(50),@MobileTele nvarchar(20),@CityCode nvarchar(20),@Address nvarchar(200),@OwnerID nvarchar(64),@Type int,@StageID nvarchar(64)
+begin tran
 
-select @PersonName=Name,@MobileTele=MobilePhone,@CityCode=CityCode,@Address=Address,@OwnerID=OwnerID,@Type=Type from Customer where CustomerID=@CustomerID
+declare  @Err int=0,@PersonName nvarchar(50),@MobileTele nvarchar(20),@CityCode nvarchar(20),@Address nvarchar(200),@OwnerID nvarchar(64),@Type int,
+@StageID nvarchar(64),@StageStatus int
+
+
+
+select @PersonName=Name,@MobileTele=MobilePhone,@CityCode=CityCode,@Address=Address,@OwnerID=OwnerID,@Type=Type,@StageStatus=StageStatus from Customer where CustomerID=@CustomerID
 if(@Type=1)
 begin	
 	select @PersonName=Name,@MobileTele=MobilePhone,@CityCode=CityCode,@Address=Address from Contact where CustomerID=@CustomerID and Status<>9 Order By [Type] desc
@@ -48,5 +53,22 @@ select top 1 @StageID=StageID from OpportunityStage where ClientID=@ClientID and
 insert into Opportunity(OpportunityID,OpportunityCode,Status,TypeID,CustomerID,PersonName,MobileTele,CityCode,Address,OwnerID,CreateUserID,AgentID,ClientID,StageID)
 		values (@OpportunityID,@OpportunityCode,1,@TypeID,@CustomerID,@PersonName,@MobileTele,@CityCode,@Address,@OwnerID,@UserID,@AgentID,@ClientID,@StageID)
 
-update Customer set StageStatus=2,OpportunityTime=getdate(),OpportunityID=@OpportunityID where CustomerID=@CustomerID and StageStatus<2
-update Customer set OpportunityCount=OpportunityCount+1 where CustomerID=@CustomerID
+if(@StageStatus<2)
+begin
+	update Customer set StageStatus=2,OpportunityTime=getdate(),OpportunityID=@OpportunityID,OpportunityCount=OpportunityCount+1 where CustomerID=@CustomerID and StageStatus<2
+end
+else
+begin
+	update Customer set OpportunityCount=OpportunityCount+1 where CustomerID=@CustomerID
+end
+
+set @Err+=@@error
+
+if(@Err>0)
+begin
+	rollback tran
+end 
+else
+begin
+	commit tran
+end

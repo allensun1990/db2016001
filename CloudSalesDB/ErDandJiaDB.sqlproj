@@ -233,9 +233,6 @@
     <None Include="Procedures\Sales\P_CloseOpportunity.sql" />
   </ItemGroup>
   <ItemGroup>
-    <PostDeploy Include="Procedures\MichauxAlter.sql" />
-  </ItemGroup>
-  <ItemGroup>
     <Build Include="Procedures\Manage\M_UpdateClientOrderAccountStatus.sql" />
     <None Include="Procedures\Products\P_DeleteBrand.sql" />
     <None Include="Procedures\Products\P_DeleteUnit.sql" />

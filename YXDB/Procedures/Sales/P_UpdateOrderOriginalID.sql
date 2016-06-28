@@ -36,8 +36,10 @@ end
 
 Update Orders set OriginalID=@OriginalID,OrderTime=getdate() where OrderID=@OrderID
 
+Update Orders set TurnTimes=TurnTimes+1 where OrderID=@OriginalID
+
 update o set OriginalCode=od.OrderCode,BigCategoryID=od.BigCategoryID,CategoryID=od.CategoryID,FinalPrice=od.FinalPrice,TotalMoney=od.FinalPrice*o.PlanQuantity,IntGoodsCode=od.IntGoodsCode,GoodsName=od.GoodsName,
-			 Price=od.Price,ProfitPrice=od.ProfitPrice,CostPrice=od.CostPrice,Platemaking=od.Platemaking,PlateRemark=od.PlateRemark,Status=4,GoodsID=od.GoodsID,OriginalPrice=od.FinalPrice 
+			 Price=od.Price,ProfitPrice=od.ProfitPrice,CostPrice=od.CostPrice,Platemaking=od.Platemaking,PlateRemark=od.PlateRemark,Status=4,GoodsID=od.GoodsID,OriginalPrice=od.FinalPrice,TurnTimes=od.TurnTimes 
 			 from Orders o join Orders od on o.OriginalID=od.OrderID where o.OrderID=@OrderID
 	
 --复制打样材料列表

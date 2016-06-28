@@ -12,7 +12,7 @@ GO
 参数说明：	 
 编写日期： 2015/5/19
 程序作者： Allen
-调试记录： exec P_GetStorageDetail 'c2d6e4e4-8ea4-49ad-b17a-c98963f57628',''
+调试记录： exec P_GetStorageDetail 'c2d6e4e4-8ea4-49ad-b17a-c98963f57628',' '
 ************************************************************/
 CREATE PROCEDURE [dbo].[P_GetStorageDetail]
 	@DocID nvarchar(64),

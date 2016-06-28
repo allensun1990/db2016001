@@ -23,9 +23,9 @@ AS
 	
 begin tran
 
-declare @Err int=0,@Status int
+declare @Err int=0,@Status int,@CustomerID nvarchar(64)
 
-select @Status=Status from Orders where OrderID=@OrderID  and ClientID=@ClientID
+select @Status=Status,@CustomerID=CustomerID from Orders where OrderID=@OrderID  and ClientID=@ClientID
 
 if(@Status > 1)
 begin
@@ -36,10 +36,7 @@ end
 
 Update Orders set Status=9 where OrderID=@OrderID
 
-if(@Status=0)
-begin
-	delete from ShoppingCart where [GUID]=@OrderID and OrderType=11
-end
+update Customer set OrderCount=OrderCount-1 where CustomerID=@CustomerID and OrderCount>0
 
 set @Err+=@@error
 

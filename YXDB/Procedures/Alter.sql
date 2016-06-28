@@ -1,18 +1,18 @@
 ﻿
---处理客户需求单和订单数
-alter table Customer add DemandCount int default 0
-alter table Customer add DYCount int default 0
-alter table Customer add DHCount int default 0
+--材料报损报溢
+update Menu set IsHide=0 where AutoID in (94,99)
 
-update Orders set OrderStatus=1 where OrderStatus=0 and Status=4
+--大货单翻单批次
+alter table Orders add TurnTimes int default 0
+Update Orders set TurnTimes=0 where OrderType=1
+Update Orders set TurnTimes=1 where OrderType=2
 
-update Customer set DemandCount=0,DYCount=0,DHCount=0
+select o.OriginalID,o.OrderID,count(o1.AutoID) C into #Temp from  Orders o join Orders o1 on o.OriginalID=o1.OriginalID and o1.AutoID<o.AutoID
+where o.OrderType=2 and o1.OrderType=2 and o.OriginalID<>'' group by o.OriginalID,o.OrderID 
 
-update C set DemandCount=o.Quantity from Customer c join
-(select CustomerID,COUNT(AutoID) Quantity from Orders where OrderStatus=0 group by CustomerID) o on c.CustomerID=o.CustomerID
+UPDATE o set TurnTimes=TurnTimes+o1.C from Orders o join #Temp o1 on o.OrderID=o1.OrderID
 
-update C set DYCount=o.Quantity from Customer c join
-(select CustomerID,COUNT(AutoID) Quantity from Orders where OrderStatus between 1 and 2 and OrderType=1 group by CustomerID) o on c.CustomerID=o.CustomerID
+drop table #Temp
 
-update C set DHCount=o.Quantity from Customer c join
-(select CustomerID,COUNT(AutoID) Quantity from Orders where OrderStatus between 1 and 2 and OrderType=2 group by CustomerID) o on c.CustomerID=o.CustomerID
+Update o set TurnTimes=od.C from Orders o join (
+select OriginalID,count(AutoID) C  from  Orders where OrderType=2 and OriginalID<>'' group by OriginalID) od on o.OrderID=od.OriginalID  

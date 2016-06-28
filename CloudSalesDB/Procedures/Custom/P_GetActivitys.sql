@@ -68,10 +68,10 @@ AS
 	end
 
 	if(@BeginTime<>'')
-		set @condition +=' and BeginTime >= Convert(varchar(20), '''+@BeginTime+''',120)'
+		set @condition +=' and BeginTime >= '''+@BeginTime+' 0:00:00'''
 
 	if(@EndTime<>'')
-		set @condition +=' and EndTime <=  Convert(varchar(20), '''+@EndTime+''',120)'
+		set @condition +=' and EndTime <=  '''+@EndTime+' 23:59:59'''
 
 	if(@keyWords <> '')
 	begin

@@ -45,10 +45,9 @@ AS
 	@orderColumn nvarchar(4000),
 	@isAsc int
 
-	select @tableName=case @ExcelType when 0 then 'Customer cus left join Contact con on cus.CustomerID=con.CustomerID and con.Status<>9 and con.Type=1 and cus.Type=1 left join city city  on city.Citycode=cus.Citycode '
-	else ' Customer cus join Contact con on cus.CustomerID=con.CustomerID and con.Status<>9 and  cus.Type=1 left join city city  on city.Citycode=cus.Citycode 'end,
-	@columns='cus.CustomerID,cus.Name,cus.Type,cus.SourceID, cus.Status,cus.Address,cus.Email,cus.Birthday,cus.StageStatus,cus.Extent,con.Name ContactName,isnull(con.MobilePhone,cus.MobilePhone) MobilePhone,
-	isnull(con.Jobs,cus.Jobs) Jobs,cus.OwnerID,cus.CreateTime,cus.Mark,con.ContactID,cus.AgentID,cus.ClientID,cus.ReplyTimes ,cus.Description,cus.IndustryID,case cus.type when 0 then cus.Name else con.Name end as Contcat,isnull(city.Province,'''') Province,isnull(city.City,'''') Citys,isnull(city.Counties,'''') Counties ',
+	select @tableName='Customer cus left join Contact con on cus.CustomerID=con.CustomerID and con.Status<>9 and con.Type=1 and cus.Type=1 ',
+	@columns='cus.CustomerID,cus.Name,cus.Type,cus.SourceID, cus.Status,cus.Address,cus.Email,cus.Birthday,cus.StageStatus,cus.Extent,con.Name ContactName,isnull(con.MobilePhone,cus.MobilePhone) MobilePhone,cus.CityCode,
+	isnull(con.Jobs,cus.Jobs) Jobs,cus.OwnerID,cus.CreateTime,cus.Mark,con.ContactID,cus.AgentID,cus.ClientID,cus.ReplyTimes ,cus.Description,cus.IndustryID,case cus.type when 0 then cus.Name else con.Name end as Contcat,OpportunityCount,OrderCount ',
 	@key='cus.AutoID',
 	@isAsc=0
 
