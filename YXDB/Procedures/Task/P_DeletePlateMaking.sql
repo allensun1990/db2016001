@@ -39,6 +39,7 @@ as
 		select OrderID from Orders
 		where OrderType=2 and OriginalID=@OrderID and Status not in(7,9)
 		)
+		and status<>9
 		set @Err+=@@ERROR
 	end
 
