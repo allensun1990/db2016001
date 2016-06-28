@@ -236,30 +236,6 @@ begin
 	set @Err+=@@error
 end
 
-if(@IsOver=1)
-begin
-	if(@DocType=1)
-	begin
-		Update Orders set CutStatus=2 where OrderID=@OrderID
-	end
-	else if(@DocType=2 and @CutStatus=2)
-	begin
-		Update Orders set SendStatus=2,Status=6 where OrderID=@OrderID
-
-		Insert into OrderStatusLog(OrderID,Status,CreateUserID) values(@OrderID,6,@OperateID)
-
-		--通知阿里待处理日志
-		if(@AliOrderCode is not null and @AliOrderCode<>'')
-		begin
-			insert into AliOrderUpdateLog(LogID,OrderID,AliOrderCode,OrderType,Status,OrderStatus,OrderPrice,FailCount,UpdateTime,CreateTime,Remark,AgentID,ClientID)
-			values(NEWID(),@OrderID,@AliOrderCode,2,0,6,0,0,getdate(),getdate(),'大货单生产完成，发货完毕',@ClientID,@ClientID)
-			set @Err+=@@error
-		end
-
-		set @Err+=@@error
-	end
-	
-end
 else if(@DocType=1)
 begin
 	Update Orders set CutStatus=1 where OrderID=@OrderID
