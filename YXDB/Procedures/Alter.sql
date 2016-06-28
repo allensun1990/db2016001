@@ -1,4 +1,7 @@
 ﻿
+--材料报损报溢
+update Menu set IsHide=0 where AutoID in (94,99)
+
 --大货单翻单批次
 alter table Orders add TurnTimes int default 0
 Update Orders set TurnTimes=0 where OrderType=1

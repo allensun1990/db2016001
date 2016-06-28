@@ -54,6 +54,12 @@ BEGIN
 	return
 END
 
+IF(@ProductCode is not null and @ProductCode<>'' and EXISTS(SELECT AutoID FROM [Products] WHERE ProductCode=@ProductCode and ClientID=@ClientID and  ProductID<>@ProductID and Status<>9))--条形码唯一
+BEGIN
+	rollback tran
+	return
+END
+
 declare @Err int,@PIDList nvarchar(max),@SaleAttr  nvarchar(max),@HasDetails int=0
 
 set @Err=0
