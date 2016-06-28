@@ -58,7 +58,7 @@ select @PIDList=PIDList,@SaleAttr=SaleAttr from Category where CategoryID=@Categ
 IF EXISTS(SELECT AutoID FROM [Products] WHERE [ProductCode]=@ProductCode and ClientID=@ClientID and Status<>9)--产品编号唯一，编号不存在时才能执行插入
 BEGIN
 	set @ProductID='';
-	set @Result=0;
+	set @Result=3;
 	rollback tran
 	return
 END
@@ -66,7 +66,7 @@ END
 IF(@ShapeCode is not null and @ShapeCode<>'' and EXISTS(SELECT AutoID FROM [Products] WHERE ShapeCode=@ShapeCode and ClientID=@ClientID and Status<>9))--条形码唯一
 BEGIN
 	set @ProductID='';
-	set @Result=0;
+	set @Result=2;
 	rollback tran
 	return
 END
