@@ -49,11 +49,18 @@ begin
 	return
 end
 
+if @ProductCode <>'' and exists(select AutoID from ProductDetail where ProductID=@ProductID and Status<>9 and DetailsCode=@ProductCode)
+begin
+	set @DetailID=''
+	set @Result=3
+	rollback tran
+	return
+end
+
 INSERT INTO ProductDetail(ProductDetailID,[ProductID],DetailsCode,BigPrice ,[SaleAttr],[AttrValue],[SaleAttrValue],[Price],[Status],Remark,IsDefault,
 					Weight,ImgS,[ShapeCode] ,[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID])
 				VALUES(@DetailID,@ProductID,@ProductCode,@BigPrice,@AttrList,@ValueList,@AttrValueList,@Price,1,@Remark,0,
 					@Weight,@ProductImg,@ShapeCode,@Description,@CreateUserID,getdate(),getdate(),'',@ClientID);
-set @Result=1;
 
 set @Err+=@@Error
 
@@ -64,5 +71,6 @@ begin
 end 
 else
 begin
+	set @Result=1;
 	commit tran
 end

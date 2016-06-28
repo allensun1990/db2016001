@@ -1,20 +1,20 @@
 ﻿Use [CloudSales1.0_dev]
 GO
-IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'P_InsertProduct')
+IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'P_InsertProductExcel')
 BEGIN
-	DROP  Procedure  P_InsertProduct
+	DROP  Procedure  P_InsertProductExcel
 END
 
 GO
 /***********************************************************
-过程名称： P_InsertProduct
+过程名称： P_InsertProductExcel
 功能描述： 添加产品
 参数说明：	 
-编写日期： 2015/6/8
-程序作者： Allen
-调试记录： exec P_InsertProduct 
+编写日期： 2016/6/28
+程序作者： Michaux
+调试记录： exec P_InsertProductExcel 
 ************************************************************/
-CREATE PROCEDURE [dbo].[P_InsertProduct]
+CREATE PROCEDURE [dbo].[P_InsertProductExcel]
 @ProductCode nvarchar(200),
 @ProductName nvarchar(200),
 @GeneralName nvarchar(200),
@@ -44,7 +44,7 @@ CREATE PROCEDURE [dbo].[P_InsertProduct]
 @CreateUserID nvarchar(64),
 @ClientID nvarchar(64),
 @ProductID nvarchar(64) output,
-@Result int output--1：成功；0失败
+@Result nvarchar(64) output--1：成功；0失败
 AS
 
 begin tran
@@ -58,7 +58,7 @@ select @PIDList=PIDList,@SaleAttr=SaleAttr from Category where CategoryID=@Categ
 IF EXISTS(SELECT AutoID FROM [Products] WHERE [ProductCode]=@ProductCode and ClientID=@ClientID and Status<>9)--产品编号唯一，编号不存在时才能执行插入
 BEGIN
 	set @ProductID='';
-	set @Result=3;
+	set @Result=@ProductCode+'产品编码已存在';
 	rollback tran
 	return
 END
@@ -66,7 +66,7 @@ END
 IF(@ShapeCode is not null and @ShapeCode<>'' and EXISTS(SELECT AutoID FROM [Products] WHERE ShapeCode=@ShapeCode and ClientID=@ClientID and Status<>9))--条形码唯一
 BEGIN
 	set @ProductID='';
-	set @Result=2;
+	set @Result=@ShapeCode+'条形码已存在';
 	rollback tran
 	return
 END
@@ -93,7 +93,7 @@ INSERT INTO ProductDetail(ProductDetailID,[ProductID],DetailsCode ,[SaleAttr],[A
 					@Weight,@ProductImg,'','',@CreateUserID,getdate(),getdate(),'',@ClientID,1);
 			set @Err+=@@Error
 
-set @Result=1;
+set @Result='';
 
 set @Err+=@@Error
 

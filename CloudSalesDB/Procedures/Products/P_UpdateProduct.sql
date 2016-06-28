@@ -43,19 +43,24 @@ CREATE PROCEDURE [dbo].[P_UpdateProduct]
 @Description text,
 @ShapeCode nvarchar(50),
 @CreateUserID nvarchar(64),
-@ClientID nvarchar(64)
+@ClientID nvarchar(64),
+@Result int output
 AS
+
+set @Result=0
 
 begin tran
 
 IF(@ShapeCode is not null and @ShapeCode<>'' and EXISTS(SELECT AutoID FROM [Products] WHERE ShapeCode=@ShapeCode and ClientID=@ClientID and  ProductID<>@ProductID and Status<>9))--条形码唯一
 BEGIN
+	set @Result=2
 	rollback tran
 	return
 END
 
 IF(@ProductCode is not null and @ProductCode<>'' and EXISTS(SELECT AutoID FROM [Products] WHERE ProductCode=@ProductCode and ClientID=@ClientID and  ProductID<>@ProductID and Status<>9))--条形码唯一
 BEGIN
+	set @Result=3
 	rollback tran
 	return
 END
@@ -88,5 +93,6 @@ begin
 end 
 else
 begin
+	set @Result=1
 	commit tran
 end

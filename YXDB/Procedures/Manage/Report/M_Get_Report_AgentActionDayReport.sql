@@ -14,7 +14,7 @@ GO
 修改说明:  添加根据工厂ID查询
 调试记录： exec [M_Get_Report_AgentActionDayReport] 1,'2016-04-04','2016-04-07',''
 ************************************************************/
-ALTER PROCEDURE [dbo].[M_Get_Report_AgentActionDayReport]
+Create PROCEDURE [dbo].[M_Get_Report_AgentActionDayReport]
 @DateType int=1,
 @BeginDate nvarchar(100)='',
 @EndDate nvarchar(100)='',
