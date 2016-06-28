@@ -559,5 +559,9 @@
     <None Include="Procedures\System\P_DeleteOrderProcess.sql" />
     <None Include="Procedures\Custom\P_GetCustomerReplys.sql" />
     <None Include="Procedures\Custom\P_AddCustomerReplyAttachment.sql" />
+    <None Include="Procedures\System\P_AccountBindMobile.sql" />
+    <None Include="Procedures\Task\P_AddPlateMaking.sql" />
+    <None Include="Procedures\Task\P_UpdatePlateMaking.sql" />
+    <None Include="Procedures\Task\P_DeletePlateMaking.sql" />
   </ItemGroup>
 </Project>
