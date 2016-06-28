@@ -40,8 +40,9 @@ AS
 	set @condition='o.status<>9  and o.ClientID='''+@ClientID+''''
 
 	if(@UserID<>'')
+	begin
 		set @condition+=' and o.OwnerID='''+@UserID+''''
-
+	end
 	if(@OrderType<>-1)
 		set @condition+=' and o.OrderType='+convert(nvarchar(2), @OrderType)
 
@@ -59,9 +60,9 @@ AS
 	if(@FilterType<>-1)
 	begin
 		if(@FilterType=1)
-			begin
-				set @condition+=' and o.PlanTime<GETDATE() and o.OrderStatus=1 '
-			end
+		begin
+			set @condition+=' and o.PlanTime<GETDATE() and o.OrderStatus=1 '
+		end
 		else if(@FilterType=3 or @FilterType=2)
 		begin
 			set @condition+=' and o.PlanTime>GETDATE() and o.OrderStatus=1 '
