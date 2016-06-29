@@ -27,7 +27,7 @@ as
 	select @OriginalPlateID=OriginalPlateID,@OrderID=OrderID from PlateMaking where PlateID=@PlateID
 	begin tran
 	declare @Err int=0
-	if(@OriginalPlateID<>'')
+	if(@OriginalPlateID is not null and @OriginalPlateID<>'')
 	begin
 		update PlateMaking set Title=@Title,Remark=@Remark,Icon=@Icon,Type=@Type where PlateID in(@OriginalPlateID,@PlateID)
 		set @Err+=@@ERROR
@@ -37,12 +37,11 @@ as
 		update PlateMaking set Title=@Title,Remark=@Remark,Icon=@Icon,Type=@Type where PlateID=@PlateID
 		set @Err+=@@ERROR
 
-		update PlateMaking set Title=@Title,Remark=@Remark,Icon=@Icon,Type=@Type where OriginalPlateID=@PlateID
-		and OrderID in (
-		select OrderID from Orders
-		where OrderType=2 and OriginalID=@OrderID and Status not in(7,9)
-		)
-		and status<>9
+		update PlateMaking set Title=@Title,Remark=@Remark,Icon=@Icon,Type=@Type where OriginalPlateID=@PlateID and status<>9
+		and OrderID in ( select OrderID from Orders
+										where OrderType=2 and OriginalID=@OrderID and OrderStatus = 1
+						)
+		
 		set @Err+=@@ERROR
 	end
 

@@ -33,7 +33,16 @@ begin
 	return
 end
 
-select @ProcessID=ProcessID,@OwnerID=OwnerID from OrderProcess where ClientID=@ClientID and ProcessType=2 and IsDefault=1
+--取得默认流程
+if(@OperateID<>'' and exists(select ProcessID from OrderProcess where  ClientID=@ClientID and ProcessType=2 and OwnerID=@OperateID and status<>9 ))
+begin
+	select top 1 @ProcessID=ProcessID,@OwnerID=OwnerID from OrderProcess 
+	where ClientID=@ClientID and ProcessType=2 and OwnerID=@OperateID  and status<>9 order by IsDefault desc
+end
+else
+begin
+	select @ProcessID=ProcessID,@OwnerID=OwnerID from OrderProcess where ClientID=@ClientID and ProcessType=2 and IsDefault=1 and status<>9
+end
 
 insert into Orders(OrderID,OrderCode,CategoryID,TypeID,OrderType,SourceType,OrderStatus,Status,ProcessID,PlanPrice,FinalPrice,PlanQuantity,PlanType,TaskCount,TaskOver,OrderImage,OriginalID,OriginalCode ,
 					Price,CostPrice,ProfitPrice,TotalMoney,CityCode,Address,PersonName,MobileTele,Remark,CustomerID,OwnerID,CreateTime,AgentID,ClientID,Platemaking,PlateRemark,

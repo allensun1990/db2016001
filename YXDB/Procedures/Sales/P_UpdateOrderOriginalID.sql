@@ -56,8 +56,6 @@ insert into PlateMaking(PlateID,OrderID,Title,Remark,Icon,Status,AgentID,CreateT
 select NEWID() as PlateID,@OrderID,p.Title,p.Remark,p.Icon,p.Status,p.AgentID,p.CreateTime,p.CreateUserID,p.Type,p.OrderID,p.PlateID from PlateMaking p
 where p.OrderID=@OriginalID and p.status<>9
 
-
-
 set @Err+=@@error
 
 if(@Err>0)
