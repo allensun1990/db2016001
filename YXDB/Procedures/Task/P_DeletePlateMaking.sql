@@ -39,7 +39,6 @@ as
 						select OrderID from Orders
 									   where OrderType=2 and OriginalID=@OrderID and OrderStatus = 1
 						)
-		
 		set @Err+=@@ERROR
 	end
 
