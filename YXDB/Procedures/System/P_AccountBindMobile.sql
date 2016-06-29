@@ -20,8 +20,16 @@ CREATE PROCEDURE [dbo].P_AccountBindMobile
 @Pwd nvarchar(100),
 @ClientID nvarchar(64)=''
 AS
+declare @BindMobilePhone nvarchar(100),
+@LoginPWD nvarchar(100)
 
 if(not exists(select UserID from users where UserID=@UserID and Status<>9) )
+begin
+	return
+end
+
+select @BindMobilePhone=BindMobilePhone,@LoginPWD=LoginPWD from users where UserID=@UserID and Status<>9
+if(@BindMobilePhone<>'')
 begin
 	return
 end
@@ -29,13 +37,21 @@ end
 begin tran
 declare @Err int=0
 
-Update users set MobilePhone=@BindMobile,BindMobilePhone=@BindMobile,LoginPWD=@Pwd where UserID=@UserID
-set @Err+=@@error
+if(@LoginPWD<>'')
+begin
+	Update users set MobilePhone=@BindMobile,BindMobilePhone=@BindMobile where UserID=@UserID
+	set @Err+=@@error
+end
+else
+begin
+	Update users set MobilePhone=@BindMobile,BindMobilePhone=@BindMobile,LoginPWD=@Pwd where UserID=@UserID
+	set @Err+=@@error
+end
 
 update clients set MobilePhone=@BindMobile where ClientID=@ClientID
 set @Err+=@@error
 
-update Agents set EndTime=dateadd(month, 2, EndTime) where AgentID=@ClientID
+update Agents set EndTime=dateadd(month, 1, EndTime) where AgentID=@ClientID
 set @Err+=@@error
 
 Update Clients set GuideStep=0 where ClientID=@ClientID
