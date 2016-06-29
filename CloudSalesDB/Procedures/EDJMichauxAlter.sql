@@ -1,1 +1,2 @@
-﻿
+﻿R_GetCustomerStageRPT
+R_GetOpportunityStateRPT
