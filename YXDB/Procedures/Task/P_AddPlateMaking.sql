@@ -29,12 +29,12 @@ as
 	declare @PlateID nvarchar(64)=''
 	set @PlateID=NEWID()
 
-	select @OrderType=OrderType,@OriginalID=OriginalID from orders where OrderID=@OrderID
+	select @OrderType=OrderType,@OriginalID=OriginalID from Orders where OrderID=@OrderID
 	begin tran
 	declare @Err int=0
 	if(@OrderType=2)
 	begin
-	insert into  PlateMaking(PlateID,Title,Remark,Icon,TaskID,OrderID,Type,CreateUserID,AgentID,CreateTime) 
+		insert into  PlateMaking(PlateID,Title,Remark,Icon,TaskID,OrderID,Type,CreateUserID,AgentID,CreateTime) 
 		values(@PlateID,@Title,@Remark,@Icon,@TaskID,@OriginalID,@Type,@UserID,@AgentID,getdate())
 		set @Err+=@@ERROR
 
@@ -50,7 +50,7 @@ as
 
 		insert into  PlateMaking(PlateID,Title,Remark,Icon,TaskID,OrderID,Type,CreateUserID,AgentID,CreateTime,OriginalID,OriginalPlateID) 
 		select NEWID(),@Title,@Remark,@Icon,@TaskID,OrderID,@Type,@UserID,@AgentID,getdate(),@OrderID,@PlateID from Orders
-		where OrderType=2 and OriginalID=@OrderID and Status not in(7,9)
+		where OrderType=2 and OriginalID=@OrderID and OrderStatus = 1
 		set @Err+=@@ERROR
 	end
 

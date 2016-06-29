@@ -34,7 +34,6 @@ begin
 	return
 end
 
-
 Update OrderCosts set Status=9 where OrderID=@OrderID and AutoID=@AutoID
 
 select @Money=sum(Price) from  OrderCosts where OrderID=@OrderID and Status=1
