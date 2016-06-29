@@ -55,12 +55,11 @@ begin
 	set @AllocationTime=getdate()
 
 	set @Err+=@@error
-
 end
 
-insert into Customer(CustomerID,Name,Type,IndustryID,Extent,CityCode,Address,MobilePhone,OfficePhone,Email,Jobs,Description,SourceID,ActivityID,
+insert into Customer(CustomerID,Name,ContactName,Type,IndustryID,Extent,CityCode,Address,MobilePhone,OfficePhone,Email,Jobs,Description,SourceID,ActivityID,
 					StageID,OwnerID,Status,AllocationTime,OrderTime,CreateTime,CreateUserID,AgentID,ClientID)
-values(@CustomerID,@Name,@Type,@IndustryID,@Extent,@CityCode,@Address,@MobilePhone,@OfficePhone,@Email,@Jobs,@Description,@SourceID,@ActivityID,
+values(@CustomerID,@Name,@ContactName,@Type,@IndustryID,@Extent,@CityCode,@Address,@MobilePhone,@OfficePhone,@Email,@Jobs,@Description,@SourceID,@ActivityID,
 					@StageID,@OwnerID,1,@AllocationTime,null,getdate(),@CreateUserID,@AgentID,@ClientID)
 
 set @Err+=@@error

@@ -79,9 +79,9 @@ tran
 		if(@SysCustomerID='')
 		begin
 		---负责人导入时为空 需要时把@StageID,null 替换为@StageID,@OwnerID
-			insert into Customer(CustomerID,Name,Type,IndustryID,Extent,CityCode,Address,MobilePhone,OfficePhone,Email,Jobs,Description,SourceID,ActivityID,
+			insert into Customer(CustomerID,Name,ContactName,Type,IndustryID,Extent,CityCode,Address,MobilePhone,OfficePhone,Email,Jobs,Description,SourceID,ActivityID,
 								StageID,OwnerID,Status,AllocationTime,OrderTime,CreateTime,CreateUserID,AgentID,ClientID)
-			values(@CustomerID,@Name,@Type,@IndustryID,@Extent,@CityCode,@Address,@MobilePhone,@OfficePhone,@Email,@Jobs,@Description,@SourceID,@ActivityID,
+			values(@CustomerID,@Name,@ContactName,@Type,@IndustryID,@Extent,@CityCode,@Address,@MobilePhone,@OfficePhone,@Email,@Jobs,@Description,@SourceID,@ActivityID,
 								@StageID,null,1,@AllocationTime,null,getdate(),@CreateUserID,@AgentID,@ClientID)
 
 			set @Err+=@@error
@@ -102,7 +102,7 @@ tran
 		if(@SysCustomerID<>'')
 		begin
 			update Customer set 
-			Name=case when @CheckType=1 then @Name else Name end ,		
+			Name=case when @CheckType=1 then @Name else Name end ,ContactName=@ContactName,		
 			MobilePhone=case when @CheckType=0 then @MobilePhone else MobilePhone end,
 			Email=@Email, IndustryID=@IndustryID,
 			Type=@Type,Extent=@Extent,CityCode=@CityCode,
