@@ -51,17 +51,17 @@ begin
 		where Status<>9  and ClientID=@ClientID and OwnerID=@OwnerID
 		group by SourceID
 		union
-		select COUNT(1) value ,2 as StageStatus,b.StageID as SourceID,c.StageName as SourceName from  Customer a 
-		left join Opportunity  b on a.CustomerID=b.CustomerID  
-		left join OpportunityStage c on b.StageID=c.StageID and b.OpportunityID=a.OpportunityID
-		where a.Status<>9  and b.Status<>9 and c.Status<>9 and a.OpportunityTime>@BeginTime 
-		and a.OpportunityTime<@EndTime  and a.ClientID=@ClientID and a.OwnerID=@OwnerID
-		group by b.StageID ,c.StageName 
+			select COUNT(1) value ,2 as StageStatus,b.StageID as SourceID,b.Status  as SourceName from OpportunityStage c   
+			left join Opportunity  b on b.StageID=c.StageID    
+			left join Customer a on a.CustomerID=b.CustomerID
+			where a.Status<>9  and b.Status<>9 and c.Status<>9 and a.OpportunityTime>@BeginTime 
+			and a.OpportunityTime<@EndTime  and a.ClientID=@ClientID and a.OwnerID=@OwnerID
+			group by b.StageID ,b.Status 
 		union
-		select COUNT(1) value ,3 as StageStatus ,'' SourceID,'' as SourceName from  Customer a 
-		join Orders  b on a.CustomerID=b.CustomerID   and a.OrderID=b.OrderID
-		where a.Status<>9  and b.Status<>9   and a.OrderTIme>@BeginTime 
-		and a.OrderTime<@EndTime  and a.ClientID=@ClientID and a.OwnerID=@OwnerID
+			select COUNT(1) value ,3 as StageStatus ,'' SourceID,'' as SourceName from  Customer a 
+			join Orders  b on a.CustomerID=b.CustomerID  
+			where a.Status<>9  and b.Status<>9   and a.OrderTIme>@BeginTime 
+			and a.OrderTime<@EndTime  and a.ClientID=@ClientID and a.OwnerID=@OwnerID
 	end
 	else
 	begin
@@ -75,15 +75,15 @@ begin
 		where Status<>9  and ClientID=@ClientID
 		group by SourceID
 		union
-		select COUNT(1) value ,2 as StageStatus,b.StageID as SourceID,c.StageName as SourceName from  Customer a 
-		left join Opportunity  b on a.CustomerID=b.CustomerID  
-		left join OpportunityStage c on b.StageID=c.StageID and b.OpportunityID=a.OpportunityID
+		select COUNT(1) value ,2 as StageStatus,b.StageID as SourceID,b.Status  as SourceName from OpportunityStage c   
+		left join Opportunity  b on b.StageID=c.StageID    
+		left join Customer a on a.CustomerID=b.CustomerID
 		where a.Status<>9  and b.Status<>9 and c.Status<>9 and a.OpportunityTime>@BeginTime 
-		and a.OpportunityTime<@EndTime  and a.ClientID=@ClientID
-		group by b.StageID ,c.StageName 
+		and a.OpportunityTime<@EndTime  and a.ClientID=@ClientID 
+		group by b.StageID ,b.Status 
 		union
 		select COUNT(1) value ,3 as StageStatus ,'' SourceID,'' as SourceName from  Customer a 
-		join Orders  b on a.CustomerID=b.CustomerID   and a.OrderID=b.OrderID
+		join Orders  b on a.CustomerID=b.CustomerID   
 		where a.Status<>9  and b.Status<>9   and a.OrderTIme>@BeginTime 
 		and a.OrderTime<@EndTime  and a.ClientID=@ClientID
 	end
@@ -103,29 +103,21 @@ begin
 		and ClientID=@ClientID and OwnerID=@OwnerID
 		group by SourceID
 		union
-		select COUNT(1) value ,2 as StageStatus,b.StageID as SourceID,c.StageName as SourceName from  Customer a 
-		left join Opportunity  b on a.CustomerID=b.CustomerID  
-		left join OpportunityStage c on b.StageID=c.StageID and b.OpportunityID=a.OpportunityID
+		select COUNT(1) value ,2 as StageStatus,b.StageID as SourceID,b.Status  as SourceName from  OpportunityStage c
+		left join Opportunity  b on  b.StageID=c.StageID
+		left join  Customer a  on  a.CustomerID=b.CustomerID  
 		where a.Status<>9  and b.Status<>9 and c.Status<>9
 			and a.CreateTime>@BeginTime and a.CreateTime<@EndTime 
 			and a.OpportunityTime>@BeginTime and a.OpportunityTime<@EndTime  
-			and a.ClientID=@ClientID and a.OwnerID=@OwnerID
-			and a.CustomerID in (
-				select distinct CustomerID  from Customer where CreateTime>@BeginTime and CreateTime<@EndTime  
-				and ClientID=@ClientID and OwnerID=@OwnerID
-				)
-		group by b.StageID ,c.StageName 
+			and a.ClientID=@ClientID and a.OwnerID=@OwnerID 
+		group by b.StageID ,b.Status 
 		union
 		select COUNT(1) value ,3 as StageStatus ,'' SourceID,'' as SourceName from  Customer a 
 		join Orders  b on a.CustomerID=b.CustomerID   and a.OrderID=b.OrderID
 		where a.Status<>9  and b.Status<>9 
 		and a.CreateTime>@BeginTime and a.CreateTime<@EndTime  
 		and a.OrderTIme>@BeginTime and a.OrderTime<@EndTime  
-		and a.ClientID=@ClientID and a.OwnerID=@OwnerID
-		and a.CustomerID in (
-			select distinct CustomerID  from Customer where CreateTime>@BeginTime and CreateTime<@EndTime   
-			and ClientID=@ClientID and OwnerID=@OwnerID
-			)
+		and a.ClientID=@ClientID and a.OwnerID=@OwnerID 
 	end
 	else
 	begin	 
@@ -139,19 +131,17 @@ begin
 		where Status<>9  and  CreateTime>@BeginTime and CreateTime<@EndTime and ClientID=@ClientID
 		group by SourceID
 		union
-		select COUNT(1) value ,2 as StageStatus,b.StageID as SourceID,c.StageName as SourceName from  Customer a 
-		left join Opportunity  b on a.CustomerID=b.CustomerID  
-		left join OpportunityStage c on b.StageID=c.StageID and b.OpportunityID=a.OpportunityID
-		where a.Status<>9  and b.Status<>9 and c.Status<>9 and a.CreateTime>@BeginTime and a.CreateTime<@EndTime 
+		select COUNT(1) value ,2 as StageStatus,b.StageID as SourceID,b.Status as SourceName from  OpportunityStage c  
+		left join Opportunity  b on  b.StageID=c.StageID
+		left join Customer a on  a.CustomerID=b.CustomerID  
+		where a.Status<>9  and b.Status<>9 and c.Status<>9 and a.CreateTime>=@BeginTime and a.CreateTime<@EndTime 
 		and a.OpportunityTime>@BeginTime and a.OpportunityTime<@EndTime  and a.ClientID=@ClientID
-		and a.CustomerID in (select distinct CustomerID  from Customer where CreateTime>@BeginTime and CreateTime<@EndTime   and ClientID=@ClientID)
-		group by b.StageID ,c.StageName 
+		group by b.StageID ,b.Status
 		union
 		select COUNT(1) value ,3 as StageStatus ,'' SourceID,'' as SourceName from  Customer a 
-		join Orders  b on a.CustomerID=b.CustomerID   and a.OrderID=b.OrderID
+		join Orders  b on a.CustomerID=b.CustomerID    
 		where a.Status<>9  and b.Status<>9  and a.CreateTime>@BeginTime and a.CreateTime<@EndTime  
 		and a.OrderTIme>@BeginTime and a.OrderTime<@EndTime  and a.ClientID=@ClientID
-		and a.CustomerID in (select distinct CustomerID  from Customer where CreateTime>@BeginTime and CreateTime<@EndTime   and ClientID=@ClientID)
 	end
 end
 

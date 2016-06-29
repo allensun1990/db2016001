@@ -23,7 +23,7 @@ Create proc R_GetOpportunityStateRPT
 @OwnerID varchar(50)=''
 as
 begin
-	if(@BeginTime='' or @Type=1) 
+	if(@BeginTime='' ) 
 		set @BeginTime='1990-01-01' 
 	if(@EndTime=''or @Type=1) 
 		set @EndTime=GETDATE()  
@@ -32,7 +32,7 @@ begin
 
 	declare @sqlText varchar(4000)
 
-	set @sqlText='select a.Status,a.StageID,count(1)value from  Opportunity  a 
+	set @sqlText='select a.Status,a.StageID,count(1) value from  Opportunity  a 
 			left join OpportunityStage b on  a.StageID=b.StageID 
 		where a.Status<>9   
 			and a.ClientID='''+@ClientID+'''
@@ -44,7 +44,7 @@ begin
 	begin
 		set @sqlText=@sqlText+'	and a.CustomerID  in (
 				select  distinct CustomerID from  Customer where a.status<>9 
-					and ClientID='''+@ClientID+''' and CreateTime >'''+ @BeginTime+''' and CreateTime<='''+@EndTime+'''
+					and ClientID='''+@ClientID+''' and OpportunityTime >'''+ @BeginTime+''' and OpportunityTime<='''+@EndTime+'''
 				) '
 	end
 
