@@ -16,3 +16,33 @@ drop table #Temp
 
 Update o set TurnTimes=od.C from Orders o join (
 select OriginalID,count(AutoID) C  from  Orders where OrderType=2 and OriginalID<>'' group by OriginalID) od on o.OrderID=od.OriginalID  
+
+--材料库存
+create table ClientProducts 
+(
+AutoID int identity(1,1) primary key,
+ProductID nvarchar(64),
+StockIn decimal(18,4) default 0,
+StockOut decimal(18,4) default 0,
+LogicOut decimal(18,4) default 0,
+ClientID nvarchar(64)
+)
+
+insert into ClientProducts(ProductID,StockIn,StockOut,LogicOut,ClientID)
+select ProductID,SUM(StockIn),SUM(StockOut), SUM(StockOut),ClientID from ProductStock group by ProductID,ClientID
+
+--材料规格库存
+create table ClientProductDetails 
+(
+AutoID int identity(1,1) primary key,
+ProductDetailID nvarchar(64),
+ProductID nvarchar(64),
+StockIn decimal(18,4) default 0,
+StockOut decimal(18,4) default 0,
+LogicOut decimal(18,4) default 0,
+ClientID nvarchar(64)
+)
+
+insert into ClientProductDetails(ProductID,ProductDetailID,StockIn,StockOut,LogicOut,ClientID)
+select ProductID,ProductDetailID,SUM(StockIn),SUM(StockOut), SUM(StockOut),ClientID from ProductStock group by ProductDetailID,ProductID,ClientID
+

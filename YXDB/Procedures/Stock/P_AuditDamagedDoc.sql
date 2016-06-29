@@ -49,14 +49,19 @@ begin
 	
 	select @ProductID=ProductID,@ProductDetailID=ProductDetailID,@Quantity=Quantity,@BatchCode=BatchCode,@DepotID=DepotID,@Remark=Remark from #TempProducts where AutoID=@AutoID
 
-	if exists(select AutoID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID and DepotID=@DepotID and BatchCode=@BatchCode and StockIn-StockOut>@Quantity)
+	--处理材料库存
+	Update ClientProducts set StockOut=StockOut+@Quantity,LogicOut=LogicOut+@Quantity where ProductID=@ProductID and ClientID=@ClientID
+
+	Update ClientProductDetails set StockOut=StockOut+@Quantity,LogicOut=LogicOut+@Quantity where ProductDetailID=@ProductDetailID and ClientID=@ClientID
+
+	if exists(select AutoID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID and DepotID=@DepotID and StockIn-StockOut>@Quantity)
 	begin
-		update ProductStock set StockOut=StockOut+@Quantity where ProductDetailID=@ProductDetailID and WareID=@WareID and DepotID=@DepotID and BatchCode=@BatchCode
+		update ProductStock set StockOut=StockOut+@Quantity where ProductDetailID=@ProductDetailID and WareID=@WareID and DepotID=@DepotID
 	end
 	else
 	begin
 		set @Result=4 --库存不足
-		select  @ErrInfo='产品：'+ProductName+' '+@Remark+' 批次：'+@BatchCode+'库存不足' from Products where ProductID=@ProductID
+		select  @ErrInfo='材料：'+ProductName+' '+@Remark+ '库存不足' from Products where ProductID=@ProductID
 		rollback tran
 		return
 	end
@@ -67,10 +72,10 @@ begin
 						values(@ProductDetailID,@ProductID,@DocID,@DocCode,@BatchCode,CONVERT(varchar(100), GETDATE(), 112),@DocType,1,@Quantity,@WareID,@DepotID,@UserID,@ClientID)
 
 	--修改产品入库数
-	update Products set LogicOut=LogicOut+@Quantity,SaleCount=SaleCount+@Quantity where ProductID=@ProductID
+	--update Products set LogicOut=LogicOut+@Quantity,SaleCount=SaleCount+@Quantity where ProductID=@ProductID
 
 	--修改产品明细入库数
-	update ProductDetail set LogicOut=LogicOut+@Quantity,SaleCount=SaleCount+@Quantity where ProductDetailID=@ProductDetailID
+	--update ProductDetail set LogicOut=LogicOut+@Quantity,SaleCount=SaleCount+@Quantity where ProductDetailID=@ProductDetailID
 	set @Err+=@@Error
 
 	set @AutoID=@AutoID+1

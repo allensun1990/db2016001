@@ -30,33 +30,27 @@ CREATE PROCEDURE [dbo].[P_CreateOrderGoodsDoc]
 AS
 begin tran
 
-declare @Err int=0,@Status int,@OwnerID nvarchar(64),@OrderCode nvarchar(64),@AutoID int=1,@GoodsQuantity nvarchar(200),@sql nvarchar(4000),@CutStatus int,
+declare @Err int=0,@OrderStatus int,@OwnerID nvarchar(64),@OrderCode nvarchar(64),@AutoID int=1,@GoodsQuantity nvarchar(200),@sql nvarchar(4000),@CutStatus int,
 @GoodsAutoID int,@Quantity int,@TotalMoney decimal(18,4),@DocImage nvarchar(4000),@DocImages nvarchar(64),@AliOrderCode nvarchar(100)='',@ProcessID nvarchar(64),
 @OrderType int,@TotalQuantity int=0
 
-select @Status=Status,@OwnerID=OwnerID,@OrderCode=OrderCode,@DocImage=OrderImage,@DocImages=OrderImages,@AliOrderCode=AliOrderCode,@ProcessID=ProcessID,@OrderType=OrderType ,@CutStatus=CutStatus
+select @OrderStatus=OrderStatus,@OwnerID=OwnerID,@OrderCode=OrderCode,@DocImage=OrderImage,@DocImages=OrderImages,@AliOrderCode=AliOrderCode,@ProcessID=ProcessID,@OrderType=OrderType ,@CutStatus=CutStatus
 from Orders where OrderID=@OrderID and ClientID=@ClientID
+
+--进行的订单才能操作
+if(@OrderStatus<>1)
+begin
+	rollback tran
+	return
+end
 
 --打样单
 if(@OrderType=1)
 begin
-	
-	if(@Status<>1 and @Status<>2)
-	begin
-		rollback tran
-		return
-	end
-
 	insert into GoodsDoc(DocID,DocCode,DocType,DocImage,DocImages,Status,TotalMoney,CityCode,Address,Remark,ExpressID,ExpressCode,WareID,CreateUserID,CreateTime,OperateIP,ClientID,OriginalID,OriginalCode,TaskID)
 			values(@DocID,@DocCode,@DocType,@DocImage,@DocImages,2,0,'','',@Remark,@ExpressID,@ExpressCode,'',@OperateID,GETDATE(),'',@ClientID,@OrderID,@OrderCode,@TaskID)
 
 	commit tran
-	return
-end
-
-if(@Status<>5)
-begin
-	rollback tran
 	return
 end
 
@@ -146,6 +140,29 @@ begin
 			@UnitID=UnitID,@ProviderID= ProdiverID
 			from #TempProducts where AutoID=@AutoID
 
+			--处理材料库存
+			if exists(select AutoID from ClientProducts where ProductID=@ProductID and ClientID=@ClientID)
+			begin
+				Update ClientProducts set StockOut=StockOut+@UseQuantity,LogicOut=LogicOut+@UseQuantity where  ProductID=@ProductID and ClientID=@ClientID
+			end
+			else
+			begin
+				insert into ClientProducts(ProductID,ClientID,StockIn,StockOut,LogicOut)
+									values(@ProductID,@ClientID,0,@UseQuantity,@UseQuantity)
+			end
+			set @Err+=@@Error
+
+			--处理材料规格库存
+			if exists(select AutoID from ClientProductDetails where ProductDetailID=@ProductDetailID and ClientID=@ClientID)
+			begin
+				Update ClientProductDetails set StockOut=StockOut+@UseQuantity,LogicOut=LogicOut+@UseQuantity where  ProductDetailID=@ProductDetailID and ClientID=@ClientID
+			end
+			else
+			begin
+				insert into ClientProductDetails(ProductID,ProductDetailID,ClientID,StockIn,StockOut,LogicOut)
+									values(@ProductID,@ProductDetailID,@ClientID,0,@UseQuantity,@UseQuantity)
+			end
+
 			truncate table #BatchStock
 
 			insert into #BatchStock(DepotID,BatchCode,Quantity) 
@@ -189,9 +206,9 @@ begin
 				end
 
 				set @BatchAutoID=@BatchAutoID+1
-
 			end
 
+			--材料库存不足
 			if(@UseQuantity > 0)
 			begin
 				select top 1 @DepotID=p.DepotID from ProductStock p join DepotSeat d on p.DepotID=d.DepotID
@@ -207,7 +224,6 @@ begin
 								values (@ProductDetailID,@ProductID,0,@UseQuantity,0,'',@WareID,@DepotID,@ClientID)
 				end
 				
-
 				--处理产品流水
 				insert into ProductStream(ProductDetailID,ProductID,DocID,DocCode,BatchCode,DocDate,DocType,Mark,Quantity,WareID,DepotID,CreateUserID,ClientID)
 							values(@ProductDetailID,@ProductID,@DocID,@DocCode,'',CONVERT(varchar(100), GETDATE(), 112),2,1,@UseQuantity,@WareID,@DepotID,@OperateID,@ClientID)
@@ -236,7 +252,7 @@ begin
 	set @Err+=@@error
 end
 
-else if(@DocType=1)
+if(@DocType=1)
 begin
 	Update Orders set CutStatus=1 where OrderID=@OrderID
 end

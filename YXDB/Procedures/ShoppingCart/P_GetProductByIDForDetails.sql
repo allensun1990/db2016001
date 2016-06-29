@@ -15,16 +15,21 @@ GO
 调试记录： exec P_GetProductByIDForDetails 'CD867D63-B61D-47DE-9C63-0B1A56D68486'
 ************************************************************/
 CREATE PROCEDURE [dbo].[P_GetProductByIDForDetails]
-	@ProductID nvarchar(64)
+	@ProductID nvarchar(64),
+	@ClientID nvarchar(64)=''
 AS
 
 declare @ProdiverID nvarchar(64),@CategoryID nvarchar(64)
 
 select @ProdiverID=ProdiverID,@CategoryID=CategoryID from Products where ProductID=@ProductID
 
-select * from Products where ProductID=@ProductID 
+select p.ProductID,ProductCode,ProductName,SmallUnitID,CategoryID,SaleAttr,AttrList,ValueList,AttrValueList,Price,OnlineTime,
+		IsNew,Weight,ProductImage,ShapeCode,ProdiverID,Description,CreateTime,isnull(c.StockIn,0) StockIn,isnull(c.StockOut,0) StockOut,isnull(c.LogicOut,0) LogicOut
+from Products p left join ClientProducts c on p.ProductID=c.ProductID and c.ClientID=@ClientID where p.ProductID=@ProductID 
 
-select * from ProductDetail where ProductID=@ProductID
+select p.ProductID,p.ProductDetailID,DetailsCode,Price,SaleAttr,AttrValue,SaleAttrValue,ImgS,Weight,Description,CreateTime,Remark,p.ClientID,
+	   isnull(c.StockIn,0) StockIn,isnull(c.StockOut,0) StockOut,isnull(c.LogicOut,0) LogicOut 
+from ProductDetail  p left join ClientProductDetails c on p.ProductDetailID=c.ProductDetailID and c.ClientID=@ClientID where p.ProductID=@ProductID
 
 select * from Providers where ProviderID= @ProdiverID
 

@@ -27,7 +27,7 @@ begin tran
 
 declare @Err int=0,@Status int,@DocCode nvarchar(50),@WareID nvarchar(64),@DocType int
 
-select @Status=Status,@DocCode=DocCode,@WareID=WareID,@DocType=DocType from StorageDoc where DocID=@DocID
+select @Status=Status,@DocCode=DocCode,@WareID=WareID,@DocType=DocType from StorageDoc where DocID=@DocID and ClientID=@ClientID
 
 if(@Status>0)
 begin
@@ -49,9 +49,35 @@ begin
 	
 	select @ProductID=ProductID,@ProductDetailID=ProductDetailID,@Quantity=Quantity,@BatchCode=BatchCode,@DepotID=DepotID from #TempProducts where AutoID=@AutoID
 
-	if exists(select AutoID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID and DepotID=@DepotID and BatchCode=@BatchCode)
+
+	--处理材料库存
+	if exists(select AutoID from ClientProducts where ProductID=@ProductID and ClientID=@ClientID)
 	begin
-		update ProductStock set StockIn=StockIn+@Quantity where ProductDetailID=@ProductDetailID and WareID=@WareID and DepotID=@DepotID and BatchCode=@BatchCode
+		Update ClientProducts set StockIn=StockIn+@Quantity where  ProductID=@ProductID and ClientID=@ClientID
+	end
+	else
+	begin
+		insert into ClientProducts(ProductID,ClientID,StockIn,StockOut,LogicOut)
+							values(@ProductID,@ClientID,@Quantity,0,0)
+	end
+	set @Err+=@@Error
+
+	--处理材料规格库存
+	if exists(select AutoID from ClientProductDetails where ProductDetailID=@ProductDetailID and ClientID=@ClientID)
+	begin
+		Update ClientProductDetails set StockIn=StockIn+@Quantity where  ProductDetailID=@ProductDetailID and ClientID=@ClientID
+	end
+	else
+	begin
+		insert into ClientProductDetails(ProductID,ProductDetailID,ClientID,StockIn,StockOut,LogicOut)
+							values(@ProductID,@ProductDetailID,@ClientID,@Quantity,0,0)
+	end
+	set @Err+=@@Error
+
+	--处理材料库存明细
+	if exists(select AutoID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID and DepotID=@DepotID and ClientID=@ClientID)
+	begin
+		update ProductStock set StockIn=StockIn+@Quantity where ProductDetailID=@ProductDetailID and WareID=@WareID and DepotID=@DepotID and ClientID=@ClientID
 	end
 	else
 	begin
@@ -65,10 +91,10 @@ begin
 						values(@ProductDetailID,@ProductID,@DocID,@DocCode,@BatchCode,CONVERT(varchar(100), GETDATE(), 112),@DocType,0,@Quantity,@WareID,@DepotID,@UserID,@ClientID)
 
 	--修改产品入库数
-	update Products set StockIn=StockIn+@Quantity where ProductID=@ProductID
+	--update Products set StockIn=StockIn+@Quantity where ProductID=@ProductID
 
 	--修改产品明细入库数
-	update ProductDetail set StockIn=StockIn+@Quantity where ProductDetailID=@ProductDetailID
+	--update ProductDetail set StockIn=StockIn+@Quantity where ProductDetailID=@ProductDetailID
 	set @Err+=@@Error
 
 	set @AutoID=@AutoID+1
@@ -78,7 +104,7 @@ end
 --单据状态
 Update StorageDetail set Status=1 where  DocID=@DocID
 
-Update StorageDoc set Status=2 where  DocID=@DocID
+Update StorageDoc set Status=2 where DocID=@DocID
 
 --记录审核日志
 insert into StorageDocAction(DocID,Remark,CreateTime,CreateUserID,OperateIP)
