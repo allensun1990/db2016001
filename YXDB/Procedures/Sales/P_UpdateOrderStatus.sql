@@ -37,14 +37,6 @@ select @OldStatus=Status,@OrderCode=OrderCode,@OrderImg=OrderImage,@ProcessID=Pr
 @OriginalID=OriginalID ,@AliOrderCode=AliOrderCode,@AliGoodsCode=GoodsCode,@IntGoodsCode=IntGoodsCode,@CustomerID=CustomerID
 from Orders where OrderID=@OrderID  and ClientID=@ClientID
 
---if(@OperateID<>@OrderOwnerID and not exists(select AutoID from OrderProcess where ProcessID=@ProcessID and OwnerID=@OperateID))
---begin
---	set @ErrorInfo='您不是订单负责人，不能进行操作'
---	rollback tran
---	return
---end
-
-
 if(@OldStatus=0 and @Status=1 and @OrderType=1)--开始打样
 begin
 	insert into OrderTask(TaskID,Title,ProductName,OrderType,TaskCode,OrderID,OrderImg,ProcessID,StageID,EndTime,OwnerID,Mark,Status,FinishStatus,CreateTime,CreateUserID,ClientID,AgentID,Sort,OrderCode,MaxHours)
@@ -69,7 +61,6 @@ begin
 end
 else if(@Status=3) --合价完成
 begin
-	
 	if exists(select AutoID from OrderTask where OrderID=@OrderID and FinishStatus<>2)
 	begin
 		set @ErrorInfo='阶段任务尚未全部完成，不能完成合价'
@@ -81,7 +72,7 @@ begin
 
 	Update Orders set Status=@Status,FinalPrice=@FinalPrice,TotalMoney=@FinalPrice,EndTime=getdate(),GoodsID=@GoodsID,OrderStatus=2 where OrderID=@OrderID and Status=2 and OrderType=1
 
-	insert into Goods(GoodsID,GoodsName,AliGoodsCode,GoodsCode,CategoryID,Price,ClientID) values( @GoodsID,@Title,@AliGoodsCode,@IntGoodsCode,@CategoryID,@FinalPrice,@ClientID ) 
+	insert into Goods(GoodsID,GoodsName,AliGoodsCode,GoodsCode,CategoryID,Price,ClientID) values(@GoodsID,@Title,@AliGoodsCode,@IntGoodsCode,@CategoryID,@FinalPrice,@ClientID ) 
 
 	set @Err+=@@error
 end

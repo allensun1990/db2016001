@@ -64,6 +64,31 @@ begin
 
 		select @ProductID=ProductID,@ProductDetailID=ProductDetailID,@BatchCode=BatchCode from StorageDetail where DocID=@DocID and AutoID=@GoodsAutoID
 
+		--处理材料库存
+		if exists(select AutoID from ClientProducts where ProductID=@ProductID and ClientID=@ClientID)
+		begin
+			Update ClientProducts set StockIn=StockIn+@Quantity where  ProductID=@ProductID and ClientID=@ClientID
+		end
+		else
+		begin
+			insert into ClientProducts(ProductID,ClientID,StockIn,StockOut,LogicOut)
+								values(@ProductID,@ClientID,@Quantity,0,0)
+		end
+		set @Err+=@@Error
+
+		--处理材料规格库存
+		if exists(select AutoID from ClientProductDetails where ProductDetailID=@ProductDetailID and ClientID=@ClientID)
+		begin
+			Update ClientProductDetails set StockIn=StockIn+@Quantity where  ProductDetailID=@ProductDetailID and ClientID=@ClientID
+		end
+		else
+		begin
+			insert into ClientProductDetails(ProductID,ProductDetailID,ClientID,StockIn,StockOut,LogicOut)
+								values(@ProductID,@ProductDetailID,@ClientID,@Quantity,0,0)
+		end
+		set @Err+=@@Error
+
+		--处理材料实际库存明细
 		if exists(select AutoID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID and DepotID=@DepotID  and ClientID=@ClientID)
 		begin
 			update ProductStock set StockIn=StockIn+@Quantity where ProductDetailID=@ProductDetailID and WareID=@WareID and DepotID=@DepotID and ClientID=@ClientID
@@ -80,10 +105,10 @@ begin
 							values(@ProductDetailID,@ProductID,@DocID,@DocCode,@BatchCode,CONVERT(varchar(100), GETDATE(), 112),@DocType,0,@Quantity,@WareID,@DepotID,@UserID,@ClientID)
 
 		--修改产品入库数
-		update Products set StockIn=StockIn+@Quantity where ProductID=@ProductID
+		--update Products set StockIn=StockIn+@Quantity where ProductID=@ProductID
 
 		--修改产品明细入库数
-		update ProductDetail set StockIn=StockIn+@Quantity where ProductDetailID=@ProductDetailID
+		--update ProductDetail set StockIn=StockIn+@Quantity where ProductDetailID=@ProductDetailID
 		set @Err+=@@Error
 
 		--更新已入库数量
@@ -105,14 +130,10 @@ begin
 	insert into StorageDoc(DocID,DocCode,DocType,DocImage,DocImages,Status,TotalMoney,CityCode,Address,Remark,WareID,CreateUserID,CreateTime,OperateIP,ClientID,OriginalID,OriginalCode)
 		select @NewDocID,@BillingCode,@DocType,DocImage,DocImages,2,@TotalMoney,CityCode,Address,'',WareID,@UserID,GETDATE(),'',ClientID,DocID,DocCode from StorageDoc where DocID=@DocID
 
-	insert into StorageDocAction(DocID,Remark,CreateTime,CreateUserID,OperateIP)
-			values( @DocID,'审核入库',getdate(),@UserID,'')
-
-	insert into StorageBilling(BillingID,BillingCode,DocID,DocCode,TotalMoney,Type,Status,PayStatus,InvoiceStatus,AgentID,ClientID,CreateUserID)
-		   values(NEWID(),@BillingCode,@NewDocID,@BillingCode,@TotalMoney,1,1,0,0,@AgentID,@ClientID,@UserID)
 	set @Err+=@@error
 end
 
+--入库完成
 if(@IsOver=1)
 begin
 	Update StorageDoc set Status=2 where  DocID=@DocID
