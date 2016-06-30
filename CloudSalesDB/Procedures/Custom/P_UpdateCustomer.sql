@@ -21,6 +21,7 @@ CREATE PROCEDURE [dbo].[P_UpdateCustomer]
 @IndustryID nvarchar(64)='',
 @Extent int=0,
 @CityCode nvarchar(20)='',
+@ContactName nvarchar(50)='',
 @Address nvarchar(500)='',
 @MobilePhone nvarchar(50)='',
 @OfficePhone nvarchar(50)='',
@@ -37,7 +38,7 @@ declare @Err int=0
 
 
 Update Customer set Name=@Name,Type=@Type,IndustryID=@IndustryID,Extent=@Extent,CityCode=@CityCode,Address=@Address,MobilePhone=@MobilePhone,OfficePhone=@OfficePhone,
-					Email=@Email,Jobs=@Jobs,Description=@Description where CustomerID=@CustomerID
+					ContactName=@ContactName,Email=@Email,Jobs=@Jobs,Description=@Description where CustomerID=@CustomerID
 
 set @Err+=@@error
 if(@Err>0)
