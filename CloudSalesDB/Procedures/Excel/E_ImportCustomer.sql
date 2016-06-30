@@ -60,16 +60,16 @@ tran
 	declare @SysContactID nvarchar(64)
 	if(@CheckType=0)
 	begin
-		select @SysCustomerID=CustomerID  from  Customer where  Name=@Name 
+		select @SysCustomerID=CustomerID  from  Customer where  Name=@Name and ClientID=@ClientID
 		select @SysContactID=ContactID    from  Contact  where  Name=@ContactName  and CustomerID=@SysCustomerID
 	end
 	else if(@CheckType=1)
 	begin
-		select @SysCustomerID=CustomerID  from  Customer where  MobilePhone=@MobilePhone  
+		select @SysCustomerID=CustomerID  from  Customer where  MobilePhone=@MobilePhone  and ClientID=@ClientID
 		select @SysContactID=ContactID    from  Contact  where  MobilePhone=@MobilePhone  and CustomerID=@SysCustomerID
 	end
 	begin
-		select @SysCustomerID=CustomerID  from  Customer where  Name=@Name and MobilePhone=@MobilePhone 
+		select @SysCustomerID=CustomerID  from  Customer where  Name=@Name and MobilePhone=@MobilePhone  and ClientID=@ClientID
 		select @SysContactID=ContactID    from  Contact  where  Name=@ContactName and MobilePhone=@MobilePhone and CustomerID=@SysCustomerID
 	end 
 	set @SysContactID=ISNULL(@SysContactID,'')
@@ -85,10 +85,10 @@ tran
 								@StageID,null,1,@AllocationTime,null,getdate(),@CreateUserID,@AgentID,@ClientID)
 
 			set @Err+=@@error
-			if(@Type=1 and @ContactName<>'')
+			if(@ContactName<>'')
 			begin
-				insert into Contact(ContactID,Name,Type,MobilePhone,OfficePhone,Email,Jobs,Status,OwnerID,CustomerID,CreateUserID,AgentID,ClientID)
-				values(NEWID(),@ContactName,1,@MobilePhone,@OfficePhone,@Email,@Jobs,1,@OwnerID,@CustomerID,@CreateUserID,@AgentID,@ClientID)
+				insert into Contact(ContactID,Name,Type,MobilePhone,OfficePhone,Email,Jobs,Status,CityCode,Address,OwnerID,CustomerID,CreateUserID,AgentID,ClientID)
+				values(NEWID(),@ContactName,1,@MobilePhone,@OfficePhone,@Email,@Jobs,1,@CityCode,@Address,@OwnerID,@CustomerID,@CreateUserID,@AgentID,@ClientID)
 			end
 
 			if(@ActivityID<>'')

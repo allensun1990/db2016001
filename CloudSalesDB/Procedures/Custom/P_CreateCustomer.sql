@@ -64,10 +64,10 @@ values(@CustomerID,@Name,@ContactName,@Type,@IndustryID,@Extent,@CityCode,@Addre
 
 set @Err+=@@error
 
-if(@Type=1 and @ContactName<>'')
+if(@ContactName<>'')
 begin
-	insert into Contact(ContactID,Name,Type,MobilePhone,OfficePhone,Email,Jobs,Status,OwnerID,CustomerID,CreateUserID,AgentID,ClientID)
-	values(NEWID(),@ContactName,1,@MobilePhone,@OfficePhone,@Email,@Jobs,1,@OwnerID,@CustomerID,@CreateUserID,@AgentID,@ClientID)
+	insert into Contact(ContactID,Name,Type,MobilePhone,OfficePhone,Email,Jobs,Status,CityCode,Address,OwnerID,CustomerID,CreateUserID,AgentID,ClientID)
+	values(NEWID(),@ContactName,1,@MobilePhone,@OfficePhone,@Email,@Jobs,1,@CityCode,@Address,@OwnerID,@CustomerID,@CreateUserID,@AgentID,@ClientID)
 end
 
 if(@ActivityID<>'')

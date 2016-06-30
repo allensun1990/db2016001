@@ -251,5 +251,6 @@
     <None Include="Procedures\System\P_DeleteCustomColor.sql" />
     <Build Include="Procedures\Products\P_InsertProductExcel.sql" />
     <Build Include="Procedures\Report\R_GetOpportunityStateRPT.sql" />
+    <None Include="Procedures\Custom\P_UpdateContactDefault.sql" />
   </ItemGroup>
 </Project>

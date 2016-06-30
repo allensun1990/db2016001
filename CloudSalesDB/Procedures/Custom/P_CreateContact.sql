@@ -38,6 +38,7 @@ select @OwnerID=OwnerID from Customer where CustomerID=@CustomerID
 if not exists(select AutoID from Contact where CustomerID=@CustomerID and Type=1 and Status<>9)
 begin
 	set @Type=1
+	Update Customer set ContactName=@Name where CustomerID=@CustomerID
 end
 
 insert into Contact(ContactID,Name,Type,MobilePhone,OfficePhone,CityCode,Email,Jobs,Address,Status,OwnerID,CustomerID,CreateUserID,AgentID,ClientID,Description)
