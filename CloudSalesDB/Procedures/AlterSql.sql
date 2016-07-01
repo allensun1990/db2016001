@@ -1,4 +1,6 @@
 ﻿
+--ActivityReply ActivityID 改为 GUID  Msg 改为Content
+
 alter table Customer add ContactName nvarchar(100) default ''
 
 Update Customer set ContactName=c.name from Contact c where Customer.CustomerID=c.CustomerID and c.Type=1
