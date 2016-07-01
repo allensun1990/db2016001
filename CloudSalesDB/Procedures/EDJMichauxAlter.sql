@@ -1,10 +1,3 @@
-<<<<<<< HEAD
-﻿
-=======
-﻿R_GetCustomerStageRPT 
-E_ImportCustomer
-E_ImportContact
-
 USE [CloudSales1.0_dev]
 GO 
 CREATE TABLE [dbo].[ClientsIndustry](
@@ -32,4 +25,4 @@ ALTER TABLE [dbo].[ClientsIndustry] ADD  CONSTRAINT [DF_ClientsIndustry_CreateTi
 GO
 ALTER TABLE [dbo].[ClientsIndustry] ADD  CONSTRAINT [DF_ClientsIndustry_Status]  DEFAULT (1) FOR [Status]
 GO
->>>>>>> cca9775b4fe272106befaa1754082d51d0affecd
+
