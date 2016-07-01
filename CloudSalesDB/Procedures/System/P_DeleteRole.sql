@@ -27,7 +27,7 @@ set @Result=0
 declare @Err int=0
 
 --角色存在员工
-if exists(select AutoID from UserRole where RoleID=@RoleID and Status=1)
+if exists(select AutoID from Users where RoleID=@RoleID and Status=1)
 begin
 	set @Result=10002
 	rollback tran
