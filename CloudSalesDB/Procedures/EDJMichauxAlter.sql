@@ -1,5 +1,6 @@
 ﻿R_GetCustomerStageRPT 
-
+E_ImportCustomer
+E_ImportContact
 
 USE [CloudSales1.0_dev]
 GO 

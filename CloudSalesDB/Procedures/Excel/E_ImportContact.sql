@@ -42,6 +42,7 @@ AS
 begin tran 
 	select @CustomerID=CustomerID from Customer where Name=@CompanyName 
 	declare @Err int=0,@Type int=0,@OwnerID nvarchar(64)
+	set @OwnerID=''
 	set @CustomerID=ISNULL(@CustomerID,'')
 	if(@CustomerID<>'')
 	begin  
@@ -89,7 +90,7 @@ begin tran
 				update Contact set [Type]=0 where  CustomerID=@CustomerID	
 				---负责人导入时为空 需要时把@Jobs,1,null 替换为@Jobs,1,@OwnerID
 				insert into Contact(ContactID,Name,Type,MobilePhone,OfficePhone,Email,Jobs,Status,OwnerID,CustomerID,CreateUserID,AgentID,ClientID,Description)
-				values(NEWID(),@Name,1,@MobilePhone,@OfficePhone,@Email,@Jobs,1,null,@CustomerID,@CreateUserID,@AgentID,@ClientID,@Description)
+				values(NEWID(),@Name,1,@MobilePhone,@OfficePhone,@Email,@Jobs,1,@OwnerID,@CustomerID,@CreateUserID,@AgentID,@ClientID,@Description)
 			end
 		end
 	 end

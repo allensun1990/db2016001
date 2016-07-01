@@ -82,7 +82,7 @@ tran
 			insert into Customer(CustomerID,Name,ContactName,Type,IndustryID,Extent,CityCode,Address,MobilePhone,OfficePhone,Email,Jobs,Description,SourceID,ActivityID,
 								StageID,OwnerID,Status,AllocationTime,OrderTime,CreateTime,CreateUserID,AgentID,ClientID)
 			values(@CustomerID,@Name,@ContactName,@Type,@IndustryID,@Extent,@CityCode,@Address,@MobilePhone,@OfficePhone,@Email,@Jobs,@Description,@SourceID,@ActivityID,
-								@StageID,null,1,@AllocationTime,null,getdate(),@CreateUserID,@AgentID,@ClientID)
+								@StageID,@OwnerID,1,@AllocationTime,null,getdate(),@CreateUserID,@AgentID,@ClientID)
 
 			set @Err+=@@error
 			if(@ContactName<>'')
@@ -126,7 +126,7 @@ tran
 				update Contact set [Type]=0 where  CustomerID=@SysCustomerID	
 				---负责人导入时为空 需要时把@Jobs,1,null 替换为@Jobs,1,@OwnerID
 				insert into Contact(ContactID,Name,Type,MobilePhone,OfficePhone,Email,Jobs,Status,OwnerID,CustomerID,CreateUserID,AgentID,ClientID)
-				values(NEWID(),@ContactName,1,@MobilePhone,@OfficePhone,@Email,@Jobs,1,null,@SysCustomerID,@CreateUserID,@AgentID,@ClientID)
+				values(NEWID(),@ContactName,1,@MobilePhone,@OfficePhone,@Email,@Jobs,1,@OwnerID,@SysCustomerID,@CreateUserID,@AgentID,@ClientID)
 			end
 		end		
 	end
