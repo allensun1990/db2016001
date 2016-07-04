@@ -104,12 +104,34 @@ insert into Users(UserID,LoginName,BindMobilePhone,LoginPWD,Name,MobilePhone,Ema
 				 values(@UserID,@LoginName,@BindMobilePhone,@LoginPWD,@ContactName,@MobilePhone,@Email,1,1,1,@DepartID,@RoleID,@UserID,@MDUserID,@MDProjectID,@AgentID,@ClientID)
 
 --部门关系
-insert into UserDepart(UserID,DepartID,CreateUserID,ClientID) values(@UserID,@DepartID,@UserID,@ClientID)  
-set @Err+=@@error
+--insert into UserDepart(UserID,DepartID,CreateUserID,ClientID) values(@UserID,@DepartID,@UserID,@ClientID)  
+--set @Err+=@@error
    
 --角色关系
-insert into UserRole(UserID,RoleID,CreateUserID,ClientID) values(@UserID,@RoleID,@UserID,@ClientID) 
-set @Err+=@@error
+--insert into UserRole(UserID,RoleID,CreateUserID,ClientID) values(@UserID,@RoleID,@UserID,@ClientID) 
+--set @Err+=@@error
+
+--行业
+insert into ClientsIndustry(ClientIndustryID,Name,Description,Status,CreateTime,CreateUserID,AgentID,ClientID)
+values(NEWID(),'食品、饮料','',1,GETDATE(),@UserID,@AgentID,@ClientID)
+insert into ClientsIndustry(ClientIndustryID,Name,Description,Status,CreateTime,CreateUserID,AgentID,ClientID)
+values(NEWID(),'纺织、服装、皮毛','',1,GETDATE(),@UserID,@AgentID,@ClientID)
+insert into ClientsIndustry(ClientIndustryID,Name,Description,Status,CreateTime,CreateUserID,AgentID,ClientID)
+values(NEWID(),'木材、家具','',1,GETDATE(),@UserID,@AgentID,@ClientID)
+insert into ClientsIndustry(ClientIndustryID,Name,Description,Status,CreateTime,CreateUserID,AgentID,ClientID)
+values(NEWID(),'机械、设备、仪表','',1,GETDATE(),@UserID,@AgentID,@ClientID)
+insert into ClientsIndustry(ClientIndustryID,Name,Description,Status,CreateTime,CreateUserID,AgentID,ClientID)
+values(NEWID(),'信息技术业','',1,GETDATE(),@UserID,@AgentID,@ClientID)
+insert into ClientsIndustry(ClientIndustryID,Name,Description,Status,CreateTime,CreateUserID,AgentID,ClientID)
+values(NEWID(),'批发和零售贸易','',1,GETDATE(),@UserID,@AgentID,@ClientID)
+insert into ClientsIndustry(ClientIndustryID,Name,Description,Status,CreateTime,CreateUserID,AgentID,ClientID)
+values(NEWID(),'金融、保险业','',1,GETDATE(),@UserID,@AgentID,@ClientID)
+insert into ClientsIndustry(ClientIndustryID,Name,Description,Status,CreateTime,CreateUserID,AgentID,ClientID)
+values(NEWID(),'传播与文化产业','',1,GETDATE(),@UserID,@AgentID,@ClientID)
+insert into ClientsIndustry(ClientIndustryID,Name,Description,Status,CreateTime,CreateUserID,AgentID,ClientID)
+values(NEWID(),'医药、生物制品','',1,GETDATE(),@UserID,@AgentID,@ClientID)
+insert into ClientsIndustry(ClientIndustryID,Name,Description,Status,CreateTime,CreateUserID,AgentID,ClientID)
+values(NEWID(),'交通运输、仓储业','',1,GETDATE(),@UserID,@AgentID,@ClientID)
 
 --客户来源
 insert into CustomSource(SourceID,SourceCode,SourceName,IsSystem,IsChoose,Status,CreateUserID,ClientID)
@@ -118,8 +140,6 @@ insert into CustomSource(SourceID,SourceCode,SourceName,IsSystem,IsChoose,Status
 insert into CustomSource(SourceID,SourceCode,SourceName,IsSystem,IsChoose,Status,CreateUserID,ClientID)
 					values(NEWID(),'Source-Activity','活动',1,0,1,@UserID,@ClientID)
 					
-
-
 --客户阶段
 insert into CustomStage(StageID,StageName,Sort,Status,Mark,PID,CreateUserID,ClientID)
 values(NEWID(),'新客户',1,1,1,'',@UserID,@ClientID)

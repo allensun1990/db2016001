@@ -31,9 +31,13 @@ CREATE PROCEDURE [dbo].[P_UpdateContact]
 AS
 begin tran
 
-declare @Err int=0
+declare @Err int=0,@Type int
 
-
+select @Type=[Type],@CustomerID=CustomerID from Contact where ContactID=@ContactID
+if(@Type=1)
+begin
+	Update Customer set ContactName=@Name where CustomerID=@CustomerID
+end
 Update Contact set Name=@Name,CityCode=@CityCode,Address=@Address,MobilePhone=@MobilePhone,OfficePhone=@OfficePhone,
 					Email=@Email,Jobs=@Jobs,Description=@Description where ContactID=@ContactID
 

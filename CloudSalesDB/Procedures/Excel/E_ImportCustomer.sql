@@ -60,16 +60,16 @@ tran
 	declare @SysContactID nvarchar(64)
 	if(@CheckType=0)
 	begin
-		select @SysCustomerID=CustomerID  from  Customer where  Name=@Name 
+		select @SysCustomerID=CustomerID  from  Customer where  Name=@Name and ClientID=@ClientID
 		select @SysContactID=ContactID    from  Contact  where  Name=@ContactName  and CustomerID=@SysCustomerID
 	end
 	else if(@CheckType=1)
 	begin
-		select @SysCustomerID=CustomerID  from  Customer where  MobilePhone=@MobilePhone  
+		select @SysCustomerID=CustomerID  from  Customer where  MobilePhone=@MobilePhone  and ClientID=@ClientID
 		select @SysContactID=ContactID    from  Contact  where  MobilePhone=@MobilePhone  and CustomerID=@SysCustomerID
 	end
 	begin
-		select @SysCustomerID=CustomerID  from  Customer where  Name=@Name and MobilePhone=@MobilePhone 
+		select @SysCustomerID=CustomerID  from  Customer where  Name=@Name and MobilePhone=@MobilePhone  and ClientID=@ClientID
 		select @SysContactID=ContactID    from  Contact  where  Name=@ContactName and MobilePhone=@MobilePhone and CustomerID=@SysCustomerID
 	end 
 	set @SysContactID=ISNULL(@SysContactID,'')
@@ -79,16 +79,16 @@ tran
 		if(@SysCustomerID='')
 		begin
 		---负责人导入时为空 需要时把@StageID,null 替换为@StageID,@OwnerID
-			insert into Customer(CustomerID,Name,Type,IndustryID,Extent,CityCode,Address,MobilePhone,OfficePhone,Email,Jobs,Description,SourceID,ActivityID,
+			insert into Customer(CustomerID,Name,ContactName,Type,IndustryID,Extent,CityCode,Address,MobilePhone,OfficePhone,Email,Jobs,Description,SourceID,ActivityID,
 								StageID,OwnerID,Status,AllocationTime,OrderTime,CreateTime,CreateUserID,AgentID,ClientID)
-			values(@CustomerID,@Name,@Type,@IndustryID,@Extent,@CityCode,@Address,@MobilePhone,@OfficePhone,@Email,@Jobs,@Description,@SourceID,@ActivityID,
-								@StageID,null,1,@AllocationTime,null,getdate(),@CreateUserID,@AgentID,@ClientID)
+			values(@CustomerID,@Name,@ContactName,@Type,@IndustryID,@Extent,@CityCode,@Address,@MobilePhone,@OfficePhone,@Email,@Jobs,@Description,@SourceID,@ActivityID,
+								@StageID,@OwnerID,1,@AllocationTime,null,getdate(),@CreateUserID,@AgentID,@ClientID)
 
 			set @Err+=@@error
-			if(@Type=1 and @ContactName<>'')
+			if(@ContactName<>'')
 			begin
-				insert into Contact(ContactID,Name,Type,MobilePhone,OfficePhone,Email,Jobs,Status,OwnerID,CustomerID,CreateUserID,AgentID,ClientID)
-				values(NEWID(),@ContactName,1,@MobilePhone,@OfficePhone,@Email,@Jobs,1,@OwnerID,@CustomerID,@CreateUserID,@AgentID,@ClientID)
+				insert into Contact(ContactID,Name,Type,MobilePhone,OfficePhone,Email,Jobs,Status,CityCode,Address,OwnerID,CustomerID,CreateUserID,AgentID,ClientID)
+				values(NEWID(),@ContactName,1,@MobilePhone,@OfficePhone,@Email,@Jobs,1,@CityCode,@Address,@OwnerID,@CustomerID,@CreateUserID,@AgentID,@ClientID)
 			end
 
 			if(@ActivityID<>'')
@@ -102,7 +102,7 @@ tran
 		if(@SysCustomerID<>'')
 		begin
 			update Customer set 
-			Name=case when @CheckType=1 then @Name else Name end ,		
+			Name=case when @CheckType=1 then @Name else Name end ,ContactName=@ContactName,		
 			MobilePhone=case when @CheckType=0 then @MobilePhone else MobilePhone end,
 			Email=@Email, IndustryID=@IndustryID,
 			Type=@Type,Extent=@Extent,CityCode=@CityCode,
@@ -126,7 +126,7 @@ tran
 				update Contact set [Type]=0 where  CustomerID=@SysCustomerID	
 				---负责人导入时为空 需要时把@Jobs,1,null 替换为@Jobs,1,@OwnerID
 				insert into Contact(ContactID,Name,Type,MobilePhone,OfficePhone,Email,Jobs,Status,OwnerID,CustomerID,CreateUserID,AgentID,ClientID)
-				values(NEWID(),@ContactName,1,@MobilePhone,@OfficePhone,@Email,@Jobs,1,null,@SysCustomerID,@CreateUserID,@AgentID,@ClientID)
+				values(NEWID(),@ContactName,1,@MobilePhone,@OfficePhone,@Email,@Jobs,1,@OwnerID,@SysCustomerID,@CreateUserID,@AgentID,@ClientID)
 			end
 		end		
 	end
