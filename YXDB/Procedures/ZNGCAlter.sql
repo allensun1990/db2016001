@@ -46,3 +46,9 @@ ClientID nvarchar(64)
 insert into ClientProductDetails(ProductID,ProductDetailID,StockIn,StockOut,LogicOut,ClientID)
 select ProductID,ProductDetailID,SUM(StockIn),SUM(StockOut), SUM(StockOut),ClientID from ProductStock group by ProductDetailID,ProductID,ClientID
 
+
+--智能工厂客户端和二当家打通内容
+alter table Customer add YXAgentID nvarchar(64)
+alter table Customer add YXClientID nvarchar(64)
+alter table Customer add YXClientCode nvarchar(50)
+

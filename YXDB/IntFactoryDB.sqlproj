@@ -510,7 +510,7 @@
     <None Include="Procedures\Sales\P_UpdateOrderDiscount.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Procedures\Alter.sql" />
+    <None Include="Procedures\ZNGCAlter.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\Task\P_CreateTask.sql" />
