@@ -51,6 +51,66 @@ insert into CustomerColor select b.ColorID,b.ColorName, b.ColorValue,0,'',GETDAT
 
 drop table #color
 
+CREATE TABLE [dbo].[OrderColor](
+	[AutoID] [int] IDENTITY(1,1) NOT NULL,
+	[ColorID] [int] NOT NULL,
+	[ColorName] [nvarchar](50) NULL,
+	[ColorValue] [nvarchar](20) NULL,
+	[Status] [int] NULL,
+	[CreateUserID] [nvarchar](64) NULL,
+	[CreateTime] [datetime] NULL,
+	[UpdateTime] [datetime] NULL,
+	[UpdateUserID] [nvarchar](64) NULL,
+	[AgentID] [nvarchar](64) NULL,
+	[ClientID] [nvarchar](64) NULL
+) ON [PRIMARY]
+
+GO
+
+ALTER TABLE [dbo].[OrderColor] ADD  DEFAULT ((0)) FOR [Status]
+GO
+
+create table #color(ColorValue varchar(50) ,ColorName varchar(50),ColorID int)
+insert  into #color values('#ff7c7c','标签1',1) 
+insert  into #color values('#3bb3ff','标签2',2)
+insert  into #color values('#9f74ff','标签3',3)  
+insert  into #color values('#ffc85d','标签4',4) 
+insert  into #color values('#fff65f','标签5',5) 
+
+insert into OrderColor select b.ColorID,b.ColorName, b.ColorValue,0,'',GETDATE(),null,null,a.AgentID,a.ClientID from Clients a join #color b  on  1=1
+
+drop table #color
+
+CREATE TABLE [dbo].[TaskColor](
+	[AutoID] [int] IDENTITY(1,1) NOT NULL,
+	[ColorID] [int] NOT NULL,
+	[ColorName] [nvarchar](50) NULL,
+	[ColorValue] [nvarchar](20) NULL,
+	[Status] [int] NULL,
+	[CreateUserID] [nvarchar](64) NULL,
+	[CreateTime] [datetime] NULL,
+	[UpdateTime] [datetime] NULL,
+	[UpdateUserID] [nvarchar](64) NULL,
+	[AgentID] [nvarchar](64) NULL,
+	[ClientID] [nvarchar](64) NULL
+) ON [PRIMARY]
+
+GO
+
+ALTER TABLE [dbo].[TaskColor] ADD  DEFAULT ((0)) FOR [Status]
+GO
+
+create table #color(ColorValue varchar(50) ,ColorName varchar(50),ColorID int)
+insert  into #color values('#ff7c7c','标签1',1) 
+insert  into #color values('#3bb3ff','标签2',2)
+insert  into #color values('#9f74ff','标签3',3)  
+insert  into #color values('#ffc85d','标签4',4) 
+insert  into #color values('#fff65f','标签5',5) 
+
+insert into TaskColor select b.ColorID,b.ColorName, b.ColorValue,0,'',GETDATE(),null,null,a.AgentID,a.ClientID from Clients a join #color b  on  1=1
+
+drop table #color
+
 
 
 
