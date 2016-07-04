@@ -1,4 +1,6 @@
 ﻿
+--材料表和材料明细表，库存相关数据类型变更
+
 --材料报损报溢
 update Menu set IsHide=0 where AutoID in (94,99)
 
