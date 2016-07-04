@@ -19,6 +19,7 @@ CREATE PROCEDURE [dbo].[M_InsertClient]
 @ClientID nvarchar(64),
 @CompanyName nvarchar(200),
 @MobilePhone nvarchar(64)='',
+@ClientCode nvarchar(50)='',
 @Industry nvarchar(64)='',
 @CityCode nvarchar(10)='',
 @Address nvarchar(200)='',
@@ -81,9 +82,15 @@ begin
 	set @MobilePhone=@BindMobilePhone
 end
 
+--客户端编码不能重复
+while exists(Select AutoID from Clients where ClientCode=@ClientCode)
+begin
+	set @ClientCode='N'+CONVERT(nvarchar(7), CEILING(RAND()*10000000))
+end
+
 --客户端
-insert into Clients(ClientID,CompanyName,ContactName,MobilePhone,Status,Industry,CityCode,Address,Description,AgentID,CreateUserID,UserQuantity,EndTime) 
-				values(@ClientID,@CompanyName,@ContactName,@MobilePhone,1,@Industry,@CityCode,@Address,@Description,@AgentID,@CreateUserID,20,'2016-9-30 23:59:59' )--dateadd(MONTH, 2, GETDATE())
+insert into Clients(ClientID,CompanyName,ContactName,MobilePhone,Status,Industry,CityCode,Address,Description,AgentID,CreateUserID,UserQuantity,EndTime,ClientCode) 
+				values(@ClientID,@CompanyName,@ContactName,@MobilePhone,1,@Industry,@CityCode,@Address,@Description,@AgentID,@CreateUserID,20,'2016-9-30 23:59:59',@ClientCode )--dateadd(MONTH, 2, GETDATE())
 
 set @Err+=@@error
 

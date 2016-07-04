@@ -93,6 +93,8 @@ as
 		begin
 			update orders set status=2 where orderid=@OrderID
 
+			Insert into OrderStatusLog(OrderID,Status,CreateUserID) values(@OrderID,2,@UserID)
+
 			--通知阿里待处理日志
 			if(@AliOrderCode is not null and @AliOrderCode<>'')
 			begin
@@ -106,6 +108,8 @@ as
 		begin
 			update orders set status=6 where orderid=@OrderID
 			set @Err+=@@ERROR
+
+			Insert into OrderStatusLog(OrderID,Status,CreateUserID) values(@OrderID,6,@UserID)
 
 			--通知阿里待处理日志
 			if(@AliOrderCode is not null and @AliOrderCode<>'')
