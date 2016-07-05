@@ -31,7 +31,8 @@ AS
 
 begin tran
 
-declare @Err int=0,@Status int,@DocCode nvarchar(50),@WareID nvarchar(64),@TotalMoney decimal(18,4),@NewDocID nvarchar(64)=NEWID(),@OriginalID  nvarchar(64)
+declare @Err int=0,@Status int,@DocCode nvarchar(50),@WareID nvarchar(64),@TotalMoney decimal(18,4),@NewDocID nvarchar(64)=NEWID(),@OriginalID  nvarchar(64),
+@RealMoney decimal(18,4)=0
 
 select @Status=Status,@DocCode=DocCode,@WareID=WareID,@TotalMoney=TotalMoney,@OriginalID=OriginalID from StorageDoc where DocID=@DocID
 
@@ -101,10 +102,10 @@ end
 if exists(select AutoID from StoragePartDetail where DocID=@NewDocID)
 begin
 	
-	select @TotalMoney=sum(TotalMoney) from StoragePartDetail where DocID=@NewDocID
+	select @RealMoney=isnull(sum(TotalMoney),0) from StoragePartDetail where DocID=@NewDocID
 
 	insert into StorageDocPart(DocID,DocCode,DocType,Status,TotalMoney,CityCode,Address,Remark,WareID,CreateUserID,CreateTime,OperateIP,ClientID,OriginalID,OriginalCode)
-		select @NewDocID,@BillingCode,1,2,@TotalMoney,CityCode,Address,'',WareID,@UserID,GETDATE(),'',ClientID,DocID,DocCode from StorageDoc where DocID=@DocID
+		select @NewDocID,@BillingCode,1,2,@RealMoney,CityCode,Address,'',WareID,@UserID,GETDATE(),'',ClientID,DocID,DocCode from StorageDoc where DocID=@DocID
 
 	insert into StorageDocAction(DocID,Remark,CreateTime,CreateUserID,OperateIP)
 			values( @DocID,'审核入库',getdate(),@UserID,'')
@@ -114,7 +115,7 @@ end
 
 if(@IsOver=1)
 begin
-	Update StorageDoc set Status=2 where  DocID=@DocID
+	Update StorageDoc set Status=2,RealMoney=RealMoney+@RealMoney where  DocID=@DocID
 
 	select @TotalMoney=sum(TotalMoney) from StorageDocPart where OriginalID=@DocID
 
@@ -123,7 +124,7 @@ begin
 end
 else
 begin
-	Update StorageDoc set Status=1 where  DocID=@DocID
+	Update StorageDoc set Status=1,RealMoney=RealMoney+@RealMoney where  DocID=@DocID
 end
 
 set @Err+=@@Error

@@ -52,7 +52,7 @@ begin
 	@ProductName=ProductName,@ProductCode=ProductCode,@DetailsCode=DetailsCode 
 	from #TempProducts where AutoID=@AutoID
 
-	if exists(select AutoID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID and DepotID=@DepotID and BatchCode=@BatchCode and StockIn-StockOut>@Quantity)
+	if exists(select AutoID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID and DepotID=@DepotID and BatchCode=@BatchCode and StockIn-StockOut>=@Quantity)
 	begin
 		update ProductStock set StockOut=StockOut+@Quantity where ProductDetailID=@ProductDetailID and WareID=@WareID and DepotID=@DepotID and BatchCode=@BatchCode
 	end

@@ -26,6 +26,34 @@ set @Result=0
 
 declare @Err int=0,@RoleID nvarchar(64)
 
+if exists(select AutoID from Activity where OwnerID=@UserID and Status<>9)
+begin
+	set @Result=2
+	rollback tran
+	return
+end
+
+if exists(select AutoID from Customer where OwnerID=@UserID and Status<>9)
+begin
+	set @Result=3
+	rollback tran
+	return
+end
+
+if exists(select AutoID from Opportunity where OwnerID=@UserID and Status<>9)
+begin
+	set @Result=4
+	rollback tran
+	return
+end
+
+if exists(select AutoID from Orders where OwnerID=@UserID and Status<>9)
+begin
+	set @Result=5
+	rollback tran
+	return
+end
+
 --防止自杀式删除用户，管理员至少保留一个
 select @RoleID from Users where UserID=@UserID and AgentID=@AgentID
 if exists (select AutoID from Role where RoleID=@RoleID and IsDefault=1)
@@ -41,8 +69,6 @@ end
 Update Users set Status=9,ParentID='',RoleID='' where UserID=@UserID and AgentID=@AgentID
 
 Update Users set ParentID='' where ParentID=@UserID
-
-Update UserRole set Status=9 where UserID=@UserID and Status=1
 
 set @Err+=@@error
 

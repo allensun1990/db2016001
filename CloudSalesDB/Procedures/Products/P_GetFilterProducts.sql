@@ -73,7 +73,7 @@ AS
 		set @condition +=' and (ProductName like ''%'+@keyWords+'%'' or  ProductCode like ''%'+@keyWords+'%'' or  GeneralName like ''%'+@keyWords+'%'') '
 	end
 
-	if(@DocType=11)
+	if(@DocType=11 or @DocType=10)
 	begin
 		set @condition +=' and P.Status=1 and pd.Status=1 '
 	end
