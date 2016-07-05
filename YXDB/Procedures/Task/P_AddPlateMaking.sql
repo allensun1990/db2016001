@@ -30,29 +30,22 @@ as
 	set @PlateID=NEWID()
 
 	select @OrderType=OrderType,@OriginalID=OriginalID from Orders where OrderID=@OrderID
+
 	begin tran
 	declare @Err int=0
 	if(@OrderType=2)
 	begin
-		insert into  PlateMaking(PlateID,Title,Remark,Icon,TaskID,OrderID,Type,CreateUserID,AgentID,CreateTime) 
-		values(@PlateID,@Title,@Remark,@Icon,@TaskID,@OriginalID,@Type,@UserID,@AgentID,getdate())
-		set @Err+=@@ERROR
-
-		insert into  PlateMaking(PlateID,Title,Remark,Icon,TaskID,OrderID,Type,CreateUserID,AgentID,CreateTime,OriginalID,OriginalPlateID) 
-		values(NEWID(),@Title,@Remark,@Icon,@TaskID,@OrderID,@Type,@UserID,@AgentID,getdate(),@OriginalID,@PlateID)
-		set @Err+=@@ERROR
+		set @OrderID=@OriginalID
 	end
-	else
-	begin
-		insert into  PlateMaking(PlateID,Title,Remark,Icon,TaskID,OrderID,Type,CreateUserID,AgentID,CreateTime) 
-		values(@PlateID,@Title,@Remark,@Icon,@TaskID,@OrderID,@Type,@UserID,@AgentID,getdate())
-		set @Err+=@@ERROR
 
-		insert into  PlateMaking(PlateID,Title,Remark,Icon,TaskID,OrderID,Type,CreateUserID,AgentID,CreateTime,OriginalID,OriginalPlateID) 
+	insert into  PlateMaking(PlateID,Title,Remark,Icon,TaskID,OrderID,Type,CreateUserID,AgentID,CreateTime) 
+			values(@PlateID,@Title,@Remark,@Icon,@TaskID,@OrderID,@Type,@UserID,@AgentID,getdate())
+			set @Err+=@@ERROR
+
+	insert into  PlateMaking(PlateID,Title,Remark,Icon,TaskID,OrderID,Type,CreateUserID,AgentID,CreateTime,OriginalID,OriginalPlateID) 
 		select NEWID(),@Title,@Remark,@Icon,@TaskID,OrderID,@Type,@UserID,@AgentID,getdate(),@OrderID,@PlateID from Orders
 		where OrderType=2 and OriginalID=@OrderID and OrderStatus = 1
 		set @Err+=@@ERROR
-	end
 
 	if(@Err>0)
 	begin
