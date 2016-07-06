@@ -19,6 +19,11 @@ CREATE PROCEDURE [dbo].[P_CreateOrder]
 @OrderCode nvarchar(20),
 @CustomerID nvarchar(64)='',
 @TypeID nvarchar(64)='',
+@Name nvarchar(50)='',
+@Mobile nvarchar(50)='',
+@CityCode nvarchar(10)='',
+@Address nvarchar(500)='',
+@Remark nvarchar(500)='',
 @UserID nvarchar(64),
 @AgentID nvarchar(64),
 @ClientID nvarchar(64)
@@ -26,26 +31,17 @@ AS
 
 begin tran
 
-declare @Err int=0,@PersonName nvarchar(50),@MobileTele nvarchar(20),@CityCode nvarchar(20),@Address nvarchar(200),@OwnerID nvarchar(64),@Type int
+declare @Err int=0
 
-select @PersonName=Name,@MobileTele=MobilePhone,@CityCode=CityCode,@Address=Address,@OwnerID=OwnerID,@Type=Type from Customer where CustomerID=@CustomerID
-if(@Type=1)
-begin	
-	select @PersonName=Name,@MobileTele=MobilePhone,@CityCode=CityCode,@Address=Address from Contact where CustomerID=@CustomerID and Status<>9 Order By [Type] desc
-end
 
-if(@OwnerID is null or @OwnerID='')
-begin
-	set @OwnerID=@UserID
-end
 
 if exists (select AutoID from Orders where OrderCode=@OrderCode and ClientID=@ClientID)
 begin
 	set @OrderCode=@OrderCode+'1'
 end
 
-insert into Orders(OrderID,OrderCode,Status,CustomerID,PersonName,MobileTele,CityCode,Address,OwnerID,CreateUserID,AgentID,ClientID,TypeID)
-		values (@OrderID,@OrderCode,1,@CustomerID,@PersonName,@MobileTele,@CityCode,@Address,@OwnerID,@UserID,@AgentID,@ClientID,@TypeID)
+insert into Orders(OrderID,OrderCode,Status,CustomerID,PersonName,MobileTele,CityCode,Address,Remark,OwnerID,CreateUserID,AgentID,ClientID,TypeID)
+		values (@OrderID,@OrderCode,1,@CustomerID,@Name,@Mobile,@CityCode,@Address,@Remark,@UserID,@UserID,@AgentID,@ClientID,@TypeID)
 
 update Customer set OrderCount=OrderCount+1 where CustomerID=@CustomerID
 
