@@ -19,6 +19,11 @@ CREATE PROCEDURE [dbo].[P_CreateOpportunity]
 @OpportunityCode nvarchar(20),
 @CustomerID nvarchar(64)='',
 @TypeID nvarchar(64)='',
+@Name nvarchar(50)='',
+@Mobile nvarchar(50)='',
+@CityCode nvarchar(10)='',
+@Address nvarchar(500)='',
+@Remark nvarchar(500)='',
 @UserID nvarchar(64),
 @AgentID nvarchar(64),
 @ClientID nvarchar(64)
@@ -26,22 +31,7 @@ AS
 
 begin tran
 
-declare  @Err int=0,@PersonName nvarchar(50),@MobileTele nvarchar(20),@CityCode nvarchar(20),@Address nvarchar(200),@OwnerID nvarchar(64),@Type int,
-@StageID nvarchar(64),@StageStatus int
-
-
-
-select @PersonName=Name,@MobileTele=MobilePhone,@CityCode=CityCode,@Address=Address,@OwnerID=OwnerID,@Type=Type,@StageStatus=StageStatus from Customer where CustomerID=@CustomerID
-if(@Type=1)
-begin	
-	select @PersonName=Name,@MobileTele=MobilePhone,@CityCode=CityCode,@Address=Address from Contact where CustomerID=@CustomerID and Status<>9 Order By [Type] desc
-end
-
-
-if(@OwnerID is null or @OwnerID='')
-begin
-	set @OwnerID=@UserID
-end
+declare  @Err int=0,@StageID nvarchar(64)
 
 if exists (select AutoID from Opportunity where OpportunityCode=@OpportunityCode and ClientID=@ClientID)
 begin
@@ -50,10 +40,10 @@ end
 
 select top 1 @StageID=StageID from OpportunityStage where ClientID=@ClientID and Status=1 order by Sort 
 
-insert into Opportunity(OpportunityID,OpportunityCode,Status,TypeID,CustomerID,PersonName,MobileTele,CityCode,Address,OwnerID,CreateUserID,AgentID,ClientID,StageID)
-		values (@OpportunityID,@OpportunityCode,1,@TypeID,@CustomerID,@PersonName,@MobileTele,@CityCode,@Address,@OwnerID,@UserID,@AgentID,@ClientID,@StageID)
+insert into Opportunity(OpportunityID,OpportunityCode,Status,TypeID,CustomerID,PersonName,MobileTele,CityCode,Address,Remark,OwnerID,CreateUserID,AgentID,ClientID,StageID)
+		values (@OpportunityID,@OpportunityCode,1,@TypeID,@CustomerID,@Name,@Mobile,@CityCode,@Address,@Remark,@UserID,@UserID,@AgentID,@ClientID,@StageID)
 
-if(@StageStatus<2)
+if exists(select AutoID from Customer where CustomerID=@CustomerID and StageStatus<2)
 begin
 	update Customer set StageStatus=2,OpportunityTime=getdate(),OpportunityID=@OpportunityID,OpportunityCount=OpportunityCount+1 where CustomerID=@CustomerID and StageStatus<2
 end
