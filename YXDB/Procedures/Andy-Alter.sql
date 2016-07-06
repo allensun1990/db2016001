@@ -11,6 +11,7 @@ select NEWID() as PlateID,o.OrderID,p.Title,p.Remark,p.Icon,p.Status,p.AgentID,p
 where o.Status<>9 and p.Status<>9
 
 
+
 USE [IntFactory]
 GO
 
@@ -110,6 +111,11 @@ insert  into #color values('#fff65f','标签5',5)
 insert into TaskColor select b.ColorID,b.ColorName, b.ColorValue,0,'',GETDATE(),null,null,a.AgentID,a.ClientID from Clients a join #color b  on  1=1
 
 drop table #color
+
+
+insert into Menu
+select '108020900','标签设置',Area,Controller,'LabelSet',IcoPath,IcoHover,Type,IsHide,PCode,8,Layer,IsMenu,IsLimit,Remark from Menu
+where AutoID=183
 
 
 

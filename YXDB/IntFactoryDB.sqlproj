@@ -465,7 +465,7 @@
     <None Include="Procedures\Sales\P_UpdateOrderOriginalID.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Procedures\Task\P_UpdateOrderPlateAttr.sql" />
+    <None Include="Procedures\Task\P_UpdateOrderPlateAttr_old.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\Products\P_GetOrderCategoryDetailsByID.sql" />
@@ -563,5 +563,6 @@
     <None Include="Procedures\Task\P_AddPlateMaking.sql" />
     <None Include="Procedures\Task\P_UpdatePlateMaking.sql" />
     <None Include="Procedures\Task\P_DeletePlateMaking.sql" />
+    <None Include="Procedures\Task\P_UpdateOrderPlateAttr.sql" />
   </ItemGroup>
 </Project>
