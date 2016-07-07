@@ -22,14 +22,17 @@ AS
 
 declare @UserID nvarchar(64),@ClientID nvarchar(64),@AgentID nvarchar(64),@RoleID nvarchar(64)
 
-IF  EXISTS(select UserID from Users where (LoginName=@LoginName or BindMobilePhone=@LoginName) and Status<>9)
+--账号不存在
+IF  EXISTS(select AutoID from UserAccounts where AccountName=@LoginName and AccountType in(1,2))
 begin
+	
+	select @UserID=UserID from UserAccounts where AccountName=@LoginName and AccountType in(1,2)
 
-	select @UserID = UserID,@ClientID=ClientID,@AgentID=AgentID,@RoleID=RoleID from Users 
-	where (LoginName=@LoginName or BindMobilePhone=@LoginName) and LoginPWD=@LoginPWD and Status=1
-
-	if(@UserID is not null)
+	--密码不正确
+	if exists(select AutoID from Users where UserID=@UserID and LoginPWD=@LoginPWD and Status=1)
 	begin
+		select @RoleID=RoleID from Users where UserID=@UserID
+
 		set @Result=1
 		--select RoleID into #Roles from UserRole where UserID=@UserID and Status=1
 
@@ -42,11 +45,13 @@ begin
 
 	end
 	else
+	begin
 		set @Result=3
-
+	end
 end
 else
-set @Result=2
-
+begin
+	set @Result=2
+end
  
 

@@ -255,5 +255,8 @@
     <None Include="Procedures\System\P_DeleteClientIndustry.sql" />
     <None Include="Procedures\System\P_DeleteWareHouse.sql" />
     <None Include="Procedures\System\P_DeleteDepotSeat.sql" />
+    <None Include="Procedures\System\P_UpdateUserAccount.sql" />
+    <None Include="Procedures\System\P_UpdateUserAccountPwd.sql" />
+    <None Include="Procedures\System\P_UpdateAccountBindMobile.sql" />
   </ItemGroup>
 </Project>

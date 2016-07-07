@@ -21,10 +21,12 @@ AS
 
 declare @UserID nvarchar(64),@ClientID nvarchar(64),@AgentID nvarchar(64),@RoleID nvarchar(64)
 
-select @UserID = UserID,@ClientID=ClientID,@AgentID=AgentID,@RoleID=RoleID from Users where MDUserID=@MDUserID and MDProjectID=@MDProjectID and Status=1
-
-if(@UserID is not null)
+IF  EXISTS(select AutoID from UserAccounts where AccountName=@MDUserID and ProjectID=@MDProjectID and AccountType =3)
 begin
+	select @UserID=UserID from UserAccounts where AccountName=@MDUserID and ProjectID=@MDProjectID and AccountType =3
+
+	select @RoleID=RoleID from Users where UserID=@UserID
+
     --select RoleID into #Roles from UserRole where UserID=@UserID and Status=1
 
 	--会员信息
