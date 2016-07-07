@@ -258,5 +258,6 @@
     <None Include="Procedures\System\P_UpdateUserAccount.sql" />
     <None Include="Procedures\System\P_UpdateUserAccountPwd.sql" />
     <None Include="Procedures\System\P_UpdateAccountBindMobile.sql" />
+    <None Include="Procedures\Products\P_AddProviders.sql" />
   </ItemGroup>
 </Project>

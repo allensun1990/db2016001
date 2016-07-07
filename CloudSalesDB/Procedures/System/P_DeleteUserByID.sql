@@ -70,6 +70,9 @@ Update Users set Status=9,ParentID='',RoleID='' where UserID=@UserID and AgentID
 
 Update Users set ParentID='' where ParentID=@UserID
 
+--清空账号信息
+Delete from UserAccounts where UserID=@UserID
+
 set @Err+=@@error
 
 if(@Err>0)
