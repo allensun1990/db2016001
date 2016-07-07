@@ -8,44 +8,51 @@ END
 GO
 /***********************************************************
 过程名称： P_UpdateOrderPlateAttr
-功能描述： 修改订单制版属性
+功能描述： 更新订单制版信息
 参数说明：	 
-编写日期： 2016/3/7
+编写日期： 2016/5/27
 程序作者： MU
-调试记录： exec P_UpdateOrderPlateAttr 
+调试记录： exec P_UpdateOrderPlateAttr '50a9187a-2535-4f55-8f36-9290b8763085','22','11','',3
 ************************************************************/
-CREATE PROCEDURE [dbo].[P_UpdateOrderPlateAttr]
+CREATE PROCEDURE [dbo].P_UpdateOrderPlateAttr
 @OrderID nvarchar(64),
-@TaskID nvarchar(64),
-@Platehtml text,
-@ValueIDS nvarchar(2000)='',
-@CreateUserID nvarchar(64)='',
-@AgentID nvarchar(64)='',
-@ClientID nvarchar(64)=''
-AS
-begin tran
+@Platehtml text
+as
+	declare @OriginalID nvarchar(64)=''
 
-declare @Err int=0
-declare @sql varchar(2000)
+	select @OriginalID=OriginalID from orders where OrderID=@OrderID
+	if(@OriginalID<>'')
+	begin
+		set @OrderID=@OriginalID
+	end
 
-update orders set Platemaking=@Platehtml where orderid=@OrderID
-set @Err+=@@ERROR
+	begin tran
+	declare @Err int=0
 
-delete from OrderTaskPlateAttr where TaskID=@TaskID and OrderID=@OrderID
-set @Err+=@@ERROR
+	update orders set Platemaking=@Platehtml where OrderID=@OrderID
+	set @Err+=@@ERROR
 
-set @sql='insert into OrderTaskPlateAttr(TaskID,OrderID,ValueID,CreateTime,CreateUserID,AgentID,ClientID) select '''+@TaskID+''','''+@OrderID+''' ,valueid,getdate(),'''+@CreateUserID+''','''+@AgentID+''','''+@ClientID+'''  from (  select valueid='''+ replace(@ValueIDS,'|',''' union all select ''')+''' ) as valueTB'
-exec (@sql)
-set @Err+=@@ERROR
+	update orders set Platemaking=@Platehtml 
+	where OrderID in 
+	( 
+		select OrderID from Orders
+		where OrderType=2 and OriginalID=@OrderID and OrderStatus = 1
+	)	
+	set @Err+=@@ERROR
 
-if(@Err>0)
-begin
-	rollback tran
-end 
-else
-begin
-	commit tran
-end
+	if(@Err>0)
+	begin
+		rollback tran
+	end 
+	else
+	begin
+		commit tran
+	end
 
- 
+
+		 
+
+
+
+
 

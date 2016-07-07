@@ -87,7 +87,7 @@ set @Err+=@@error
 
 --直营代理商
 insert into Agents(AgentID,CompanyName,Status,IsDefault,MDProjectID,ClientID,UserQuantity,EndTime) 
-			values(@AgentID,'公司直营',1,1,@MDProjectID,@ClientID,20,dateadd(MONTH, 2, GETDATE()))
+			values(@AgentID,'公司直营',1,1,@MDProjectID,@ClientID,20,dateadd(MONTH, 1, GETDATE()))
 
 --部门
 insert into Department(DepartID,Name,Status,CreateUserID,AgentID,ClientID) values (@DepartID,'系统管理',1,@UserID,@AgentID,@ClientID)
@@ -121,6 +121,25 @@ values(NEWID(),'Depot001',@WareID,'主货位',1,@UserID,@ClientID)
 insert into Providers(ProviderID,Name,Contact,MobileTele,Email,Website,CityCode,Address,Remark,CreateTime,CreateUserID,AgentID,ClientID)
 			 values (NEWID(),'公司直营',@CompanyName,@MobilePhone,@Email,'',@CityCode,@Address,'',GETDATE(),@UserID,@AgentID,@ClientID)
 
+--初始化客户、订单、任务的标签颜色
+create table #color(ColorValue varchar(50) ,ColorName varchar(50),ColorID int)
+insert  into #color values('#3c78d8','普通',1) 
+insert  into #color values('#00ff00','重要',2)
+insert  into #color values('#cc0000','紧急',3)  
+
+insert into CustomerColor 
+select b.ColorID,b.ColorName, b.ColorValue,0,'',GETDATE(),null,null,a.AgentID,a.ClientID 
+from Clients a join #color b  on  ClientID=@ClientID
+
+insert into OrderColor 
+select b.ColorID,b.ColorName, b.ColorValue,0,'',GETDATE(),null,null,a.AgentID,a.ClientID 
+from Clients a join #color b  on  ClientID=@ClientID
+
+insert into TaskColor 
+select b.ColorID,b.ColorName, b.ColorValue,0,'',GETDATE(),null,null,a.AgentID,a.ClientID 
+from Clients a join #color b  on  ClientID=@ClientID
+
+drop table #color
 
 if(@Err>0)
 begin
