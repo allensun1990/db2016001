@@ -564,5 +564,7 @@
     <None Include="Procedures\Task\P_UpdatePlateMaking.sql" />
     <None Include="Procedures\Task\P_DeletePlateMaking.sql" />
     <None Include="Procedures\Task\P_UpdateOrderPlateAttr.sql" />
+    <None Include="Procedures\Custom\P_GetCustomerByMobilePhone.sql" />
+    <None Include="Procedures\Custom\P_SetCustomerYXinfo.sql" />
   </ItemGroup>
 </Project>
