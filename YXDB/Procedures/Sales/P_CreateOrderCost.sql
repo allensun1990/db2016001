@@ -29,19 +29,14 @@ declare @Err int=0,@Status int,@Money decimal(18,4),@OwnerID nvarchar(64),@Proce
 
 select @Status=Status,@OwnerID=OwnerID,@ProcessID=ProcessID from Orders where OrderID=@OrderID  and ClientID=@ClientID
 
-if(@Status>=3)
-begin
-	rollback tran
-	return
-end
-
-
 insert into OrderCosts(OrderID,Price,Remark,Status,CreateUserID,ClientID)
 values(@OrderID,@Price,@Remark,1,@OperateID,@ClientID)
 
 select @Money=sum(Price) from  OrderCosts where OrderID=@OrderID and Status=1
 
-Update Orders set CostPrice=@Money where OrderID=@OrderID
+Update Orders set CostPrice=isnull(@Money,0) where OrderID=@OrderID
+
+update Orders set CostPrice=isnull(@Money,0) where OriginalID=@OrderID and OrderStatus=1
 
 set @Err+=@@error
 

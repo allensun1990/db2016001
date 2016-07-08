@@ -1,4 +1,10 @@
 ﻿
+alter table Agents add RegisterType int default 0
+
+Update Agents set RegisterType=3 where MDProjectID is not null and MDProjectID<>''
+
+Update Agents set RegisterType=2 where RegisterType is null
+
 --员工账号表
 create table UserAccounts
 (
