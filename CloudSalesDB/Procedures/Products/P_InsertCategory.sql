@@ -24,10 +24,20 @@ CREATE PROCEDURE [dbo].[P_InsertCategory]
 @Description nvarchar(4000),
 @CreateUserID nvarchar(64),
 @ClientID nvarchar(64),
-@CategoryID nvarchar(64) output 
+@CategoryID nvarchar(64) output,
+@Result int output 
 AS
 
 begin tran
+
+set @Result=0
+
+if exists(select AutoID from Category where ClientID=@ClientID and CategoryCode=@CategoryCode and Status<>9)
+begin
+	set @Result=2
+	rollback tran
+	return
+end
 
 declare @Err int,@PIDList nvarchar(max),@Layers int=0 
 set @Err=0
@@ -55,10 +65,12 @@ set @Err+=@@error
 
 if(@Err>0)
 begin
+	set @Result=0
 	set @CategoryID=''
 	rollback tran
 end 
 else
 begin
+	set @Result=1
 	commit tran
 end

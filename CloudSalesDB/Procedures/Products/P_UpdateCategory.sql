@@ -17,21 +17,33 @@ GO
 CREATE PROCEDURE [dbo].[P_UpdateCategory]
 @CategoryID nvarchar(64),
 @CategoryName nvarchar(200),
+@CategoryCode nvarchar(200),
 @AttrList nvarchar(4000),
 @SaleAttr nvarchar(4000),
 @Status int,
 @Description nvarchar(4000),
-@UserID nvarchar(64)
+@UserID nvarchar(64),
+@ClientID nvarchar(64),
+@Result int output 
 AS
 
 begin tran
+
+set @Result=0
+
+if exists(select AutoID from Category where ClientID=@ClientID and CategoryCode=@CategoryCode and CategoryID<>@CategoryID and Status<>9)
+begin
+	set @Result=2
+	rollback tran
+	return
+end
 
 declare @Err int, @OldAttr nvarchar(4000),@OldSales nvarchar(4000)
 set @Err=0
 
 select @OldAttr=AttrList,@OldSales=SaleAttr from Category where CategoryID=@CategoryID
 
-Update Category set CategoryName=@CategoryName,Status=@Status,AttrList=@AttrList,SaleAttr=@SaleAttr,Description=@Description,UpdateTime=getdate() 
+Update Category set CategoryName=@CategoryName,CategoryCode=@CategoryCode,Status=@Status,AttrList=@AttrList,SaleAttr=@SaleAttr,Description=@Description,UpdateTime=getdate() 
 where CategoryID=@CategoryID
 
 set @Err+=@@error
@@ -69,5 +81,6 @@ begin
 end 
 else
 begin
+	set @Result=1
 	commit tran
 end

@@ -34,6 +34,7 @@ CREATE PROCEDURE [dbo].[M_InsertClient]
 @CompanyCode nvarchar(200)='',
 @CustomerID nvarchar(64)='',
 @CreateUserID nvarchar(64)='',
+@UserID nvarchar(64)='',
 @Result int output --0：失败，1：成功，2 账号已存在
 AS
 
@@ -41,9 +42,14 @@ begin tran
 
 set @Result=0
 
-declare @Err int ,@DepartID nvarchar(64),@RoleID nvarchar(64),@UserID nvarchar(64),@AgentID nvarchar(64),@WareID nvarchar(64),@MDProjectID nvarchar(64)=''
+if(@UserID='')
+begin
+	set @UserID=NEWID()
+end
 
-select @Err=0,@DepartID=NEWID(),@RoleID=NEWID(),@UserID=NEWID(),@AgentID=NEWID(),@WareID=NEWID()
+declare @Err int ,@DepartID nvarchar(64),@RoleID nvarchar(64),@AgentID nvarchar(64),@WareID nvarchar(64),@MDProjectID nvarchar(64)=''
+
+select @Err=0,@DepartID=NEWID(),@RoleID=NEWID(),@AgentID=NEWID(),@WareID=NEWID()
 
 --账号
 if(@AccountType=1) 
