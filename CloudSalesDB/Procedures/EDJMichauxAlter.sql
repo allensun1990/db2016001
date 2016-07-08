@@ -24,3 +24,6 @@ update clients set ChangeRate=1.00
 P_InsertClientMemberLevel
 P_UpdateClientMemberLevel
 P_DeleteClientMemberLevel
+
+/*ÐÞ¸Ä*/
+P_GetCustomers

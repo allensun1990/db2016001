@@ -255,10 +255,9 @@
     <None Include="Procedures\System\P_DeleteClientIndustry.sql" />
     <None Include="Procedures\System\P_DeleteWareHouse.sql" />
     <None Include="Procedures\System\P_DeleteDepotSeat.sql" />
-    <None Include="Procedures\System\P_UpdateUserAccount.sql" />
     <Build Include="Procedures\System\P_InsertClientMemberLevel.sql" />
-    <None Include="Procedures\System\P_UpdateUserAccountPwd.sql" />
-    <None Include="Procedures\System\P_UpdateAccountBindMobile.sql" />
+    <Build Include="Procedures\System\P_UpdateClientMemberLevel.sql" />
+    <Build Include="Procedures\System\P_DeleteClientMemberLevel.sql" />
     <None Include="Procedures\Products\P_AddProviders.sql" />
   </ItemGroup>
 </Project>
