@@ -47,7 +47,7 @@ AS
 
 	select @tableName='Customer cus ',
 	@columns='cus.CustomerID,cus.Name,cus.Type,cus.SourceID, cus.Status,cus.Address,cus.Email,cus.Birthday,cus.StageStatus,cus.Extent, cus.MobilePhone,cus.CityCode,
-	cus.OwnerID,cus.CreateTime,cus.Mark,cus.AgentID,cus.ClientID,cus.ReplyTimes,cus.Description,cus.IndustryID,cus.ContactName,OpportunityCount,OrderCount,cus.Jobs ',
+	cus.OwnerID,cus.CreateTime,cus.Mark,cus.AgentID,cus.ClientID,cus.ReplyTimes,cus.Description,cus.IndustryID,cus.ContactName,OpportunityCount,OrderCount,cus.Jobs,cus.MemberLevelID ',
 	@key='cus.AutoID',
 	@isAsc=0
 
