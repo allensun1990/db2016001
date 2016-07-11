@@ -37,7 +37,7 @@ declare @Err int
 set @Err=0
 set @Result=0
 
-if exists(select AutoID from ProductDetail where ProductID=@ProductID and [AttrValue]=@ValueList and ProductDetailID<>@DetailID and Status<>9)
+if @ValueList<>'' and exists(select AutoID from ProductDetail where ProductID=@ProductID and [AttrValue]=@ValueList and ProductDetailID<>@DetailID and Status<>9)
 begin
 	set @Result=2
 	rollback tran

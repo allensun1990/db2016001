@@ -249,7 +249,6 @@
     <None Include="Procedures\Stock\P_GetPurchases.sql" />
     <None Include="Procedures\System\P_InsertCustomerColor.sql" />
     <None Include="Procedures\System\P_DeleteCustomColor.sql" />
-    <Build Include="Procedures\Products\P_InsertProductExcel.sql" />
     <Build Include="Procedures\Report\R_GetOpportunityStateRPT.sql" />
     <None Include="Procedures\Custom\P_UpdateContactDefault.sql" />
     <None Include="Procedures\System\P_DeleteClientIndustry.sql" />

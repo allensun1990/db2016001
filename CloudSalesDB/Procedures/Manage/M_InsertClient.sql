@@ -47,7 +47,7 @@ begin
 	set @UserID=NEWID()
 end
 
-declare @Err int ,@DepartID nvarchar(64),@RoleID nvarchar(64),@AgentID nvarchar(64),@WareID nvarchar(64),@MDProjectID nvarchar(64)=''
+declare @Err int ,@DepartID nvarchar(64),@RoleID nvarchar(64),@AgentID nvarchar(64),@WareID nvarchar(64),@MDProjectID nvarchar(64)='',@IsIntFactory int=0
 
 select @Err=0,@DepartID=NEWID(),@RoleID=NEWID(),@AgentID=NEWID(),@WareID=NEWID()
 
@@ -91,6 +91,10 @@ begin
 
 	set @MDProjectID=@CompanyID
 end
+else if(@RegisterType=4) --智能工厂
+begin
+	set @IsIntFactory=1
+end
 
 --客户端编码不能重复
 while exists(Select AutoID from Clients where ClientCode=@ClientCode)
@@ -105,8 +109,8 @@ insert into Clients(ClientID,CompanyName,ContactName,MobilePhone,Status,Industry
 set @Err+=@@error
 
 --直营代理商
-insert into Agents(AgentID,CompanyName,Status,RegisterType,IsDefault,MDProjectID,ClientID,UserQuantity,EndTime) 
-			values(@AgentID,'公司直营',1,@RegisterType,1,@MDProjectID,@ClientID,20,'2016-9-30 23:59:59')
+insert into Agents(AgentID,CompanyName,Status,RegisterType,IsDefault,MDProjectID,ClientID,UserQuantity,EndTime,IsIntFactory) 
+			values(@AgentID,'公司直营',1,@RegisterType,1,@MDProjectID,@ClientID,20,'2016-9-30 23:59:59',@IsIntFactory)
 
 --部门
 insert into Department(DepartID,Name,Status,CreateUserID,AgentID,ClientID) values (@DepartID,'系统管理',1,@UserID,@AgentID,@ClientID)
@@ -126,12 +130,12 @@ values(@Account,@AccountType,@MDProjectID,@UserID,@AgentID,@ClientID)
 insert into Providers(ProviderID,Name,Contact,MobileTele,Email,Website,CityCode,Address,Remark,CreateTime,CreateUserID,AgentID,ClientID)
 					 values (NEWID(),'公司自营',@ContactName,@MobilePhone,'','','','','',GETDATE(),@UserID,@AgentID,@ClientID)
 
---智能工厂客户管理
-if(@RegisterType=4 and @CustomerID<>'')
-begin
-	insert into ClientCustomer(AgentID,ClientID,CMCustomerID,Status,CMClientID,CMClientCode)
-						values(@AgentID,@ClientID,@CustomerID,1,@CompanyID,@CompanyCode)
-end
+
+--系统默认参数
+insert into ClientSetting(KeyType,NValue,DValue,IValue,Description,ClientID)
+				   values(1,'',0,2,'',@ClientID)
+insert into ClientSetting(KeyType,NValue,DValue,IValue,Description,ClientID)
+				   values(2,'',1,0,'',@ClientID)
 
 --行业
 insert into ClientsIndustry(ClientIndustryID,Name,Description,Status,CreateTime,CreateUserID,AgentID,ClientID)
