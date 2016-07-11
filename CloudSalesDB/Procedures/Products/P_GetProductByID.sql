@@ -20,14 +20,7 @@ AS
 
 select * from Products where ProductID=@ProductID 
 
-if exists(select AutoID from Products where ProductID=@ProductID and HasDetails=1)
-begin
-	select * from ProductDetail where ProductID=@ProductID and Status<>9 and IsDefault=0
-end
-else
-begin
-	select * from ProductDetail where ProductID=@ProductID and Status<>9 and IsDefault=1
-end
+select * from ProductDetail where ProductID=@ProductID and Status<>9
 
  
 

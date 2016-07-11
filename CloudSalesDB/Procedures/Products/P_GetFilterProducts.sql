@@ -47,11 +47,11 @@ AS
 	
 
 	set @tableName='Products P join Brand B on P.BrandID=B.BrandID 
-					join ProductDetail pd on p.ProductID=pd.ProductID and pd.Status<>9 and ((p.HasDetails=1 and pd.IsDefault=0) or (p.HasDetails=0 and pd.IsDefault=1)) '
+					join ProductDetail pd on p.ProductID=pd.ProductID '
 	set @columns='P.ProductID,P.ProductName,p.CommonPrice,pd.price,B.Name BrandName,
 				  p.ProductImage,pd.SaleCount,pd.ProductDetailID,pd.ImgS ,pd.StockIn,pd.LogicOut '
 	set @key='pd.AutoID'
-	set @condition=' P.ClientID='''+@ClientID+''' and P.Status<>9 '
+	set @condition=' P.ClientID='''+@ClientID+''' and P.Status<>9 and pd.Status<>9 '
 
 	if(@CategoryID<>'' and @CategoryID<> '-1')
 	begin
@@ -80,9 +80,9 @@ AS
 
 	set @condition += @AttrWhere
 
-	if(@SaleWhere!='')
+	if(@SaleWhere != '')
 	begin
-		set @condition += ' and pd.AutoID in (select AutoID from ProductDetail where   ClientID='''+@ClientID+'''and Status=1 '+@SaleWhere+' )'
+		set @condition += ' and pd.AutoID in (select AutoID from ProductDetail where  ClientID='''+@ClientID+'''and Status<>9 '+@SaleWhere+' )'
 	end
 
 	declare @total int,@page int

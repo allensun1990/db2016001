@@ -42,6 +42,11 @@ declare @Err int=0
 insert into Providers(ProviderID,Name,Contact,MobileTele,Email,Website,CityCode,Address,Remark,CreateTime,CMClientID,CMClientCode,CreateUserID,AgentID,ClientID)
                values(@ProviderID ,@Name,@Contact ,@MobileTele,@Email,'',@CityCode,@Address,@Remark,getdate(),@CMClientID,@CMClientCode,@CreateUserID,@AgentID,@ClientID)
 
+if(@CMClientID<>'')
+begin
+	Update Agents set IsIntFactory=1 where AgentID=@AgentID and IsIntFactory=0
+end
+
 if(@Err>0)
 begin
 	rollback tran

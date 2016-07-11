@@ -1,4 +1,6 @@
 ﻿
+DROP  Procedure  P_InsertProductExcel
+
 alter table Agents add RegisterType int default 0
 
 Update Agents set RegisterType=3 where MDProjectID is not null and MDProjectID<>''
@@ -30,6 +32,37 @@ select BindMobilePhone,2,'',UserID,AgentID,ClientID from Users where BindMobileP
 --明道
 insert into UserAccounts(AccountName,AccountType,ProjectID,UserID,AgentID,ClientID)
 select MDUserID,3,MDProjectID,UserID,AgentID,ClientID from Users where MDUserID is not null and MDUserID<>''
+
+--系统配置
+drop table Dictionary
+drop table ClientCustomer
+
+create table ClientSetting
+(
+AutoID int identity(1,1) primary key,
+KeyType int,
+NValue nvarchar(200) default '',
+DValue decimal(18,4) default 0,
+IValue int default 0,
+Description nvarchar(500) default '',
+ClientID nvarchar(64)
+)
+
+--积分来源
+insert into ClientSetting(KeyType,NValue,DValue,IValue,Description,ClientID)
+select 1,'',0,2,'',ClientID from Clients
+
+--积分比例
+insert into ClientSetting(KeyType,NValue,DValue,IValue,Description,ClientID)
+select 2,'',1,0,'',ClientID from Clients
+
+alter table Log_Operate add AgentID nvarchar(64)
+alter table Log_Operate add ClientID nvarchar(64)
+
+--
+alter table Agents add IsIntFactory int default 0
+Go 
+Update Agents set IsIntFactory=0
 
 
 

@@ -1,19 +1,19 @@
 ﻿Use [CloudSales1.0_dev]
 GO
-IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'P_GetProductList')
+IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'P_GetProductListForExport')
 BEGIN
-	DROP  Procedure  P_GetProductList
+	DROP  Procedure  P_GetProductListForExport
 END
 
 GO
 /***********************************************************
-过程名称： P_GetProductList
+过程名称： P_GetProductListForExport
 功能描述： 获取产品列表
 参数说明：	 
 编写日期： 2015/6/29
 程序作者： Allen
 调试记录  declare @totalCount int ,@pageCount int 
-		  exec P_GetProductList 
+		  exec P_GetProductListForExport 
 		  @CategoryID='ffdcab10-fa72-4463-83e2-f9945874f00b',
 		  @keyWords='',
 		  @orderColumn=' p.Price ',
@@ -24,7 +24,7 @@ GO
 		  @pageCount =@pageCount,
 		  @ClientID='d583bf9e-1243-44fe-ac5c-6fbc118aae36'
 ************************************************************/
-CREATE PROCEDURE [dbo].[P_GetProductList]
+CREATE PROCEDURE [dbo].[P_GetProductListForExport]
 	@CategoryID nvarchar(64),
 	@BeginPrice nvarchar(20)='',
 	@EndPrice nvarchar(20)='',
@@ -42,8 +42,12 @@ AS
 	@condition nvarchar(4000),
 	@key nvarchar(100)
 
-	select @tableName='Products P left join Brand B on P.BrandID=B.BrandID ',@columns='P.*,B.Name BrandName ',@key='P.AutoID'
-	set @condition=' P.ClientID='''+@ClientID+''' and P.Status<>9 '
+	select @tableName='Products P join Brand B on P.BrandID=B.BrandID 
+	join Category C on P.CategoryID=C.CategoryID 
+	join ProductDetail PD on P.ProductID=PD.ProductID ',
+	@columns='P.*,B.Name BrandName,C.CategoryName ,C.CategoryCode, PD.DetailsCode,PD.Remark,PD.Price as SpecPrice,PD.Imgs ',
+	@key='P.AutoID'
+	set @condition=' P.ClientID='''+@ClientID+''' and P.Status<>9 and PD.Status<>9 '
 	if(@keyWords <> '')
 	begin
 		set @condition +=' and (ProductName like ''%'+@keyWords+'%'' or  ProductCode like ''%'+@keyWords+'%'' or  GeneralName like ''%'+@keyWords+'%'') '
