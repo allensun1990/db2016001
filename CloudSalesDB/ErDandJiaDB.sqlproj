@@ -259,5 +259,6 @@
     <Build Include="Procedures\System\P_UpdateClientMemberLevel.sql" />
     <Build Include="Procedures\System\P_DeleteClientMemberLevel.sql" />
     <None Include="Procedures\Products\P_AddProviders.sql" />
+    <Build Include="Procedures\Products\P_GetProductListForExport.sql" />
   </ItemGroup>
 </Project>

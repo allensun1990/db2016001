@@ -27,3 +27,4 @@ P_DeleteClientMemberLevel
 
 /*ÐÞ¸Ä*/
 P_GetCustomers
+P_InsertProductDetail
