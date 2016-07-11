@@ -16,6 +16,8 @@ GO
 ************************************************************/
 CREATE PROCEDURE [dbo].[P_SetCustomerYXinfo]
 	@CustomerID nvarchar(64)='',
+	@Name nvarchar(64)='',
+	@MobilePhone nvarchar(64)='',
 	@YXAgentID nvarchar(64)='',
 	@YXClientID nvarchar(64)='',
 	@YXClientCode nvarchar(64)='',
@@ -27,10 +29,29 @@ if( exists( select CustomerID from Customer where ClientID=@ClientID and Custome
 
 begin tran
 declare @Err int
+	if(@CustomerID<>'')
+	begin
+		update Customer set YXAgentID=@YXAgentID,YXClientID=@YXClientID,YXClientCode=@YXClientCode
+		where ClientID=@ClientID and CustomerID=@CustomerID
+		set @Err+=@@error
+	end
+	else
+	begin
+		if( exists( select CustomerID from Customer where ClientID=@ClientID and MobilePhone=@MobilePhone and status<>9 ) )
+		begin
+			update Customer set YXAgentID=@YXAgentID,YXClientID=@YXClientID,YXClientCode=@YXClientCode
+			where ClientID=@ClientID and MobilePhone=@MobilePhone and status<>9
 
-	update Customer set @YXAgentID=@YXAgentID,@YXClientID=@YXClientID,@YXClientCode=@YXClientCode
-	where ClientID=@ClientID and CustomerID=@CustomerID
-	set @Err+=@@error
+			set @Err+=@@error
+		end
+		else
+		begin
+			insert into Customer(CustomerID,Name,Type,MobilePhone,SourceType,Status,CreateTime,AgentID,ClientID,FirstName,YXAgentID,YXClientID,YXClientCode)
+			values(newid(),@Name,0,@MobilePhone,3,1,getdate(),@ClientID,@ClientID,dbo.fun_getFirstPY(left(@Name,1)),@YXAgentID,@YXClientID,@YXClientCode)
+
+			set @Err+=@@error
+		end
+	end
 
 if(@Err>0)
 begin
