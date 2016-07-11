@@ -22,6 +22,7 @@ CREATE PROCEDURE [dbo].[P_GetTasksByEndTime]
 	@FilterType int =-1,
 	@FinishStatus int =-1,
 	@PreFinishStatus int=-1,
+	@TaskType int=-1,
 	@ClientID nvarchar(64),
 	@PageSize int=20,
 	@PageIndex int=1,
@@ -35,7 +36,7 @@ AS
 	@condition nvarchar(1000)
 	
 	set @tableName='OrderTask t left join OrderTask t2 on t.OrderID=t2.OrderID and t2.Sort=t.Sort-1'
-	set @columns='t.*,t2.FinishStatus as PreFinishStatus'
+	set @columns='t.TaskID,t.OrderID'
 	set @key='t.TaskID'
 	set @orderColumn='t.EndTime'
 	set @condition=' t.status<>8  and t.ClientID='''+@ClientID+''''
@@ -57,6 +58,11 @@ AS
 			set @condition+=' and t2.FinishStatus='+ str(@PreFinishStatus)
 		else
 			set @condition+=' and t.Sort=1'
+	end
+
+	if(@TaskType<>-1)
+	begin
+		set @condition+=' and right(t.Mark,1)='+ convert(nvarchar(2), @TaskType)
 	end
 
 	if(@StartEndTime<>'')
@@ -90,9 +96,19 @@ AS
 		end
 	end
 
+	declare @tmp table(rowid nvarchar(50) default('0') null ,TaskID nvarchar(64),OrderID nvarchar(64))
 	declare @total int,@page int
-	exec P_GetPagerData @tableName,@columns,@condition,@key,@OrderColumn,@pageSize,@pageIndex,@total out,@page out,0 
+
+	insert into @tmp exec P_GetPagerData @tableName,@columns,@condition,@key,@OrderColumn,@pageSize,@pageIndex,@total out,@page out,0 
 	select @totalCount=@total,@pageCount =@page
+
+	select  t.*,t2.FinishStatus as PreFinishStatus,t2.Title as PreTitle  from OrderTask t left join OrderTask t2 on t.OrderID=t2.OrderID and t2.Sort=t.Sort-1
+	where t.TaskID in ( select TaskID from @tmp)
+
+	select * from orders 
+	where orderid in ( select OrderID from @tmp)
+
+
 	
 
 
