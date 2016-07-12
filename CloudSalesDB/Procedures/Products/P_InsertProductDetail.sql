@@ -70,6 +70,8 @@ INSERT INTO ProductDetail(ProductDetailID,[ProductID],DetailsCode,BigPrice ,[Sal
 				VALUES(@DetailID,@ProductID,@ProductCode,@BigPrice,@AttrList,@ValueList,@AttrValueList,@Price,1,@Remark,0,
 					@Weight,@ProductImg,@ShapeCode,@Description,@CreateUserID,getdate(),getdate(),'',@ClientID);
 
+Update Products set HasDetails=1 where ProductID=@ProductID and HasDetails=0 
+
 set @Err+=@@Error
 
 if(@Err>0)

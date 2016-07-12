@@ -1,5 +1,19 @@
 ﻿
+--ShoppingCart 删除供应商名称
+
 DROP  Procedure  P_InsertProductExcel
+
+--处理产品是否存在子产品
+update Products set HasDetails=0
+Update Products set HasDetails=1 where ProductID in(
+select ProductID from ProductDetail where Status<>9 group by ProductID having COUNT(0)>1
+)
+
+--处理材料供应商
+update p set ProviderID=pr.ProviderID from Products p join 
+(select ProviderID,ClientID from Providers where AutoID in (
+select MIN(AutoID) AutoID from Providers where Status<>9 group by ClientID
+)) pr on p.ClientID=pr.ClientID
 
 alter table Agents add RegisterType int default 0
 

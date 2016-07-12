@@ -17,7 +17,7 @@ GO
 CREATE PROCEDURE [dbo].[P_DeleteProvider]
 @ProviderID nvarchar(64),
 @ClientID nvarchar(64),
-@Result int output --0：失败，1：成功，10002 存在关联数据
+@Result int output --0：失败，1：成功，10002 存在关联数据 10003 至少保留一个供应商
 AS
 
 begin tran
@@ -25,6 +25,13 @@ begin tran
 set @Result=0
 
 declare @Err int=0
+
+if not exists(select AutoID from Providers where ClientID=@ClientID and Status<>9 and ProviderID<>@ProviderID)
+begin
+	set @Result=10003
+	rollback tran
+	return
+end
 
 --存在关联数据
 if exists(select AutoID from Products where ClientID=@ClientID and Status<>9 and ProviderID=@ProviderID)

@@ -65,14 +65,14 @@ begin
 	select @CategoryID,AttrID,1,2,@UserID,getdate() from ProductAttr 
 	where ClientID=ClientID and Status<>9 and CHARINDEX(AttrID,@SaleAttr)>0
 
-	if(@SaleAttr is null or @SaleAttr='')
-	begin
-		update Products set HasDetails=0 where @CategoryID=CategoryID
-	end
-	else
-	begin
-		update Products set HasDetails=1 where @CategoryID=CategoryID
-	end
+	--if(@SaleAttr is null or @SaleAttr='')
+	--begin
+	--	update Products set HasDetails=0 where @CategoryID=CategoryID
+	--end
+	--else
+	--begin
+	--	update Products set HasDetails=1 where @CategoryID=CategoryID
+	--end
 end
 
 if(@Err>0)

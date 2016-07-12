@@ -20,6 +20,7 @@ CREATE PROCEDURE [dbo].[P_UpdateProduct]
 @ProductName nvarchar(200),
 @GeneralName nvarchar(200),
 @IsCombineProduct int,
+@ProviderID nvarchar(64)='',
 @BrandID nvarchar(64),
 @BigUnitID nvarchar(64),
 @UnitID nvarchar(64),
@@ -77,7 +78,7 @@ Update [Products] set [ProductName]=@ProductName,ProductCode=@ProductCode,[Gener
 						[CategoryIDList]=@PIDList,[SaleAttr]=@SaleAttr,[AttrList]=@AttrList,[ValueList]=@ValueList,[AttrValueList]=@AttrValueList,
 						[CommonPrice]=@CommonPrice,[Price]=@Price,[PV]=0,[Status]=@Status,ProductImage=@ProductImg,
 						[IsNew]=@Isnew,[IsRecommend]=@IsRecommend ,[DiscountValue]=@DiscountValue,[Weight]=@Weight ,[EffectiveDays]=@EffectiveDays,
-						IsAllow=@IsAllow,IsAutoSend=@IsAutoSend,WarnCount=@WarnCount,
+						IsAllow=@IsAllow,IsAutoSend=@IsAutoSend,WarnCount=@WarnCount,ProviderID=@ProviderID,
 						[ShapeCode]=@ShapeCode ,[Description]=@Description ,[UpdateTime]=getdate()
 where ProductID=@ProductID
 

@@ -46,10 +46,8 @@ AS
 	@key nvarchar(100)
 	
 
-	set @tableName='Products P join Brand B on P.BrandID=B.BrandID 
-					join ProductDetail pd on p.ProductID=pd.ProductID '
-	set @columns='P.ProductID,P.ProductName,p.CommonPrice,pd.price,B.Name BrandName,
-				  p.ProductImage,pd.SaleCount,pd.ProductDetailID,pd.ImgS ,pd.StockIn,pd.LogicOut '
+	set @tableName='Products P join ProductDetail pd on p.ProductID=pd.ProductID and ((p.HasDetails=1 and pd.IsDefault=0) or (p.HasDetails=0 and pd.IsDefault=1))'
+	set @columns='P.ProductID,P.ProductName,p.CommonPrice,pd.price, p.ProductImage,pd.SaleCount,pd.ProductDetailID,pd.ImgS ,pd.StockIn,pd.LogicOut,pd.Remark '
 	set @key='pd.AutoID'
 	set @condition=' P.ClientID='''+@ClientID+''' and P.Status<>9 and pd.Status<>9 '
 

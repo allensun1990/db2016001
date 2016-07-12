@@ -50,7 +50,16 @@ end
 
 set @Err+=@@error
 
+declare @ProductID nvarchar(64)
+
 Update ProductDetail set Status=9,UpdateTime=getdate() where ProductDetailID=@ProductDetailID 
+
+select @ProductID=ProductID from ProductDetail where ProductDetailID=@ProductDetailID 
+
+if not exists(select AutoID from ProductDetail where ProductID=@ProductID and Status<>9 and IsDefault=0)
+begin
+	Update Products set HasDetails=0 where ProductID=@ProductID 
+end
 
 if(@Err>0)
 begin

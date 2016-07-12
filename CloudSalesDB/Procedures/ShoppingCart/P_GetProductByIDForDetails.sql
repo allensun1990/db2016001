@@ -24,7 +24,15 @@ select @HasDetails=HasDetails,@CategoryID=CategoryID from Products where Product
 
 select * from Products where ProductID=@ProductID 
 
-select * from ProductDetail where ProductID=@ProductID and Status=1 order by Remark
+if(@HasDetails=1)
+begin
+	select * from ProductDetail where ProductID=@ProductID and Status=1 and (IsDefault=0 or StockIn>0 or LogicOut>0 ) order by Remark
+end
+else
+begin
+	select * from ProductDetail where ProductID=@ProductID and Status=1 order by Remark
+end
+
 
 select p.AttrID,p.AttrName,c.Type from ProductAttr p join CategoryAttr c on p.AttrID=c.AttrID 
 where c.Status=1 and c.CategoryID= @CategoryID and p.Status=1 order by p.AutoID

@@ -20,7 +20,14 @@ AS
 
 select * from Products where ProductID=@ProductID 
 
-select * from ProductDetail where ProductID=@ProductID and Status<>9
+if exists(select AutoID from Products where ProductID=@ProductID and HasDetails=1)
+begin
+	select * from ProductDetail where ProductID=@ProductID and Status<>9 and (IsDefault=0 or StockIn>0 or LogicOut>0 )
+end
+else
+begin
+	select * from ProductDetail where ProductID=@ProductID and Status<>9
+end
 
  
 

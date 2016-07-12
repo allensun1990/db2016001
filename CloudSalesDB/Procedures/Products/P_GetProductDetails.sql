@@ -13,7 +13,7 @@ GO
 编写日期： 2015/12/11
 程序作者： Allen
 调试记录  exec P_GetProductDetails 
-		  @keyWords='New',
+		  @keyWords='',
 		  @ClientID='eda082bc-b848-4de8-8776-70235424fc06'
 ************************************************************/
 CREATE PROCEDURE [dbo].[P_GetProductDetails]
@@ -25,13 +25,13 @@ AS
 
 	set @sqlText='select d.ProductDetailID,d.ProductID,p.ProductCode,p.ProductName,d.SaleAttrValue,d.StockIn,d.SaleCount,d.Remark from '
 
-	set @sqlText+=' Products p join ProductDetail d on p.ProductID=d.ProductID'
+	set @sqlText+=' Products p join ProductDetail d on p.ProductID=d.ProductID and ((p.HasDetails=1 and d.IsDefault=0) or (p.HasDetails=0 and d.IsDefault=1)) '
 
-	set @sqlText+='where p.ClientID='''+@ClientID+''' and P.Status<>9 and d.Status<>9 '
+	set @sqlText+=' where p.ClientID='''+@ClientID+''' and P.Status<>9 and d.Status<>9 '
 
 	if(@WareID<>'')
 	begin
-		set @sqlText+=' and ProductDetailID in (select ProductDetailID from ProductStock where WareID='''+@WareID+''')'
+		set @sqlText+=' and p.ProductDetailID in (select ProductDetailID from ProductStock where WareID='''+@WareID+''')'
 	end
 
 	if(@keyWords <> '')
