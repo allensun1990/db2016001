@@ -51,6 +51,13 @@ begin
 	return
 end
 
+if(@Remark='' or exists(select AutoID from ProductDetail where ProductID=@ProductID and Remark=@Remark and ProductDetailID<>@DetailID and Status<>9))
+begin
+	set @Result=2
+	rollback tran
+	return
+end
+
 update ProductDetail set DetailsCode=@ProductCode ,[SaleAttr]=@AttrList,[AttrValue]=@ValueList,[SaleAttrValue]=@AttrValueList,[Price]=@Price,
 					[Weight]=@Weight,[ShapeCode]=@ShapeCode ,BigPrice=@BigPrice,ImgS=@ImgS,Remark=@Remark,[Description]=@Description ,[UpdateTime]=getdate()
 where ProductDetailID=@DetailID

@@ -260,5 +260,6 @@
     <None Include="Procedures\Products\P_AddProviders.sql" />
     <None Include="Procedures\System\P_DeleteOrderType.sql" />
     <Build Include="Procedures\Products\P_GetProductListForExport.sql" />
+    <Build Include="Procedures\Custom\P_RefreshMemberLevelID.sql" />
   </ItemGroup>
 </Project>
