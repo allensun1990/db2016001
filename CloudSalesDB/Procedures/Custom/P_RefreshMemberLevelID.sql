@@ -48,7 +48,7 @@ as
 		else
 		begin
 			declare @nextFee decimal(18,2) 
-			select @nextFee=IntegFeeMore from ClientMemberLevel where ClientID=@ClientID and Origin=(@i+1)	and Status<>9 
+			select @levelID=LevelID,@nextFee=IntegFeeMore,@levelName=Name  from ClientMemberLevel where ClientID=@ClientID and Origin=(@i+1)	and Status<>9 
 			
 			insert into CustomerLog (LogGUID,Remark,CreateUserID,OperateIP,GUID,AgentID,ClientID) 
 			select CustomerID,'客户等级变更为:'+@levelName+'(操作来自:客户配置->等级配置->应用到所有会员)',@CreateUserID,@IP,newid(),@AgentID,@ClientID from Customer
