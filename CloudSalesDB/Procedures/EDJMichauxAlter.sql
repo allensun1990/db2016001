@@ -25,6 +25,7 @@ update Customer set IntegerFee=0.00
 P_InsertClientMemberLevel
 P_UpdateClientMemberLevel
 P_DeleteClientMemberLevel
+P_RefreshMemberLevelID
 
 /*ÐÞ¸Ä*/
 P_GetCustomers
