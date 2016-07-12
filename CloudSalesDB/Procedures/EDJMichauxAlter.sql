@@ -13,11 +13,12 @@ create table ClientMemberLevel(
 [ImgUrl] [nvarchar](248) Not NULL,
 )
 
-Alter table clients  add ChangeRate decimal(18,2) default(1.00)
+
+alter table Customer Add IntegerFee decimal(18,2) default(0.00)
 
 alter table Customer add MemberLevelID varchar(50) 
 
-update clients set ChangeRate=1.00
+update Customer set IntegerFee=0.00
 
 
 /*新增存储过程*/
