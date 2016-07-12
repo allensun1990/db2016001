@@ -61,11 +61,11 @@ AS
 	begin
 		if(@FilterType=1)
 		begin
-			set @condition+=' and o.PlanTime<GETDATE() and o.OrderStatus=1 '
+			set @condition+=' and o.PlanTime<GETDATE() and o.OrderStatus=1 and o.status<>4'
 		end
 		else if(@FilterType=3 or @FilterType=2)
 		begin
-			set @condition+=' and o.PlanTime>GETDATE() and o.OrderStatus=1 '
+			set @condition+=' and o.PlanTime>GETDATE() and o.OrderStatus=1 and o.status<>4 '
 
 			if(@FilterType=2)
 			begin
