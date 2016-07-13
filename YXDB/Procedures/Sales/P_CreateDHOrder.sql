@@ -21,7 +21,8 @@ CREATE PROCEDURE [dbo].[P_CreateDHOrder]
 	@Price decimal(18,4)=0,
 	@OrderCode nvarchar(50),
 	@OperateID nvarchar(64)='',
-	@ClientID nvarchar(64)
+	@ClientID nvarchar(64),
+	@YXOrderID nvarchar(64)
 AS
 	
 declare @Status int,@OwnerID nvarchar(64),@ProcessID nvarchar(64),@CustomerID nvarchar(64),@TurnTimes int=0
@@ -46,10 +47,10 @@ end
 
 insert into Orders(OrderID,OrderCode,CategoryID,TypeID,OrderType,SourceType,OrderStatus,Status,ProcessID,PlanPrice,FinalPrice,PlanQuantity,PlanType,TaskCount,TaskOver,OrderImage,OriginalID,OriginalCode ,
 					Price,CostPrice,ProfitPrice,TotalMoney,CityCode,Address,PersonName,MobileTele,Remark,CustomerID,OwnerID,CreateTime,AgentID,ClientID,Platemaking,PlateRemark,
-					GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,Discount,OriginalPrice,IntGoodsCode,GoodsName,TurnTimes)
+					GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,Discount,OriginalPrice,IntGoodsCode,GoodsName,TurnTimes,YXOrderID)
 select @OrderID,@OrderCode,CategoryID,TypeID,2,1,1,4,@ProcessID,PlanPrice,@Price,0,PlanType,0,0,OrderImage,OrderID,OrderCode,
 		Price,CostPrice,ProfitPrice,0,CityCode,Address,PersonName,MobileTele,Remark,CustomerID,@OwnerID,getdate(),AgentID,ClientID,Platemaking,PlateRemark,
-		GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,@Discount,FinalPrice,IntGoodsCode,GoodsName,TurnTimes+1 from Orders where OrderID=@OriginalID
+		GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,@Discount,FinalPrice,IntGoodsCode,GoodsName,TurnTimes+1,@YXOrderID from Orders where OrderID=@OriginalID
 	
 --复制打样材料列表
 insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProdiverID )
