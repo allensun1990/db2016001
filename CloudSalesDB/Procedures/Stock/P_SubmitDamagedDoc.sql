@@ -35,8 +35,8 @@ declare @Err int=0
 if exists(select AutoID from ShoppingCart where UserID=@UserID and [GUID]=@WareID and OrderType=@DocType)
 begin
 
-	insert into StorageDetail(DocID,ProductDetailID,ProductID,UnitID,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage)
-	select @DocID,ProductDetailID,ProductID,UnitID,0,Quantity,Price,Quantity*Price,@WareID,DepotID,BatchCode,0,Remark,@ClientID ,ProductName,ProductCode,DetailsCode,ProductImage 
+	insert into StorageDetail(DocID,ProductDetailID,ProductID,UnitID,UnitName,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage)
+	select @DocID,ProductDetailID,ProductID,UnitID,UnitName,0,Quantity,Price,Quantity*Price,@WareID,DepotID,BatchCode,0,Remark,@ClientID ,ProductName,ProductCode,DetailsCode,ProductImage 
 	from ShoppingCart where UserID=@UserID and [GUID]=@WareID and OrderType=@DocType
 
 	select @TotalMoney=sum(TotalMoney) from StorageDetail where DocID=@DocID

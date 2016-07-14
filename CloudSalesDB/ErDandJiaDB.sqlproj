@@ -155,7 +155,6 @@
     <None Include="Procedures\Sales\P_UpdateOrderPrice.sql" />
     <None Include="Procedures\Sales\P_UpdateReturnQuantity.sql" />
     <None Include="Procedures\ShoppingCart\P_AddShoppingCart.sql" />
-    <None Include="Procedures\ShoppingCart\P_AddShoppingCartBatchIn.sql" />
     <None Include="Procedures\ShoppingCart\P_AddShoppingCartBatchOut.sql" />
     <None Include="Procedures\ShoppingCart\P_DeleteCart.sql" />
     <None Include="Procedures\ShoppingCart\P_GetProductByIDForDetails.sql" />

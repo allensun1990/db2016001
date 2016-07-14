@@ -32,7 +32,6 @@ declare @Err int=0
 
 if not exists(select AutoID from ShoppingCart where ProductDetailID=@ProductDetailID  and OrderType=@OrderType and [GUID]=@GUID and UserID=@UserID and BatchCode=@BatchCode and DepotID=@DepotID)
 begin
-
 	insert into ShoppingCart(OrderType,ProductDetailID,ProductID,UnitID,DepotID,BatchCode,Quantity,Price,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,CreateTime,UserID,OperateIP,[GUID])
 	select @OrderType,@ProductDetailID,@ProductID,p.UnitID,@DepotID,@BatchCode,@Quantity,d.Price,d.Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,GETDATE(),@UserID,@OperateIP,@GUID 
 	from ProductDetail d join Products p on d.ProductID=p.ProductID where d.ProductDetailID=@ProductDetailID 

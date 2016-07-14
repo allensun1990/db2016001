@@ -41,13 +41,13 @@ set @Result=0
 set @DetailID=NEWID()
 
 
---if(@ValueList<>'' and exists(select AutoID from ProductDetail where ProductID=@ProductID  and [AttrValue]=@ValueList and Status<>9))
---begin
---	set @DetailID=''
---	set @Result=2
---	rollback tran
---	return
---end
+if(@ValueList<>'' and charindex('|',@ValueList)=0 and exists(select AutoID from ProductDetail where ProductID=@ProductID  and [AttrValue]=@ValueList and Status<>9))
+begin
+	set @DetailID=''
+	set @Result=2
+	rollback tran
+	return
+end
 
 if(@Remark='' or exists(select AutoID from ProductDetail where ProductID=@ProductID and replace(Remark,' ','')=replace(@Remark,' ','') and Status<>9))
 begin

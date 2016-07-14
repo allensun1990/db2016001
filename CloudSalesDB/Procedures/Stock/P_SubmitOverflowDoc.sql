@@ -18,7 +18,7 @@ CREATE PROCEDURE [dbo].[P_SubmitOverflowDoc]
 @DocID nvarchar(64),
 @DocCode nvarchar(20),
 @DocType int,
-@TotalMoney decimal(18,2)=0,
+@AutoIDs nvarchar(4000),
 @CityCode nvarchar(10)='',
 @Address nvarchar(500)='',
 @Remark nvarchar(500)='',
@@ -30,17 +30,21 @@ AS
 
 begin tran
 
-declare @Err int=0
+declare @Err int=0,@TotalMoney decimal(18,2)=0,@sql nvarchar(4000)
 
-if exists(select AutoID from ShoppingCart where UserID=@UserID and [GUID]=@WareID and OrderType=@DocType)
+create table #TempTable(ID int)
+set @sql='select col='''+ replace(@AutoIDs,',',''' union all select ''')+''''
+insert into #TempTable exec (@sql)
+
+if exists(select AutoID from ShoppingCart where UserID=@UserID and [GUID]=@UserID and OrderType=@DocType and AutoID in (select ID from #TempTable))
 begin
 	
 	declare @AutoID int=1,@ProductID nvarchar(64),@ProductDetailID nvarchar(64),@Quantity int,@BatchCode nvarchar(50),@DepotID nvarchar(64),
 	@DRemark nvarchar(4000),@Price decimal(18,4),@UnitID nvarchar(64)
 
-	select identity(int,1,1) as AutoID,ProductDetailID,ProductID,UnitID ,Quantity,Price,BatchCode,Remark,ProductName,ProductCode,DetailsCode,ProductImage  into #TempProducts 
+	select identity(int,1,1) as AutoID,ProductDetailID,ProductID,UnitID ,UnitName,Quantity,Price,BatchCode,Remark,ProductName,ProductCode,DetailsCode,ProductImage  into #TempProducts 
 	from ShoppingCart 
-	where UserID=@UserID and [GUID]=@WareID and OrderType=@DocType
+	where UserID=@UserID and [GUID]=@UserID and OrderType=@DocType and AutoID in (select ID from #TempTable)
 
 	while exists(select AutoID from #TempProducts where AutoID=@AutoID)
 	begin
@@ -59,8 +63,8 @@ begin
 		end
 
 
-		insert into StorageDetail(DocID,ProductDetailID,ProductID,UnitID,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage)
-		select @DocID,ProductDetailID,ProductID,UnitID,0,Quantity,Price,Quantity*Price,@WareID,@DepotID,BatchCode,0,Remark,@ClientID ,ProductName,ProductCode,DetailsCode,ProductImage 
+		insert into StorageDetail(DocID,ProductDetailID,ProductID,UnitID,UnitName,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage)
+		select @DocID,ProductDetailID,ProductID,UnitID,UnitName,0,Quantity,Price,Quantity*Price,@WareID,@DepotID,BatchCode,0,Remark,@ClientID ,ProductName,ProductCode,DetailsCode,ProductImage 
 		from #TempProducts where AutoID=@AutoID
 
 		set @Err+=@@Error
@@ -74,7 +78,7 @@ begin
 	insert into StorageDoc(DocID,DocCode,DocType,Status,TotalMoney,CityCode,Address,Remark,WareID,CreateUserID,CreateTime,OperateIP,ClientID)
 	values(@DocID,@DocCode,@DocType,0,@TotalMoney,@CityCode,@Address,@Remark,@WareID,@UserID,GETDATE(),@OperateIP,@ClientID)
 
-	delete from ShoppingCart  where UserID=@UserID and [GUID]=@WareID and OrderType=@DocType
+	delete from ShoppingCart  where UserID=@UserID and [GUID]=@UserID and OrderType=@DocType and AutoID in (select ID from #TempTable)
 end
 set @Err+=@@Error
 
