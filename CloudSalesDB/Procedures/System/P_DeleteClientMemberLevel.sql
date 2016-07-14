@@ -22,9 +22,21 @@ create proc P_DeleteClientMemberLevel
 as
 begin
 	set @result=''
+	declare @tempID varchar(50)
+	select top 1 @tempID=LevelID  from ClientMemberLevel where  ClientID=@ClientID and [Status]<>9 order by origin desc
 	if(exists(select top 1 Name from Customer where MemberLevelID=@LevelID and [Status]<>9 ))
 	begin
 		set   @result='会员等级已被使用,删除失败'
+		return -1
+	end
+	if(@tempID!=@LevelID)
+	begin
+		set   @result='会员信息不是最新,请刷新页面后,再执行删除操作'
+		return -1
+	end
+	if((select [Status] from ClientMemberLevel where  LevelID=@LevelID and ClientID=@ClientID )=9)
+	begin
+		set   @result='会员已被他人删除,不能重复操作,删除操作.'
 		return -1
 	end
 	update ClientMemberLevel set Status=9 where LevelID=@LevelID and ClientID=@ClientID
