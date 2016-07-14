@@ -32,10 +32,9 @@ declare @GoodsID nvarchar(64),@Status int,@GoodsDetailID nvarchar(64),@Price dec
 select @GoodsID=GoodsID,@Status=Status,@Price=FinalPrice,@OriginalPrice=OriginalPrice from Orders where OrderID=@OrderID
 
 
-if exists(select AutoID from GoodsDetail where GoodsID=@GoodsID  and [AttrValue]=@ValueList)
+if exists(select AutoID from GoodsDetail where GoodsID=@GoodsID  and replace(Description,' ','')=replace(@Description,' ',''))
 begin
-	
-	select @DetailID=GoodsDetailID from GoodsDetail where GoodsID=@GoodsID  and [AttrValue]=@ValueList
+	select @DetailID=GoodsDetailID from GoodsDetail where GoodsID=@GoodsID  and replace(Description,' ','')=replace(@Description,' ','')
 end
 else
 begin
