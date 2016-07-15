@@ -86,7 +86,7 @@ AS
 
 	declare @total int,@page int
 
-	insert into #TempDoc(DocID)  exec P_GetPagerData @tableName,@columns,@condition,@key,@orderColumn,@PageSize,@PageIndex,@total out,@page out,@isAsc 
+	insert into #TempDoc(DocID)  exec P_GetPagerDataColumn @tableName,@columns,@condition,@key,@orderColumn,@PageSize,@PageIndex,@total out,@page out,@isAsc 
 
 	select @TotalCount=@total,@PageCount =@page
 

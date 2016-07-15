@@ -31,7 +31,7 @@ AS
 
 begin tran
 
-declare @Err int=0,@ProviderAutoID int=1,@ProviderID nvarchar(64)='',@NewCode nvarchar(50),@sql nvarchar(4000)
+declare @Err int=0,@ProviderAutoID int=1,@ProviderID nvarchar(64)='',@NewCode nvarchar(50),@sql nvarchar(4000),@ProviderName nvarchar(200)
 
 create table #TempTable(ID int)
 set @sql='select col='''+ replace(@AutoIDs,',',''' union all select ''')+''''
@@ -45,12 +45,12 @@ begin
 	select identity(int,1,1) as AutoID,ProductDetailID,ProductID,UnitID,UnitName,Quantity,Price,BatchCode,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,ProviderName into #TempShoppingCart
 	from ShoppingCart where UserID=@UserID and [GUID]=@UserID and OrderType=@DocType and AutoID in (select ID from #TempTable)
 
-	select identity(int,1,1) as AutoID,ProviderID into #TempProvider from #TempShoppingCart group by  ProviderID
+	select identity(int,1,1) as AutoID,ProviderID,ProviderName into #TempProvider from #TempShoppingCart group by  ProviderID,ProviderName
 
 	--循环代理商
 	while exists(select AutoID from #TempProvider where AutoID=@ProviderAutoID)
 	begin
-		select @ProviderID=ProviderID,@AutoID=1,@DocID=NEWID(),@NewCode=@DocCode+convert(nvarchar(10),@ProviderAutoID) from #TempProvider where AutoID=@ProviderAutoID
+		select @ProviderID=ProviderID,@ProviderName=ProviderName,@AutoID=1,@DocID=NEWID(),@NewCode=@DocCode+convert(nvarchar(10),@ProviderAutoID) from #TempProvider where AutoID=@ProviderAutoID
 		--取得代理商产品
 		select identity(int,1,1) as AutoID,ProductDetailID,ProductID,UnitID,UnitName,Quantity,Price,BatchCode,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,ProviderName into #TempProducts 
 		from #TempShoppingCart where ProviderID=@ProviderID
@@ -83,8 +83,8 @@ begin
 
 		select @TotalMoney=sum(TotalMoney) from StorageDetail where DocID=@DocID
 
-		insert into StorageDoc(DocID,DocCode,DocType,Status,TotalMoney,CityCode,Address,Remark,WareID,ProviderID,CreateUserID,CreateTime,OperateIP,ClientID)
-		values(@DocID,@NewCode,@DocType,0,@TotalMoney,@CityCode,@Address,@Remark,@WareID,@ProviderID,@UserID,GETDATE(),@OperateIP,@ClientID)
+		insert into StorageDoc(DocID,DocCode,DocType,Status,TotalMoney,CityCode,Address,Remark,WareID,ProviderID,CreateUserID,CreateTime,OperateIP,ClientID,ProviderName)
+		values(@DocID,@NewCode,@DocType,0,@TotalMoney,@CityCode,@Address,@Remark,@WareID,@ProviderID,@UserID,GETDATE(),@OperateIP,@ClientID,@ProviderName)
 
 		Drop table #TempProducts
 

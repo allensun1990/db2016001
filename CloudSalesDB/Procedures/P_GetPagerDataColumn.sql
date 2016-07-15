@@ -1,13 +1,13 @@
 ﻿Use [CloudSales1.0_dev]
 GO
-IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'P_GetPagerData')
+IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'P_GetPagerDataColumn')
 BEGIN
-	DROP  Procedure  P_GetPagerData
+	DROP  Procedure  P_GetPagerDataColumn
 END
 
 GO
 /***********************************************************
-过程名称： P_GetPagerData
+过程名称： P_GetPagerDataColumn
 功能描述： 数据分页
 参数说明： @tableName nvarchar(4000),     //表明
 		   @columns nvarchar(4000),       //查询字段
@@ -21,9 +21,9 @@ GO
 		   @isAsc int                     //是否升序 1升序 0 倒序	 
 编写日期： 2015/4/10
 程序作者： Allen
-调试记录： exec P_GetPagerData 
+调试记录： exec P_GetPagerDataColumn 
 ************************************************************/
-CREATE PROCEDURE [dbo].[P_GetPagerData]
+CREATE PROCEDURE [dbo].[P_GetPagerDataColumn]
 	@tableName nvarchar(4000),
 	@columns nvarchar(4000),
 	@condition nvarchar(4000),
@@ -67,6 +67,6 @@ begin
 	begin
 		set	@orderColumn=@orderColumn+','
 	end
-	set @CommandSQL='select * from (select row_number() over( order by '+@orderColumn+@key+' '+@orderby+') as rowid , '+@columns+' from '+@tableName+' where '+@condition+'  ) as dt where rowid between '+str((@pageIndex-1) * @pageSize + 1)+' and '+str(@pageIndex* @pageSize)
+	set @CommandSQL='select '+@columns+' from (select row_number() over( order by '+@orderColumn+@key+' '+@orderby+') as rowid , '+@columns+' from '+@tableName+' where '+@condition+'  ) as dt where rowid between '+str((@pageIndex-1) * @pageSize + 1)+' and '+str(@pageIndex* @pageSize)
 end
 exec (@CommandSQL)
