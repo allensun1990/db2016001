@@ -91,10 +91,7 @@ AS
 	select @TotalCount=@total,@PageCount =@page
 
 	select * from StorageDoc where DocID in (select DocID from #TempDoc) order by CreateTime desc
-	--采购单
-	if(@DocType > 2)
-	begin
-		select * from StorageDetail where DocID in (select DocID from #TempDoc)
-	end
+
+	select * from StorageDetail where DocID in (select DocID from #TempDoc)
  
 

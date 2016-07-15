@@ -24,7 +24,7 @@ CREATE PROCEDURE [dbo].[P_UpdateProductDetail]
 @AttrValueList nvarchar(max),
 @Price decimal(18,2),
 @Weight decimal(18,2),
-@Description text,
+@Description nvarchar(4000)='',
 @Remark nvarchar(500)='',
 @ShapeCode nvarchar(50),
 @ImgS nvarchar(500),
@@ -37,8 +37,15 @@ declare @Err int
 set @Err=0
 set @Result=0
 
-if exists(select AutoID from ProductDetail where ProductID=@ProductID and [AttrValue]=@ValueList and ProductDetailID<>@DetailID)
+if(@ValueList<>'' and charindex('|',@ValueList)=0 and exists(select AutoID from ProductDetail where ProductID=@ProductID and [AttrValue]=@ValueList  and Status<>9 and ProductDetailID<>@DetailID))
 begin
+	rollback tran
+	return
+end
+
+if(@Description='' or exists(select AutoID from ProductDetail where ProductID=@ProductID and replace(Description,' ','')=replace(@Description,' ','') and Status<>9 and ProductDetailID<>@DetailID))
+begin
+	set @DetailID=''
 	rollback tran
 	return
 end

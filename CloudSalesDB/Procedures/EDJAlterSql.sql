@@ -115,6 +115,11 @@ alter table AgentsOrderDetail add UnitName nvarchar(50) default ''
 GO
 update s set UnitName=u.UnitName from AgentsOrderDetail s join ProductUnit u on s.UnitID=u.UnitID
 
+--冗余供应商名称
+alter table StorageDoc add ProviderName nvarchar(200) default ''
+GO
+Update s set ProviderName=p.Name from StorageDoc s join Providers p on s.ProviderID=p.ProviderID
+
 
 
 

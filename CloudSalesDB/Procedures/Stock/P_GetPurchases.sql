@@ -43,7 +43,9 @@ AS
 	@orderColumn nvarchar(4000),
 	@isAsc int
 
-	select @tableName='StorageDoc s left join Providers p on s.ProviderID=p.ProviderID',@columns='s.* ,p.Name ProviderName',@key='s.AutoID',@orderColumn='s.CreateTime desc',@isAsc=0
+	Create table #TempDoc(DocID nvarchar(64))
+
+	select @tableName='StorageDoc s',@columns='DocID',@key='s.AutoID',@orderColumn='s.CreateTime desc',@isAsc=0
 	set @condition='s.ClientID='''+@ClientID+''' and s.Status<>9 and DocType=1 '
 	--关键词
 	if(@keyWords <> '')
@@ -77,7 +79,11 @@ AS
 		set @condition +=' and s.CreateTime <=  '''+@EndTime+' 23:59:59'''
 
 	declare @total int,@page int
-	exec P_GetPagerData @tableName,@columns,@condition,@key,@orderColumn,@PageSize,@PageIndex,@total out,@page out,@isAsc 
+	insert into #TempDoc(DocID)  exec P_GetPagerData @tableName,@columns,@condition,@key,@orderColumn,@PageSize,@PageIndex,@total out,@page out,@isAsc 
 	select @TotalCount=@total,@PageCount =@page
+
+	select * from StorageDoc where DocID in (select DocID from #TempDoc) order by CreateTime desc
+
+	select * from StorageDetail where DocID in (select DocID from #TempDoc)
  
 
