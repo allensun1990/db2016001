@@ -13,7 +13,7 @@ GO
 编写日期： 2015/4/10
 程序作者： Allen
 调试记录： exec M_InsertClient 
-修改信息:  Michaux 2016-05-30 添加来源类型
+修改信息:  Michaux 2016-07-14 添加来源类型 添加默认会员
 ************************************************************/
 CREATE PROCEDURE [dbo].[M_InsertClient]
 @ClientID nvarchar(64),
@@ -181,6 +181,14 @@ insert into CustomerColor(ColorID,ColorName,ColorValue,Status,CreateUserID,Creat
 values(2,'重要客户','#00ff00',0,@UserID,GETDATE(),@AgentID,@ClientID)
 insert into CustomerColor(ColorID,ColorName,ColorValue,Status,CreateUserID,CreateTime,AgentID,ClientID)
 values(3,'高级客户','#cc0000',0,@UserID,GETDATE(),@AgentID,@ClientID)
+
+--客户等级
+insert into ClientMemberLevel(LeveID,Name,IntegFeeMore,DiscountFee,Status,CreateUserID,CreateTime,AgentID,ClientID)
+values(newid(),'青铜会员',1000,1,1,@UserID,GETDATE(),@AgentID,@ClientID)
+insert into ClientMemberLevel(LeveID,Name,IntegFeeMore,DiscountFee,Status,CreateUserID,CreateTime,AgentID,ClientID)
+values(newid(),'白银会员',3000,1,1,@UserID,GETDATE(),@AgentID,@ClientID)
+insert into ClientMemberLevel(LeveID,Name,IntegFeeMore,DiscountFee,Status,CreateUserID,CreateTime,AgentID,ClientID)
+values(newid(),'黄金会员',7000,1,1,@UserID,GETDATE(),@AgentID,@ClientID)
 
 --机会阶段
 insert into [OpportunityStage] (StageID,StageName,Probability,Sort,Status,Mark,PID,CreateUserID,ClientID) 

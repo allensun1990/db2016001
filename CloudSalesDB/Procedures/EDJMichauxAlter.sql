@@ -30,3 +30,6 @@ P_RefreshMemberLevelID
 /*ÐÞ¸Ä*/
 P_GetCustomers
 P_InsertProductDetail
+M_InsertClient
+E_ImportCustomer
+P_CreateCustomer

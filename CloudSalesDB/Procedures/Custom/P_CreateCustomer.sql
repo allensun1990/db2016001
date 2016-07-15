@@ -37,8 +37,8 @@ CREATE PROCEDURE [dbo].[P_CreateCustomer]
 AS
 begin tran
 
-declare @Err int=0,@StageID nvarchar(64),@AllocationTime datetime=null
-
+declare @Err int=0,@StageID nvarchar(64),@LevelID varchar(50),@AllocationTime datetime=null
+	select top 1 @LevelID=LevelID from ClientMemberLevel where Status<>9  order by Origin asc
 --新客户阶段
 --select @StageID=StageID from  CustomStage where ClientID=@ClientID and Mark=1
 
@@ -58,9 +58,9 @@ begin
 end
 
 insert into Customer(CustomerID,Name,ContactName,Type,IndustryID,Extent,CityCode,Address,MobilePhone,OfficePhone,Email,Jobs,Description,SourceID,ActivityID,
-					StageID,OwnerID,Status,AllocationTime,OrderTime,CreateTime,CreateUserID,AgentID,ClientID)
+					StageID,OwnerID,Status,AllocationTime,OrderTime,CreateTime,CreateUserID,AgentID,ClientID,MemberLevelID,IntegerFee)
 values(@CustomerID,@Name,@ContactName,@Type,@IndustryID,@Extent,@CityCode,@Address,@MobilePhone,@OfficePhone,@Email,@Jobs,@Description,@SourceID,@ActivityID,
-					@StageID,@OwnerID,1,@AllocationTime,null,getdate(),@CreateUserID,@AgentID,@ClientID)
+					@StageID,@OwnerID,1,@AllocationTime,null,getdate(),@CreateUserID,@AgentID,@ClientID,@LevelID,0)
 
 set @Err+=@@error
 
