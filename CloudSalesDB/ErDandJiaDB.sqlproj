@@ -261,5 +261,6 @@
     <Build Include="Procedures\Products\P_GetProductListForExport.sql" />
     <Build Include="Procedures\Custom\P_RefreshMemberLevelID.sql" />
     <None Include="Procedures\P_GetPagerDataColumn.sql" />
+    <None Include="Procedures\Stock\P_GetStorageDocDetails.sql" />
   </ItemGroup>
 </Project>
