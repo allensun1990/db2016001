@@ -64,6 +64,12 @@ begin
 
 		select @ProductID=ProductID,@ProductDetailID=ProductDetailID,@BatchCode=BatchCode from StorageDetail where DocID=@DocID and AutoID=@GoodsAutoID
 
+		if(@Quantity is null or @Quantity=0)
+		begin
+			set @AutoID+=1
+			continue;
+		end
+
 		--处理材料库存
 		if exists(select AutoID from ClientProducts where ProductID=@ProductID and ClientID=@ClientID)
 		begin
@@ -128,7 +134,7 @@ begin
 	select @TotalMoney=sum(TotalMoney) from StorageDetail where DocID=@NewDocID
 
 	insert into StorageDoc(DocID,DocCode,DocType,DocImage,DocImages,Status,TotalMoney,CityCode,Address,Remark,WareID,CreateUserID,CreateTime,OperateIP,ClientID,OriginalID,OriginalCode)
-		select @NewDocID,@BillingCode,@DocType,DocImage,DocImages,2,@TotalMoney,CityCode,Address,'',WareID,@UserID,GETDATE(),'',ClientID,DocID,DocCode from StorageDoc where DocID=@DocID
+		select @NewDocID,@BillingCode,@DocType,DocImage,DocImages,2,isnull( @TotalMoney,0),CityCode,Address,'',WareID,@UserID,GETDATE(),'',ClientID,DocID,DocCode from StorageDoc where DocID=@DocID
 
 	set @Err+=@@error
 end

@@ -1,7 +1,11 @@
 ﻿
---ShoppingCart 删除供应商名称
 
 DROP  Procedure  P_InsertProductExcel
+DROP  Procedure  P_AddShoppingCartBatchIn
+
+alter table ShoppingCart add WareID nvarchar(64)
+
+update StorageDoc set Status=9 where Status=4
 
 --处理产品是否存在子产品
 update Products set HasDetails=0
@@ -77,14 +81,48 @@ alter table Log_Operate add ClientID nvarchar(64)
 alter table Agents add IsIntFactory int default 0
 Go 
 Update Agents set IsIntFactory=0
+Go
+
+--处理批次信息
+Update ShoppingCart set BatchCode=''
+update StorageDetail set BatchCode=''
+GO
+select ProductDetailID,ProductID,WareID,DepotID,ClientID,SUM(StockIn) StockIn,sum(StockOut) StockOut into #tempstock from ProductStock 
+group by ProductDetailID,ProductID,WareID,DepotID,ClientID
+GO
+truncate table ProductStock
+GO
+insert into ProductStock(ProductDetailID,ProductID,WareID,DepotID,ClientID,StockIn,StockOut)
+select ProductDetailID,ProductID,WareID,DepotID,ClientID,StockIn,StockOut from #tempstock
+Go
+Drop table #tempstock
+
+--增加单位名称
+alter table ShoppingCart add UnitName nvarchar(50) default ''
+GO
+update s set UnitName=u.UnitName from ShoppingCart s join ProductUnit u on s.UnitID=u.UnitID
+
+alter table OrderDetail add UnitName nvarchar(50) default ''
+GO
+update s set UnitName=u.UnitName from OrderDetail s join ProductUnit u on s.UnitID=u.UnitID
+
+alter table OpportunityProduct add UnitName nvarchar(50) default ''
+GO
+update s set UnitName=u.UnitName from OpportunityProduct s join ProductUnit u on s.UnitID=u.UnitID
+
+alter table StorageDetail add UnitName nvarchar(50) default ''
+GO
+update s set UnitName=u.UnitName from StorageDetail s join ProductUnit u on s.UnitID=u.UnitID
 
 
+alter table AgentsOrderDetail add UnitName nvarchar(50) default ''
+GO
+update s set UnitName=u.UnitName from AgentsOrderDetail s join ProductUnit u on s.UnitID=u.UnitID
 
-
-
-
-
-
+--冗余供应商名称
+alter table StorageDoc add ProviderName nvarchar(200) default ''
+GO
+Update s set ProviderName=p.Name from StorageDoc s join Providers p on s.ProviderID=p.ProviderID
 
 
 

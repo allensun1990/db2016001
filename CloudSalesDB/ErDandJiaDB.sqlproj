@@ -155,7 +155,6 @@
     <None Include="Procedures\Sales\P_UpdateOrderPrice.sql" />
     <None Include="Procedures\Sales\P_UpdateReturnQuantity.sql" />
     <None Include="Procedures\ShoppingCart\P_AddShoppingCart.sql" />
-    <None Include="Procedures\ShoppingCart\P_AddShoppingCartBatchIn.sql" />
     <None Include="Procedures\ShoppingCart\P_AddShoppingCartBatchOut.sql" />
     <None Include="Procedures\ShoppingCart\P_DeleteCart.sql" />
     <None Include="Procedures\ShoppingCart\P_GetProductByIDForDetails.sql" />
@@ -261,5 +260,7 @@
     <None Include="Procedures\System\P_DeleteOrderType.sql" />
     <Build Include="Procedures\Products\P_GetProductListForExport.sql" />
     <Build Include="Procedures\Custom\P_RefreshMemberLevelID.sql" />
+    <None Include="Procedures\P_GetPagerDataColumn.sql" />
+    <None Include="Procedures\Stock\P_GetStorageDocDetails.sql" />
   </ItemGroup>
 </Project>

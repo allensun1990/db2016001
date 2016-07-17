@@ -47,7 +47,7 @@ set @DocID=NEWID()
 declare @AutoID int=1,@ProductID nvarchar(64),@ProductDetailID nvarchar(64),@Quantity int,@Price decimal(18,4),@UnitID nvarchar(64),@Remark nvarchar(500)
 
 
-select identity(int,1,1) as AutoID,ProductID,ProductDetailID,ApplyQuantity,Price,UnitID,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS into #TempProducts 
+select identity(int,1,1) as AutoID,ProductID,ProductDetailID,ApplyQuantity,Price,UnitID,UnitName,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS into #TempProducts 
 from AgentsOrderDetail where OrderID=@OrderID and ApplyQuantity>0
 
 --代理商信息
@@ -84,8 +84,8 @@ begin
 			select top 1 @DepotID = DepotID from DepotSeat where WareID=@WareID and Status=1
 		end
 
-		insert into StorageDetail(DocID,ProductDetailID,ProductID,UnitID,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage)
-			select  @DocID,@ProductDetailID,@ProductID,@UnitID,0,@Quantity,@Price,@Quantity*@Price,@WareID,@DepotID,'',0,@Remark,@ClientID,ProductName,ProductCode,DetailsCode,ProductImage 
+		insert into StorageDetail(DocID,ProductDetailID,ProductID,UnitID,UnitName,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage)
+			select  @DocID,@ProductDetailID,@ProductID,@UnitID,UnitName,0,@Quantity,@Price,@Quantity*@Price,@WareID,@DepotID,'',0,@Remark,@ClientID,ProductName,ProductCode,DetailsCode,ProductImage 
 			from #TempProducts where AutoID=@AutoID
 
 		set @TotalMoney+=@Quantity*@Price

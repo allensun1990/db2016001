@@ -21,6 +21,7 @@ CREATE PROCEDURE [dbo].[P_CreateWareHouse]
 @ShortName nvarchar(100),
 @CityCode nvarchar(10),
 @Status int,
+@DepotID nvarchar(64)='',
 @DepotCode nvarchar(50),
 @DepotName nvarchar(50)='',
 @Description nvarchar(4000),
@@ -37,7 +38,7 @@ insert into WareHouse(WareID,WareCode,Name,ShortName,CityCode,Status,Description
               values(@WareID,@WareCode,@Name,@ShortName,@CityCode,@Status,@Description,@CreateUserID,@ClientID)
 
 insert into DepotSeat(DepotID,DepotCode,WareID,Name,Status,CreateUserID,ClientID)
-values(NEWID(),@DepotCode,@WareID,@DepotName,1,@CreateUserID,@ClientID)
+values(@DepotID,@DepotCode,@WareID,@DepotName,1,@CreateUserID,@ClientID)
 
 set @Err+=@@error
 

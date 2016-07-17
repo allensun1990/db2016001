@@ -54,7 +54,7 @@ end
 
 set @DocID=NEWID() 
 
-select identity(int,1,1) as AutoID,ProductID,ProductDetailID, Quantity,Price ,Remark,UnitID,ProductName,ProductCode,DetailsCode into #TempProducts 
+select identity(int,1,1) as AutoID,ProductID,ProductDetailID, Quantity,Price ,Remark,UnitID,UnitName,ProductName,ProductCode,DetailsCode into #TempProducts 
 from AgentsOrderDetail where OrderID=@OrderID
 
 create table #BatchStock(AutoID int identity(1,1),DepotID nvarchar(64),BatchCode nvarchar(50),Quantity int)
@@ -83,8 +83,8 @@ begin
 
 		if(@BatchQuantity>=@Quantity)
 		begin
-			insert into StorageDetail(DocID,ProductDetailID,ProductID,UnitID,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode)
-			select @DocID,@ProductDetailID,@ProductID,@UnitID,0,@Quantity,@Price,@Quantity*@Price,@WareID,@DepotID,@BatchCode,1,@Remark,@ClientID,ProductName,ProductCode,DetailsCode 
+			insert into StorageDetail(DocID,ProductDetailID,ProductID,UnitID,UnitName,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode)
+			select @DocID,@ProductDetailID,@ProductID,@UnitID,UnitName,0,@Quantity,@Price,@Quantity*@Price,@WareID,@DepotID,@BatchCode,1,@Remark,@ClientID,ProductName,ProductCode,DetailsCode 
 			from #TempProducts where AutoID=@AutoID
 
 			update ProductStock set StockOut=StockOut+@Quantity where DepotID=@DepotID and BatchCode=@BatchCode and ProductID=@ProductID and ProductDetailID=@ProductDetailID
@@ -100,8 +100,8 @@ begin
 		end
 		else
 		begin
-			insert into StorageDetail(DocID,ProductDetailID,ProductID,UnitID,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode)
-			select  @DocID,@ProductDetailID,@ProductID,@UnitID,0,@BatchQuantity,@Price,@BatchQuantity*@Price,@WareID,@DepotID,@BatchCode,1,@Remark,@ClientID,ProductName,ProductCode,DetailsCode
+			insert into StorageDetail(DocID,ProductDetailID,ProductID,UnitID,UnitName,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode)
+			select  @DocID,@ProductDetailID,@ProductID,@UnitID,UnitName,0,@BatchQuantity,@Price,@BatchQuantity*@Price,@WareID,@DepotID,@BatchCode,1,@Remark,@ClientID,ProductName,ProductCode,DetailsCode
 			from #TempProducts where AutoID=@AutoID
 
 			update ProductStock set StockOut=StockOut+@BatchQuantity where DepotID=@DepotID and BatchCode=@BatchCode and ProductID=@ProductID and ProductDetailID=@ProductDetailID

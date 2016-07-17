@@ -570,6 +570,8 @@
     <None Include="Procedures\Sales\P_UpdateOrderTotalMoney.sql" />
     <None Include="Procedures\System\P_GetUserByWeiXinID.sql" />
     <None Include="Procedures\Manage\M_BindUserWeiXinID.sql" />
+    <None Include="Procedures\Stock\P_GetGoodsDocByOrderID.sql" />
+    <None Include="Procedures\Stock\P_GetStorageDocDetails.sql" />
     <None Include="Procedures\Manage\M_UnBindUserWeiXinID.sql" />
   </ItemGroup>
 </Project>

@@ -53,7 +53,7 @@ declare @Price decimal(18,4),@BigSmallMultiple int,@IsAllow int,@StockIn int,@Sa
 
 
 --汇总产品明细库存
-select identity(int,1,1) as AutoID,ProductDetailID,ProductID,UnitID,Quantity,Price,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID into #TempProducts 
+select identity(int,1,1) as AutoID,ProductDetailID,ProductID,UnitID,UnitName,Quantity,Price,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID into #TempProducts 
 from OrderDetail where OrderID=@OrderID
 
 set @Err+=@@error
@@ -105,8 +105,8 @@ begin
 		set @Err+=@@error
 
 		--代理商采购明细
-		insert into AgentsOrderDetail(OrderID,ProductDetailID,ProductID,UnitID,IsBigUnit,Quantity,Price,TotalMoney,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,Imgs)
-							select @AgentOrderID,ProductDetailID,ProductID,UnitID,0,Quantity,Price,TotalMoney,Remark,@ClientID,ProductName,ProductCode,DetailsCode,ProductImage,Imgs from #TempProducts where AutoID=@AutoID
+		insert into AgentsOrderDetail(OrderID,ProductDetailID,ProductID,UnitID,UnitName,IsBigUnit,Quantity,Price,TotalMoney,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,Imgs)
+							select @AgentOrderID,ProductDetailID,ProductID,UnitID,UnitName,0,Quantity,Price,TotalMoney,Remark,@ClientID,ProductName,ProductCode,DetailsCode,ProductImage,Imgs from #TempProducts where AutoID=@AutoID
 		
 		--产品库存处理
 		update Products set LogicOut=LogicOut+@Quantity where ProductID=@ProductID

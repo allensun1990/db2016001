@@ -18,7 +18,8 @@ CREATE PROCEDURE [dbo].[P_DeleteCart]
 @ProductID nvarchar(64)='',
 @OrderType int,
 @GUID nvarchar(64)='',
-@UserID nvarchar(64)
+@UserID nvarchar(64),
+@DepotID nvarchar(64)=''
 AS
 begin tran
 
@@ -50,7 +51,11 @@ begin
 
 	update Orders set TotalMoney=isnull(@TotalMoney,0) where OrderID=@GUID
 end
-else 
+else if(@DepotID<>'')
+begin
+	delete from ShoppingCart where [GUID]=@GUID and ProductDetailID=@ProductID and UserID=@UserID and DepotID=@DepotID
+end
+else
 begin
 	delete from ShoppingCart where [GUID]=@GUID and ProductDetailID=@ProductID and UserID=@UserID
 end

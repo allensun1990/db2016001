@@ -26,9 +26,11 @@ AS
 set @Result=0	
 begin tran
 
-declare @Err int=0, @OrderID nvarchar(64)=NEWID()
+declare @Err int=0, @OrderID nvarchar(64)=NEWID(),@CustomerID nvarchar(64),@Status int=0
 
-if not exists(select AutoID from Opportunity  where OpportunityID=@OpportunityID and ClientID=@ClientID and Status=1)
+select @CustomerID=CustomerID,@Status=Status from Opportunity where OpportunityID=@OpportunityID and ClientID=@ClientID
+
+if (@Status<>1)
 begin
 	set @Result=2
 	rollback tran
@@ -43,14 +45,16 @@ end
 insert into Orders(OrderID,OrderCode,Status,CustomerID,PersonName,MobileTele,CityCode,Address,OwnerID,CreateUserID,AgentID,ClientID,StageID,TypeID,OpportunityID,OpportunityCode,TotalMoney)
 		select @OrderID,@OrderCode,1,CustomerID,PersonName,MobileTele,CityCode,Address,OwnerID,@UserID,AgentID,ClientID,StageID,TypeID,OpportunityID,OpportunityCode,TotalMoney from Opportunity where OpportunityID=@OpportunityID
 
-insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,IsBigUnit,BigSmallMultiple,Quantity,Price,TotalMoney,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,ProviderName)
-select @OrderID,ProductDetailID,ProductID,UnitID,IsBigUnit,BigSmallMultiple,Quantity,Price,TotalMoney,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,ProviderName from OpportunityProduct
+insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,UnitName,IsBigUnit,BigSmallMultiple,Quantity,Price,TotalMoney,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,ProviderName)
+select @OrderID,ProductDetailID,ProductID,UnitID,UnitName,IsBigUnit,BigSmallMultiple,Quantity,Price,TotalMoney,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,ProviderName from OpportunityProduct
 where OpportunityID=@OpportunityID
 
 set @Err+=@@error
 
 
 update Opportunity set Status=2,OrderTime=getdate(),OrderID=@OrderID,OrderCode=@OrderCode where OpportunityID=@OpportunityID and ClientID=@ClientID and Status=1
+
+update Customer set OrderCount=OrderCount+1 where CustomerID=@CustomerID
 
 set @Err+=@@error
 
