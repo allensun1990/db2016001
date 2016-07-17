@@ -3,6 +3,10 @@
 DROP  Procedure  P_InsertProductExcel
 DROP  Procedure  P_AddShoppingCartBatchIn
 
+alter table ShoppingCart add WareID nvarchar(64)
+
+update StorageDoc set Status=9 where Status=4
+
 --处理产品是否存在子产品
 update Products set HasDetails=0
 Update Products set HasDetails=1 where ProductID in(

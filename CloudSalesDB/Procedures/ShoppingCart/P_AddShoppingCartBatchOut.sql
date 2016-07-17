@@ -19,6 +19,7 @@ CREATE PROCEDURE [dbo].[P_AddShoppingCartBatchOut]
 @ProductDetailID nvarchar(64),
 @ProductID nvarchar(64),
 @Quantity int=1,
+@WareID nvarchar(64)='',
 @DepotID nvarchar(64),
 @BatchCode nvarchar(50)='',
 @GUID nvarchar(64)='',
@@ -32,9 +33,9 @@ declare @Err int=0
 
 if not exists(select AutoID from ShoppingCart where ProductDetailID=@ProductDetailID  and OrderType=@OrderType and [GUID]=@GUID and UserID=@UserID and BatchCode=@BatchCode and DepotID=@DepotID)
 begin
-	insert into ShoppingCart(OrderType,ProductDetailID,ProductID,UnitID,DepotID,BatchCode,Quantity,Price,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,CreateTime,UserID,OperateIP,[GUID])
-	select @OrderType,@ProductDetailID,@ProductID,p.UnitID,@DepotID,@BatchCode,@Quantity,d.Price,d.Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,GETDATE(),@UserID,@OperateIP,@GUID 
-	from ProductDetail d join Products p on d.ProductID=p.ProductID where d.ProductDetailID=@ProductDetailID 
+	insert into ShoppingCart(OrderType,ProductDetailID,ProductID,UnitID,UnitName,WareID,DepotID,BatchCode,Quantity,Price,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,CreateTime,UserID,OperateIP,[GUID])
+	select @OrderType,@ProductDetailID,@ProductID,p.UnitID,u.UnitName,@WareID,@DepotID,@BatchCode,@Quantity,d.Price,d.Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,GETDATE(),@UserID,@OperateIP,@GUID 
+	from ProductDetail d join Products p on d.ProductID=p.ProductID left join ProductUnit u on p.UnitID=u.UnitID where d.ProductDetailID=@ProductDetailID 
 end
 else 
 begin

@@ -569,5 +569,6 @@
     <None Include="Procedures\Sales\P_GetOrdersByYXCode.sql" />
     <None Include="Procedures\Sales\P_UpdateOrderTotalMoney.sql" />
     <None Include="Procedures\Stock\P_GetGoodsDocByOrderID.sql" />
+    <None Include="Procedures\Stock\P_GetStorageDocDetails.sql" />
   </ItemGroup>
 </Project>

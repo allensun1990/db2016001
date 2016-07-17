@@ -23,13 +23,11 @@ CREATE PROCEDURE [dbo].[P_GetProductsByKeywords_Stock]
 AS
 	declare @sqlText nvarchar(4000)
 
-	set @sqlText='select s.ProductDetailID,s.ProductID,p.ProductCode,p.ProductName,d.SaleAttrValue,s.BatchCode,s.StockIn,s.StockOut,w.Name WareName,dm.DepotCode,s.DepotID,d.Remark from '
+	set @sqlText='select s.ProductDetailID,s.ProductID,p.ProductCode,p.ProductName,d.SaleAttrValue,s.BatchCode,s.StockIn,s.StockOut,s.WareID,s.DepotID,d.Remark from '
 
 	set @sqlText+=' ProductStock s 
 					join Products p on s.ProductID=p.ProductID 
-					join ProductDetail d on s.ProductDetailID=d.ProductDetailID
-					join WareHouse w on s.WareID=w.WareID
-					join DepotSeat dm on s.DepotID=dm.DepotID '
+					join ProductDetail d on s.ProductDetailID=d.ProductDetailID '
 
 	set @sqlText+='where s.ClientID='''+@ClientID+''' and P.Status<>9 and s.StockIn>s.StockOut '
 
@@ -40,7 +38,7 @@ AS
 
 	if(@keyWords <> '')
 	begin
-		set @sqlText +=' and (p.ProductName like ''%'+@keyWords+'%'' or  p.ProductCode like ''%'+@keyWords+'%'' or dm.DepotCode like ''%'+@keyWords+'%'' or  s.BatchCode like ''%'+@keyWords+'%'') '
+		set @sqlText +=' and (p.ProductName like ''%'+@keyWords+'%'' or  p.ProductCode like ''%'+@keyWords+'%'' or  s.BatchCode like ''%'+@keyWords+'%'') '
 	end
 
 	exec(@sqlText)
