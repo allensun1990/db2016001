@@ -33,3 +33,4 @@ P_InsertProductDetail
 M_InsertClient
 E_ImportCustomer
 P_CreateCustomer
+M_DeleteRole
