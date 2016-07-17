@@ -27,7 +27,7 @@ declare @MemberID nvarchar(64)=''
 
 select @MemberID=AliMemberID from clients where ClientiD=@ClientiD 
 
-if(@MemberID<>'' and @MemberID is not null)
+if(@MemberID<>'' )
 begin
 rollback tran
 return

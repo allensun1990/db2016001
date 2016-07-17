@@ -568,5 +568,8 @@
     <None Include="Procedures\Custom\P_SetCustomerYXinfo.sql" />
     <None Include="Procedures\Sales\P_GetOrdersByYXCode.sql" />
     <None Include="Procedures\Sales\P_UpdateOrderTotalMoney.sql" />
+    <None Include="Procedures\System\P_GetUserByWeiXinID.sql" />
+    <None Include="Procedures\Manage\M_BindUserWeiXinID.sql" />
+    <None Include="Procedures\Manage\M_UnBindUserWeiXinID.sql" />
   </ItemGroup>
 </Project>
