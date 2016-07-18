@@ -42,10 +42,9 @@ AS
 	@condition nvarchar(4000),
 	@key nvarchar(100)
 
-	select @tableName='Products P join Brand B on P.BrandID=B.BrandID 
-	join Category C on P.CategoryID=C.CategoryID 
-	join ProductDetail PD on P.ProductID=PD.ProductID ',
-	@columns='P.*,B.Name BrandName,C.CategoryName ,C.CategoryCode, PD.DetailsCode,PD.Remark,PD.Price as SpecPrice,PD.Imgs ',
+	select @tableName='Products P join Brand B on P.BrandID=B.BrandID  join Category C on P.CategoryID=C.CategoryID 	 
+	join ProductDetail PD on P.ProductID=PD.ProductID left join Providers pr on P.ProviderID=pr.ProviderID ',
+	@columns='P.*,B.Name BrandName,C.CategoryName ,C.CategoryCode, PD.DetailsCode,PD.Remark,PD.Price as SpecPrice,PD.Imgs,pr.Name as ProviderName ',
 	@key='P.AutoID'
 	set @condition=' P.ClientID='''+@ClientID+''' and P.Status<>9 and PD.Status<>9 '
 	if(@keyWords <> '')

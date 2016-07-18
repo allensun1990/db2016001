@@ -26,8 +26,10 @@ P_InsertClientMemberLevel
 P_UpdateClientMemberLevel
 P_DeleteClientMemberLevel
 P_RefreshMemberLevelID
-
+P_GetProductListForExport
+M_Get_Report_AgentActionDayPageList
 /*ÐÞ¸Ä*/
+
 P_GetCustomers
 P_InsertProductDetail
 M_InsertClient
