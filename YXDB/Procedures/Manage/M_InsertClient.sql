@@ -31,6 +31,7 @@ CREATE PROCEDURE [dbo].[M_InsertClient]
 @MDUserID nvarchar(64)='',
 @MDProjectID nvarchar(64)='',
 @AliMemberID nvarchar(64)='',
+@WeiXinID nvarchar(200)='',
 @CreateUserID nvarchar(64)='',
 @Result int output --0：失败，1：成功，2 账号已存在
 AS
@@ -98,8 +99,8 @@ insert into Role(RoleID,Name,Status,IsDefault,CreateUserID,AgentID,ClientID) val
 
 set @Err+=@@error
 
-insert into Users(UserID,LoginName,BindMobilePhone,LoginPWD,Name,MobilePhone,Email,Allocation,Status,IsDefault,DepartID,RoleID,CreateUserID,MDUserID,MDProjectID,AgentID,ClientID,AliMemberID)
-             values(@UserID,@LoginName,@BindMobilePhone,@LoginPWD,@ContactName,@MobilePhone,@Email,1,1,1,@DepartID,@RoleID,@UserID,@MDUserID,@MDProjectID,@AgentID,@ClientID,@AliMemberID)
+insert into Users(UserID,LoginName,BindMobilePhone,LoginPWD,Name,MobilePhone,Email,Allocation,Status,IsDefault,DepartID,RoleID,CreateUserID,MDUserID,MDProjectID,AgentID,ClientID,AliMemberID,WeiXinID)
+             values(@UserID,@LoginName,@BindMobilePhone,@LoginPWD,@ContactName,@MobilePhone,@Email,1,1,1,@DepartID,@RoleID,@UserID,@MDUserID,@MDProjectID,@AgentID,@ClientID,@AliMemberID,@WeiXinID)
 
 --部门关系
 insert into UserDepart(UserID,DepartID,CreateUserID,ClientID) values(@UserID,@DepartID,@UserID,@ClientID)  

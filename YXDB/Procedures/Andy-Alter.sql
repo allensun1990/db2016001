@@ -45,6 +45,8 @@ GO
 ALTER TABLE [dbo].[OrderPriceRange] ADD  CONSTRAINT [DF_OrderPriceRange_CreateTime]  DEFAULT (getdate()) FOR [CreateTime]
 GO
 
+alter table users add WeiXinID nvarchar(200) null
+
 
 
 
