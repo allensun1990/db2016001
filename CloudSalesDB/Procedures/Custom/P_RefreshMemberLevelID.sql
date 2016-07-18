@@ -34,11 +34,11 @@ as
 		if(@i=1)
 		begin			
 			insert into CustomerLog (LogGUID,Remark,CreateUserID,OperateIP,GUID,AgentID,ClientID) 
-			select CustomerID,'客户等级变更为:'+@levelName+'(操作来自:客户配置->等级配置->应用到所有会员)',@CreateUserID,@IP,newid(),@AgentID,@ClientID from Customer where ClientID=@ClientID and IntegerFee<@integerFee and IntegerFee>=0		
+			select CustomerID,'客户等级变更为:新客户(操作来自:客户配置->等级配置->应用到所有会员)',@CreateUserID,@IP,newid(),@AgentID,@ClientID from Customer where ClientID=@ClientID and IntegerFee<@integerFee and IntegerFee>=0		
 			
-			update Customer set MemberLevelID=@levelID  where ClientID=@ClientID and IntegerFee<@integerFee and IntegerFee>=0
+			update Customer set MemberLevelID=''  where ClientID=@ClientID and IntegerFee<@integerFee and IntegerFee>=0
 		end 
-		else if(@i=@j)
+		else  if(@i=@j)
 		begin 
 			insert into CustomerLog (LogGUID,Remark,CreateUserID,OperateIP,GUID,AgentID,ClientID) 
 			select CustomerID,'客户等级变更为:'+@levelName+'(操作来自:客户配置->等级配置->应用到所有会员)',@CreateUserID,@IP,newid(),@AgentID,@ClientID from Customer where ClientID=@ClientID and  IntegerFee>=@integerFee
