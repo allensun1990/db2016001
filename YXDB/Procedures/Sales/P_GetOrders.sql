@@ -58,7 +58,7 @@ AS
 
 	if(@SearchType=1) --我的
 	begin
-		set @condition +=' and o.OwnerID = '''+@UserID+''''
+		set @condition +=' and (o.OwnerID = '''+@UserID+''' or o.CreateUserID= '''+@UserID+''')'
 	end
 	else if(@SearchType=2) --下属
 	begin

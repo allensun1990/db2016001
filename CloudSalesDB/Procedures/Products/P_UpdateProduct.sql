@@ -66,12 +66,13 @@ BEGIN
 	return
 END
 
-declare @Err int,@PIDList nvarchar(max),@SaleAttr  nvarchar(max),@HasDetails int=0
+declare @Err int,@PIDList nvarchar(max),@SaleAttr  nvarchar(max),@HasDetails int=0,@DPrice decimal(18,4)
 
 set @Err=0
 
 select @PIDList=PIDList,@SaleAttr=SaleAttr from Category where CategoryID=@CategoryID
 
+select @DPrice=Price from [Products] where ProductID=@ProductID
 
 Update [Products] set [ProductName]=@ProductName,ProductCode=@ProductCode,[GeneralName]=@GeneralName,[IsCombineProduct]=@IsCombineProduct,[BrandID]=@BrandID,
 						[BigUnitID]=@BigUnitID,[UnitID]=@UnitID,[BigSmallMultiple]=@BigSmallMultiple ,
@@ -85,6 +86,8 @@ where ProductID=@ProductID
 set @Err+=@@Error
 
 update ProductDetail set Price=@Price,ImgS=@ProductImg,DetailsCode=@ProductCode,[Weight]=@Weight where ProductID=@ProductID and IsDefault=1
+
+update ProductDetail set Price=@Price where ProductID=@ProductID and Price=@DPrice
 	
 set @Err+=@@Error
 

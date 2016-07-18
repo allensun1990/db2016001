@@ -63,6 +63,12 @@ begin
 
 		set @DepotID=SUBSTRING (@GoodsQuantity , CHARINDEX (':' , @GoodsQuantity)+1 ,LEN(@GoodsQuantity)- CHARINDEX (':' , @GoodsQuantity))
 
+		if(@Quantity is null or @Quantity=0)
+		begin
+			set @AutoID+=1
+			continue;
+		end
+
 		select @ProductID=ProductID,@ProductDetailID=ProductDetailID,@BatchCode=BatchCode from StorageDetail where DocID=@DocID and AutoID=@GoodsAutoID
 
 		if exists(select AutoID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID and DepotID=@DepotID  and ClientID=@ClientID)

@@ -25,13 +25,13 @@ AS
 
 	set @sqlText='select d.ProductDetailID,d.ProductID,p.ProductCode,p.ProductName,d.SaleAttrValue,d.StockIn,d.SaleCount,d.Price,B.Name ProviderName,case d.Imgs when '''' then p.ProductImage else d.Imgs end Imgs,d.Description from '
 
-	set @sqlText+=' Products p join ProductDetail d on p.ProductID=d.ProductID join Providers B on P.ProdiverID=B.ProviderID '
+	set @sqlText+=' Products p join ProductDetail d on p.ProductID=d.ProductID and ((p.HasDetails=1 and d.IsDefault=0) or (p.HasDetails=0 and d.IsDefault=1)) join Providers B on P.ProdiverID=B.ProviderID '
 
 	set @sqlText+='where p.ClientID='''+@ClientID+''' and P.Status<>9 and d.Status<>9 '
 
 	if(@WareID<>'')
 	begin
-		set @sqlText+=' and ProductDetailID in (select ProductDetailID from ProductStock where WareID='''+@WareID+''')'
+		set @sqlText+=' and p.ProductDetailID in (select ProductDetailID from ProductStock where WareID='''+@WareID+''')'
 	end
 
 	if(@keyWords <> '')

@@ -29,9 +29,6 @@ AS
 	@condition nvarchar(4000),
 	@key nvarchar(100)
 
-select o.PersonName,o.CityCode,o.Address,o.OrderCode,d.Remark,o.CreateTime,(d.Quantity+d.Loss)*o.PlanQuantity Quantity 
-from OrderDetail d join Orders o on o.OrderID=d.OrderID 
-where d.ProductID=@ProductID
 
 select @tableName='OrderDetail d join Orders o on o.OrderID=d.OrderID ',
 @columns='o.PersonName,o.CityCode,o.Address,o.OrderCode,d.Remark,o.CreateTime,(d.Quantity+d.Loss)*o.PlanQuantity Quantity',@key='d.AutoID'

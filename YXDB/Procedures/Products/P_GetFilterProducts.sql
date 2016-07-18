@@ -47,11 +47,11 @@ AS
 	@key nvarchar(100)
 	
 
-	set @tableName='Products P join ProductDetail pd on p.ProductID=pd.ProductID and pd.Status=1 '
-	set @columns='P.ProductID,P.ProductName,p.CommonPrice,pd.Price,
+	set @tableName='Products P join ProductDetail pd on p.ProductID=pd.ProductID and ((p.HasDetails=1 and pd.IsDefault=0) or (p.HasDetails=0 and pd.IsDefault=1)) '
+	set @columns='P.ProductID,P.ProductName,p.CommonPrice,pd.Price,pd.Description,pd.Remark,
 				  case pd.Imgs when '''' then p.ProductImage else pd.Imgs end Imgs,p.SaleCount,pd.ProductDetailID,pd.SaleAttrValue '
 	set @key='pd.AutoID'
-	set @condition=' P.Status=1 '
+	set @condition=' P.Status=1 and pd.Status=1 '
 
 	if(@IsPublic=-1)
 	begin
@@ -95,7 +95,7 @@ AS
 
 	if(@SaleWhere!='')
 	begin
-		set @condition += ' and pd.AutoID in (select AutoID from ProductDetail where  Status=1'+@SaleWhere+' )'
+		set @condition += ' and pd.AutoID in (select AutoID from ProductDetail where  Status=1 '+@SaleWhere+' )'
 	end
 
 	declare @total int,@page int

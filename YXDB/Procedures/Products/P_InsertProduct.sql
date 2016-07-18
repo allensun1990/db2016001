@@ -66,23 +66,18 @@ BEGIN
 		INSERT INTO [Products]([ProductID],[ProductCode],[ProductName],[GeneralName],[IsCombineProduct],ProdiverID,[BrandID],[BigUnitID],[SmallUnitID],[BigSmallMultiple] ,
 						[CategoryID],[CategoryIDList],[SaleAttr],[AttrList],[ValueList],[AttrValueList],[CommonPrice],[Price],[PV],[TaxRate],[Status],IsPublic,
 						[OnlineTime],[UseType],[IsNew],[IsRecommend] ,[IsDiscount],[DiscountValue],[SaleCount],[Weight] ,[ProductImage],[EffectiveDays],
-						[ShapeCode] ,[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID],IsAllow,IsAutoSend)
+						[ShapeCode] ,[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID],IsAllow,IsAutoSend,HasDetails)
 				 VALUES(@ProductID,@ProductCode,@ProductName,@GeneralName,@IsCombineProduct,@ProdiverID,@BrandID,@BigUnitID,@SmallUnitID,@BigSmallMultiple,
 						@CategoryID,@PIDList,@SaleAttr,@AttrList,@ValueList,@AttrValueList,@CommonPrice,@Price,@Price,0,@Status,@IsPublic,
 						getdate(),0,@Isnew,@IsRecommend,1,@DiscountValue,0,@Weight,@ProductImg,@EffectiveDays,@ShapeCode,@Description,@CreateUserID,
-						getdate(),getdate(),'',@ClientID,@IsAllow,@IsAutoSend);
+						getdate(),getdate(),'',@ClientID,@IsAllow,@IsAutoSend,0);
 
 						set @Err+=@@Error
 
-		--不存在规格，插入默认子产品
-		if not exists (select AutoID from CategoryAttr where CategoryID=@CategoryID and Type=2 and Status=1)
-		begin
-			INSERT INTO ProductDetail(ProductDetailID,[ProductID],DetailsCode ,[SaleAttr],[AttrValue],[SaleAttrValue],[Price],[BigPrice],[Status],
-					Weight,ImgS,[ShapeCode] ,[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID])
-				VALUES(NEWID(),@ProductID,'','','','',@Price,@Price*@BigSmallMultiple,1,
-					@Weight,'','','',@CreateUserID,getdate(),getdate(),'',@ClientID);
-			set @Err+=@@Error
-		end
+INSERT INTO ProductDetail(ProductDetailID,[ProductID],DetailsCode ,[SaleAttr],[AttrValue],[SaleAttrValue],[Price],[BigPrice],[Status],
+					Weight,ImgS,[ShapeCode] ,[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID],IsDefault)
+				VALUES(NEWID(),@ProductID,'','','','',@Price,@Price,1,
+					@Weight,'','','',@CreateUserID,getdate(),getdate(),'',@ClientID,1);
 
 
 		set @Result=1;

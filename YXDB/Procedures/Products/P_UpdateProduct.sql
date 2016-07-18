@@ -49,18 +49,13 @@ AS
 
 begin tran
 
-declare @Err int,@PIDList nvarchar(max),@SaleAttr  nvarchar(max),@Multiple int,@Public int
+declare @Err int,@PIDList nvarchar(max),@SaleAttr  nvarchar(max),@Multiple int,@Public int,@DPrice decimal(18,4)=0
 
 set @Err=0
 
 select @PIDList=PIDList,@SaleAttr=SaleAttr from Category where CategoryID=@CategoryID
 
---if(@BigUnitID=@SmallUnitID)
---begin
---	set @BigSmallMultiple=1
---end
-
-select @Multiple=BigSmallMultiple,@Public=IsPublic from [Products] where ProductID=@ProductID
+select @Multiple=BigSmallMultiple,@Public=IsPublic,@DPrice=Price from [Products] where ProductID=@ProductID
 
 if(@Public=2 and @IsPublic=1)
 begin
@@ -80,21 +75,9 @@ Update [Products] set [ProductName]=@ProductName,ProductCode=@ProductCode,[Gener
 						[ShapeCode]=@ShapeCode ,[Description]=@Description ,[UpdateTime]=getdate()
 where ProductID=@ProductID
 
---处理子产品大单位价格
---if(@Multiple<>@BigSmallMultiple)
---begin
---	if(@BigSmallMultiple=1)
---	begin
---		update ProductDetail set BigPrice=Price where ProductID=@ProductID
---	end
---	else
---	begin
---		update ProductDetail set BigPrice=BigPrice/@Multiple*@BigSmallMultiple where ProductID=@ProductID
---	end
---	set @Err+=@@Error
---end
+update ProductDetail set Price=@Price,ImgS=@ProductImg,DetailsCode=@ProductCode,[Weight]=@Weight where ProductID=@ProductID and IsDefault=1
 
-
+update ProductDetail set Price=@Price where ProductID=@ProductID and Price=@DPrice
 
 set @Err+=@@Error
 
