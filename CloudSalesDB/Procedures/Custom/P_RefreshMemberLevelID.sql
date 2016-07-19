@@ -26,7 +26,7 @@ as
 	set @i=0
 	select @j=COUNT(1) from ClientMemberLevel where ClientID=@ClientID and Status<>9
 	while @i<@j
-	begin
+	begin 
 		set @i=@i+1
 		declare @levelID varchar(50)  declare @levelName varchar(50) 
 		declare @integerFee decimal(18,2)
