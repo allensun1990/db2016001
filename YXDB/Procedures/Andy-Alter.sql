@@ -22,7 +22,6 @@ CREATE TABLE [dbo].[OrderPriceRange](
 	[RangeID] [nvarchar](64) NOT NULL,
 	[OrderID] [nvarchar](64) NULL,
 	[MinQuantity] [int] NOT NULL,
-	[MaxQuantity] [int] NOT NULL,
 	[Price] [decimal](18, 3) NOT NULL,
 	[Status] [int] NOT NULL,
 	[ClientID] [nvarchar](64) NOT NULL,
@@ -36,9 +35,6 @@ GO
 ALTER TABLE [dbo].[OrderPriceRange] ADD  CONSTRAINT [DF_OrderPriceRange_MinQuantity]  DEFAULT ((1)) FOR [MinQuantity]
 GO
 
-ALTER TABLE [dbo].[OrderPriceRange] ADD  CONSTRAINT [DF_OrderPriceRange_MaxQuantity]  DEFAULT ((1)) FOR [MaxQuantity]
-GO
-
 ALTER TABLE [dbo].[OrderPriceRange] ADD  CONSTRAINT [DF_OrderPriceRange_Status]  DEFAULT ((1)) FOR [Status]
 GO
 
@@ -46,6 +42,7 @@ ALTER TABLE [dbo].[OrderPriceRange] ADD  CONSTRAINT [DF_OrderPriceRange_CreateTi
 GO
 
 alter table users add WeiXinID nvarchar(200) null
+
 
 
 
