@@ -28,7 +28,7 @@ select p.ProductID,ProductCode,ProductName,SmallUnitID,CategoryID,SaleAttr,AttrL
 from Products p left join ClientProducts c on p.ProductID=c.ProductID and c.ClientID=@ClientID where p.ProductID=@ProductID 
 
 select p.ProductID,p.ProductDetailID,DetailsCode,Price,SaleAttr,AttrValue,SaleAttrValue,ImgS,Weight,Description,CreateTime,Remark,p.ClientID,
-	   isnull(c.StockIn,0) StockIn,isnull(c.StockOut,0) StockOut,isnull(c.LogicOut,0) LogicOut 
+	   isnull(c.StockIn,0) StockIn,isnull(c.StockOut,0) StockOut,isnull(c.LogicOut,0) LogicOut,p.IsDefault 
 from ProductDetail  p left join ClientProductDetails c on p.ProductDetailID=c.ProductDetailID and c.ClientID=@ClientID where p.ProductID=@ProductID
 
 select * from Providers where ProviderID= @ProdiverID
