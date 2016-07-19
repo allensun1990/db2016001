@@ -183,13 +183,13 @@ insert into CustomerColor(ColorID,ColorName,ColorValue,Status,CreateUserID,Creat
 values(3,'高级客户','#cc0000',0,@UserID,GETDATE(),@AgentID,@ClientID)
 
 --客户等级
-insert into ClientMemberLevel(LeveID,Name,IntegFeeMore,DiscountFee,Status,CreateUserID,CreateTime,AgentID,ClientID,Origin)
+insert into ClientMemberLevel(LevelID,Name,IntegFeeMore,DiscountFee,Status,CreateUserID,CreateTime,AgentID,ClientID,Origin)
 values(newid(),'普通会员',0,1,1,@UserID,GETDATE(),@AgentID,@ClientID,1)
-insert into ClientMemberLevel(LeveID,Name,IntegFeeMore,DiscountFee,Status,CreateUserID,CreateTime,AgentID,ClientID,Origin)
+insert into ClientMemberLevel(LevelID,Name,IntegFeeMore,DiscountFee,Status,CreateUserID,CreateTime,AgentID,ClientID,Origin)
 values(newid(),'青铜会员',1000,1,1,@UserID,GETDATE(),@AgentID,@ClientID,2)
-insert into ClientMemberLevel(LeveID,Name,IntegFeeMore,DiscountFee,Status,CreateUserID,CreateTime,AgentID,ClientID,Origin)
+insert into ClientMemberLevel(LevelID,Name,IntegFeeMore,DiscountFee,Status,CreateUserID,CreateTime,AgentID,ClientID,Origin)
 values(newid(),'白银会员',3000,1,1,@UserID,GETDATE(),@AgentID,@ClientID,3)
-insert into ClientMemberLevel(LeveID,Name,IntegFeeMore,DiscountFee,Status,CreateUserID,CreateTime,AgentID,ClientID,Origin)
+insert into ClientMemberLevel(LevelID,Name,IntegFeeMore,DiscountFee,Status,CreateUserID,CreateTime,AgentID,ClientID,Origin)
 values(newid(),'黄金会员',7000,1,1,@UserID,GETDATE(),@AgentID,@ClientID,4)
 
 --机会阶段
