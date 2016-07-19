@@ -26,19 +26,20 @@ as
 	set @i=0
 	select @j=COUNT(1) from ClientMemberLevel where ClientID=@ClientID and Status<>9
 	while @i<@j
-	begin
+	begin 
 		set @i=@i+1
 		declare @levelID varchar(50)  declare @levelName varchar(50) 
 		declare @integerFee decimal(18,2)
 		select @levelID=LevelID,@integerFee=IntegFeeMore,@levelName=Name from ClientMemberLevel where ClientID=@ClientID and Origin=@i and Status<>9 
-		if(@i=1)
-		begin			
-			insert into CustomerLog (LogGUID,Remark,CreateUserID,OperateIP,GUID,AgentID,ClientID) 
-			select CustomerID,'客户等级变更为:'+@levelName+'(操作来自:客户配置->等级配置->应用到所有会员)',@CreateUserID,@IP,newid(),@AgentID,@ClientID from Customer where ClientID=@ClientID and IntegerFee<@integerFee and IntegerFee>=0		
+		--if(@i=1)
+		--begin			
+		--	insert into CustomerLog (LogGUID,Remark,CreateUserID,OperateIP,GUID,AgentID,ClientID) 
+		--	select CustomerID,'客户等级变更为:新客户(操作来自:客户配置->等级配置->应用到所有会员)',@CreateUserID,@IP,newid(),@AgentID,@ClientID from Customer where ClientID=@ClientID and IntegerFee<@integerFee and IntegerFee>=0		
 			
-			update Customer set MemberLevelID=@levelID  where ClientID=@ClientID and IntegerFee<@integerFee and IntegerFee>=0
-		end 
-		else if(@i=@j)
+		--	update Customer set MemberLevelID=''  where ClientID=@ClientID and IntegerFee<@integerFee and IntegerFee>=0
+		--end 
+		--else  
+		if(@i=@j)
 		begin 
 			insert into CustomerLog (LogGUID,Remark,CreateUserID,OperateIP,GUID,AgentID,ClientID) 
 			select CustomerID,'客户等级变更为:'+@levelName+'(操作来自:客户配置->等级配置->应用到所有会员)',@CreateUserID,@IP,newid(),@AgentID,@ClientID from Customer where ClientID=@ClientID and  IntegerFee>=@integerFee
