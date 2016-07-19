@@ -28,6 +28,7 @@ P_DeleteClientMemberLevel
 P_RefreshMemberLevelID
 P_GetProductListForExport
 M_Get_Report_AgentActionDayPageList
+R_GetClientsGrowDate
 /*ÐÞ¸Ä*/
 
 P_GetCustomers
