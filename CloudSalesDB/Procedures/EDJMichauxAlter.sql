@@ -29,6 +29,7 @@ P_RefreshMemberLevelID
 P_GetProductListForExport
 M_Get_Report_AgentActionDayPageList
 R_GetClientsGrowDate
+R_GetClientsAgentLogin_Day
 /*ÐÞ¸Ä*/
 
 P_GetCustomers
