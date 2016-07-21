@@ -297,9 +297,6 @@
     <None Include="Procedures\Products\P_UpdateProduct.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Procedures\Products\P_GetAttrByID.sql" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Procedures\Products\P_GetAttrList.sql" />
   </ItemGroup>
   <ItemGroup>
@@ -573,5 +570,7 @@
     <None Include="Procedures\Stock\P_GetGoodsDocByOrderID.sql" />
     <None Include="Procedures\Stock\P_GetStorageDocDetails.sql" />
     <None Include="Procedures\Manage\M_UnBindUserWeiXinID.sql" />
+    <None Include="Procedures\Products\P_DeleteUnit.sql" />
+    <None Include="Procedures\Products\P_DeleteProductAttr.sql" />
   </ItemGroup>
 </Project>

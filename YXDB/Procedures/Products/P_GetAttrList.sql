@@ -20,7 +20,7 @@ CREATE PROCEDURE [dbo].[P_GetAttrList]
 	@pageIndex int,
 	@totalCount int output ,
 	@pageCount int output,
-	@CategoryID nvarchar(64)
+	@CategoryID nvarchar(64)=''
 AS
 	declare @tableName nvarchar(4000),
 	@columns nvarchar(4000),
@@ -29,7 +29,7 @@ AS
 	@orderColumn nvarchar(4000),
 	@isAsc int
 
-	select @tableName=' ProductAttr ',@columns=' * ',@key='AutoID',@orderColumn='',@isAsc=0
+	select @tableName=' ProductAttr ',@columns=' AttrID,AttrName,Description ',@key='AutoID',@orderColumn='',@isAsc=0
 	set @condition=' CategoryID='''+@CategoryID+''' and Status<>9 '
 	if(@keyWords <> '')
 	begin
@@ -37,6 +37,7 @@ AS
 	end
 
 	declare @total int,@page int
+
 	exec P_GetPagerData @tableName,@columns,@condition,@key,@orderColumn,@pageSize,@pageIndex,@total out,@page out,@isAsc
 
 	select @totalCount=@total,@pageCount =@page

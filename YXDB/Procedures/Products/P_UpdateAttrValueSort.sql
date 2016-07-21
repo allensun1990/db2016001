@@ -17,33 +17,42 @@ GO
 CREATE PROCEDURE [dbo].[P_UpdateAttrValueSort]
 @AttrID nvarchar(64),
 @ValueID nvarchar(64),
+@ValueName nvarchar(100),
 @Sort int
 AS
 
 begin tran
 
-declare @Err int, @Layers int=0 ,@OriginalSort int=0
+declare @Err int, @MaxSort int=0 ,@OriginalSort int=0
 set @Err=0
-select @OriginalSort=sort from AttrValue where ValueID=@ValueID
 
-if(@OriginalSort=@Sort)
-return
+--select @OriginalSort=Sort from AttrValue where ValueID=@ValueID
+--select @MaxSort=max(Sort) from AttrValue where AttrID=@AttrID and Status<>9
+--if(@Sort>@MaxSort)
+--begin
+--	set @Sort=@MaxSort
+--end
 
-if(@Sort> @OriginalSort)
-begin
-	update AttrValue set sort=sort-1
-	where AttrID=@AttrID and sort<=@Sort and sort>=@OriginalSort
-	set @Err+=@@error
-end
-else
-begin
-	update AttrValue set sort=sort+1
-	where AttrID=@AttrID and sort>=@Sort and sort<=@OriginalSort
-	set @Err+=@@error
-end
+--if(@OriginalSort=@Sort)
+--begin
+--	Update AttrValue set Sort=@Sort,ValueName=@ValueName where AttrID=@AttrID and ValueID=@ValueID
+--	commit tran
+--	return
+--end
+--if(@Sort > @OriginalSort)
+--begin
+--	update AttrValue set Sort=Sort-1
+--	where AttrID=@AttrID and Sort<=@Sort and sort>=@OriginalSort
+--	set @Err+=@@error
+--end
+--else
+--begin
+--	update AttrValue set Sort=Sort+1
+--	where AttrID=@AttrID and Sort>=@Sort and Sort<=@OriginalSort
+--	set @Err+=@@error
+--end
 
-Update AttrValue set sort=@Sort
-where AttrID=@AttrID and ValueID=@ValueID
+Update AttrValue set Sort=@Sort,ValueName=@ValueName where AttrID=@AttrID and ValueID=@ValueID
 set @Err+=@@error
 
 if(@Err>0)
