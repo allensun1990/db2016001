@@ -263,5 +263,8 @@
     <Build Include="Procedures\Custom\P_RefreshMemberLevelID.sql" />
     <None Include="Procedures\P_GetPagerDataColumn.sql" />
     <None Include="Procedures\Stock\P_GetStorageDocDetails.sql" />
+    <Build Include="Procedures\Manage\Report\R_GetClientsAgentAction.sql" />
+    <Build Include="Procedures\Manage\Report\R_GetClientsGrowDate.sql" />
+    <Build Include="Procedures\Manage\Report\R_GetClientsAgentLogin_Day.sql" />
   </ItemGroup>
 </Project>

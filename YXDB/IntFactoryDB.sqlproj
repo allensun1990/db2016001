@@ -561,7 +561,6 @@
     <None Include="Procedures\Task\P_UpdatePlateMaking.sql" />
     <None Include="Procedures\Task\P_DeletePlateMaking.sql" />
     <None Include="Procedures\Task\P_UpdateOrderPlateAttr.sql" />
-    <None Include="Procedures\Custom\P_GetCustomerByMobilePhone.sql" />
     <None Include="Procedures\Custom\P_SetCustomerYXinfo.sql" />
     <None Include="Procedures\Sales\P_GetOrdersByYXCode.sql" />
     <None Include="Procedures\Sales\P_UpdateOrderTotalMoney.sql" />
