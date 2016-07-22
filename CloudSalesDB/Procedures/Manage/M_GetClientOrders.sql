@@ -39,13 +39,13 @@ AS
 	@key nvarchar(100)
 	
 	set @tableName='ClientOrder a left join Clients b on a.ClientId=b.ClientId'
-	set @columns='a.*,b.CompanyName '
+	set @columns='a.*,b.CompanyName,b.ClientCode '
 	set @key='a.AutoID'
 	set @orderColumn=' a.createtime desc '
 	set @condition=' 1=1 '
 	if(LEN(@KeyWords)>0)
 	begin
-		set @condition+=' and ( charindex ('''+@KeyWords+''',b.CompanyName)>0)'
+		set @condition+=' and ( charindex ('''+@KeyWords+''',b.CompanyName)>0 or charindex ('''+@KeyWords+''',b.ClientCode)>0  )'
 	end
 	if(@AgentID<>'')
 		set @condition+=' and a.AgentID='''+@AgentID+''''

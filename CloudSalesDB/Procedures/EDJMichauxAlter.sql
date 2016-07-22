@@ -15,8 +15,10 @@ create table ClientMemberLevel(
 
 
 alter table Customer Add IntegerFee decimal(18,2) default(0.00)
-
 alter table Customer add MemberLevelID varchar(50) 
+
+alter table  M_Report_AgentAction_Day add UserNum int default 1
+alter table  M_Report_AgentAction_Day add Vitality decimal(18,4) default 0.0000
 
 update Customer set IntegerFee=0.00
 
@@ -31,13 +33,16 @@ M_Get_Report_AgentActionDayPageList
 R_GetClientsGrowDate
 R_GetClientsAgentLogin_Day
 /*修改*/
-
+R_GetClientsActiveReprot
+M_Get_Report_AgentActionDayReport
 P_GetCustomers
 P_InsertProductDetail
 M_InsertClient
 E_ImportCustomer
 P_CreateCustomer
 M_DeleteRole
+Rpt_AgentAction_Day
+M_GetClientOrders
 
 /*配置已存在的客户的客户等级*/
 
@@ -51,3 +56,19 @@ insert into #memberLevel values('黄金会员',9000,0.92,4)
  select newid(),b.Name,b.integFeeMore,b.DiscountFee,1,'',GETDATE(),a.AgentID,a.ClientID,b.origin,'' from  Clients a join #memberLevel b on 1=1 where status<>9
  
  drop table #memberLevel
+
+ /*刷新人数和活跃度*/
+  update M_Report_AgentAction_Day set UserNum=UserCount,Vitality=
+cast( 
+	round(
+		(CustomerCount+OrdersCOunt+ ActivityCount+ProductCount+UsersCount+AgentCount+OpportunityCount+PurchaseCount+WarehousingCount+ProductCount)
+		/ cast(UserNum as decimal(18,4)
+	 ),4) as  decimal(18,4)
+ )  
+ from 
+ (
+	select isnull(Count(ClientID),0) as UserCount ,Users.ClientID from Users where Status=1  group by Users.ClientID
+) a 
+join  M_Report_AgentAction_Day   on a.ClientID=M_Report_AgentAction_Day.ClientID
+  
+

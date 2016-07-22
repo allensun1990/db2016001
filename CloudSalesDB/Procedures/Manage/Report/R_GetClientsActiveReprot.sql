@@ -44,7 +44,8 @@ begin
 	  SUM( a.AgentCount) as AgentCount,
 	  SUM( a.OpportunityCount) as OpportunityCount,
 	  SUM( a.PurchaseCount) as PurchaseCount,
-	  SUM( a.WarehousingCount) as WarehousingCount   '
+	  SUM( a.WarehousingCount) as WarehousingCount,
+	  sum( a.Vitality) as Vitality   '
 	--按天统计 
 	if(@DateType=1)
 	begin	
