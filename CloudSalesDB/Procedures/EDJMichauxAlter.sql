@@ -32,6 +32,7 @@ P_GetProductListForExport
 M_Get_Report_AgentActionDayPageList
 R_GetClientsGrowDate
 R_GetClientsAgentLogin_Day
+R_GetOrderDetailReeport
 /*ÐÞ¸Ä*/
 R_GetClientsActiveReprot
 M_Get_Report_AgentActionDayReport
