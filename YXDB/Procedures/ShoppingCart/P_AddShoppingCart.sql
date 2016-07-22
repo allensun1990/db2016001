@@ -60,8 +60,7 @@ begin
 	end
 	else 
 	begin
-		update ShoppingCart set Quantity=Quantity+@Quantity,Remark=@Remark 
-		where ProductDetailID=@ProductDetailID and [GUID]=@GUID and OrderType=@OrderType
+		update ShoppingCart set Quantity=Quantity+@Quantity where ProductDetailID=@ProductDetailID and [GUID]=@GUID and OrderType=@OrderType
 	end
 end
 

@@ -39,7 +39,7 @@ begin
 	end
 	else 
 	begin
-		update OpportunityProduct set Quantity=Quantity+@Quantity,Remark=@Remark,TotalMoney=(Quantity+@Quantity)*Price where ProductDetailID=@ProductDetailID and OpportunityID=@GUID
+		update OpportunityProduct set Quantity=Quantity+@Quantity,TotalMoney=(Quantity+@Quantity)*Price where ProductDetailID=@ProductDetailID and OpportunityID=@GUID
 	end
 
 	select @TotalMoney=sum(TotalMoney) from OpportunityProduct where  OpportunityID=@GUID
@@ -56,7 +56,7 @@ begin
 	end
 	else 
 	begin
-		update OrderDetail set Quantity=Quantity+@Quantity,Remark=@Remark,TotalMoney=(Quantity+@Quantity)*Price where ProductDetailID=@ProductDetailID and OrderID=@GUID
+		update OrderDetail set Quantity=Quantity+@Quantity,TotalMoney=(Quantity+@Quantity)*Price where ProductDetailID=@ProductDetailID and OrderID=@GUID
 	end
 
 	select @TotalMoney=sum(TotalMoney) from OrderDetail where OrderID=@GUID
@@ -77,7 +77,7 @@ begin
 	end
 	else
 	begin
-		update ShoppingCart set Quantity=Quantity+@Quantity,Remark=@Remark where ProductDetailID=@ProductDetailID and [GUID]=@GUID and OrderType=@OrderType and UserID=@UserID
+		update ShoppingCart set Quantity=Quantity+@Quantity where ProductDetailID=@ProductDetailID and [GUID]=@GUID and OrderType=@OrderType and UserID=@UserID
 	end
 end
 else 
@@ -92,7 +92,7 @@ begin
 	end
 	else
 	begin
-		update ShoppingCart set Quantity=Quantity+@Quantity,Remark=@Remark where ProductDetailID=@ProductDetailID and [GUID]=@GUID and OrderType=@OrderType and UserID=@UserID
+		update ShoppingCart set Quantity=Quantity+@Quantity where ProductDetailID=@ProductDetailID and [GUID]=@GUID and OrderType=@OrderType and UserID=@UserID
 	end
 end
 

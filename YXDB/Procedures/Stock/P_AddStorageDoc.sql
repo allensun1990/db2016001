@@ -32,7 +32,7 @@ begin tran
 
 declare @Err int=0
 
-if exists(select AutoID from ShoppingCart where  [GUID]=@WareID and OrderType=@DocType)
+if exists(select AutoID from ShoppingCart where  [GUID]=@UserID and OrderType=@DocType)
 begin
 	
 	declare @AutoID int=1,@DepotID nvarchar(64),@ProductDetailID nvarchar(64)
@@ -71,7 +71,7 @@ begin
 	values(@DocID,@DocCode,@DocType,0,@TotalMoney,@CityCode,@Address,@Remark,@WareID,'',@UserID,GETDATE(),@OperateIP,@ClientID)
 
 
-	delete from ShoppingCart  where [GUID]=@WareID and OrderType=@DocType
+	delete from ShoppingCart  where [GUID]=@UserID and OrderType=@DocType
 end
 set @Err+=@@Error
 
