@@ -84,7 +84,7 @@ end
 --款号已存在打样单
 if(@SourceType=3 and @GoodsCode<>'' and @OrderType=2 and exists(select AutoID from Orders where OrderType=1 and Status=3 and GoodsCode=@GoodsCode and ClientID=@ClientID))
 begin
-	select @OriginalID=OrderID from Orders where OrderType=1 and Status=3 and GoodsCode=@GoodsCode and ClientID=@ClientID
+	select @OriginalID=OrderID,@CustomerID=CustomerID from Orders where OrderType=1 and Status=3 and GoodsCode=@GoodsCode and ClientID=@ClientID
 end
 
 if(@OrderType=1)
@@ -101,7 +101,6 @@ insert into Orders(OrderID,OrderCode,AliOrderCode,Status,CustomerID,OrderImage,O
 --款号已存在打样单
 if(@OriginalID<>'')
 begin
-
 	Update Orders set TurnTimes=TurnTimes+1 where OrderID=@OriginalID
 	
 	update o set OriginalCode=od.OrderCode,BigCategoryID=od.BigCategoryID,CategoryID=od.CategoryID,FinalPrice=od.FinalPrice,TotalMoney=od.FinalPrice*o.PlanQuantity,IntGoodsCode=od.IntGoodsCode,GoodsName=od.GoodsName,
@@ -112,11 +111,6 @@ begin
 	insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProdiverID )
 	select @OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProdiverID  from OrderDetail where OrderID=@OriginalID
 
-	if(@CustomerID is not null and @CustomerID<>'')
-	begin
-		Update Customer set DHCount=DHCount+1 where CustomerID=@CustomerID
-	end
-	
 	Insert into OrderStatusLog(OrderID,Status,CreateUserID) values(@OrderID,4,@UserID)
 
 	--复制工艺说明
@@ -124,8 +118,10 @@ begin
 	select NEWID() as PlateID,@OrderID,p.Title,p.Remark,p.Icon,p.Status,p.AgentID,p.CreateTime,p.CreateUserID,p.Type,p.OrderID,p.PlateID from PlateMaking p
 	where p.OrderID=@OriginalID and p.status<>9
 
+	Update Customer set DHCount=DHCount+1 where CustomerID=@CustomerID
+
 end
-else if(@CustomerID is not null and @CustomerID<>'')
+else 
 begin
 	Update Customer set DemandCount=DemandCount+1 where CustomerID=@CustomerID
 end

@@ -45,13 +45,13 @@ begin
 
 	Update Customer set DemandCount=DemandCount-1 where CustomerID=@OldCustomerID and DemandCount>0
 end
-else if(@OrderType=1)
+else if(@OrderType=1 and @Status<>9)
 begin
 	Update Customer set DYCount=DYCount+1 where CustomerID=@CustomerID
 
 	Update Customer set DYCount=DYCount-1 where CustomerID=@OldCustomerID and DYCount>0
 end
-else
+else if(@OrderType=2 and @Status<>9)
 begin
 	Update Customer set DHCount=DHCount+1 where CustomerID=@CustomerID
 

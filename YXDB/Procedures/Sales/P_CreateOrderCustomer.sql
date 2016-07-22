@@ -64,11 +64,11 @@ if(@Status=0)
 begin
 	set @DemandCount=1
 end
-else if(@OrderType=1)
+else if(@OrderType=1 and @Status<>9)
 begin
 	set @DYCount=1
 end
-else
+else if(@OrderType=2 and @Status<>9)
 begin
 	set @DHCount=1
 end

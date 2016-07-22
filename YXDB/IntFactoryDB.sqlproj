@@ -93,9 +93,6 @@
     <None Include="Procedures\Stock\P_GetDepotSeats.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Procedures\Stock\P_GetWareHouses.sql" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Procedures\Stock\P_AddStorageDoc.sql" />
   </ItemGroup>
   <ItemGroup>
@@ -267,9 +264,6 @@
     <None Include="Procedures\Products\P_GetBrandList.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Procedures\Products\P_GetCategoryDetailByID.sql" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Procedures\Products\P_GetFilterProducts.sql" />
   </ItemGroup>
   <ItemGroup>
@@ -304,9 +298,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\Products\P_GetProductList.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Procedures\Products\P_GetAttrsByCategoryID.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\Stock\P_GetProductStocks.sql" />
@@ -455,7 +446,6 @@
     <None Include="Procedures\System\P_UpdateOrderCategory.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Procedures\Task\P_GetTaskPlateAttrByCategoryID.sql" />
     <None Include="Procedures\Sales\P_UpdateOrderClient.sql" />
   </ItemGroup>
   <ItemGroup>
@@ -463,9 +453,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\Task\P_UpdateOrderPlateAttr_old.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Procedures\Products\P_GetOrderCategoryDetailsByID.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\Sales\P_CreateDHOrder.sql" />
