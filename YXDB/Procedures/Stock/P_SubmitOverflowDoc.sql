@@ -32,7 +32,7 @@ begin tran
 
 declare @Err int=0
 
-if exists(select AutoID from ShoppingCart where UserID=@UserID and [GUID]=@WareID and OrderType=@DocType)
+if exists(select AutoID from ShoppingCart where UserID=@UserID and [GUID]=@UserID and OrderType=@DocType)
 begin
 	
 	declare @AutoID int=1,@ProductID nvarchar(64),@ProductDetailID nvarchar(64),@Quantity int,@BatchCode nvarchar(50),@DepotID nvarchar(64),
@@ -40,7 +40,7 @@ begin
 
 	select identity(int,1,1) as AutoID,ProductDetailID,ProductID,UnitID,Quantity,Price,BatchCode,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS into #TempProducts 
 	from ShoppingCart 
-	where UserID=@UserID and [GUID]=@WareID and OrderType=@DocType
+	where UserID=@UserID and [GUID]=@UserID and OrderType=@DocType
 
 	while exists(select AutoID from #TempProducts where AutoID=@AutoID)
 	begin
@@ -73,7 +73,7 @@ begin
 	insert into StorageDoc(DocID,DocCode,DocType,Status,TotalMoney,CityCode,Address,Remark,WareID,CreateUserID,CreateTime,OperateIP,ClientID)
 	values(@DocID,@DocCode,@DocType,0,@TotalMoney,@CityCode,@Address,@Remark,@WareID,@UserID,GETDATE(),@OperateIP,@ClientID)
 
-	delete from ShoppingCart  where UserID=@UserID and [GUID]=@WareID and OrderType=@DocType
+	delete from ShoppingCart  where UserID=@UserID and [GUID]=@UserID and OrderType=@DocType
 end
 set @Err+=@@Error
 

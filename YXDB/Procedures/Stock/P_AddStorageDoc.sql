@@ -32,14 +32,14 @@ begin tran
 
 declare @Err int=0
 
-if exists(select AutoID from ShoppingCart where  [GUID]=@UserID and OrderType=@DocType)
+if exists(select AutoID from ShoppingCart where  [GUID]=@UserID and UserID=@UserID and OrderType=@DocType)
 begin
 	
 	declare @AutoID int=1,@DepotID nvarchar(64),@ProductDetailID nvarchar(64)
 
 
 	select identity(int,1,1) as AutoID,ProductDetailID,ProductID, UnitID,Quantity,Price,BatchCode,Remark,s.ProdiverID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS into #TempProducts 
-	from ShoppingCart s where [GUID]=@WareID and OrderType=@DocType 
+	from ShoppingCart s where [GUID]=@UserID and OrderType=@DocType and UserID=@UserID
 
 	while exists(select AutoID from #TempProducts where AutoID=@AutoID)
 	begin
@@ -71,7 +71,7 @@ begin
 	values(@DocID,@DocCode,@DocType,0,@TotalMoney,@CityCode,@Address,@Remark,@WareID,'',@UserID,GETDATE(),@OperateIP,@ClientID)
 
 
-	delete from ShoppingCart  where [GUID]=@UserID and OrderType=@DocType
+	delete from ShoppingCart  where [GUID]=@UserID and OrderType=@DocType and UserID=@UserID 
 end
 set @Err+=@@Error
 

@@ -32,20 +32,20 @@ begin tran
 
 declare @Err int=0
 
-if exists(select AutoID from ShoppingCart where UserID=@UserID and [GUID]=@WareID and OrderType=@DocType)
+if exists(select AutoID from ShoppingCart where UserID=@UserID and [GUID]=@UserID and OrderType=@DocType)
 begin
 
 	insert into StorageDetail(DocID,ProductDetailID,ProductID,UnitID,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS)
 	select @DocID,ProductDetailID,ProductID,UnitID,0,Quantity,Price,Quantity*Price,@WareID,DepotID,BatchCode,0,Remark,@ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS 
 	from ShoppingCart 
-	where UserID=@UserID and [GUID]=@WareID and OrderType=@DocType
+	where UserID=@UserID and [GUID]=@UserID and OrderType=@DocType
 
 	select @TotalMoney=sum(TotalMoney) from StorageDetail where DocID=@DocID
 
 	insert into StorageDoc(DocID,DocCode,DocType,Status,TotalMoney,CityCode,Address,Remark,WareID,CreateUserID,CreateTime,OperateIP,ClientID)
 	values(@DocID,@DocCode,@DocType,0,@TotalMoney,@CityCode,@Address,@Remark,@WareID,@UserID,GETDATE(),@OperateIP,@ClientID)
 
-	delete from ShoppingCart  where UserID=@UserID and [GUID]=@WareID and OrderType=@DocType
+	delete from ShoppingCart  where UserID=@UserID and [GUID]=@UserID and OrderType=@DocType
 end
 set @Err+=@@Error
 
