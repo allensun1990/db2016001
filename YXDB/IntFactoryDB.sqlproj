@@ -382,9 +382,6 @@
     <None Include="Procedures\Stock\P_GetProductsByKeywords_Stock.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Procedures\ShoppingCart\P_AddShoppingCartBatchOut.sql" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Procedures\Stock\P_SubmitDamagedDoc.sql" />
   </ItemGroup>
   <ItemGroup>
@@ -394,16 +391,10 @@
     <None Include="Procedures\Products\P_GetProductDetails.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Procedures\ShoppingCart\P_AddShoppingCartBatchIn.sql" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Procedures\Stock\P_SubmitOverflowDoc.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\Stock\P_AuditOverflowDoc.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Procedures\Sales\P_GetOpportunitys.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\Planwork\Report_AgentAction_Day.sql" />

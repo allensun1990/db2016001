@@ -28,7 +28,7 @@ CREATE PROCEDURE [dbo].[P_CreateOrder]
 @CustomerID nvarchar(64)='',
 @Name nvarchar(64)='',
 @Mobile nvarchar(64)='',
-@PlanPrice nvarchar(100)='',
+@PlanPrice decimal(18,4)=0,
 @PlanQuantity int=0,
 @PlanTime nvarchar(50)='',
 @OrderImg nvarchar(200)='',

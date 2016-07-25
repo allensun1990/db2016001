@@ -50,43 +50,34 @@ AS
 
 begin tran
 
+IF(@ProductCode is not null and @ProductCode<>'' and EXISTS(SELECT AutoID FROM [Products] WHERE ProductCode=@ProductCode and ClientID=@ClientID and Status<>9))--编码唯一
+BEGIN
+	set @Result=2
+	rollback tran
+	return
+END
+
 declare @Err int,@PIDList nvarchar(max),@SaleAttr  nvarchar(max)
 set @Err=0
 set @ProductID=NEWID()
 
 select @PIDList=PIDList,@SaleAttr=SaleAttr from Category where CategoryID=@CategoryID
 
---if(@BigUnitID=@SmallUnitID)
---begin
---	set @BigSmallMultiple=1
---end
+INSERT INTO [Products]([ProductID],[ProductCode],[ProductName],[GeneralName],[IsCombineProduct],ProdiverID,[BrandID],[BigUnitID],[SmallUnitID],[BigSmallMultiple] ,
+				[CategoryID],[CategoryIDList],[SaleAttr],[AttrList],[ValueList],[AttrValueList],[CommonPrice],[Price],[PV],[TaxRate],[Status],IsPublic,
+				[OnlineTime],[UseType],[IsNew],[IsRecommend] ,[IsDiscount],[DiscountValue],[SaleCount],[Weight] ,[ProductImage],[EffectiveDays],
+				[ShapeCode] ,[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID],IsAllow,IsAutoSend,HasDetails)
+			VALUES(@ProductID,@ProductCode,@ProductName,@GeneralName,@IsCombineProduct,@ProdiverID,@BrandID,@BigUnitID,@SmallUnitID,@BigSmallMultiple,
+				@CategoryID,@PIDList,@SaleAttr,@AttrList,@ValueList,@AttrValueList,@CommonPrice,@Price,@Price,0,@Status,@IsPublic,
+				getdate(),0,@Isnew,@IsRecommend,1,@DiscountValue,0,@Weight,@ProductImg,@EffectiveDays,@ShapeCode,@Description,@CreateUserID,
+				getdate(),getdate(),'',@ClientID,@IsAllow,@IsAutoSend,0);
 
-IF(@ProductCode='' or NOT EXISTS(SELECT 1 FROM [Products] WHERE [ProductCode]=@ProductCode and ClientID=@ClientID))--产品编号唯一，编号不存在时才能执行插入
-BEGIN
-		INSERT INTO [Products]([ProductID],[ProductCode],[ProductName],[GeneralName],[IsCombineProduct],ProdiverID,[BrandID],[BigUnitID],[SmallUnitID],[BigSmallMultiple] ,
-						[CategoryID],[CategoryIDList],[SaleAttr],[AttrList],[ValueList],[AttrValueList],[CommonPrice],[Price],[PV],[TaxRate],[Status],IsPublic,
-						[OnlineTime],[UseType],[IsNew],[IsRecommend] ,[IsDiscount],[DiscountValue],[SaleCount],[Weight] ,[ProductImage],[EffectiveDays],
-						[ShapeCode] ,[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID],IsAllow,IsAutoSend,HasDetails)
-				 VALUES(@ProductID,@ProductCode,@ProductName,@GeneralName,@IsCombineProduct,@ProdiverID,@BrandID,@BigUnitID,@SmallUnitID,@BigSmallMultiple,
-						@CategoryID,@PIDList,@SaleAttr,@AttrList,@ValueList,@AttrValueList,@CommonPrice,@Price,@Price,0,@Status,@IsPublic,
-						getdate(),0,@Isnew,@IsRecommend,1,@DiscountValue,0,@Weight,@ProductImg,@EffectiveDays,@ShapeCode,@Description,@CreateUserID,
-						getdate(),getdate(),'',@ClientID,@IsAllow,@IsAutoSend,0);
-
-						set @Err+=@@Error
+set @Err+=@@Error
 
 INSERT INTO ProductDetail(ProductDetailID,[ProductID],DetailsCode ,[SaleAttr],[AttrValue],[SaleAttrValue],[Price],[BigPrice],[Status],
 					Weight,ImgS,[ShapeCode] ,[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID],IsDefault)
 				VALUES(NEWID(),@ProductID,'','','','',@Price,@Price,1,
 					@Weight,'','','',@CreateUserID,getdate(),getdate(),'',@ClientID,1);
-
-
-		set @Result=1;
-END
-ELSE
-BEGIN
-	set @ProductID='';
-	set @Result=0;
-END
 
 set @Err+=@@Error
 
@@ -97,5 +88,6 @@ begin
 end 
 else
 begin
+	set @Result=1;
 	commit tran
 end

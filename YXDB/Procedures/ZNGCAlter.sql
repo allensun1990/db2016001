@@ -1,15 +1,23 @@
 ﻿
 DROP  Procedure  P_GetAttrByID
-
+GO
 DROP  Procedure  P_GetCategoryDetailByID
-
+GO
 DROP  Procedure  P_GetAttrsByCategoryID
-
+GO
 DROP  Procedure  P_GetTaskPlateAttrByCategoryID
-
+GO
 DROP  Procedure  P_GetOrderCategoryDetailsByID
-
+GO
 DROP  Procedure  P_GetWareHouses
+GO
+DROP  Procedure  P_AddShoppingCartBatchIn
+Go
+DROP  Procedure  P_AddShoppingCartBatchOut
+GO
+DROP  Procedure  P_GetOpportunitys
+
+--Orders 表 PlanPrice 改为 decimal 类型
 
 --处理批次信息
 Update ShoppingCart set BatchCode=''

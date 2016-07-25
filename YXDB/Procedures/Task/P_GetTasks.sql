@@ -144,39 +144,6 @@ AS
 	declare @total int,@page int
 	exec P_GetPagerData @tableName,@columns,@condition,@key,@OrderColumn,@pageSize,@pageIndex,@total out,@page out,0 
 	select @totalCount=@total,@pageCount =@page
---	declare @CommandSQL nvarchar(4000)
---	set @CommandSQL= 'select @total=count(0) from '+@tableName+' where '+@condition
---	exec sp_executesql @CommandSQL,N'@total int output',@total output
---	set @page=CEILING(@total * 1.0/@pageSize)
-
---	if(@PageIndex=0 or @PageIndex=1)
---	begin 
---		if @orderColumn!=''
---		begin
---			set	@orderColumn=@orderColumn+','
---		end
---		set @CommandSQL='select TaskID into #tmp from (select top '+str(@pageSize)+' '+@columns+' from '+@tableName+' where '+@condition+' order by '+@orderColumn+@key+' '+@orderby+' ) as tids'
---	end
---	else
---	begin
---		if(@PageIndex>@total)
---		begin
---			set @PageIndex=@total
---		end
---		if @orderColumn!=''
---		begin
---			set	@orderColumn=@orderColumn+','
---		end
---		set @CommandSQL='select TaskID into #tmp from ( select * from (select row_number() over( order by '+@orderColumn+@key+' '+@orderby+') as rowid , '+@columns+' from '+@tableName+' where '+@condition+'  ) as dt where rowid between '+str((@PageIndex-1) * @pageSize + 1)+' and '+str(@PageIndex* @pageSize)+'	) as tids'
---	end
-
---		set @CommandSQL=@CommandSQL+'	select t1.*,t2.FinishStatus as PreFinishStatus from OrderTask t1 left join OrderTask t2 on t1.OrderID=t2.OrderID and t2.Sort=t1.Sort-1
---where t1.TaskID in (select * from #tmp)   drop table #tmp'
-
---	exec (@CommandSQL)
-
---	set @TotalCount=@total
---	set @PageCount =@page
 
 
 
