@@ -31,19 +31,19 @@ declare @sql varchar(4000)
 set @sql='select b.ProductCode,b.ProductName,b.Remark,b.UnitName,SUM(b.Quantity-b.ReturnQuantity) as Quantity, SUM(b.TotalMoney-b.ReturnMoney) from  Orders a  join OrderDetail b  on a.OrderID=b.OrderID'
   
  if(@clientID<>'')
-	set @sql=@sql+' b.ClientID='''+@clientID+''''
+	set @sql=@sql+' and b.ClientID='''+@clientID+''''
 
 if(@customerID<>'')
-	set @sql=@sql+' a.CustomerID='''+@customerID+''''
+	set @sql=@sql+' and a.CustomerID='''+@customerID+''''
 	
 if(@remark<>'')
-	set @sql=@sql+' b.Remark='''+@remark+''''
+	set @sql=@sql+' and b.Remark='''+@remark+''''
 
 if(@beginTime<>'')
-	set @sql=@sql+' a.CreateTime>='''+@beginTime+''''
+	set @sql=@sql+' and a.CreateTime>='''+@beginTime+''''
 	
 if(@endTime<>'')
-	set @sql=@sql+' a.CreateTime<='''+@endTime+' 23:59:59:999'''
+	set @sql=@sql+' and a.CreateTime<='''+@endTime+' 23:59:59:999'''
 	
 set @sql=@sql+ ' group  by b.ProductCode,b.ProductName,b.Remark,b.UnitName '
 

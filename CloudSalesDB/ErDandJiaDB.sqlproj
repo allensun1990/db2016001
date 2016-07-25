@@ -213,6 +213,8 @@
     <None Include="Procedures\Excel\E_ImportContact.sql" />
     <None Include="Procedures\Report\R_GetCustomerStageRPT.sql" />
     <None Include="Procedures\Manage\Report\M_Get_Report_AgentActionDayPageList.sql" />
+    <None Include="Procedures\Report\R_GetOrderDetailReeport.sql" />
+    <None Include="Procedures\System\P_GetUserByWeiXinID.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\Sales\P_CreateOpportunity.sql" />
@@ -266,5 +268,6 @@
     <Build Include="Procedures\Manage\Report\R_GetClientsAgentAction.sql" />
     <Build Include="Procedures\Manage\Report\R_GetClientsGrowDate.sql" />
     <Build Include="Procedures\Manage\Report\R_GetClientsAgentLogin_Day.sql" />
+    <Build Include="Procedures\Manage\M_BindUserWeiXinID.sql" />
   </ItemGroup>
 </Project>
