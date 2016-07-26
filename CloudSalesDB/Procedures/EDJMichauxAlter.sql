@@ -37,7 +37,7 @@ R_GetClientsAgentLogin_Day
 R_GetOrderDetailReeport
 P_GetUserByWeiXinID
 M_BindUserWeiXinID
-
+R_StockInOutReport
 /*ÐÞ¸Ä*/
 R_GetClientsActiveReprot
 M_Get_Report_AgentActionDayReport

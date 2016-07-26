@@ -17,22 +17,26 @@ GO
 CREATE PROCEDURE [dbo].[M_BindUserWeiXinID]
 @ClientiD nvarchar(64),
 @UserID nvarchar(64),
-@WeiXinID nvarchar(64)
+@WeiXinID nvarchar(64),
+@Type int =0
 AS
 
 begin tran
 
 declare @Err int=0
-declare @OriginalWeiXinID nvarchar(64)=''
 
-select @OriginalWeiXinID=WeiXinID from users where UserID=@UserID  AND ClientiD=@ClientiD
-
-if(@OriginalWeiXinID<>'' )
+if(@Type=0)
 begin
-	rollback tran
-	return
-end
+	declare @OriginalWeiXinID nvarchar(64)=''
 
+	select @OriginalWeiXinID=WeiXinID from users where UserID=@UserID  AND ClientiD=@ClientiD
+
+	if(@OriginalWeiXinID<>'' )
+	begin
+		rollback tran
+		return
+	end
+end
 update users set WeiXinID=@WeiXinID where UserID=@UserID  AND ClientiD=@ClientiD
 set @Err+=@@error
 
