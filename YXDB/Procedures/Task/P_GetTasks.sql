@@ -46,7 +46,7 @@ AS
 	@key nvarchar(100)
 	
 	set @tableName='OrderTask t left join OrderTask t2 on t.OrderID=t2.OrderID and t2.Sort=t.Sort-1'
-	set @columns='t.*,t2.FinishStatus as PreFinishStatus'
+	set @columns='t.*,t2.FinishStatus as PreFinishStatus,t2.Title as PreTitle,t2.OwnerID POwnerID,t2.EndTime PEndTime,t2.CompleteTime PCompleteTime'
 	set @key='t.TaskID'
 	set @orderColumn='t.createtime'
 	set @condition=' 1=1 '
