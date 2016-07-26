@@ -269,5 +269,6 @@
     <Build Include="Procedures\Manage\Report\R_GetClientsGrowDate.sql" />
     <Build Include="Procedures\Manage\Report\R_GetClientsAgentLogin_Day.sql" />
     <Build Include="Procedures\Manage\M_BindUserWeiXinID.sql" />
+    <Build Include="Procedures\Report\R_StockInOutReport.sql" />
   </ItemGroup>
 </Project>
