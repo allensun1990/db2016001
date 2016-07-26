@@ -549,5 +549,7 @@
     <None Include="Procedures\Manage\M_UnBindUserWeiXinID.sql" />
     <None Include="Procedures\Products\P_DeleteUnit.sql" />
     <None Include="Procedures\Products\P_DeleteProductAttr.sql" />
+    <None Include="Procedures\Products\P_DeleteProduct.sql" />
+    <None Include="Procedures\Products\P_DeleteProductDetail.sql" />
   </ItemGroup>
 </Project>
