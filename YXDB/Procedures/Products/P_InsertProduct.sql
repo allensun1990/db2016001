@@ -50,8 +50,12 @@ AS
 
 begin tran
 
+set @Result=0
+
+
 IF(@ProductCode is not null and @ProductCode<>'' and EXISTS(SELECT AutoID FROM [Products] WHERE ProductCode=@ProductCode and ClientID=@ClientID and Status<>9))--编码唯一
 BEGIN
+	set @ProductID=''
 	set @Result=2
 	rollback tran
 	return
