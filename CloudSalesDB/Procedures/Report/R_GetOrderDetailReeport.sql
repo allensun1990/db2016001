@@ -24,27 +24,56 @@ create proc R_GetOrderDetailReport
 @beginTime varchar(50)='',
 @endTime varchar(50)='',
 @customerID varchar(50)='',
-@remark varchar(500)
+@keyWords varchar(500),
+@pageSize int,
+@pageIndex int,
+@orderBy varchar(500),
+@totalCount int output,
+@pageCount int output
 
-as
-declare @sql varchar(4000)
-set @sql='select b.ProductCode,b.ProductName,b.Remark,b.UnitName,SUM(b.Quantity-b.ReturnQuantity) as Quantity, SUM(b.TotalMoney-b.ReturnMoney) from  Orders a  join OrderDetail b  on a.OrderID=b.OrderID'
-  
- if(@clientID<>'')
-	set @sql=@sql+' b.ClientID='''+@clientID+''''
+as 
+DECLARE @tableName nvarchar(400),
+	@columns nvarchar(1000), 	 
+	@condition  nvarchar(400),
+	@groupColumn nvarchar(100)
 
-if(@customerID<>'')
-	set @sql=@sql+' a.CustomerID='''+@customerID+''''
+	set @columns=' b.ProductID,a.ClientID,b.ProductCode,b.ProductName,b.Remark,b.UnitName,SUM(b.Quantity-b.ReturnQuantity) as Quantity, SUM(b.TotalMoney-b.ReturnMoney) as TotalMoney '
+	set @tableName='  Orders a  join OrderDetail b  on a.OrderID=b.OrderID '
+	set @condition =' a.Status<>9 ' 
+	 if(@clientID<>'')
+		set @condition=@condition+' and b.ClientID='''+@clientID+''''
+
+	if(@customerID<>'')
+		set @condition=@condition+' and a.CustomerID='''+@customerID+''''
 	
-if(@remark<>'')
-	set @sql=@sql+' b.Remark='''+@remark+''''
+	if(@keyWords<>'')
+		set @condition=@condition+' and  b.Remark like ''%'+@keyWords+'%'''
 
-if(@beginTime<>'')
-	set @sql=@sql+' a.CreateTime>='''+@beginTime+''''
+	if(@beginTime<>'')
+		set @condition=@condition+' and a.CreateTime>='''+@beginTime+''''
 	
-if(@endTime<>'')
-	set @sql=@sql+' a.CreateTime<='''+@endTime+' 23:59:59:999'''
+	if(@endTime<>'')
+		set @condition=@condition+' and a.CreateTime<='''+@endTime+' 23:59:59:999'''
 	
-set @sql=@sql+ ' group  by b.ProductCode,b.ProductName,b.Remark,b.UnitName '
+	set @condition=@condition+ ' group  by a.ClientID,b.ProductID,b.ProductCode,b.ProductName,b.Remark,b.UnitName '
+ 
+	declare @CommandSQL nvarchar(4000)
 
-exec (@sql)
+	set @CommandSQL= 'select @totalCount=count(0) from( select a.ClientID  from '+@tableName+' where '+@condition +') as c '
+	 
+	exec sp_executesql @CommandSQL,N'@totalCount int output',@totalCount output
+	set @pageCount=CEILING(@totalCount * 1.0/@pageSize)
+
+	if(@pageIndex=0 or @pageIndex=1)
+	begin 
+		set @CommandSQL='select top '+str(@pageSize)+' '+@columns+' from '+@tableName+' where '+@condition+' order by '+@orderBy
+	end
+	else
+	begin
+		if(@pageIndex>@pageCount)
+		begin
+			set @pageIndex=@pageCount
+		end
+		set @CommandSQL='select * from (select row_number() over( order by '+@orderBy+' ) as rowid ,'+@columns+' from '+@tableName+' where '+@condition+' ) as dt where rowid between '+str((@pageIndex-1) * @pageSize + 1)+' and '+str(@pageIndex* @pageSize)
+	end  
+	exec (@CommandSQL)

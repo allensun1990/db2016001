@@ -20,6 +20,8 @@ alter table Customer add MemberLevelID varchar(50)
 alter table  M_Report_AgentAction_Day add UserNum int default 1
 alter table  M_Report_AgentAction_Day add Vitality decimal(18,4) default 0.0000
 
+alter table Users add WeiXinID  varchar(150) 
+
 update Customer set IntegerFee=0.00
 
 
@@ -33,6 +35,9 @@ M_Get_Report_AgentActionDayPageList
 R_GetClientsGrowDate
 R_GetClientsAgentLogin_Day
 R_GetOrderDetailReeport
+P_GetUserByWeiXinID
+M_BindUserWeiXinID
+R_StockInOutReport
 /*ÐÞ¸Ä*/
 R_GetClientsActiveReprot
 M_Get_Report_AgentActionDayReport
