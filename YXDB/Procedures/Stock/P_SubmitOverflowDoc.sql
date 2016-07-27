@@ -35,8 +35,7 @@ declare @Err int=0
 if exists(select AutoID from ShoppingCart where UserID=@UserID and [GUID]=@UserID and OrderType=@DocType)
 begin
 	
-	declare @AutoID int=1,@ProductID nvarchar(64),@ProductDetailID nvarchar(64),@Quantity int,@BatchCode nvarchar(50),@DepotID nvarchar(64),
-	@DRemark nvarchar(4000),@Price decimal(18,4),@UnitID nvarchar(64)
+	declare @AutoID int=1,@ProductID nvarchar(64),@ProductDetailID nvarchar(64),@BatchCode nvarchar(50),@DepotID nvarchar(64)
 
 	select identity(int,1,1) as AutoID,ProductDetailID,ProductID,UnitID,Quantity,Price,BatchCode,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS into #TempProducts 
 	from ShoppingCart 
@@ -45,21 +44,24 @@ begin
 	while exists(select AutoID from #TempProducts where AutoID=@AutoID)
 	begin
 		
-		select @ProductID=ProductID,@ProductDetailID=ProductDetailID,@Quantity=Quantity,@BatchCode=BatchCode,@DRemark=Remark,@Price=Price,@UnitID=UnitID 
+		select @ProductID=ProductID,@ProductDetailID=ProductDetailID,@DepotID=DepotID 
 		from #TempProducts where AutoID=@AutoID
 
 
-		if exists(select AutoID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID)
+		if(@DepotID is null or @DepotID='')
 		begin
-			select top 1 @DepotID=DepotID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID order by BatchCode desc
-		end
-		else
-		begin
-			select top 1 @DepotID = DepotID from DepotSeat where WareID=@WareID and Status=1
+			if exists(select AutoID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID)
+			begin
+				select top 1 @DepotID= DepotID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID 
+			end
+			else
+			begin
+				select top 1 @DepotID = DepotID from DepotSeat where WareID=@WareID and Status=1 order by Sort 
+			end
 		end
 
 		insert into StorageDetail(DocID,ProductDetailID,ProductID,UnitID,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS)
-		select @DocID,@ProductDetailID,@ProductID,@UnitID,0,@Quantity,@Price,@Price*@Quantity,@WareID,@DepotID,@BatchCode,0,@DRemark,@ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS
+		select @DocID,@ProductDetailID,@ProductID,UnitID,0,Quantity,Price,Price*Quantity,@WareID,@DepotID,BatchCode,0,Remark,@ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS
 	    from #TempProducts where AutoID=@AutoID
 
 		set @Err+=@@Error

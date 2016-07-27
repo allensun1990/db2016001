@@ -38,21 +38,24 @@ begin
 	declare @AutoID int=1,@DepotID nvarchar(64),@ProductDetailID nvarchar(64)
 
 
-	select identity(int,1,1) as AutoID,ProductDetailID,ProductID, UnitID,Quantity,Price,BatchCode,Remark,s.ProdiverID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS into #TempProducts 
+	select identity(int,1,1) as AutoID,ProductDetailID,ProductID, UnitID,Quantity,Price,DepotID,BatchCode,Remark,s.ProdiverID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS into #TempProducts 
 	from ShoppingCart s where [GUID]=@UserID and OrderType=@DocType and UserID=@UserID
 
 	while exists(select AutoID from #TempProducts where AutoID=@AutoID)
 	begin
 		
-		select @ProductDetailID=ProductDetailID from #TempProducts where AutoID=@AutoID
+		select @ProductDetailID=ProductDetailID,@DepotID=DepotID from #TempProducts where AutoID=@AutoID
 
-		if exists(select AutoID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID)
+		if(@DepotID is null or @DepotID='')
 		begin
-			select top 1 @DepotID= DepotID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID  order by BatchCode desc
-		end
-		else
-		begin
-			select top 1 @DepotID = DepotID from DepotSeat where WareID=@WareID and Status=1 order by Sort 
+			if exists(select AutoID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID)
+			begin
+				select top 1 @DepotID= DepotID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID 
+			end
+			else
+			begin
+				select top 1 @DepotID = DepotID from DepotSeat where WareID=@WareID and Status=1 order by Sort 
+			end
 		end
 
 		insert into StorageDetail(DocID,ProductDetailID,ProductID,ProdiverID,UnitID,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS)

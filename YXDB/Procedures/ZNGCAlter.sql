@@ -37,8 +37,7 @@ drop table CustomerStageLog
 
 
 --删除无效菜单和权限
-delete from Menu where IsHide=1 
-delete from RolePermission where MenuCode not in (select MenuCode from Menu)
+delete from Menu where MenuCode in ('103029001','103029003','103030301','103030303','103030401','103030403')
 
 --Orders 表 PlanPrice 改为 decimal 类型
 
