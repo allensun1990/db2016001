@@ -54,3 +54,35 @@ insert into ProductStock(ProductDetailID,ProductID,WareID,DepotID,ClientID,Stock
 select ProductDetailID,ProductID,WareID,DepotID,ClientID,StockIn,StockOut from #tempstock
 Go
 Drop table #tempstock
+
+--流程分类表
+create table ProcessCategory
+(
+AutoID int identity(1,1),
+CategoryID nvarchar(64) primary key,
+Name nvarchar(50),
+Status int default 1,
+Remark nvarchar(4000) default '',
+CreateTime datetime default getdate(),
+CreateUserID nvarchar(64)
+)
+
+--品类项
+create table CategoryItems
+(
+AutoID int identity(1,1),
+ItemID nvarchar(64) primary key,
+Name nvarchar(50),
+CategoryID nvarchar(64),
+[Type] int,
+OrderType int ,
+Mark int default 0,
+Sort int default 1,
+Remark nvarchar(4000) default '',
+CreateTime datetime default getdate(),
+CreateUserID nvarchar(64)
+)
+
+
+alter table OrderProcess add CategoryID nvarchar(64)
+

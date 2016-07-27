@@ -536,5 +536,7 @@
     <None Include="Procedures\Products\P_DeleteProductAttr.sql" />
     <None Include="Procedures\Products\P_DeleteProduct.sql" />
     <None Include="Procedures\Products\P_DeleteProductDetail.sql" />
+    <None Include="Procedures\System\P_CreateProcessCategory.sql" />
+    <None Include="Procedures\System\P_DeleteProcessCategory.sql" />
   </ItemGroup>
 </Project>
