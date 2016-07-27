@@ -111,9 +111,6 @@
     <None Include="Procedures\Stock\P_UpdateStorageStatus.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Procedures\Custom\P_GetActivitys.sql" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Procedures\System\P_GetUserByMDUserID.sql" />
   </ItemGroup>
   <ItemGroup>
@@ -138,15 +135,6 @@
     <None Include="Procedures\System\P_UpdateUserRole.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Procedures\System\P_InsertCustomSource.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Procedures\System\P_InsertCustomStage.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Procedures\System\P_DeletetCustomStage.sql" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Procedures\System\P_DeleteTeam.sql" />
   </ItemGroup>
   <ItemGroup>
@@ -169,9 +157,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\Custom\P_UpdateCustomerAgent.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Procedures\Custom\P_UpdateCustomerStage.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\Custom\P_GetCustomerByID.sql" />
