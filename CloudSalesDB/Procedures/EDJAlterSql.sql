@@ -3,6 +3,10 @@
 DROP  Procedure  P_InsertProductExcel
 DROP  Procedure  P_AddShoppingCartBatchIn
 
+--删除无效菜单和权限
+delete from Menu where IsHide=1 and MenuCode in('103020000','103029003','103030100','103030303','103030403','103040200','103040300','108020800')
+delete from RolePermission where MenuCode not in (select MenuCode from Menu)
+
 alter table ShoppingCart add WareID nvarchar(64)
 
 update StorageDoc set Status=9 where Status=4
