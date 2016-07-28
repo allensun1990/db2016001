@@ -10,14 +10,17 @@ GO
 过程名称： M_InsertClient
 功能描述： 添加客户端
 参数说明：	 
-编写日期： 2015/4/10
-程序作者： Allen
+编写日期： 2015/4/10 
+程序作者： 
+	修改： 2016/7/28   Allen
 调试记录： exec M_InsertClient 
 ************************************************************/
 CREATE PROCEDURE [dbo].[M_InsertClient]
 @ClientID nvarchar(64),
-@LoginName nvarchar(50)='',
 @ClientCode nvarchar(20),
+@RegisterType int=0,
+@AccountType int =0,
+@Account nvarchar(200),
 @CompanyName nvarchar(200)='',
 @MobilePhone nvarchar(64)='',
 @Industry nvarchar(64)='',
@@ -25,14 +28,11 @@ CREATE PROCEDURE [dbo].[M_InsertClient]
 @Address nvarchar(200)='',
 @Description nvarchar(200)='',
 @ContactName nvarchar(50),
-@BindMobilePhone nvarchar(200)='',
 @LoginPWD nvarchar(64)='',
 @Email nvarchar(200)='',
-@MDUserID nvarchar(64)='',
-@MDProjectID nvarchar(64)='',
-@AliMemberID nvarchar(64)='',
-@WeiXinID nvarchar(200)='',
+@CompanyID nvarchar(64)='',
 @CreateUserID nvarchar(64)='',
+@UserID nvarchar(64)='',
 @Result int output --0：失败，1：成功，2 账号已存在
 AS
 
@@ -40,38 +40,50 @@ begin tran
 
 set @Result=0
 
-declare @Err int ,@DepartID nvarchar(64),@RoleID nvarchar(64),@UserID nvarchar(64),@AgentID nvarchar(64),@WareID nvarchar(64)
-
-
-select @Err=0,@DepartID=NEWID(),@RoleID=NEWID(),@UserID=NEWID(),@AgentID=@ClientID,@WareID=NEWID()
-
-
-if(@AliMemberID<>'' and exists(select AutoID from Clients where AliMemberID=@AliMemberID))
+if(@UserID='')
 begin
-	set @Result=2
-	rollback tran
-	return
+	set @UserID=NEWID()
 end
 
-if(@LoginName<>'' and exists(select UserID from Users where (LoginName=@LoginName or BindMobilePhone=@LoginName) and Status<>9))
+declare @Err int ,@DepartID nvarchar(64),@RoleID nvarchar(64),@AgentID nvarchar(64),@WareID nvarchar(64),@AliMemberID nvarchar(200)
+
+select @Err=0,@DepartID=NEWID(),@RoleID=NEWID(),@AgentID=@ClientID,@WareID=NEWID()
+
+
+--账号
+if(@AccountType=1) 
 begin
-	set @Result=2
-	rollback tran
-	return
+	if exists(select AutoID from UserAccounts where  AccountName = @Account and AccountType in (1,2))
+	begin
+		set @Result=2
+		rollback tran
+		return
+	end
+end
+else if(@AccountType=2) --手机
+begin
+	if exists(select AutoID from UserAccounts where  AccountName = @Account and AccountType in (1,2))
+	begin
+		set @Result=2
+		rollback tran
+		return
+	end
+
+	set @MobilePhone=@Account
+end
+else  --其他账号
+begin
+	if exists(select AutoID from UserAccounts where  AccountName = @Account and AccountType =@AccountType)
+	begin
+		set @Result=2
+		rollback tran
+		return
+	end
 end
 
---账号已存在
-if(@BindMobilePhone<>'' and exists(select UserID from Users where (LoginName=@BindMobilePhone or BindMobilePhone=@BindMobilePhone) and Status<>9))
+if(@AccountType=3)
 begin
-	set @Result=2
-	rollback tran
-	return
-end
-
-
-if(@MobilePhone='')
-begin
-	set @MobilePhone=@BindMobilePhone
+	set @AliMemberID=@Account
 end
 
 --客户端编码不能重复
@@ -81,14 +93,14 @@ begin
 end
 
 --客户端
-insert into Clients(ClientID,ClientCode,CompanyName,ContactName,MobilePhone,Status,GuideStep,Industry,CityCode,Address,Description,AgentID,CreateUserID,UserQuantity,EndTime,AliMemberID) 
-				values(@ClientID,@ClientCode,@CompanyName,@ContactName,@MobilePhone,1,1,@Industry,@CityCode,@Address,@Description,@AgentID,@CreateUserID,20,dateadd(MONTH, 1, GETDATE()),@AliMemberID )
+insert into Clients(ClientID,ClientCode,CompanyName,ContactName,MobilePhone,Status,GuideStep,Industry,CityCode,Address,Description,AgentID,CreateUserID,UserQuantity,EndTime,AliMemberID,RegisterType) 
+				values(@ClientID,@ClientCode,@CompanyName,@ContactName,@MobilePhone,1,1,@Industry,@CityCode,@Address,@Description,@AgentID,@CreateUserID,20,dateadd(MONTH, 1, GETDATE()),@AliMemberID,@RegisterType)
 
 set @Err+=@@error
 
 --直营代理商
 insert into Agents(AgentID,CompanyName,Status,IsDefault,MDProjectID,ClientID,UserQuantity,EndTime) 
-			values(@AgentID,'公司直营',1,1,@MDProjectID,@ClientID,20,dateadd(MONTH, 1, GETDATE()))
+			values(@AgentID,'公司直营',1,1,'',@ClientID,20,dateadd(MONTH, 1, GETDATE()))
 
 --部门
 insert into Department(DepartID,Name,Status,CreateUserID,AgentID,ClientID) values (@DepartID,'系统管理',1,@UserID,@AgentID,@ClientID)
@@ -99,8 +111,11 @@ insert into Role(RoleID,Name,Status,IsDefault,CreateUserID,AgentID,ClientID) val
 
 set @Err+=@@error
 
-insert into Users(UserID,LoginName,BindMobilePhone,LoginPWD,Name,MobilePhone,Email,Allocation,Status,IsDefault,DepartID,RoleID,CreateUserID,MDUserID,MDProjectID,AgentID,ClientID,AliMemberID,WeiXinID)
-             values(@UserID,@LoginName,@BindMobilePhone,@LoginPWD,@ContactName,@MobilePhone,@Email,1,1,1,@DepartID,@RoleID,@UserID,@MDUserID,@MDProjectID,@AgentID,@ClientID,@AliMemberID,@WeiXinID)
+insert into Users(UserID,LoginName,BindMobilePhone,LoginPWD,Name,MobilePhone,Email,Allocation,Status,IsDefault,DepartID,RoleID,CreateUserID,MDUserID,MDProjectID,AgentID,ClientID,AliMemberID)
+             values(@UserID,@Account,'',@LoginPWD,@ContactName,@MobilePhone,@Email,1,1,1,@DepartID,@RoleID,@UserID,'','',@AgentID,@ClientID,@AliMemberID)
+
+insert into UserAccounts(AccountName,AccountType,ProjectID,UserID,AgentID,ClientID)
+values(@Account,@AccountType,'',@UserID,@AgentID,@ClientID)
 
 --部门关系
 insert into UserDepart(UserID,DepartID,CreateUserID,ClientID) values(@UserID,@DepartID,@UserID,@ClientID)  

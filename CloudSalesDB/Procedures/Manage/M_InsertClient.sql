@@ -91,7 +91,18 @@ begin
 
 	set @MDProjectID=@CompanyID
 end
-else if(@RegisterType=4) --智能工厂
+else
+begin
+	if exists(select AutoID from UserAccounts where  AccountName = @Account and AccountType =@AccountType)
+	begin
+		set @Result=2
+		rollback tran
+		return
+	end
+end
+
+
+if(@RegisterType=4) --智能工厂
 begin
 	set @IsIntFactory=1
 end
