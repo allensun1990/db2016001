@@ -36,7 +36,7 @@ R_GetClientsGrowDate
 R_GetClientsAgentLogin_Day
 R_GetOrderDetailReeport
 P_GetUserByWeiXinID
-M_BindUserWeiXinID
+M_BindOtherAccount
 R_StockInOutReport
 /*修改*/
 R_GetClientsActiveReprot
@@ -49,7 +49,7 @@ P_CreateCustomer
 M_DeleteRole
 Rpt_AgentAction_Day
 M_GetClientOrders
-
+GetUserByMDUserID
 /*配置已存在的客户的客户等级*/
 
 create table #memberLevel (Name varchar(50),integFeeMore decimal(18,2),DiscountFee decimal(18,2) ,origin int )
