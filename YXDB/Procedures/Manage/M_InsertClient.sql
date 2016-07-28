@@ -49,6 +49,13 @@ declare @Err int ,@DepartID nvarchar(64),@RoleID nvarchar(64),@AgentID nvarchar(
 
 select @Err=0,@DepartID=NEWID(),@RoleID=NEWID(),@AgentID=@ClientID,@WareID=NEWID()
 
+if exists(select AutoID from UserAccounts where  AccountName = @Account and AccountType =@AccountType)
+begin
+	set @Result=2
+	rollback tran
+	return
+end
+
 
 --账号
 if(@AccountType=1) 
@@ -71,15 +78,7 @@ begin
 
 	set @MobilePhone=@Account
 end
-else  --其他账号
-begin
-	if exists(select AutoID from UserAccounts where  AccountName = @Account and AccountType =@AccountType)
-	begin
-		set @Result=2
-		rollback tran
-		return
-	end
-end
+
 
 if(@AccountType=3)
 begin

@@ -26,6 +26,12 @@ GO
 DROP  Procedure  P_DeletetCustomStage
 GO
 DROP  Procedure  P_UpdateCustomerStage
+GO
+DROP  Procedure  GetUserByMDUserID
+GO
+DROP  Procedure  P_GetUserByWeiXinID
+GO
+DROP  Procedure  P_GetUserByAliMemberID
 
 --删除订单类别表
 drop table OrderType

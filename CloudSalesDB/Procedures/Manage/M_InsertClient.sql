@@ -51,6 +51,14 @@ declare @Err int ,@DepartID nvarchar(64),@RoleID nvarchar(64),@AgentID nvarchar(
 
 select @Err=0,@DepartID=NEWID(),@RoleID=NEWID(),@AgentID=NEWID(),@WareID=NEWID()
 
+--账号是否存在(除去明道)
+if @AccountType<>3 and exists(select AutoID from UserAccounts where  AccountName = @Account and AccountType =@AccountType)
+begin
+	set @Result=2
+	rollback tran
+	return
+end
+
 --账号
 if(@AccountType=1) 
 begin
@@ -90,15 +98,6 @@ begin
 	end
 
 	set @MDProjectID=@CompanyID
-end
-else
-begin
-	if exists(select AutoID from UserAccounts where  AccountName = @Account and AccountType =@AccountType)
-	begin
-		set @Result=2
-		rollback tran
-		return
-	end
 end
 
 

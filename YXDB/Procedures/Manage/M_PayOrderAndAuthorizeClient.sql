@@ -19,7 +19,8 @@ GO
 CREATE PROCEDURE [dbo].[M_PayOrderAndAuthorizeClient]
 @M_OrderID nvarchar(64),
 @M_CheckUserID nvarchar(64),
-@M_PayStatus int=-1
+@M_PayStatus int=-1,
+@M_PayType int=1
 AS
 
 begin tran
@@ -28,10 +29,8 @@ declare @Err int ,
 	@M_ClientID nvarchar(64),@M_AgentID nvarchar(64),
 	@UserQuantity int,@Years int,
 	@RealAmount decimal(18,3),@Type int,
-	@EndTime datetime,@BeginTime datetime,
-	@OrderID varchar(64),@OrderCode varchar(20),
-	@BillingID varchar(64),@BillingCode varchar(20),
-	@YX_AgentID nvarchar(64),@YX_ClientID nvarchar(64)
+	@EndTime datetime,@BeginTime datetime
+
 set @Err=0
 --客户订单已支付
 if(@M_OrderID<>'' and exists(select OrderID from ClientOrder where OrderID=@M_OrderID and status=1) )
@@ -41,8 +40,6 @@ begin
 end
 
 --变量赋值
-select @YX_AgentID=AgentID,@YX_ClientID=ClientID from Clients where IsDefault=1
-
 select @M_ClientID=ClientID,@M_AgentID=AgentID,@UserQuantity=UserQuantity,@Years=Years,@RealAmount=RealAmount,@Type=Type from  ClientOrder where OrderID=@M_OrderID
 
 select @BeginTime=EndTime from Agents where AgentID=@M_AgentID
@@ -60,31 +57,17 @@ end
 else
 	set @EndTime=@BeginTime
 
-set @BillingID=NEWID();
-set @BillingCode=replace(replace(replace(CONVERT(varchar, getdate(), 120 ),'-',''),':',''),' ','')+SUBSTRING(convert(varchar,rand()),3,3);
-set @OrderID=NEWID();
-set @OrderCode=replace(replace(replace(CONVERT(varchar, getdate(), 120 ),'-',''),':',''),' ','')+SUBSTRING(convert(varchar,rand()),3,3);
-
-
---新增订单
-insert into Orders(OrderID,OrderCode,Status,TotalMoney,CustomerID,AgentID,ClientID,AuditTime,CreateTime) 
-values(@OrderID,@OrderCode,2,@RealAmount,@M_ClientID,@YX_AgentID,@YX_ClientID,@BeginTime,getdate())
-set @Err+=@@error
-
---新增账单
-insert into Billing(BillingID,BillingCode,OrderID,OrderCode,TotalMoney,Status,PayStatus,PayTime,PayMoney,InvoiceStatus,CreateTime,AgentID,ClientID) 
-values(@BillingID,@BillingCode,@OrderID,@OrderCode,@RealAmount,1,2,getdate(),@RealAmount,0,getdate(),@YX_AgentID,@YX_ClientID)
-set @Err+=@@error
-
---新增账单支付明细
-insert into BillingPay(BillingID,Type,Status,PayType,PayMoney,PayTime,CreateTime,AgentID,ClientID) 
-values(@BillingID,2,1,3,@RealAmount,getdate(),getdate(),@YX_AgentID,@YX_ClientID)
-set @Err+=@@error
-
 --更新后台订单状态为支付
-
-update ClientOrder set status=1,CheckUserID=@M_CheckUserID,CheckTime=getdate(),payStatus=case when @M_PayStatus>-1 then @M_PayStatus else payStatus end  where OrderID=@M_OrderID
+update ClientOrder set status=1,CheckUserID=@M_CheckUserID,CheckTime=getdate(),payStatus=case when @M_PayStatus>-1 then @M_PayStatus else payStatus end  
+where OrderID=@M_OrderID
 set @Err+=@@error
+
+--支付宝付款
+if(@M_PayType=3)
+begin
+	insert into ClientOrderAccount (OrderID,PayType,Type,status,RealAmount,ClientID,CreateUserID,Remark) values
+	(@M_OrderID,@M_PayType,1,1,@RealAmount,@M_ClientID,@M_CheckUserID,'支付宝自动付款')
+end
 
 --更改代理商客户授权
 --购买或续费
