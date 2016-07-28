@@ -16,18 +16,19 @@ GO
 ************************************************************/
 CREATE PROCEDURE [dbo].[GetUserByMDUserID]
 @MDUserID nvarchar(64),
-@MDProjectID nvarchar(64)
+@MDProjectID nvarchar(64),
+@AccouType int=3
 AS
 
 declare @UserID nvarchar(64),@ClientID nvarchar(64),@AgentID nvarchar(64),@RoleID nvarchar(64)
-
-IF  EXISTS(select AutoID from UserAccounts where AccountName=@MDUserID and ProjectID=@MDProjectID and AccountType =3)
+ 
+IF  EXISTS(select AutoID from UserAccounts where AccountName=@MDUserID and ProjectID=@MDProjectID and AccountType =@AccouType)
 begin
-	select @UserID=UserID from UserAccounts where AccountName=@MDUserID and ProjectID=@MDProjectID and AccountType =3
+	select @UserID=UserID from UserAccounts where AccountName=@MDUserID and ProjectID=@MDProjectID and AccountType =@AccouType
 
 	select @RoleID=RoleID from Users where UserID=@UserID
 
-    --select RoleID into #Roles from UserRole where UserID=@UserID and Status=1
+	--select RoleID into #Roles from UserRole where UserID=@UserID and Status=1
 
 	--会员信息
 	select * from Users where UserID=@UserID
@@ -36,7 +37,5 @@ begin
 	select m.* from Menu m left join RolePermission r on r.MenuCode=m.MenuCode 
 	where (RoleID=@RoleID or IsLimit=0 )
 
-end
-
- 
+end 
 
