@@ -12,46 +12,42 @@ GO
 参数说明：	 
 编写日期： 2016/6/24
 程序作者： MU
+	修改： 2016/7/28 Allen
 调试记录： exec P_AccountBindMobile 
 ************************************************************/
 CREATE PROCEDURE [dbo].P_AccountBindMobile
 @UserID nvarchar(64),
 @BindMobile nvarchar(64),
 @Pwd nvarchar(100),
+@AgentID nvarchar(64),
 @ClientID nvarchar(64)=''
 AS
-declare @BindMobilePhone nvarchar(100),
-@LoginPWD nvarchar(100)
-
-if(not exists(select UserID from users where UserID=@UserID and Status<>9) )
-begin
-	return
-end
-
-select @BindMobilePhone=BindMobilePhone,@LoginPWD=LoginPWD from users where UserID=@UserID and Status<>9
-if(@BindMobilePhone<>'')
-begin
-	return
-end
-
+declare @LoginPWD nvarchar(100),@Err int=0
 begin tran
-declare @Err int=0
 
-if(@LoginPWD<>'')
+IF EXISTS(select AutoID from UserAccounts where UserID=@UserID and AccountType=2)
 begin
-	Update users set MobilePhone=@BindMobile,BindMobilePhone=@BindMobile where UserID=@UserID
+	rollback tran
+	return
+end
+
+insert into UserAccounts(AccountName,AccountType,UserID,AgentID,ClientID)
+values(@BindMobile,2,@UserID,@AgentID,@ClientID)
+
+select @LoginPWD=LoginPWD from Users where UserID=@UserID 
+
+if(@LoginPWD<>'' and @LoginPWD is not null)
+begin
+	Update users set MobilePhone=@BindMobile where UserID=@UserID
 	set @Err+=@@error
 end
 else
 begin
-	Update users set MobilePhone=@BindMobile,BindMobilePhone=@BindMobile,LoginPWD=@Pwd where UserID=@UserID
+	Update users set MobilePhone=@BindMobile,LoginPWD=@Pwd where UserID=@UserID
 	set @Err+=@@error
 end
 
-update clients set MobilePhone=@BindMobile where ClientID=@ClientID
-set @Err+=@@error
-
-update Agents set EndTime=dateadd(month, 1, EndTime) where AgentID=@ClientID
+update Clients set MobilePhone=@BindMobile where ClientID=@ClientID
 set @Err+=@@error
 
 Update Clients set GuideStep=0 where ClientID=@ClientID

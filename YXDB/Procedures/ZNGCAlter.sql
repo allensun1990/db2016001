@@ -32,6 +32,12 @@ GO
 DROP  Procedure  P_GetUserByWeiXinID
 GO
 DROP  Procedure  P_GetUserByAliMemberID
+GO
+DROP  Procedure  M_BindUserWeiXinID
+GO
+DROP  Procedure  M_UnBindUserWeiXinID
+GO
+DROP  Procedure  M_BindClientAliMember
 
 --删除订单类别表
 drop table OrderType
