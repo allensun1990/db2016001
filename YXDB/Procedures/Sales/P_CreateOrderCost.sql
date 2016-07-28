@@ -25,9 +25,7 @@ AS
 	
 begin tran
 
-declare @Err int=0,@Status int,@Money decimal(18,4),@OwnerID nvarchar(64),@ProcessID nvarchar(64)
-
-select @Status=Status,@OwnerID=OwnerID,@ProcessID=ProcessID from Orders where OrderID=@OrderID  and ClientID=@ClientID
+declare @Err int=0,@Money decimal(18,4)
 
 insert into OrderCosts(OrderID,Price,Remark,Status,CreateUserID,ClientID)
 values(@OrderID,@Price,@Remark,1,@OperateID,@ClientID)
