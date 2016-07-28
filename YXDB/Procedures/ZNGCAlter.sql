@@ -38,6 +38,8 @@ GO
 DROP  Procedure  M_UnBindUserWeiXinID
 GO
 DROP  Procedure  M_BindClientAliMember
+GO
+DROP  Procedure  P_UpdateAccountBindMobile
 
 --删除订单类别表
 drop table OrderType

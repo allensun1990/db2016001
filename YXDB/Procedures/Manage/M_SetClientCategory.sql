@@ -34,6 +34,12 @@ begin
 	rollback tran
 	return
 end
+else
+begin	
+	Update Clients set GuideStep=3 where ClientID=@ClientID
+	set @Result=1
+	commit tran
+end
 
 set @Err+=@@error
 

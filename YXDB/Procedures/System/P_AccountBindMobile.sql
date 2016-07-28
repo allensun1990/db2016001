@@ -19,6 +19,7 @@ CREATE PROCEDURE [dbo].P_AccountBindMobile
 @UserID nvarchar(64),
 @BindMobile nvarchar(64),
 @Pwd nvarchar(100),
+@IsFirst int=0,
 @AgentID nvarchar(64),
 @ClientID nvarchar(64)=''
 AS
@@ -31,28 +32,37 @@ begin
 	return
 end
 
-insert into UserAccounts(AccountName,AccountType,UserID,AgentID,ClientID)
-values(@BindMobile,2,@UserID,@AgentID,@ClientID)
-
-select @LoginPWD=LoginPWD from Users where UserID=@UserID 
-
-if(@LoginPWD<>'' and @LoginPWD is not null)
+IF  EXISTS(select AutoID from UserAccounts where AccountName=@BindMobile and AccountType in(1,2))
 begin
-	Update users set MobilePhone=@BindMobile where UserID=@UserID
+	rollback tran
+	return
+end
+
+if exists (select AutoID from UserAccounts where UserID=@UserID and AccountType=1)
+begin
+	Update Users set MobilePhone=@BindMobile where UserID=@UserID
 	set @Err+=@@error
 end
 else
 begin
 	Update users set MobilePhone=@BindMobile,LoginPWD=@Pwd where UserID=@UserID
-	set @Err+=@@error
 end
 
-update Clients set MobilePhone=@BindMobile where ClientID=@ClientID
 set @Err+=@@error
 
-Update Clients set GuideStep=0 where ClientID=@ClientID
+insert into UserAccounts(AccountName,AccountType,UserID,AgentID,ClientID)
+values(@BindMobile,2,@UserID,@AgentID,@ClientID)
+
 set @Err+=@@error
 
+if(@IsFirst=1)
+begin
+	update Clients set MobilePhone=@BindMobile where ClientID=@ClientID
+	set @Err+=@@error
+
+	Update Clients set GuideStep=0 where ClientID=@ClientID
+	set @Err+=@@error
+end
 if(@Err>0)
 begin
 	rollback tran

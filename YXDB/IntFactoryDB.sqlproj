@@ -533,7 +533,6 @@
     <None Include="Procedures\System\P_DeleteProcessCategory.sql" />
     <Build Include="Procedures\System\P_UpdateUserAccount.sql" />
     <Build Include="Procedures\System\P_UpdateUserAccountPwd.sql" />
-    <Build Include="Procedures\System\P_UpdateAccountBindMobile.sql" />
     <None Include="Procedures\System\P_BindOtherAccount.sql" />
     <None Include="Procedures\System\P_UnBindOtherAccount.sql" />
   </ItemGroup>
