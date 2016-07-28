@@ -111,9 +111,6 @@
     <None Include="Procedures\Stock\P_UpdateStorageStatus.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Procedures\System\P_GetUserByMDUserID.sql" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Procedures\System\P_InsterUser.sql" />
   </ItemGroup>
   <ItemGroup>
@@ -478,8 +475,7 @@
   <ItemGroup>
     <None Include="Procedures\Products\P_UpdateAttrValueSort.sql" />
     <None Include="Procedures\AliOrder\P_AddAliOrderDownloadPlan.sql" />
-    <None Include="Procedures\System\P_GetUserByAliMemberID.sql" />
-    <None Include="Procedures\Manage\M_BindClientAliMember.sql" />
+    <None Include="Procedures\System\P_GetUserByOtherAccount.sql" />
     <None Include="Procedures\Sales\p_GetOrderBaseInfoByID.sql" />
     <None Include="Procedures\Sales\P_UpdateOrderOver.sql" />
     <None Include="Procedures\P_GetPagerData.sql" />
@@ -527,16 +523,18 @@
     <None Include="Procedures\Custom\P_SetCustomerYXinfo.sql" />
     <None Include="Procedures\Sales\P_GetOrdersByYXCode.sql" />
     <None Include="Procedures\Sales\P_UpdateOrderTotalMoney.sql" />
-    <None Include="Procedures\System\P_GetUserByWeiXinID.sql" />
-    <None Include="Procedures\Manage\M_BindUserWeiXinID.sql" />
     <None Include="Procedures\Stock\P_GetGoodsDocByOrderID.sql" />
     <None Include="Procedures\Stock\P_GetStorageDocDetails.sql" />
-    <None Include="Procedures\Manage\M_UnBindUserWeiXinID.sql" />
     <None Include="Procedures\Products\P_DeleteUnit.sql" />
     <None Include="Procedures\Products\P_DeleteProductAttr.sql" />
     <None Include="Procedures\Products\P_DeleteProduct.sql" />
     <None Include="Procedures\Products\P_DeleteProductDetail.sql" />
     <None Include="Procedures\System\P_CreateProcessCategory.sql" />
     <None Include="Procedures\System\P_DeleteProcessCategory.sql" />
+    <Build Include="Procedures\System\P_UpdateUserAccount.sql" />
+    <Build Include="Procedures\System\P_UpdateUserAccountPwd.sql" />
+    <Build Include="Procedures\System\P_UpdateAccountBindMobile.sql" />
+    <None Include="Procedures\System\P_BindOtherAccount.sql" />
+    <None Include="Procedures\System\P_UnBindOtherAccount.sql" />
   </ItemGroup>
 </Project>

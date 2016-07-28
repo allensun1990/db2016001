@@ -31,7 +31,7 @@ AS
 					join WareHouse w on s.WareID=w.WareID
 					join DepotSeat dm on s.DepotID=dm.DepotID '
 
-	set @sqlText+='where s.ClientID='''+@ClientID+''' and P.Status<>9 and s.StockIn>s.StockOut '
+	set @sqlText+='where s.ClientID='''+@ClientID+''' and P.Status<>9 and d.Status<>9 and s.StockIn>s.StockOut '
 
 	if(@WareID<>'')
 	begin
