@@ -55,24 +55,6 @@ as
 		return
 	end
 
-	--任务标记为制版时 制版信息为空；任务标记为材料时 订单没有产品详情
-	if(@Mark=12)
-	begin
-		if(exists( select orderid from orders where orderid=@OrderID and ( (cast(Platemaking as varchar(max))='' or cast(Platemaking as varchar(max)) is  null) ) ) )
-		begin
-			set @Result=5;
-			return;
-		end
-	end
-	else if(@Mark=11 or @Mark=21)
-	begin
-		if(not exists(select AutoID from OrderDetail where orderid=@OrderID))
-		begin
-			set @Result=5;
-			return;
-		end
-	end
-
 	begin tran
 	declare @Err int=0
 	--更新任务进行状态为完成且加锁
