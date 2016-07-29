@@ -18,12 +18,13 @@ CREATE PROCEDURE [dbo].P_CreateOrderProcess
 @ProcessID nvarchar(64),
 @ProcessName nvarchar(100),
 @ProcessType int,
-@CategoryType int=1,
+@CategoryID nvarchar(64),
 @IsDefault int=0,
 @PlanDays int=7,
 @OwnerID nvarchar(64)='',
 @UserID nvarchar(64)='',
-@ClientID nvarchar(64)=''
+@ClientID nvarchar(64)='',
+@OtherProcessID nvarchar(64) output
 AS
 
 begin tran
@@ -31,79 +32,41 @@ begin tran
 
 declare @Err int=0
  
-if(@IsDefault=1)
+ set @OtherProcessID=''
+
+if exists(select CategoryID from OrderCategory where ClientID=@ClientID and CategoryID=@CategoryID)
 begin
-	Update OrderProcess set IsDefault=0 where IsDefault=1 and ClientID=@ClientID and ProcessType=@ProcessType
+	Insert into OrderProcess(ProcessID,ProcessName,ProcessType,CategoryID,IsDefault,Status,PlanDays,OwnerID,CreateUserID,ClientID)
+	values(@ProcessID,@ProcessName,@ProcessType,@CategoryID,0,1,@PlanDays,@OwnerID,@UserID,@ClientID)
+
+	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
+		select NEWID(),Name,@ProcessID,Sort,1,Mark,'',@UserID,@UserID,@ClientID from CategoryItems 
+		where CategoryID=@CategoryID and OrderType=@ProcessType and Type=2
+end
+else
+begin
+	
+	Insert into OrderCategory(CategoryID,Layers,ClientID,PID) values(@CategoryID,1,@ClientID,'')
+
+	Insert into OrderProcess(ProcessID,ProcessName,ProcessType,CategoryID,IsDefault,Status,PlanDays,OwnerID,CreateUserID,ClientID)
+	values(@ProcessID,@ProcessName,@ProcessType,@CategoryID,1,1,@PlanDays,@OwnerID,@UserID,@ClientID)
+
+	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
+		select NEWID(),Name,@ProcessID,Sort,1,Mark,'',@UserID,@UserID,@ClientID from CategoryItems 
+		where CategoryID=@CategoryID and OrderType=@ProcessType and Type=2
+
+	--另一类型流程
+    set @OtherProcessID = NewID()
+
+	Insert into OrderProcess(ProcessID,ProcessName,ProcessType,CategoryID,IsDefault,Status,PlanDays,OwnerID,CreateUserID,ClientID)
+	values(@OtherProcessID,@ProcessName,@ProcessType%2+1,@CategoryID,1,1,@PlanDays,@OwnerID,@UserID,@ClientID)
+
 	set @Err+=@@error
-end
 
-Insert into OrderProcess(ProcessID,ProcessName,ProcessType,CategoryType,IsDefault,Status,PlanDays,OwnerID,CreateUserID,ClientID)
-values(@ProcessID,@ProcessName,@ProcessType,@CategoryType,@IsDefault,1,@PlanDays,@OwnerID,@UserID,@ClientID)
+	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
+		select NEWID(),Name,@OtherProcessID,Sort,1,Mark,'',@UserID,@UserID,@ClientID from CategoryItems 
+		where CategoryID=@CategoryID and OrderType=@ProcessType%2+1 and Type=2
 
---打样
-if(@ProcessType=1 and @CategoryType=1)
-begin
-	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-	values (NEWID(),'面料/辅料',@ProcessID,1,1,11,'',@UserID,@UserID,@ClientID)
-	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-	values (NEWID(),'制版',@ProcessID,2,1,12,'',@UserID,@UserID,@ClientID)
-	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-	values (NEWID(),'做样衣',@ProcessID,3,1,0,'',@UserID,@UserID,@ClientID)
-	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-	values (NEWID(),'审版',@ProcessID,4,1,0,'',@UserID,@UserID,@ClientID)
-	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-	values (NEWID(),'核价',@ProcessID,5,1,16,'',@UserID,@UserID,@ClientID)
-	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-	values (NEWID(),'发货',@ProcessID,6,1,15,'',@UserID,@UserID,@ClientID)
-end
-else if(@ProcessType=1 and @CategoryType=2)
-begin
-	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-	values (NEWID(),'纱线/辅料',@ProcessID,1,1,11,'',@UserID,@UserID,@ClientID)
-	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-	values (NEWID(),'制版/工艺',@ProcessID,2,1,12,'',@UserID,@UserID,@ClientID)
-	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-	values (NEWID(),'织片',@ProcessID,3,1,0,'',@UserID,@UserID,@ClientID)
-	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-	values (NEWID(),'套口/缝盘',@ProcessID,4,1,0,'',@UserID,@UserID,@ClientID)
-	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-	values (NEWID(),'审版',@ProcessID,5,1,0,'',@UserID,@UserID,@ClientID)
-	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-	values (NEWID(),'核价',@ProcessID,6,1,16,'',@UserID,@UserID,@ClientID)
-	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-	values (NEWID(),'发货',@ProcessID,7,1,15,'',@UserID,@UserID,@ClientID)
-end
-else if(@ProcessType=2 and @CategoryType=1)
-begin
-	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-	values (NEWID(),'推码/工艺单',@ProcessID,1,1,22,'',@UserID,@UserID,@ClientID)
-	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-	values (NEWID(),'面料/辅料',@ProcessID,2,1,21,'',@UserID,@UserID,@ClientID)
-	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-	values (NEWID(),'裁剪',@ProcessID,3,1,23,'',@UserID,@UserID,@ClientID)
-	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-	values (NEWID(),'车缝',@ProcessID,4,1,24,'',@UserID,@UserID,@ClientID)
-	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-	values (NEWID(),'后整',@ProcessID,5,1,0,'',@UserID,@UserID,@ClientID)
-	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-	values (NEWID(),'品控',@ProcessID,6,1,0,'',@UserID,@UserID,@ClientID)
-	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-	values (NEWID(),'发货',@ProcessID,7,1,25,'',@UserID,@UserID,@ClientID)
-end
-else if(@ProcessType=2 and @CategoryType=2)
-begin
-	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-	values (NEWID(),'推码/工艺单',@ProcessID,1,1,22,'',@UserID,@UserID,@ClientID)
-	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-	values (NEWID(),'纱线/辅料',@ProcessID,2,1,21,'',@UserID,@UserID,@ClientID)
-	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-	values (NEWID(),'织片',@ProcessID,3,1,23,'',@UserID,@UserID,@ClientID)
-	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-	values (NEWID(),'套口/缝盘',@ProcessID,4,1,24,'',@UserID,@UserID,@ClientID)
-	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-	values (NEWID(),'品控',@ProcessID,5,1,0,'',@UserID,@UserID,@ClientID)
-	insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-	values (NEWID(),'发货',@ProcessID,6,1,25,'',@UserID,@UserID,@ClientID)
 end
 
 set @Err+=@@error

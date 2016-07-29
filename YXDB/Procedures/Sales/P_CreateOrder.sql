@@ -46,7 +46,7 @@ begin tran
 
 set @Result=0
 
-declare @Err int=0,@OwnerID nvarchar(64),@ProcessID nvarchar(64),@PoolID nvarchar(64),@OriginalID nvarchar(64)='',@TurnTimes int=1
+declare @Err int=0,@OwnerID nvarchar(64),@ProcessID nvarchar(64),@OriginalID nvarchar(64)='',@TurnTimes int=1
 
 if(@AgentID='')
 begin
@@ -71,18 +71,18 @@ begin
 	set @OrderCode=@OrderCode+'1'
 end
 
-if(@UserID<>'' and exists(select ProcessID from OrderProcess where  ClientID=@ClientID and ProcessType=@OrderType and OwnerID=@UserID and status<>9 ))
+if(@UserID<>'' and exists(select ProcessID from OrderProcess where  ClientID=@ClientID and ProcessType=@OrderType and CategoryID=@BigCategoryID and OwnerID=@UserID and status<>9 ))
 begin
 	select top 1 @ProcessID=ProcessID,@OwnerID=OwnerID from OrderProcess 
 	where ClientID=@ClientID and ProcessType=@OrderType and OwnerID=@UserID  and status<>9 order by IsDefault desc
 end
 else
 begin
-	select @ProcessID=ProcessID,@OwnerID=OwnerID from OrderProcess where ClientID=@ClientID and ProcessType=@OrderType and IsDefault=1 and status<>9
+	select @ProcessID=ProcessID,@OwnerID=OwnerID from OrderProcess where ClientID=@ClientID and ProcessType=@OrderType and CategoryID=@BigCategoryID and IsDefault=1 and status<>9
 end
 
 --款号已存在打样单
-if(@SourceType=3 and @GoodsCode<>'' and @OrderType=2 and exists(select AutoID from Orders where OrderType=1 and Status=3 and GoodsCode=@GoodsCode and ClientID=@ClientID))
+if(@SourceType=3 and @GoodsCode<>'' and @OrderType=2 and exists(select AutoID from Orders where OrderType=1 and Status<>9 and GoodsCode=@GoodsCode and ClientID=@ClientID))
 begin
 	select @OriginalID=OrderID,@CustomerID=CustomerID from Orders where OrderType=1 and Status=3 and GoodsCode=@GoodsCode and ClientID=@ClientID
 end
@@ -104,27 +104,23 @@ begin
 	Update Orders set TurnTimes=TurnTimes+1 where OrderID=@OriginalID
 	
 	update o set OriginalCode=od.OrderCode,BigCategoryID=od.BigCategoryID,CategoryID=od.CategoryID,FinalPrice=od.FinalPrice,TotalMoney=od.FinalPrice*o.PlanQuantity,IntGoodsCode=od.IntGoodsCode,GoodsName=od.GoodsName,
-			 Price=od.Price,ProfitPrice=od.ProfitPrice,CostPrice=od.CostPrice,Platemaking=od.Platemaking,PlateRemark=od.PlateRemark,OrderStatus=1,Status=4,GoodsID=od.GoodsID,OriginalPrice=od.FinalPrice,TurnTimes=od.TurnTimes
+			 Price=od.Price,ProfitPrice=od.ProfitPrice,CostPrice=od.CostPrice,Platemaking=od.Platemaking,PlateRemark=od.PlateRemark,GoodsID=od.GoodsID,OriginalPrice=od.FinalPrice,TurnTimes=od.TurnTimes
 			 from Orders o join Orders od on o.OriginalID=od.OrderID where o.OrderID=@OrderID
 
 	--复制打样材料列表
 	insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProdiverID )
 	select @OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProdiverID  from OrderDetail where OrderID=@OriginalID
 
-	Insert into OrderStatusLog(OrderID,Status,CreateUserID) values(@OrderID,4,@UserID)
 
 	--复制工艺说明
 	insert into PlateMaking(PlateID,OrderID,Title,Remark,Icon,Status,AgentID,CreateTime,CreateUserID,Type,OriginalID,OriginalPlateID)
 	select NEWID() as PlateID,@OrderID,p.Title,p.Remark,p.Icon,p.Status,p.AgentID,p.CreateTime,p.CreateUserID,p.Type,p.OrderID,p.PlateID from PlateMaking p
 	where p.OrderID=@OriginalID and p.status<>9
 
-	Update Customer set DHCount=DHCount+1 where CustomerID=@CustomerID
-
 end
 else 
-begin
-	Update Customer set DemandCount=DemandCount+1 where CustomerID=@CustomerID
-end
+
+Update Customer set DemandCount=DemandCount+1 where CustomerID=@CustomerID
 
 set @Err+=@@error
 

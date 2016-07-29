@@ -52,7 +52,7 @@ begin
 
 	while exists(select AutoID from #TempProducts where AutoID=@AutoID)
 	begin
-		select @ProductID=ProductID,@ProductDetailID=ProductDetailID,@Quantity=Quantity*@PlanQuantity,@BatchCode=BatchCode,@DRemark=Remark,@Price=Price,
+		select @ProductID=ProductID,@ProductDetailID=ProductDetailID,@Quantity=Quantity,@BatchCode=BatchCode,@DRemark=Remark,@Price=Price,
 		@UnitID=UnitID,@ProviderID= ProdiverID
 		from #TempProducts where AutoID=@AutoID
 

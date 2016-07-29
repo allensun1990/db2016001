@@ -48,6 +48,11 @@ begin
 		begin
 			Insert into OrderCategory(CategoryID,Layers,ClientID,PID) values(@CategoryID,1,@ClientID,'')
 		end
+		else
+		begin
+			set @AutoID+=1
+			continue;
+		end
 
 		select @Name=Name from ProcessCategory where CategoryID=@CategoryID
 
@@ -58,7 +63,7 @@ begin
 		values(@ProcessIDDY,@Name+'打样流程',1,1,1,0,@UserID,@UserID,@ClientID,@CategoryID)
 
 		insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-		select NEWID(),Name,@ProcessIDDY,1,1,11,'',@UserID,@UserID,@ClientID from CategoryItems 
+		select NEWID(),Name,@ProcessIDDY,Sort,1,Mark,'',@UserID,@UserID,@ClientID from CategoryItems 
 		where CategoryID=@CategoryID and OrderType=1 and Type=2
 
 		--大货流程

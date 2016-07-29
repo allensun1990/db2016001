@@ -136,3 +136,30 @@ select AliMemberID,3,'',UserID,AgentID,ClientID from Users where AliMemberID is 
 insert into UserAccounts(AccountName,AccountType,ProjectID,UserID,AgentID,ClientID)
 select WeiXinID,4,'',UserID,AgentID,ClientID from Users where WeiXinID is not null and WeiXinID<>''
 
+--处理流程和品类 CategoryID 需要更改
+update OrderProcess set CategoryID='4902b471-7f9a-42a2-b892-14caabe14ec2' where CategoryType=1 and Status<>9
+update OrderProcess set CategoryID='54d1c8bd-bb7c-45d8-a9c1-8c8b6974c221' where CategoryType=2 and Status<>9
+GO
+truncate table OrderCategory
+GO
+insert into OrderCategory (CategoryID,ClientID,Layers,PID) 
+select CategoryID,ClientID,1,'' from OrderProcess where CategoryID is not null and CategoryID<>'' group by CategoryID,ClientID 
+GO
+update o set BigCategoryID=p.CategoryID from Orders o join OrderProcess p on o.ProcessID=p.ProcessID
+
+--处理待大货为需求单
+Update Orders set OrderStatus=0 where Status=4
+GO
+update Customer set DYCount=0,DHCount=0,DemandCount=0
+GO
+update C set DemandCount=o.Quantity from Customer c join
+(select CustomerID,COUNT(AutoID) Quantity from Orders where OrderStatus=0 group by CustomerID) o on c.CustomerID=o.CustomerID
+
+update C set DYCount=o.Quantity from Customer c join
+(select CustomerID,COUNT(AutoID) Quantity from Orders where OrderStatus>0 and OrderStatus<>9 and OrderType=1 group by CustomerID) o on c.CustomerID=o.CustomerID
+
+update C set DHCount=o.Quantity from Customer c join
+(select CustomerID,COUNT(AutoID) Quantity from Orders where OrderStatus>0 and OrderStatus<>9 and OrderType=2 group by CustomerID) o on c.CustomerID=o.CustomerID
+
+
+

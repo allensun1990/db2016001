@@ -33,6 +33,8 @@ declare @Err int=0
 
 Update OrderProcess set Status=9 where ProcessID=@ProcessID
 
+delete from [OrderStage] where ProcessID=@ProcessID
+
 set @Err+=@@error
 set @Result=1
 
