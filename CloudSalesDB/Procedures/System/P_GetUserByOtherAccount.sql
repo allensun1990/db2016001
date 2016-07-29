@@ -1,20 +1,20 @@
 ﻿Use [CloudSales1.0_dev]
 GO
-IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'GetUserByMDUserID')
+IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'P_GetUserByOtherAccount')
 BEGIN
-	DROP  Procedure  GetUserByMDUserID
+	DROP  Procedure  P_GetUserByOtherAccount
 END
 
 GO
 /***********************************************************
-过程名称： GetUserByMDUserID
+过程名称： P_GetUserByOtherAccount
 功能描述： 根据明道ID获取信息
 参数说明：	 
 编写日期： 2015/10/20
 程序作者： Allen
-调试记录： exec GetUserByMDUserID ''
+调试记录： exec P_GetUserByOtherAccount ''
 ************************************************************/
-CREATE PROCEDURE [dbo].[GetUserByMDUserID]
+CREATE PROCEDURE [dbo].[P_GetUserByOtherAccount]
 @MDUserID nvarchar(64),
 @MDProjectID nvarchar(64),
 @AccouType int=3
