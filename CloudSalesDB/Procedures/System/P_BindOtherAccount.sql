@@ -1,8 +1,8 @@
 ﻿Use [CloudSales1.0_dev]
 GO
-IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'M_BindOtherAccount')
+IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'P_BindOtherAccount')
 BEGIN
-	DROP  Procedure  M_BindOtherAccount
+	DROP  Procedure  P_BindOtherAccount
 END
 
 GO
@@ -12,9 +12,9 @@ GO
 参数说明：	 
 编写日期： 2016/7/17
 程序作者： Michaux
-调试记录： exec M_BindOtherAccount 
+调试记录： exec P_BindOtherAccount 
 ************************************************************/
-CREATE PROCEDURE [dbo].[M_BindOtherAccount]
+CREATE PROCEDURE [dbo].[P_BindOtherAccount]
 @ClientiD nvarchar(64),
 @AgentID nvarchar(64),
 @UserID nvarchar(64),
