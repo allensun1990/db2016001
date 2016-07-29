@@ -28,15 +28,10 @@ begin tran
 declare @Err int=0,@Status int,@TotalMoney decimal(18,4),@PurchaseStatus int, @OrderType int
 
 
-select @Status=Status,@PurchaseStatus=PurchaseStatus,@OrderType=@OrderType from Orders where OrderID=@OrderID  and ClientID=@ClientID
+select @Status=OrderStatus,@PurchaseStatus=PurchaseStatus,@OrderType=@OrderType from Orders where OrderID=@OrderID  and ClientID=@ClientID
 
-if(@OrderType=1 and @Status=3)
-begin
-	rollback tran
-	return
-end
 
-if(@OrderType=2 and (@PurchaseStatus=1 or @Status>5))
+if(@Status<>1 or @PurchaseStatus=1)
 begin
 	rollback tran
 	return

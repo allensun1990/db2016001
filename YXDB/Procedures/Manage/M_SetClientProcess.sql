@@ -48,6 +48,11 @@ begin
 		begin
 			Insert into OrderCategory(CategoryID,Layers,ClientID,PID) values(@CategoryID,1,@ClientID,'')
 		end
+		else
+		begin
+			set @AutoID+=1
+			continue;
+		end
 
 		select @Name=Name from ProcessCategory where CategoryID=@CategoryID
 
