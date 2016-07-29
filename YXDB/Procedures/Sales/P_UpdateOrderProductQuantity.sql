@@ -35,7 +35,7 @@ begin
 	return
 end
 
-update OrderDetail set Quantity=@Quantity,TotalMoney=Price*(@Quantity+Loss) where OrderID=@OrderID and AutoID=@AutoID
+update OrderDetail set Quantity=@Quantity,TotalMoney=Price*(@Quantity+Loss),LossRate=Loss/@Quantity where OrderID=@OrderID and AutoID=@AutoID
 
 select @TotalMoney=sum(TotalMoney) from OrderDetail where OrderID=@OrderID
 

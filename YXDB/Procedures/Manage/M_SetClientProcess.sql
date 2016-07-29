@@ -63,7 +63,7 @@ begin
 		values(@ProcessIDDY,@Name+'打样流程',1,1,1,0,@UserID,@UserID,@ClientID,@CategoryID)
 
 		insert into [OrderStage] (StageID,StageName,ProcessID,Sort,Status,Mark,PID,OwnerID,CreateUserID,ClientID) 
-		select NEWID(),Name,@ProcessIDDY,1,1,11,'',@UserID,@UserID,@ClientID from CategoryItems 
+		select NEWID(),Name,@ProcessIDDY,Sort,1,Mark,'',@UserID,@UserID,@ClientID from CategoryItems 
 		where CategoryID=@CategoryID and OrderType=1 and Type=2
 
 		--大货流程

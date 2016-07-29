@@ -27,16 +27,14 @@ as
 set @result=0
 if((select COUNT(1) from CustomerColor where Status<>9 and  ClientID=@ClientID and AgentID=@AgentID and ColorValue=@ColorValue )>0)
 begin
-set @result=-1
+	set @result=-1
 end
 else
 begin
 	declare @ColorID int
 	select @ColorID=isnull(MAX(ColorID),0)+1 from CustomerColor where ClientID=@ClientID and AgentID=@AgentID
-	insert into CustomerColor
-	(ColorID,ColorName,ColorValue,Status,AgentID,ClientID,CreateTime,CreateUserID) 
-	values
-	(@ColorID,@ColorName,@ColorValue,@Status,@AgentID,@ClientID,GETDATE(),@CreateUserID)
+	insert into CustomerColor(ColorID,ColorName,ColorValue,Status,AgentID,ClientID,CreateTime,CreateUserID) 
+	values(@ColorID,@ColorName,@ColorValue,@Status,@AgentID,@ClientID,GETDATE(),@CreateUserID)
 	 set @result=@ColorID
  end
 GO
