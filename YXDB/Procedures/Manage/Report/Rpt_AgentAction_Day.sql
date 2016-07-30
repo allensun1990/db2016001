@@ -61,7 +61,6 @@ update M_Report_AgentAction_Day set Vitality=cast( round((CustomerCount+OrdersCO
 
 
 --登录日志
-
 insert into Report_AgentLogin_Day(AgentID,ClientID,ReportDate,ReportUserCount,ReportTimes)
 select AgentID,ClientID,ReportDate,COUNT(UserID),SUM(Times) from
 (select UserID,AgentID,ClientID,@ReportDate ReportDate,COUNT(0) Times from Log_Login 

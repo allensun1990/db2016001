@@ -43,7 +43,7 @@ AS
 	@condition nvarchar(4000),
 	@key nvarchar(100)
 
-	select @tableName='Products P join Providers B on P.ProdiverID=B.ProviderID',
+	select @tableName='Products P left join Providers B on P.ProdiverID=B.ProviderID',
 	@columns='P.*,B.Name ProviderName ',@key='P.AutoID'
 	set @condition=' P.ClientID='''+@ClientID+''' and P.Status<>9 '
 	if(@keyWords <> '')

@@ -385,9 +385,6 @@
     <None Include="Procedures\Report\R_GetUserOpportunitys.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Procedures\RepotLog\R_GetAgentActions_Log.sql" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Procedures\RepotLog\R_GetClientUpcomings.sql" />
   </ItemGroup>
   <ItemGroup>
@@ -435,9 +432,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\Sales\P_CreateOrderGoodsDoc.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Procedures\RepotLog\R_GetClientActions.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\Sales\P_UpdateOrderCustomer.sql" />
