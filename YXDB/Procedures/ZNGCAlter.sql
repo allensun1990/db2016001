@@ -1,4 +1,6 @@
 ﻿
+return
+
 --删除无效菜单和权限
 delete from Menu where MenuCode in ('103029001','103029003','103030301','103030303','103030401','103030403')
 
@@ -27,8 +29,6 @@ insert into ProductStock(ProductDetailID,ProductID,WareID,DepotID,ClientID,Stock
 select ProductDetailID,ProductID,WareID,DepotID,ClientID,StockIn,StockOut from #tempstock
 Go
 Drop table #tempstock
-
-
 
 --注册来源
 alter table Clients add RegisterType int default 0
@@ -67,7 +67,7 @@ update o set BigCategoryID=p.CategoryID from Orders o join OrderProcess p on o.P
 
 
 --处理待大货为需求单
-Update Orders set OrderStatus=0 where Status=4
+Update Orders set OrderStatus=0,Status=0 where Status=4
 GO
 update Customer set DYCount=0,DHCount=0,DemandCount=0
 GO

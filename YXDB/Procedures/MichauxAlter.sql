@@ -374,3 +374,17 @@ alter table dbo.TaskColor drop column AgentID
 alter table dbo.TaskMember drop column AgentID
 alter table dbo.Teams drop column AgentID
 alter table dbo.Users drop column AgentID
+
+--删除所有存储过程
+--SELECT identity(int ,1,1) as  id , name Into #table FROM sysobjects  WHERE (xtype = 'p')
+--declare @tablename nvarchar(100), @execSQL nvarchar(300), @id int, @count int
+--select @count=max(id) from #table
+--set @id=1
+--while @id<=@count
+--begin
+--	select @tablename=[name] from #table where id=@id
+--	set @id=@id+1
+--	set @execSQL =' drop Procedure '+ @tablename
+--	exec (@execSQL)
+--end
+--drop table #table
