@@ -25,7 +25,6 @@ CREATE PROCEDURE [dbo].[P_GetCustomers]
 	@Mark int=-1,
 	@SearchUserID nvarchar(64)='',
 	@SearchTeamID nvarchar(64)='',
-	@SearchAgentID nvarchar(64)='',
 	@FirstName nvarchar(10)='',
 	@Keywords nvarchar(4000),
 	@BeginTime nvarchar(50)='',
@@ -87,10 +86,6 @@ AS
 		begin
 			insert into #UserID select UserID from TeamUser where TeamID=@SearchTeamID and status=1
 			set @condition +=' and cus.OwnerID in (select UserID from #UserID) '
-		end
-		else if(@SearchAgentID<>'')
-		begin
-			set @condition +=' and cus.AgentID = '''+@SearchAgentID+''''
 		end
 	end
 

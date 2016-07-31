@@ -16,7 +16,6 @@ GO
 ************************************************************/
 CREATE PROCEDURE [dbo].[P_DeleteRole]
 @RoleID nvarchar(64),
-@AgentID nvarchar(64),
 @Result int output --0：失败，1：成功，10002 角色存在员工
 AS
 

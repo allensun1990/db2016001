@@ -31,8 +31,8 @@ insert into Report_AgentAction_Day(ObjectType,ActionType,ReportDate,ReportValue,
 select ObjectType,ActionType, ReportDate, str(ReportValue),ClientID from #temp
 
 --日志处理（新）
-insert into M_Report_AgentAction_Day(AgentID,ClientID,ReportDate)
-select AgentID,ClientID,@ReportDate from Agents
+insert into M_Report_AgentAction_Day(ClientID,ReportDate)
+select ClientID,@ReportDate from Agents
 
 update d set CustomerCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.ClientID=t.ClientID where t.ObjectType=1
 update d set OrdersCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.ClientID=t.ClientID where t.ObjectType=2

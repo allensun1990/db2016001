@@ -26,7 +26,7 @@ begin tran
 set @Result=0
 
 --订单信息
-declare @Err int=0,@Status int,@OrderAgentID nvarchar(64),@OrderCode nvarchar(50),@TotalMoney decimal(18,4),@ReturnStatus nvarchar(64)
+declare @Err int=0,@Status int,@OrderCode nvarchar(50),@TotalMoney decimal(18,4),@ReturnStatus nvarchar(64)
 select @Status=Status,@OrderCode=OrderCode,@TotalMoney=TotalMoney,@ReturnStatus=ReturnStatus from Orders where OrderID=@OrderID and ClientID=@ClientID
 
 if(@Status<>2 or @ReturnStatus=1)

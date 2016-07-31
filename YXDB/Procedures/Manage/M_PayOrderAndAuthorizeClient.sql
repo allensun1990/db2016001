@@ -26,7 +26,7 @@ AS
 begin tran
 
 declare @Err int ,
-	@M_ClientID nvarchar(64),@M_AgentID nvarchar(64),
+	@M_ClientID nvarchar(64),
 	@UserQuantity int,@Years int,
 	@RealAmount decimal(18,3),@Type int,
 	@EndTime datetime,@BeginTime datetime
@@ -42,7 +42,7 @@ end
 --变量赋值
 select @M_ClientID=ClientID,@UserQuantity=UserQuantity,@Years=Years,@RealAmount=RealAmount,@Type=Type from  ClientOrder where OrderID=@M_OrderID
 
-select @BeginTime=EndTime from Agents where AgentID=@M_AgentID
+select @BeginTime=EndTime from Clients where ClientID=@M_ClientID
 
 --购买或续费
 if(@Type=1 or @Type=3)

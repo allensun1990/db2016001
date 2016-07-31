@@ -37,7 +37,6 @@ CREATE PROCEDURE [dbo].[P_CreateOrder]
 @Address nvarchar(200)='',
 @Remark nvarchar(4000)='',
 @UserID nvarchar(64),
-@AgentID nvarchar(64)='',
 @ClientID nvarchar(64),
 @Result int=0 output
 AS

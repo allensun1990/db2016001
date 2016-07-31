@@ -43,18 +43,18 @@ select ObjectType,ActionType, ReportDate, str(ReportValue),ClientID from #temp
 insert into M_Report_AgentAction_Day(ClientID,ReportDate)
 select ClientID,@ReportDate from Agents
 
-update d set CustomerCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.AgentID=t.AgentID where t.ObjectType=1
-update d set OrdersCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.AgentID=t.AgentID where t.ObjectType=2
-update d set ActivityCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.AgentID=t.AgentID where t.ObjectType=3
-update d set ProductCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.AgentID=t.AgentID where t.ObjectType=4
-update d set UsersCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.AgentID=t.AgentID where t.ObjectType=5
-update d set AgentCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.AgentID=t.AgentID where t.ObjectType=6
-update d set OpportunityCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.AgentID=t.AgentID where t.ObjectType=7
-update d set PurchaseCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.AgentID=t.AgentID where t.ObjectType=8
-update d set WarehousingCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.AgentID=t.AgentID where t.ObjectType=9
-update d set TaskCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.AgentID=t.AgentID where t.ObjectType=10
-update d set DownOrderCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.AgentID=t.AgentID where t.ObjectType=11
-update d set ProductOrderCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.AgentID=t.AgentID where t.ObjectType=12
+update d set CustomerCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.ClientID=t.ClientID where t.ObjectType=1
+update d set OrdersCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.ClientID=t.ClientID where t.ObjectType=2
+update d set ActivityCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.ClientID=t.ClientID where t.ObjectType=3
+update d set ProductCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.ClientID=t.ClientID where t.ObjectType=4
+update d set UsersCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.ClientID=t.ClientID where t.ObjectType=5
+update d set AgentCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.ClientID=t.ClientID where t.ObjectType=6
+update d set OpportunityCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.ClientID=t.ClientID where t.ObjectType=7
+update d set PurchaseCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.ClientID=t.ClientID where t.ObjectType=8
+update d set WarehousingCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.ClientID=t.ClientID where t.ObjectType=9
+update d set TaskCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.ClientID=t.ClientID where t.ObjectType=10
+update d set DownOrderCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.ClientID=t.ClientID where t.ObjectType=11
+update d set ProductOrderCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.ClientID=t.ClientID where t.ObjectType=12
 update d set UserNum=UserCount from ( select isnull(Count(ClientID),0) as UserCount ,Users.ClientID from Users where Status=1  group by Users.ClientID) a join  M_Report_AgentAction_Day d  on a.ClientID=d.ClientID where  d.ReportDate=@ReportDate
 update M_Report_AgentAction_Day set Vitality=cast( round((CustomerCount+OrdersCOunt+ ActivityCount+ProductCount+UsersCount+AgentCount+OpportunityCount+PurchaseCount+WarehousingCount+TaskCount+DownOrderCount+ProductCount+ProductOrderCount)
  / cast(UserNum as decimal(18,4)  ),4) as  decimal(18,4)) where ReportDate=@ReportDate

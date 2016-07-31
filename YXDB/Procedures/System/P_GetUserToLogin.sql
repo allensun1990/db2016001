@@ -20,7 +20,7 @@ CREATE PROCEDURE [dbo].[P_GetUserToLogin]
 @Result int output  --1:查询正常；2：用户名不存在；3：用户密码有误
 AS
 
-declare @UserID nvarchar(64),@ClientID nvarchar(64),@AgentID nvarchar(64),@RoleID nvarchar(64)
+declare @UserID nvarchar(64),@ClientID nvarchar(64),@RoleID nvarchar(64)
 
 --账号不存在
 IF  EXISTS(select AutoID from UserAccounts where AccountName=@LoginName and AccountType in(1,2))

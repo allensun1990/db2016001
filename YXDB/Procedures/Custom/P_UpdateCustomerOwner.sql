@@ -18,7 +18,6 @@ CREATE PROCEDURE [dbo].[P_UpdateCustomerOwner]
 	@CustomerID nvarchar(64)='',
 	@UserID nvarchar(64)='',
 	@OperateID nvarchar(64)='',
-	@AgentID nvarchar(64)='',
 	@ClientID nvarchar(64)=''
 AS
 	
