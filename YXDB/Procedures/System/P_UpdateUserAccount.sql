@@ -18,7 +18,6 @@ CREATE PROCEDURE [dbo].[P_UpdateUserAccount]
 @UserID nvarchar(64),
 @LoginName nvarchar(200),
 @LoginPwd nvarchar(200)='',
-@AgentID nvarchar(64)='',
 @ClientID nvarchar(64)=''
 AS
 
@@ -40,8 +39,8 @@ begin
 	return
 end
 
-insert into UserAccounts(AccountName,AccountType,UserID,AgentID,ClientID)
-values(@LoginName,1,@UserID,@AgentID,@ClientID)
+insert into UserAccounts(AccountName,AccountType,UserID,ClientID)
+values(@LoginName,1,@UserID,@ClientID)
 
 if(@LoginPwd<>'')
 begin

@@ -19,7 +19,6 @@ CREATE PROCEDURE [dbo].[P_UpdateOrderProductQuantity]
 	@AutoID int ,
 	@Quantity decimal(18,4)=1 ,
 	@OperateID nvarchar(64)='',
-	@AgentID nvarchar(64)='',
 	@ClientID nvarchar(64)=''
 AS
 	
@@ -35,7 +34,7 @@ begin
 	return
 end
 
-update OrderDetail set Quantity=@Quantity,TotalMoney=Price*(@Quantity+Loss),LossRate=Loss/@Quantity where OrderID=@OrderID and AutoID=@AutoID
+update OrderDetail set Quantity=@Quantity,TotalMoney=Price*(@Quantity+Loss) where OrderID=@OrderID and AutoID=@AutoID
 
 select @TotalMoney=sum(TotalMoney) from OrderDetail where OrderID=@OrderID
 

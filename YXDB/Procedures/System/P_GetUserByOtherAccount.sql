@@ -19,12 +19,12 @@ CREATE PROCEDURE [dbo].[P_GetUserByOtherAccount]
 @Account nvarchar(64)
 AS
 
-declare @UserID nvarchar(64),@ClientID nvarchar(64),@AgentID nvarchar(64),@RoleID nvarchar(64)
+declare @UserID nvarchar(64),@ClientID nvarchar(64),@RoleID nvarchar(64)
 IF  EXISTS(select AutoID from UserAccounts where AccountName=@Account and AccountType = @AccountType )
 begin
 
 	select @UserID=UserID from UserAccounts where AccountName=@Account and AccountType = @AccountType
-	select @ClientID=ClientID,@AgentID=AgentID,@RoleID=RoleID from Users where UserID=@UserID
+	select @ClientID=ClientID,@RoleID=RoleID from Users where UserID=@UserID
 
 	select * from Users where UserID=@UserID
 

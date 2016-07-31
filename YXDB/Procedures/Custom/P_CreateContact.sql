@@ -26,7 +26,6 @@ CREATE PROCEDURE [dbo].[P_CreateContact]
 @Jobs nvarchar(200)='',
 @Description nvarchar(500)='',
 @CreateUserID nvarchar(64)='',
-@AgentID nvarchar(64)='',
 @ClientID nvarchar(64)
 AS
 begin tran
@@ -40,8 +39,8 @@ begin
 	set @Type=1
 end
 
-insert into Contact(ContactID,Name,Type,MobilePhone,OfficePhone,CityCode,Email,Jobs,Address,Status,OwnerID,CustomerID,CreateUserID,AgentID,ClientID,Description)
-	values(@ContactID,@Name,@Type,@MobilePhone,@OfficePhone,@CityCode,@Email,@Jobs,@Address,1,'',@CustomerID,@CreateUserID,@AgentID,@ClientID,@Description)
+insert into Contact(ContactID,Name,Type,MobilePhone,OfficePhone,CityCode,Email,Jobs,Address,Status,OwnerID,CustomerID,CreateUserID,ClientID,Description)
+	values(@ContactID,@Name,@Type,@MobilePhone,@OfficePhone,@CityCode,@Email,@Jobs,@Address,1,'',@CustomerID,@CreateUserID,@ClientID,@Description)
 
 if(@Err>0)
 begin

@@ -36,7 +36,6 @@ CREATE PROCEDURE [dbo].[P_GetCustomers]
 	@totalCount int output ,
 	@pageCount int output,
 	@UserID nvarchar(64)='',
-	@AgentID nvarchar(64),
 	@ClientID nvarchar(64)
 AS
 	declare @tableName nvarchar(4000),

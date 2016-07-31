@@ -18,7 +18,6 @@ CREATE PROCEDURE [dbo].[P_UpdateProductDetail]
 @DetailID nvarchar(64),
 @ProductCode nvarchar(200),
 @ProductID nvarchar(64),
-@BigPrice decimal(18,2),
 @AttrList nvarchar(max),
 @ValueList nvarchar(max),
 @AttrValueList nvarchar(max),
@@ -51,7 +50,7 @@ begin
 end
 
 update ProductDetail set DetailsCode=@ProductCode ,[SaleAttr]=@AttrList,[AttrValue]=@ValueList,[SaleAttrValue]=@AttrValueList,[Price]=@Price,Remark=@Remark,
-					[Weight]=@Weight,[ShapeCode]=@ShapeCode ,BigPrice=@BigPrice,ImgS=@ImgS,[Description]=@Description ,[UpdateTime]=getdate()
+					[Weight]=@Weight,[ShapeCode]=@ShapeCode ,ImgS=@ImgS,[Description]=@Description ,[UpdateTime]=getdate()
 where ProductDetailID=@DetailID
 
 set @Err+=@@Error

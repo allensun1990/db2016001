@@ -13,8 +13,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
 /***********************************************************
 过程名称： M_GetClientOrders
 功能描述： 查询客户订单列表
@@ -31,7 +29,6 @@ Create PROCEDURE [M_GetClientOrders]
 @Type int=-1,
 @BeginDate nvarchar(100),
 @EndDate nvarchar(100),
-@AgentID nvarchar(64),
 @ClientID nvarchar(64),
 @pageSize int,
 @pageIndex int,
@@ -53,8 +50,7 @@ AS
 	begin
 		set @condition+=' and ( charindex ('''+@KeyWords+''',b.CompanyName)>0 or  charindex ('''+@KeyWords+''',b.ClientCode)>0 )'
 	end
-	if(@AgentID<>'')
-		set @condition+=' and a.AgentID='''+@AgentID+''''
+
 	if(@ClientID<>'')
 		set @condition+=' and a.clientID='''+@ClientID+''''
 

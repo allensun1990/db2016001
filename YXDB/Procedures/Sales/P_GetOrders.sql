@@ -26,7 +26,6 @@ CREATE PROCEDURE [dbo].[P_GetOrders]
 	@Mark int=-1,
 	@SearchUserID nvarchar(64)='',
 	@SearchTeamID nvarchar(64)='',
-	@SearchAgentID nvarchar(64)='',
 	@EntrustClientID nvarchar(64)='',
 	@Keywords nvarchar(4000),
 	@BeginTime nvarchar(50)='',
@@ -37,7 +36,6 @@ CREATE PROCEDURE [dbo].[P_GetOrders]
 	@totalCount int output ,
 	@pageCount int output,
 	@UserID nvarchar(64)='',
-	@AgentID nvarchar(64),
 	@ClientID nvarchar(64)
 AS
 	declare @tableName nvarchar(4000),
@@ -106,10 +104,6 @@ AS
 		begin
 			insert into #UserID select UserID from TeamUser where TeamID=@SearchTeamID and status=1
 			set @condition +=' and o.OwnerID in (select UserID from #UserID) '
-		end
-		else if(@SearchAgentID<>'')
-		begin
-			set @condition +=' and o.AgentID = '''+@SearchAgentID+''''
 		end
 		else
 		begin

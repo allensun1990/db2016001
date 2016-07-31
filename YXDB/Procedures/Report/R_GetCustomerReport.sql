@@ -20,7 +20,6 @@ CREATE PROCEDURE [dbo].[R_GetCustomerReport]
 	@EndTime nvarchar(50)='',
 	@UserID nvarchar(64)='',
 	@TeamID nvarchar(64)='',
-	@AgentID nvarchar(64),
 	@ClientID nvarchar(64)
 AS
 
@@ -43,10 +42,7 @@ begin
 		insert into #UserID select UserID from TeamUser where TeamID=@TeamID and status=1
 		set @SqlText +=' and cm.OwnerID in (select UserID from #UserID) '
 	end
-	else
-	begin
-		set @SqlText +=' and cm.AgentID = '''+@AgentID+''''
-	end
+
 
 	if(@BeginTime<>'')
 	begin
@@ -74,10 +70,6 @@ begin
 		insert into #UserID select UserID from TeamUser where TeamID=@TeamID and status=1
 		set @SqlText +=' and cm.OwnerID in (select UserID from #UserID) '
 	end
-	else
-	begin
-		set @SqlText +=' and cm.AgentID = '''+@AgentID+''''
-	end
 
 	if(@BeginTime<>'')
 	begin
@@ -104,10 +96,6 @@ begin
 	begin
 		insert into #UserID select UserID from TeamUser where TeamID=@TeamID and status=1
 		set @SqlText +=' and cm.OwnerID in (select UserID from #UserID) '
-	end
-	else
-	begin
-		set @SqlText +=' and cm.AgentID = '''+@AgentID+''''
 	end
 
 	if(@BeginTime<>'')

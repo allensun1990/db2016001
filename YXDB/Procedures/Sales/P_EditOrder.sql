@@ -27,7 +27,6 @@ CREATE PROCEDURE [dbo].[P_EditOrder]
 	@ExpressType int=0,
 	@Remark nvarchar(500)='',
 	@UserID nvarchar(64)='',
-	@AgentID nvarchar(64)='',
 	@ClientID nvarchar(64)='',
 	@Result int output
 AS
@@ -56,13 +55,13 @@ begin
 	end
 	else
 	begin
-		update Orders set IntGoodsCode=@IntGoodsCode,GoodsName=@GoodsName,PersonName=@PersonName,MobileTele=@MobileTele,CityCode=@CityCode,Address=@Address,PostalCode=@PostalCode,TypeID=@TypeID,ExpressType=@ExpressType,Remark=@Remark
+		update Orders set IntGoodsCode=@IntGoodsCode,GoodsName=@GoodsName,PersonName=@PersonName,MobileTele=@MobileTele,CityCode=@CityCode,Address=@Address,PostalCode=@PostalCode,ExpressType=@ExpressType,Remark=@Remark
 			  where OrderID=@OrderID and ClientID=@ClientID 
 	end
 end
 else
 begin
-	update Orders set PersonName=@PersonName,MobileTele=@MobileTele,CityCode=@CityCode,Address=@Address,PostalCode=@PostalCode,TypeID=@TypeID,ExpressType=@ExpressType,Remark=@Remark
+	update Orders set PersonName=@PersonName,MobileTele=@MobileTele,CityCode=@CityCode,Address=@Address,PostalCode=@PostalCode,ExpressType=@ExpressType,Remark=@Remark
 			  where OrderID=@OrderID and ClientID=@ClientID 
 end
 

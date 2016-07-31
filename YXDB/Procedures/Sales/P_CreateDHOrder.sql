@@ -45,23 +45,17 @@ begin
 	select @ProcessID=ProcessID,@OwnerID=OwnerID from OrderProcess where ClientID=@ClientID and ProcessType=2 and IsDefault=1 and status<>9
 end
 
-insert into Orders(OrderID,OrderCode,CategoryID,TypeID,OrderType,SourceType,OrderStatus,Status,ProcessID,PlanPrice,FinalPrice,PlanQuantity,PlanType,TaskCount,TaskOver,OrderImage,OriginalID,OriginalCode ,
-					Price,CostPrice,ProfitPrice,TotalMoney,CityCode,Address,PersonName,MobileTele,Remark,CustomerID,OwnerID,CreateTime,AgentID,ClientID,Platemaking,PlateRemark,
+insert into Orders(OrderID,OrderCode,CategoryID,OrderType,SourceType,OrderStatus,Status,ProcessID,PlanPrice,FinalPrice,PlanQuantity,TaskCount,TaskOver,OrderImage,OriginalID,OriginalCode ,
+					Price,CostPrice,ProfitPrice,TotalMoney,CityCode,Address,PersonName,MobileTele,Remark,CustomerID,OwnerID,CreateTime,ClientID,Platemaking,
 					GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,Discount,OriginalPrice,IntGoodsCode,GoodsName,TurnTimes,YXOrderID)
-select @OrderID,@OrderCode,CategoryID,TypeID,2,1,1,4,@ProcessID,PlanPrice,@Price,0,PlanType,0,0,OrderImage,OrderID,OrderCode,
-		Price,CostPrice,ProfitPrice,0,CityCode,Address,PersonName,MobileTele,Remark,CustomerID,@OwnerID,getdate(),AgentID,ClientID,Platemaking,PlateRemark,
+select @OrderID,@OrderCode,CategoryID,2,1,0,0,@ProcessID,PlanPrice,@Price,0,0,0,OrderImage,OrderID,OrderCode,
+		Price,CostPrice,ProfitPrice,0,CityCode,Address,PersonName,MobileTele,Remark,CustomerID,@OwnerID,getdate(),ClientID,Platemaking,
 		GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,@Discount,FinalPrice,IntGoodsCode,GoodsName,TurnTimes+1,@YXOrderID from Orders where OrderID=@OriginalID
 	
 --复制打样材料列表
-insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProdiverID )
-select @OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProdiverID  from OrderDetail where OrderID=@OriginalID
+insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID )
+select @OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID  from OrderDetail where OrderID=@OriginalID
 
---复制工艺说明
-insert into PlateMaking(PlateID,OrderID,Title,Remark,Icon,Status,AgentID,CreateTime,CreateUserID,Type,OriginalID,OriginalPlateID)
-select NEWID() as PlateID,@OrderID,p.Title,p.Remark,p.Icon,p.Status,p.AgentID,p.CreateTime,p.CreateUserID,p.Type,p.OrderID,p.PlateID from PlateMaking p
-where p.OrderID=@OriginalID and p.status<>9
-
-Insert into OrderStatusLog(OrderID,Status,CreateUserID) values(@OrderID,4,@OperateID)
 
 Update Orders set TurnTimes=TurnTimes+1 where OrderID=@OriginalID
 

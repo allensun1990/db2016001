@@ -38,7 +38,7 @@ begin
 	declare @AutoID int=1,@DepotID nvarchar(64),@ProductDetailID nvarchar(64)
 
 
-	select identity(int,1,1) as AutoID,ProductDetailID,ProductID, UnitID,Quantity,Price,DepotID,BatchCode,Remark,s.ProdiverID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS into #TempProducts 
+	select identity(int,1,1) as AutoID,ProductDetailID,ProductID, UnitID,Quantity,Price,DepotID,Remark,s.ProviderID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS into #TempProducts 
 	from ShoppingCart s where [GUID]=@UserID and OrderType=@DocType and UserID=@UserID
 
 	while exists(select AutoID from #TempProducts where AutoID=@AutoID)

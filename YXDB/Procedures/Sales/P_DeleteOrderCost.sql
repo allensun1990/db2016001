@@ -18,7 +18,6 @@ CREATE PROCEDURE [dbo].[P_DeleteOrderCost]
 	@OrderID nvarchar(64),
 	@AutoID int,
 	@OperateID nvarchar(64)='',
-	@AgentID nvarchar(64)='',
 	@ClientID nvarchar(64)=''
 AS
 	

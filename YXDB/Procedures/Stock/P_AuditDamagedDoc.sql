@@ -17,7 +17,6 @@ GO
 CREATE PROCEDURE [dbo].[P_AuditDamagedDoc]
 @DocID nvarchar(64),
 @UserID nvarchar(64),
-@AgentID nvarchar(64)='',
 @ClientID nvarchar(64),
 @Result int output,
 @ErrInfo nvarchar(500) output
@@ -38,16 +37,16 @@ begin
 end
 
 --代理商订单信息
-declare @AutoID int=1,@ProductID nvarchar(64),@ProductDetailID nvarchar(64),@Quantity int,@BatchCode nvarchar(50),@DepotID nvarchar(64),@Remark nvarchar(4000)
+declare @AutoID int=1,@ProductID nvarchar(64),@ProductDetailID nvarchar(64),@Quantity int,@DepotID nvarchar(64),@Remark nvarchar(4000)
 
 
-select identity(int,1,1) as AutoID,ProductID,ProductDetailID,Quantity,BatchCode,DepotID,Remark into #TempProducts 
+select identity(int,1,1) as AutoID,ProductID,ProductDetailID,Quantity,DepotID,Remark into #TempProducts 
 from StorageDetail where DocID=@DocID
 
 while exists(select AutoID from #TempProducts where AutoID=@AutoID)
 begin
 	
-	select @ProductID=ProductID,@ProductDetailID=ProductDetailID,@Quantity=Quantity,@BatchCode=BatchCode,@DepotID=DepotID,@Remark=Remark from #TempProducts where AutoID=@AutoID
+	select @ProductID=ProductID,@ProductDetailID=ProductDetailID,@Quantity=Quantity,@DepotID=DepotID,@Remark=Remark from #TempProducts where AutoID=@AutoID
 
 	--处理材料库存
 	Update ClientProducts set StockOut=StockOut+@Quantity,LogicOut=LogicOut+@Quantity where ProductID=@ProductID and ClientID=@ClientID
@@ -68,8 +67,8 @@ begin
 	set @Err+=@@Error
 
 	--处理产品流水
-	insert into ProductStream(ProductDetailID,ProductID,DocID,DocCode,BatchCode,DocDate,DocType,Mark,Quantity,WareID,DepotID,CreateUserID,ClientID)
-						values(@ProductDetailID,@ProductID,@DocID,@DocCode,@BatchCode,CONVERT(varchar(100), GETDATE(), 112),@DocType,1,@Quantity,@WareID,@DepotID,@UserID,@ClientID)
+	insert into ProductStream(ProductDetailID,ProductID,DocID,DocCode,DocDate,DocType,Mark,Quantity,WareID,DepotID,CreateUserID,ClientID)
+						values(@ProductDetailID,@ProductID,@DocID,@DocCode,CONVERT(varchar(100), GETDATE(), 112),@DocType,1,@Quantity,@WareID,@DepotID,@UserID,@ClientID)
 
 	--修改产品入库数
 	--update Products set LogicOut=LogicOut+@Quantity,SaleCount=SaleCount+@Quantity where ProductID=@ProductID

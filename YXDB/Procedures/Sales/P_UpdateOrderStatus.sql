@@ -21,7 +21,6 @@ CREATE PROCEDURE [dbo].[P_UpdateOrderStatus]
 	@FinalPrice decimal(18,4)=0,
 	@DocCode nvarchar(50),
 	@OperateID nvarchar(64)='',
-	@AgentID nvarchar(64)='',
 	@ClientID nvarchar(64)='',
 	@ErrorInfo nvarchar(40) output
 AS
@@ -39,8 +38,8 @@ from Orders where OrderID=@OrderID  and ClientID=@ClientID
 
 if(@OldStatus=0 and @Status=1 and @OrderType=1)--开始打样
 begin
-	insert into OrderTask(TaskID,Title,ProductName,OrderType,TaskCode,OrderID,OrderImg,ProcessID,StageID,EndTime,OwnerID,Mark,Status,FinishStatus,CreateTime,CreateUserID,ClientID,AgentID,Sort,OrderCode,MaxHours)
-	select NEWID(),StageName,@Title,@OrderType,@OrderCode+convert(nvarchar(2),Sort),@OrderID,@OrderImg,ProcessID,StageID,null,OwnerID,Mark,1,0,GETDATE(),OwnerID,ClientID,@AgentID,Sort,@OrderCode,MaxHours from OrderStage
+	insert into OrderTask(TaskID,Title,ProductName,OrderType,TaskCode,OrderID,OrderImg,ProcessID,StageID,EndTime,OwnerID,Mark,Status,FinishStatus,CreateTime,CreateUserID,ClientID,Sort,OrderCode,MaxHours)
+	select NEWID(),StageName,@Title,@OrderType,@OrderCode+convert(nvarchar(2),Sort),@OrderID,@OrderImg,ProcessID,StageID,null,OwnerID,Mark,1,0,GETDATE(),OwnerID,ClientID,Sort,@OrderCode,MaxHours from OrderStage
 	where ProcessID =@ProcessID and status<>9
 	order by Sort
 
@@ -72,11 +71,11 @@ begin
 
 	Update Orders set Status=@Status,FinalPrice=@FinalPrice,TotalMoney=@FinalPrice,EndTime=getdate(),GoodsID=@GoodsID,OrderStatus=2 where OrderID=@OrderID and Status=2 and OrderType=1
 
-	insert into Goods(GoodsID,GoodsName,AliGoodsCode,GoodsCode,CategoryID,Price,ClientID) values(@GoodsID,@Title,@AliGoodsCode,@IntGoodsCode,@CategoryID,@FinalPrice,@ClientID ) 
+	insert into Goods(GoodsID,GoodsName,GoodsCode,CategoryID,Price,ClientID) values(@GoodsID,@Title,@IntGoodsCode,@CategoryID,@FinalPrice,@ClientID ) 
 
 	set @Err+=@@error
 end
-else if(@Status=5 and @OldStatus=4 and @OrderType=2) --开始生产
+else if(@Status=5 and @OldStatus=0 and @OrderType=2) --开始生产
 begin
 	
 	if(@OriginalID is null or @OriginalID='')
@@ -86,14 +85,16 @@ begin
 		return
 	end
 
-	insert into OrderTask(TaskID,Title,ProductName,OrderType,TaskCode,OrderID,OrderImg,ProcessID,StageID,EndTime,OwnerID,Mark,Status,FinishStatus,CreateTime,CreateUserID,ClientID,AgentID,Sort,OrderCode,MaxHours)
-	select NEWID(),StageName,@Title,@OrderType,@OrderCode+convert(nvarchar(2),Sort),@OrderID,@OrderImg,ProcessID,StageID,null,OwnerID,Mark,1,0,GETDATE(),OwnerID,ClientID,@AgentID,Sort,@OrderCode,MaxHours from OrderStage
+	insert into OrderTask(TaskID,Title,ProductName,OrderType,TaskCode,OrderID,OrderImg,ProcessID,StageID,EndTime,OwnerID,Mark,Status,FinishStatus,CreateTime,CreateUserID,ClientID,Sort,OrderCode,MaxHours)
+	select NEWID(),StageName,@Title,@OrderType,@OrderCode+convert(nvarchar(2),Sort),@OrderID,@OrderImg,ProcessID,StageID,null,OwnerID,Mark,1,0,GETDATE(),OwnerID,ClientID,Sort,@OrderCode,MaxHours from OrderStage
 	where ProcessID =@ProcessID and status<>9
 	order by Sort
 
 	select @TaskCount=count(0) from OrderStage where ProcessID =@ProcessID and status<>9
 
 	Update Orders set Status=@Status,OrderTime=GetDate(),TaskCount=@TaskCount,OrderStatus=1,PlanTime=@PlanTime where OrderID=@OrderID
+
+	Update Customer set DemandCount=DemandCount-1,DHCount=DHCount+1 where CustomerID=@CustomerID
 
 	set @Err+=@@error
 end
@@ -125,8 +126,8 @@ set @Err+=@@error
 --通知阿里待处理日志
 if(@AliOrderCode is not null and @AliOrderCode<>'')
 begin
-	insert into AliOrderUpdateLog(LogID,OrderID,AliOrderCode,OrderType,Status,OrderStatus,OrderPrice,FailCount,UpdateTime,CreateTime,Remark,AgentID,ClientID)
-	values(NEWID(),@OrderID,@AliOrderCode,@OrderType,0,@Status,@FinalPrice,0,getdate(),getdate(),'',@ClientID,@ClientID)
+	insert into AliOrderUpdateLog(LogID,OrderID,AliOrderCode,OrderType,Status,OrderStatus,OrderPrice,FailCount,UpdateTime,CreateTime,Remark,ClientID)
+	values(NEWID(),@OrderID,@AliOrderCode,@OrderType,0,@Status,@FinalPrice,0,getdate(),getdate(),'',@ClientID)
 	set @Err+=@@error
 end
 

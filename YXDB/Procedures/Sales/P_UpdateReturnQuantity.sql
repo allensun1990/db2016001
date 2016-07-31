@@ -19,7 +19,6 @@ CREATE PROCEDURE [dbo].[P_UpdateReturnQuantity]
 	@AutoID int ,
 	@Quantity int=0 ,
 	@OperateID nvarchar(64)='',
-	@AgentID nvarchar(64)='',
 	@ClientID nvarchar(64)=''
 AS
 	
@@ -35,7 +34,7 @@ begin
 	return
 end
 
-update OrderDetail set ApplyQuantity=@Quantity where OrderID=@OrderID and AutoID=@AutoID and Quantity-ReturnQuantity>=@Quantity
+update OrderGoods set ApplyQuantity=@Quantity where OrderID=@OrderID and AutoID=@AutoID and Quantity-ReturnQuantity>=@Quantity
 
 set @Err+=@@error
 

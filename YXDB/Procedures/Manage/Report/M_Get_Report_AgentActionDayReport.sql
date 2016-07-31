@@ -1,5 +1,10 @@
 ﻿USE [IntFactory]
 GO
+IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'M_Get_Report_AgentActionDayReport')
+BEGIN
+	DROP  Procedure  M_Get_Report_AgentActionDayReport
+END
+
 /****** Object:  StoredProcedure [dbo].[M_Get_Report_AgentActionDayReport]    Script Date: 05/23/2016 13:05:16 ******/
 SET ANSI_NULLS ON
 GO

@@ -19,7 +19,7 @@ CREATE PROCEDURE [dbo].[P_CreateCustomerReply]
 @GUID nvarchar(64),
 @Content nvarchar(4000),
 @CreateUserID nvarchar(64)='',
-@AgentID nvarchar(64)='',
+@ClientID nvarchar(64)='',
 @FromReplyID nvarchar(64)='',
 @FromReplyUserID nvarchar(64)='',
 @FromReplyAgentID nvarchar(64)=''
@@ -28,10 +28,8 @@ begin tran
 
 declare @Err int=0
 
-insert into CustomerReply(ReplyID,GUID,Content,CreateUserID,AgentID,FromReplyID,FromReplyUserID,FromReplyAgentID)
-                                values(@ReplyID,@GUID,@Content,@CreateUserID,@AgentID,@FromReplyID,@FromReplyUserID,@FromReplyAgentID)
-
-update Customer set ReplyTimes=ReplyTimes+1 where CustomerID = @GUID
+insert into CustomerReply(ReplyID,GUID,Content,CreateUserID,ClientID,FromReplyID,FromReplyUserID,FromReplyAgentID)
+                                values(@ReplyID,@GUID,@Content,@CreateUserID,@ClientID,@FromReplyID,@FromReplyUserID,@FromReplyAgentID)
 
 if(@Err>0)
 begin

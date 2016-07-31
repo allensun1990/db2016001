@@ -16,7 +16,6 @@ GO
 ************************************************************/
 CREATE PROCEDURE [dbo].P_AddTaskMembers
 @TaskID nvarchar(64),
-@AgentID nvarchar(64),
 @UserID nvarchar(64),
 @MemberIDs nvarchar(2000),
 @Result int output --0：失败，1：成功，2: 非任务负责人
@@ -28,7 +27,7 @@ as
 		set @Result=2
 	end
 
-	set @sql='insert into TaskMember(TaskID,MemberID,CreateTime,CreateUserID,AgentID,status,PermissionType) select '''+@TaskID+''',MemberID,getdate(),'''+@UserID+''','''+@AgentID+''',1,1  from (  select MemberID='''+ replace(@MemberIDs,',',''' union all select ''')+''' ) as valueTB'
+	set @sql='insert into TaskMember(TaskID,MemberID,CreateTime,CreateUserID,status,PermissionType) select '''+@TaskID+''',MemberID,getdate(),'''+@UserID+''',1,1  from (  select MemberID='''+ replace(@MemberIDs,',',''' union all select ''')+''' ) as valueTB'
 	exec (@sql)
 
 	set  @Result=1

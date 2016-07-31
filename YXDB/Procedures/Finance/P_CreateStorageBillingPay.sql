@@ -22,7 +22,6 @@ CREATE PROCEDURE [dbo].[P_CreateStorageBillingPay]
 	@PayTime datetime,
 	@Remark nvarchar(4000),
 	@UserID nvarchar(64),
-	@AgentID nvarchar(64),
 	@ClientID nvarchar(64)
 AS
 begin tran
@@ -31,8 +30,8 @@ begin tran
 
 	declare @TotalMoney decimal(18,4),@TotalPayMoney decimal(18,4),@BillingCode nvarchar(50)
 
-	insert into StorageBillingPay(BillingID,Type,Status,PayType,PayTime,PayMoney,Remark,CreateTime,CreateUserID,AgentID,ClientID)
-			values(@BillingID,@Type,1,@PayType,@PayTime,@PayMoney,@Remark,getdate(),@UserID,@AgentID,@ClientID)
+	insert into StorageBillingPay(BillingID,Type,Status,PayType,PayTime,PayMoney,Remark,CreateTime,CreateUserID,ClientID)
+			values(@BillingID,@Type,1,@PayType,@PayTime,@PayMoney,@Remark,getdate(),@UserID,@ClientID)
 	set @Err+=@@error
 
 	select @TotalMoney=TotalMoney,@TotalPayMoney=PayMoney,@BillingCode=BillingCode from StorageBilling where BillingID=@BillingID
@@ -54,8 +53,8 @@ begin tran
 	--公司账户处理
 	update Clients set TotalOut=TotalOut+@PayMoney where ClientID=@ClientID
 
-	insert into ClientAccounts(AgentID,HappenMoney,EndMoney,Mark,SubjectID,Remark,CreateUserID,ClientID)
-	select @AgentID,@PayMoney,TotalIn-TotalOut,1,1,'采购账单支出，账单编号：'+@BillingCode,@UserID,@ClientID from Clients where ClientID=@ClientID
+	insert into ClientAccounts(HappenMoney,EndMoney,Mark,SubjectID,Remark,CreateUserID,ClientID)
+	select @PayMoney,TotalIn-TotalOut,1,1,'采购账单支出，账单编号：'+@BillingCode,@UserID,@ClientID from Clients where ClientID=@ClientID
 
 	set @Err+=@@error
 	

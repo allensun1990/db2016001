@@ -18,7 +18,6 @@ CREATE PROCEDURE [dbo].[P_DeleteOrderProduct]
 	@OrderID nvarchar(64),
 	@AutoID int ,
 	@OperateID nvarchar(64)='',
-	@AgentID nvarchar(64)='',
 	@ClientID nvarchar(64)=''
 AS
 	
@@ -43,7 +42,7 @@ begin
 	set @TotalMoney=0
 end
 
-Update Orders set Price=@TotalMoney,TotalMoney=@TotalMoney*PlanQuantity where OrderID=@OrderID
+Update Orders set Price=@TotalMoney where OrderID=@OrderID
 
 set @Err+=@@error
 

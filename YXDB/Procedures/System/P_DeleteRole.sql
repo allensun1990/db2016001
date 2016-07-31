@@ -36,7 +36,7 @@ end
 
 set @Err+=@@error
 
-Update Role set Status=9 where RoleID=@RoleID and AgentID=@AgentID and IsDefault = 0
+Update Role set Status=9 where RoleID=@RoleID  and IsDefault = 0
 
 delete from RolePermission where RoleID=@RoleID
 

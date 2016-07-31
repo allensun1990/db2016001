@@ -40,7 +40,7 @@ begin
 end
 
 --变量赋值
-select @M_ClientID=ClientID,@M_AgentID=AgentID,@UserQuantity=UserQuantity,@Years=Years,@RealAmount=RealAmount,@Type=Type from  ClientOrder where OrderID=@M_OrderID
+select @M_ClientID=ClientID,@UserQuantity=UserQuantity,@Years=Years,@RealAmount=RealAmount,@Type=Type from  ClientOrder where OrderID=@M_OrderID
 
 select @BeginTime=EndTime from Agents where AgentID=@M_AgentID
 
@@ -73,19 +73,19 @@ end
 --购买或续费
 if(@Type=1 or @Type=3)
 begin
-	update Agents set UserQuantity=@UserQuantity,EndTime=@EndTime,AuthorizeType=1 where AgentID=@M_AgentID
+	update Clients set UserQuantity=@UserQuantity,EndTime=@EndTime,AuthorizeType=1 where ClientID=@M_ClientID
 
 	set @Err+=@@error
 end
 else --购买人数
 begin
-	update Agents set UserQuantity+=@UserQuantity,AuthorizeType=1 where AgentID=@M_AgentID
+	update Clients set UserQuantity+=@UserQuantity,AuthorizeType=1 where ClientID=@M_ClientID
 	set @Err+=@@error
 end
 
 --新增后台代理商授权记录
-insert into ClientAuthorizeLog(ClientiD,AgentID,OrderID,UserQuantity,BeginTime,EndTime,SystemType,Type) 
-values(@M_ClientID,@M_AgentID,@M_OrderID,@UserQuantity,@BeginTime,@EndTime,2,@Type)
+insert into ClientAuthorizeLog(ClientiD,OrderID,UserQuantity,BeginTime,EndTime,SystemType,Type) 
+values(@M_ClientID,@M_OrderID,@UserQuantity,@BeginTime,@EndTime,2,@Type)
 set @Err+=@@error
    
 

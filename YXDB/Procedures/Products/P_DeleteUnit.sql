@@ -26,7 +26,7 @@ set @Result=0
 declare @Err int=0
 
 --存在关联数据
-if exists(select AutoID from Products where SmallUnitID=@UnitID and Status<>9)
+if exists(select AutoID from Products where UnitID=@UnitID and Status<>9)
 begin
 	set @Result=10002
 	rollback tran

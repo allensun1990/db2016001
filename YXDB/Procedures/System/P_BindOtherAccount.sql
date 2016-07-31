@@ -18,7 +18,6 @@ CREATE PROCEDURE [dbo].[P_BindOtherAccount]
 @UserID nvarchar(64),
 @AccountType int,
 @Account nvarchar(200),
-@AgentID nvarchar(64),
 @ClientID nvarchar(64)
 AS
 
@@ -28,8 +27,8 @@ begin
 	begin
 		Update Clients set AliMemberID=@Account where ClientID=@ClientID
 	end
-	insert into UserAccounts(AccountName,AccountType,UserID,AgentID,ClientID)
-	values(@Account,@AccountType,@UserID,@AgentID,@ClientID)
+	insert into UserAccounts(AccountName,AccountType,UserID,ClientID)
+	values(@Account,@AccountType,@UserID,@ClientID)
 end
 
  

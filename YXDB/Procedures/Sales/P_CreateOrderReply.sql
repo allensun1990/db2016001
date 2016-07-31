@@ -21,7 +21,7 @@ CREATE PROCEDURE [dbo].[P_CreateOrderReply]
 @Mark int=1,
 @Content nvarchar(4000),
 @CreateUserID nvarchar(64)='',
-@AgentID nvarchar(64)='',
+@ClientID nvarchar(64)='',
 @FromReplyID nvarchar(64)='',
 @FromReplyUserID nvarchar(64)='',
 @FromReplyAgentID nvarchar(64)=''
@@ -30,10 +30,9 @@ begin tran
 
 declare @Err int=0
 
-insert into OrderReply(ReplyID,GUID,StageID,Mark,Content,CreateUserID,AgentID,FromReplyID,FromReplyUserID,FromReplyAgentID)
-                                values(@ReplyID,@GUID,@StageID,@Mark,@Content,@CreateUserID,@AgentID,@FromReplyID,@FromReplyUserID,@FromReplyAgentID)
+insert into OrderReply(ReplyID,GUID,StageID,Mark,Content,CreateUserID,ClientID,FromReplyID,FromReplyUserID,FromReplyAgentID)
+                                values(@ReplyID,@GUID,@StageID,@Mark,@Content,@CreateUserID,@ClientID,@FromReplyID,@FromReplyUserID,@FromReplyAgentID)
 
-update Orders set ReplyTimes=ReplyTimes+1 where OrderID = @GUID
 
 if(@Err>0)
 begin

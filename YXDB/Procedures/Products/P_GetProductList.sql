@@ -26,7 +26,7 @@ GO
 ************************************************************/
 CREATE PROCEDURE [dbo].[P_GetProductList]
 	@CategoryID nvarchar(64)='',
-	@ProdiverID nvarchar(64)='',
+	@ProviderID nvarchar(64)='',
 	@BeginPrice nvarchar(20)='',
 	@EndPrice nvarchar(20)='',
 	@keyWords nvarchar(4000),
@@ -43,7 +43,7 @@ AS
 	@condition nvarchar(4000),
 	@key nvarchar(100)
 
-	select @tableName='Products P left join Providers B on P.ProdiverID=B.ProviderID',
+	select @tableName='Products P left join Providers B on P.ProviderID=B.ProviderID',
 	@columns='P.*,B.Name ProviderName ',@key='P.AutoID'
 	set @condition=' P.ClientID='''+@ClientID+''' and P.Status<>9 '
 	if(@keyWords <> '')
@@ -56,9 +56,9 @@ AS
 		set @condition +=' and P.CategoryIDList like ''%'+@CategoryID+'%'''
 	end
 
-	if(@ProdiverID<>'')
+	if(@ProviderID<>'')
 	begin
-		set @condition +=' and p.ProdiverID='''+@ProdiverID+''''
+		set @condition +=' and p.ProviderID='''+@ProviderID+''''
 	end
 
 	if(@BeginPrice<>'')

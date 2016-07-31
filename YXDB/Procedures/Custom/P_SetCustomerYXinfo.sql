@@ -46,8 +46,8 @@ declare @Err int
 		end
 		else
 		begin
-			insert into Customer(CustomerID,Name,Type,MobilePhone,SourceType,Status,CreateTime,AgentID,ClientID,FirstName,YXAgentID,YXClientID,YXClientCode)
-			values(newid(),@Name,0,@MobilePhone,3,1,getdate(),@ClientID,@ClientID,dbo.fun_getFirstPY(left(@Name,1)),@YXAgentID,@YXClientID,@YXClientCode)
+			insert into Customer(CustomerID,Name,Type,MobilePhone,SourceType,Status,CreateTime,ClientID,FirstName,YXAgentID,YXClientID,YXClientCode)
+			values(newid(),@Name,0,@MobilePhone,3,1,getdate(),@ClientID,dbo.fun_getFirstPY(left(@Name,1)),@YXAgentID,@YXClientID,@YXClientCode)
 
 			set @Err+=@@error
 		end

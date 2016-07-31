@@ -18,7 +18,6 @@ CREATE PROCEDURE [dbo].[P_UnBindOtherAccount]
 @UserID nvarchar(64),
 @AccountType int,
 @Account nvarchar(200),
-@AgentID nvarchar(64),
 @ClientID nvarchar(64)
 AS
 

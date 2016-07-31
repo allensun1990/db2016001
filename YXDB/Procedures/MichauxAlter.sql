@@ -25,6 +25,7 @@ drop table OrderImg
 
 --删除列
 --删除购物车批次
+EXEC  sp_rename   'ShoppingCart.ProdiverID' , 'ProviderID'
 alter table ShoppingCart drop constraint DF_ShoppingCart_BatchCode
 GO
 alter table ShoppingCart drop column BatchCode
@@ -61,6 +62,7 @@ alter table Category drop column BrandList
 
 --删除材料表
 EXEC  sp_rename   'Products.SmallUnitID' , 'UnitID'
+EXEC  sp_rename   'Products.ProdiverID' , 'ProviderID'
 Go
 alter table Products drop constraint DF__C_Product__IsCom__2F9A1060
 GO

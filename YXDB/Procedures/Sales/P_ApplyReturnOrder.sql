@@ -17,7 +17,6 @@ GO
 CREATE PROCEDURE [dbo].[P_ApplyReturnOrder]
 	@OrderID nvarchar(64),
 	@OperateID nvarchar(64)='',
-	@AgentID nvarchar(64)='',
 	@ClientID nvarchar(64)='',
 	@Result int output
 AS
@@ -37,11 +36,10 @@ begin
 	return
 end
 
-select @AgentID=AgentID from Clients where ClientID=@NewClientID
 
 select @OwnerID=OwnerID,@ProcessID=ProcessID from OrderProcess where ClientID=@NewClientID and ProcessType=@OrderType and IsDefault=1
 
-Update Orders set ProcessID=@ProcessID,OwnerID=@OwnerID,ClientID=@NewClientID,AgentID=@AgentID,EntrustClientID='',EntrustStatus=2 where OrderID=@OrderID
+Update Orders set ProcessID=@ProcessID,OwnerID=@OwnerID,ClientID=@NewClientID,EntrustClientID='',EntrustStatus=2 where OrderID=@OrderID
 
 if(@Err>0)
 begin

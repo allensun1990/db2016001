@@ -17,14 +17,14 @@ GO
 CREATE PROCEDURE [dbo].[P_UpdateUserRole]
 @UserID nvarchar(64),
 @RoleID nvarchar(64),
-@AgentID nvarchar(64),
+@ClientID nvarchar(64),
 @OpreateID nvarchar(64)
 AS
 
 begin tran
 declare @Err int =0 ,@OldRoleID nvarchar(64)
 
-select @OldRoleID=RoleID from Users where UserID=@UserID and AgentID=@AgentID
+select @OldRoleID=RoleID from Users where UserID=@UserID and ClientID=@ClientID
 --默认管理员角色至少保留一人
 if(@OldRoleID is not null and @OldRoleID<>'' and exists(select AutoID from Role where RoleID=@OldRoleID and IsDefault=1))
 begin
@@ -35,13 +35,8 @@ begin
 	end
 end
 
-Update Users set RoleID=@RoleID where UserID=@UserID and AgentID=@AgentID
+Update Users set RoleID=@RoleID where UserID=@UserID and ClientID=@ClientID
 set @Err+=@@error
-
---角色记录
-Update UserRole set Status=9 where UserID=@UserID and Status=1
-
-insert into UserRole(UserID,RoleID,Status,CreateUserID,ClientID) values(@UserID,@RoleID,1,@OpreateID,@AgentID)
 
 set @Err+=@@error
 

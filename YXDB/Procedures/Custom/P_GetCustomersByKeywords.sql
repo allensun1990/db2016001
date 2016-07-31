@@ -17,7 +17,6 @@ GO
 CREATE PROCEDURE [dbo].[P_GetCustomersByKeywords]
 	@Keywords nvarchar(4000),
 	@UserID nvarchar(64)='',
-	@AgentID nvarchar(64),
 	@ClientID nvarchar(64)
 AS
 

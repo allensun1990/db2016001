@@ -20,7 +20,6 @@ CREATE PROCEDURE [dbo].P_AccountBindMobile
 @BindMobile nvarchar(64),
 @Pwd nvarchar(100),
 @IsFirst int=0,
-@AgentID nvarchar(64),
 @ClientID nvarchar(64)=''
 AS
 declare @LoginPWD nvarchar(100),@Err int=0
@@ -50,8 +49,8 @@ end
 
 set @Err+=@@error
 
-insert into UserAccounts(AccountName,AccountType,UserID,AgentID,ClientID)
-values(@BindMobile,2,@UserID,@AgentID,@ClientID)
+insert into UserAccounts(AccountName,AccountType,UserID,ClientID)
+values(@BindMobile,2,@UserID,@ClientID)
 
 set @Err+=@@error
 

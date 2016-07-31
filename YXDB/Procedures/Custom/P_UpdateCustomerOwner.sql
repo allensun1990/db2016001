@@ -34,16 +34,8 @@ begin
 	return
 end
 
-update Customer set OwnerID=@UserID,AgentID=@AgentID,AllocationTime=isnull(AllocationTime,getdate()) where CustomerID=@CustomerID and ClientID=@ClientID
-update Contact set OwnerID=@UserID,AgentID=@AgentID where CustomerID=@CustomerID and ClientID=@ClientID
-
-set @Err+=@@error
-
---处理拥有着记录
-update CustomerOwner set status=9 where CustomerID=@CustomerID and status=1
-
-insert into CustomerOwner(CustomerID,UserID,Status,CreateTime,CreateUserID,AgentID,ClientID)
-	 values(@CustomerID,@UserID,1,getdate(),@OperateID,@AgentID,@ClientID)
+update Customer set OwnerID=@UserID where CustomerID=@CustomerID and ClientID=@ClientID
+update Contact set OwnerID=@UserID where CustomerID=@CustomerID and ClientID=@ClientID
 
 set @Err+=@@error
 

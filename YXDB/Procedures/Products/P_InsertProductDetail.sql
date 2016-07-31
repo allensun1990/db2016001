@@ -17,7 +17,6 @@ GO
 CREATE PROCEDURE [dbo].[P_InsertProductDetail]
 @ProductID nvarchar(64),
 @ProductCode nvarchar(200),
-@BigPrice decimal(18,2),
 @AttrList nvarchar(max),
 @ValueList nvarchar(max),
 @AttrValueList nvarchar(max),
@@ -55,9 +54,9 @@ begin
 	return
 end
 
-INSERT INTO ProductDetail(ProductDetailID,[ProductID],DetailsCode,BigPrice ,[SaleAttr],[AttrValue],[SaleAttrValue],[Price],[Status],
+INSERT INTO ProductDetail(ProductDetailID,[ProductID],DetailsCode ,[SaleAttr],[AttrValue],[SaleAttrValue],[Price],[Status],
 					Weight,ImgS,[ShapeCode] ,[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID],Remark)
-				VALUES(@DetailID,@ProductID,@ProductCode,@BigPrice,@AttrList,@ValueList,@AttrValueList,@Price,1,
+				VALUES(@DetailID,@ProductID,@ProductCode,@AttrList,@ValueList,@AttrValueList,@Price,1,
 					@Weight,@ProductImg,@ShapeCode,@Description,@CreateUserID,getdate(),getdate(),'',@ClientID,@Remark);
 
 Update Products set HasDetails=1 where ProductID=@ProductID and HasDetails=0 

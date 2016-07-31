@@ -21,10 +21,10 @@ AS
 
 declare @ProdiverID nvarchar(64),@CategoryID nvarchar(64)
 
-select @ProdiverID=ProdiverID,@CategoryID=CategoryID from Products where ProductID=@ProductID
+select @ProdiverID=ProviderID,@CategoryID=CategoryID from Products where ProductID=@ProductID
 
-select p.ProductID,ProductCode,ProductName,SmallUnitID,CategoryID,SaleAttr,AttrList,ValueList,AttrValueList,Price,OnlineTime,p.ClientID,
-		IsNew,Weight,ProductImage,ShapeCode,ProdiverID,Description,CreateTime,isnull(c.StockIn,0) StockIn,isnull(c.StockOut,0) StockOut,isnull(c.LogicOut,0) LogicOut
+select p.ProductID,ProductCode,ProductName,UnitID,CategoryID,SaleAttr,AttrList,ValueList,AttrValueList,Price,p.ClientID,
+		Weight,ProductImage,ShapeCode,ProviderID,Description,CreateTime,isnull(c.StockIn,0) StockIn,isnull(c.StockOut,0) StockOut,isnull(c.LogicOut,0) LogicOut
 from Products p left join ClientProducts c on p.ProductID=c.ProductID and c.ClientID=@ClientID where p.ProductID=@ProductID 
 
 select p.ProductID,p.ProductDetailID,DetailsCode,Price,SaleAttr,AttrValue,SaleAttrValue,ImgS,Weight,Description,CreateTime,Remark,p.ClientID,

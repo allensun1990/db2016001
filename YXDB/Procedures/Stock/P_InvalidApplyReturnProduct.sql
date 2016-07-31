@@ -38,11 +38,8 @@ begin
 	return
 end
 
-Update AgentsOrders set ReturnStatus=0 where OrderID=@OrderID
-Update AgentsOrderDetail set ApplyQuantity=0 where OrderID=@OrderID 
-
 update Orders set ReturnStatus=0 where OrderID=@OldOrderID
-Update OrderDetail set ApplyQuantity=0 where OrderID=@OldOrderID
+Update OrderGoods set ApplyQuantity=0 where OrderID=@OldOrderID
 
 
 set @Err+=@@Error

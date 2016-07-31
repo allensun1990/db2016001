@@ -16,7 +16,6 @@ GO
 ************************************************************/
 CREATE PROCEDURE [dbo].[P_GetOrderForFentReport]
 	@OrderID nvarchar(64)='',
-	@AgentID nvarchar(64)='',
 	@ClientID nvarchar(64)=''
 AS
 declare @CustomerID nvarchar(64),@Status int ,@ProcessID nvarchar(64)
@@ -27,7 +26,7 @@ select * from Orders where OrderID=@OrderID and (ClientID=@ClientID or EntrustCl
 
 select * from Customer where CustomerID=@CustomerID 
 
-select d.*,p.MobileTele as ProviderMobileTele,p.Address as ProviderAddress,p.Name as ProviderName,p.CityCode as ProviderCityCode from OrderDetail as d left join Providers as p on d.ProdiverID=p.ProviderID
+select d.*,p.MobileTele as ProviderMobileTele,p.Address as ProviderAddress,p.Name as ProviderName,p.CityCode as ProviderCityCode from OrderDetail as d left join Providers as p on d.ProviderID=p.ProviderID
 where d.OrderID=@OrderID
 
 select * from OrderTask where OrderID=@OrderID and ProcessID=@ProcessID order by Sort

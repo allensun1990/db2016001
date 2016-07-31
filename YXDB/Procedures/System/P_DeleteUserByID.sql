@@ -16,7 +16,7 @@ GO
 ************************************************************/
 CREATE PROCEDURE [dbo].[P_DeleteUserByID]
 @UserID nvarchar(64),
-@AgentID nvarchar(64),
+@ClientID nvarchar(64),
 @Result int output --0：失败，1：成功
 AS
 
@@ -24,16 +24,19 @@ begin tran
 
 set @Result=0
 
-declare @Err int=0,@RoleID nvarchar(64),@AliID nvarchar(200)
+declare @Err int=0,@RoleID nvarchar(64)
 
---防止自杀式删除用户，管理员至少保留一个
-select @RoleID=RoleID,@AliID=AliMemberID from Users where UserID=@UserID and AgentID=@AgentID
-if(@AliID is not null and @AliID<>'')
+--绑定阿里的账号不能删除
+if exists(select AutoID from UserAccounts where UserID=@UserID and AccountType=3)
 begin
 	set @Result=0
 	rollback tran
 	return
 end
+
+--防止自杀式删除用户，管理员至少保留一个
+select @RoleID=RoleID from Users where UserID=@UserID and ClientID=@ClientID
+
 if exists (select AutoID from Role where RoleID=@RoleID and IsDefault=1)
 begin
 	if not exists(select UserID from Users where RoleID=@RoleID and Status=1 and UserID<>@UserID)
@@ -44,7 +47,7 @@ begin
 	end
 end
 
-Update Users set Status=9,ParentID='',RoleID='' where UserID=@UserID and AgentID=@AgentID
+Update Users set Status=9,ParentID='',RoleID='' where UserID=@UserID and ClientID=@ClientID
 
 Update Users set ParentID='' where ParentID=@UserID
 

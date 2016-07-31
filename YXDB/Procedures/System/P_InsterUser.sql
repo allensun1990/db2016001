@@ -28,7 +28,6 @@ CREATE PROCEDURE [dbo].[P_InsterUser]
 @RoleID nvarchar(64)='',
 @DepartID nvarchar(64)='',
 @ParentID nvarchar(64)='',
-@AgentID nvarchar(64)='',
 @CreateUserID nvarchar(64)='',
 @ClientID nvarchar(64)='',
 @Result int output --0：失败，1：成功，2 账号已存在 3：人数超限
@@ -40,7 +39,7 @@ set @Result=0
 
 declare @Err int=0,@MaxCount int=0,@Count int
 
-select @MaxCount=UserQuantity from Agents where AgentID=@AgentID
+select @MaxCount=UserQuantity from Clients where ClientID=@ClientID
 
 select @Count=count(0) from Users where ClientID=@ClientID and Status=1
 --人数超过上限
@@ -68,7 +67,7 @@ end
 
 if(@RoleID='')
 begin
-	select @RoleID=RoleID from Role where AgentID=@AgentID and IsDefault=1
+	select @RoleID=RoleID from Role where ClientID=@ClientID and IsDefault=1
 end
 
 set @Err+=@@error
@@ -76,11 +75,11 @@ set @Err+=@@error
 
 if(@CreateUserID='') set @CreateUserID=@UserID
 
-insert into Users(UserID,LoginName,LoginPWD,Name,MobilePhone,Email,CityCode,Address,Jobs,Allocation,Status,IsDefault,ParentID,RoleID,DepartID,CreateUserID,MDUserID,MDProjectID,AgentID,ClientID)
-             values(@UserID,@LoginName,@LoginPWD,@Name,@Mobile,@Email,@CityCode,@Address,@Jobs,1,1,0,@ParentID,@RoleID,@DepartID,@CreateUserID,'','',@AgentID,@ClientID)
+insert into Users(UserID,LoginPWD,Name,MobilePhone,Email,CityCode,Address,Jobs,Allocation,Status,IsDefault,ParentID,RoleID,DepartID,CreateUserID,ClientID)
+             values(@UserID,@LoginPWD,@Name,@Mobile,@Email,@CityCode,@Address,@Jobs,1,1,0,@ParentID,@RoleID,@DepartID,@CreateUserID,@ClientID)
 
-insert into UserAccounts(AccountName,AccountType,ProjectID,UserID,AgentID,ClientID)
-				 values(@LoginName,@AccountType,'',@UserID,@AgentID,@ClientID)
+insert into UserAccounts(AccountName,AccountType,ProjectID,UserID,ClientID)
+				 values(@LoginName,@AccountType,'',@UserID,@ClientID)
 if(@Err>0)
 begin
 	set @Result=0
