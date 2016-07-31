@@ -23,7 +23,6 @@ CREATE PROCEDURE [dbo].[P_EditOrder]
 	@CityCode nvarchar(50)='',
 	@Address nvarchar(50)='',
 	@PostalCode nvarchar(20)='',
-	@TypeID nvarchar(64)='',
 	@ExpressType int=0,
 	@Remark nvarchar(500)='',
 	@UserID nvarchar(64)='',

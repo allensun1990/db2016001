@@ -30,7 +30,6 @@ CREATE PROCEDURE [dbo].[P_InsertProduct]
 @Price decimal(18,2),
 @Weight decimal(18,2)=0,
 @IsAllow int=0,
-@EffectiveDays int=0,
 @DiscountValue decimal(5,4)=1,
 @ProductImg nvarchar(4000),
 @Description text,
@@ -62,11 +61,11 @@ select @PIDList=PIDList,@SaleAttr=SaleAttr from Category where CategoryID=@Categ
 
 INSERT INTO [Products]([ProductID],[ProductCode],[ProductName],[GeneralName],ProviderID,[UnitID],
 				[CategoryID],[CategoryIDList],[SaleAttr],[AttrList],[ValueList],[AttrValueList],[CommonPrice],[Price],[TaxRate],[Status],IsPublic,
-				[IsDiscount],[DiscountValue],[SaleCount],[Weight] ,[ProductImage],[EffectiveDays],
+				[IsDiscount],[DiscountValue],[SaleCount],[Weight] ,[ProductImage],
 				[ShapeCode] ,[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID],IsAllow,HasDetails)
 			VALUES(@ProductID,@ProductCode,@ProductName,@GeneralName,@ProviderID,@UnitID,
 				@CategoryID,@PIDList,@SaleAttr,@AttrList,@ValueList,@AttrValueList,@CommonPrice,@Price,0,@Status,@IsPublic,
-				1,@DiscountValue,0,@Weight,@ProductImg,@EffectiveDays,@ShapeCode,@Description,@CreateUserID,
+				1,@DiscountValue,0,@Weight,@ProductImg,@ShapeCode,@Description,@CreateUserID,
 				getdate(),getdate(),'',@ClientID,@IsAllow,0);
 
 set @Err+=@@Error
