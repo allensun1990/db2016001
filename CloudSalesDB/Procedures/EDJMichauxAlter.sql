@@ -13,6 +13,20 @@ create table ClientMemberLevel(
 [ImgUrl] [nvarchar](248) Not NULL,
 )
 
+create table IntegerFeeChange
+(
+AutoID int identity(1,1),
+ChangeType  int not null,
+ChangeFee decimal(18,4),
+OldChangeFee decimal(18,4),
+CreateTime datetime default(getdate()),
+CreateUserID varchar(50),
+CustomerID varchar(50) not null,
+AgentID varchar(50) not null,
+ClientID varchar(50) not null,
+Reamrk varchar(500) 
+)
+
 
 alter table Customer Add IntegerFee decimal(18,2) default(0.00)
 alter table Customer add MemberLevelID varchar(50) 
