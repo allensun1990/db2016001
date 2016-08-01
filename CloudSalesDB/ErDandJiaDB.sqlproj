@@ -189,7 +189,7 @@
     <None Include="Procedures\System\P_DeletetCustomStage.sql" />
     <None Include="Procedures\System\P_DeleteTeam.sql" />
     <None Include="Procedures\System\P_DeleteUserByID.sql" />
-    <None Include="Procedures\System\P_GetUserByMDUserID.sql" />
+    <None Include="Procedures\System\P_GetUserByOtherAccount.sql" />
     <None Include="Procedures\System\P_GetUserToLogin.sql" />
     <None Include="Procedures\System\P_InsertCustomSource.sql" />
     <None Include="Procedures\System\P_InsertCustomStage.sql" />
@@ -214,7 +214,6 @@
     <None Include="Procedures\Report\R_GetCustomerStageRPT.sql" />
     <None Include="Procedures\Manage\Report\M_Get_Report_AgentActionDayPageList.sql" />
     <None Include="Procedures\Report\R_GetOrderDetailReeport.sql" />
-    <None Include="Procedures\System\P_GetUserByWeiXinID.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\Sales\P_CreateOpportunity.sql" />
@@ -268,7 +267,7 @@
     <Build Include="Procedures\Manage\Report\R_GetClientsAgentAction.sql" />
     <Build Include="Procedures\Manage\Report\R_GetClientsGrowDate.sql" />
     <Build Include="Procedures\Manage\Report\R_GetClientsAgentLogin_Day.sql" />
-    <Build Include="Procedures\Manage\M_BindOtherAccount.sql" />
     <Build Include="Procedures\Report\R_StockInOutReport.sql" />
+    <Build Include="Procedures\System\P_BindOtherAccount.sql" />
   </ItemGroup>
 </Project>
