@@ -16,8 +16,7 @@ GO
 ************************************************************/
 CREATE PROCEDURE [dbo].[P_DeleteTeam]
 @TeamID nvarchar(64),
-@UserID nvarchar(64)='',
-@AgentID nvarchar(64)
+@UserID nvarchar(64)=''
 AS
 
 begin tran

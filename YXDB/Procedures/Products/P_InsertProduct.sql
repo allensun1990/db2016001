@@ -18,12 +18,8 @@ CREATE PROCEDURE [dbo].[P_InsertProduct]
 @ProductCode nvarchar(200),
 @ProductName nvarchar(200),
 @GeneralName nvarchar(200)='',
-@IsCombineProduct int=0,
-@ProdiverID  nvarchar(64)='',
-@BrandID nvarchar(64)='',
-@BigUnitID nvarchar(64)='',
-@SmallUnitID nvarchar(64),
-@BigSmallMultiple int=1,
+@ProviderID  nvarchar(64)='',
+@UnitID nvarchar(64),
 @CategoryID nvarchar(64),
 @Status int=1,
 @IsPublic int=0,
@@ -33,11 +29,7 @@ CREATE PROCEDURE [dbo].[P_InsertProduct]
 @CommonPrice decimal(18,2)=0,
 @Price decimal(18,2),
 @Weight decimal(18,2)=0,
-@Isnew int=0,
-@IsRecommend int=0,
 @IsAllow int=0,
-@IsAutoSend int=0,
-@EffectiveDays int=0,
 @DiscountValue decimal(5,4)=1,
 @ProductImg nvarchar(4000),
 @Description text,
@@ -67,20 +59,20 @@ set @ProductID=NEWID()
 
 select @PIDList=PIDList,@SaleAttr=SaleAttr from Category where CategoryID=@CategoryID
 
-INSERT INTO [Products]([ProductID],[ProductCode],[ProductName],[GeneralName],[IsCombineProduct],ProdiverID,[BrandID],[BigUnitID],[SmallUnitID],[BigSmallMultiple] ,
-				[CategoryID],[CategoryIDList],[SaleAttr],[AttrList],[ValueList],[AttrValueList],[CommonPrice],[Price],[PV],[TaxRate],[Status],IsPublic,
-				[OnlineTime],[UseType],[IsNew],[IsRecommend] ,[IsDiscount],[DiscountValue],[SaleCount],[Weight] ,[ProductImage],[EffectiveDays],
-				[ShapeCode] ,[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID],IsAllow,IsAutoSend,HasDetails)
-			VALUES(@ProductID,@ProductCode,@ProductName,@GeneralName,@IsCombineProduct,@ProdiverID,@BrandID,@BigUnitID,@SmallUnitID,@BigSmallMultiple,
-				@CategoryID,@PIDList,@SaleAttr,@AttrList,@ValueList,@AttrValueList,@CommonPrice,@Price,@Price,0,@Status,@IsPublic,
-				getdate(),0,@Isnew,@IsRecommend,1,@DiscountValue,0,@Weight,@ProductImg,@EffectiveDays,@ShapeCode,@Description,@CreateUserID,
-				getdate(),getdate(),'',@ClientID,@IsAllow,@IsAutoSend,0);
+INSERT INTO [Products]([ProductID],[ProductCode],[ProductName],[GeneralName],ProviderID,[UnitID],
+				[CategoryID],[CategoryIDList],[SaleAttr],[AttrList],[ValueList],[AttrValueList],[CommonPrice],[Price],[TaxRate],[Status],IsPublic,
+				[IsDiscount],[DiscountValue],[SaleCount],[Weight] ,[ProductImage],
+				[ShapeCode] ,[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID],IsAllow,HasDetails)
+			VALUES(@ProductID,@ProductCode,@ProductName,@GeneralName,@ProviderID,@UnitID,
+				@CategoryID,@PIDList,@SaleAttr,@AttrList,@ValueList,@AttrValueList,@CommonPrice,@Price,0,@Status,@IsPublic,
+				1,@DiscountValue,0,@Weight,@ProductImg,@ShapeCode,@Description,@CreateUserID,
+				getdate(),getdate(),'',@ClientID,@IsAllow,0);
 
 set @Err+=@@Error
 
-INSERT INTO ProductDetail(ProductDetailID,[ProductID],DetailsCode ,[SaleAttr],[AttrValue],[SaleAttrValue],[Price],[BigPrice],[Status],
+INSERT INTO ProductDetail(ProductDetailID,[ProductID],DetailsCode ,[SaleAttr],[AttrValue],[SaleAttrValue],[Price],[Status],
 					Weight,ImgS,[ShapeCode] ,[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID],IsDefault)
-				VALUES(NEWID(),@ProductID,'','','','',@Price,@Price,1,
+				VALUES(NEWID(),@ProductID,'','','','',@Price,1,
 					@Weight,'','','',@CreateUserID,getdate(),getdate(),'',@ClientID,1);
 
 set @Err+=@@Error

@@ -17,7 +17,6 @@ GO
 CREATE PROCEDURE [dbo].[R_GetCustomerStageRate]
 	@BeginTime nvarchar(50)='',
 	@EndTime nvarchar(50)='',
-	@AgentID nvarchar(64),
 	@ClientID nvarchar(64)
 AS
 
@@ -25,10 +24,6 @@ AS
 
 	set @SqlText='select StageID,COUNT(0) Value,Status from  Customer where ClientID='''+@ClientID+''' and Status<>9'
 
-	if(@AgentID<>'')
-	begin
-		set @SqlText +=' and AgentID = '''+@AgentID+''''
-	end
 
 	if(@BeginTime<>'')
 	begin

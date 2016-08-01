@@ -17,7 +17,6 @@ GO
 CREATE PROCEDURE [dbo].[P_AuditOverflowDoc]
 @DocID nvarchar(64),
 @UserID nvarchar(64),
-@AgentID nvarchar(64)='',
 @ClientID nvarchar(64),
 @Result int output,
 @ErrInfo nvarchar(500) output
@@ -38,16 +37,16 @@ begin
 end
 
 --代理商订单信息
-declare @AutoID int=1,@ProductID nvarchar(64),@ProductDetailID nvarchar(64),@Quantity int,@BatchCode nvarchar(50),@DepotID nvarchar(64)
+declare @AutoID int=1,@ProductID nvarchar(64),@ProductDetailID nvarchar(64),@Quantity int,@DepotID nvarchar(64)
 
 
-select identity(int,1,1) as AutoID,ProductID,ProductDetailID,Quantity,BatchCode,DepotID into #TempProducts 
+select identity(int,1,1) as AutoID,ProductID,ProductDetailID,Quantity,DepotID into #TempProducts 
 from StorageDetail where DocID=@DocID
 
 while exists(select AutoID from #TempProducts where AutoID=@AutoID)
 begin
 	
-	select @ProductID=ProductID,@ProductDetailID=ProductDetailID,@Quantity=Quantity,@BatchCode=BatchCode,@DepotID=DepotID from #TempProducts where AutoID=@AutoID
+	select @ProductID=ProductID,@ProductDetailID=ProductDetailID,@Quantity=Quantity,@DepotID=DepotID from #TempProducts where AutoID=@AutoID
 
 
 	--处理材料库存
@@ -81,14 +80,14 @@ begin
 	end
 	else
 	begin
-		insert into ProductStock(ProductDetailID,ProductID,StockIn,StockOut,BatchCode,WareID,DepotID,ClientID)
-							values (@ProductDetailID,@ProductID,@Quantity,0,@BatchCode,@WareID,@DepotID,@ClientID)
+		insert into ProductStock(ProductDetailID,ProductID,StockIn,StockOut,WareID,DepotID,ClientID)
+							values (@ProductDetailID,@ProductID,@Quantity,0,@WareID,@DepotID,@ClientID)
 	end
 	set @Err+=@@Error
 
 	--处理产品流水
-	insert into ProductStream(ProductDetailID,ProductID,DocID,DocCode,BatchCode,DocDate,DocType,Mark,Quantity,WareID,DepotID,CreateUserID,ClientID)
-						values(@ProductDetailID,@ProductID,@DocID,@DocCode,@BatchCode,CONVERT(varchar(100), GETDATE(), 112),@DocType,0,@Quantity,@WareID,@DepotID,@UserID,@ClientID)
+	insert into ProductStream(ProductDetailID,ProductID,DocID,DocCode,DocDate,DocType,Mark,Quantity,WareID,DepotID,CreateUserID,ClientID)
+						values(@ProductDetailID,@ProductID,@DocID,@DocCode,CONVERT(varchar(100), GETDATE(), 112),@DocType,0,@Quantity,@WareID,@DepotID,@UserID,@ClientID)
 
 	--修改产品入库数
 	--update Products set StockIn=StockIn+@Quantity where ProductID=@ProductID

@@ -17,7 +17,6 @@ GO
 CREATE PROCEDURE [dbo].[P_UpdateUserTeamID]
 @UserID nvarchar(64),
 @TeamID nvarchar(64),
-@AgentID nvarchar(64),
 @OperateID nvarchar(64)=''
 AS
 
@@ -34,16 +33,16 @@ begin
 		return
 	end
 
-	Update Users set TeamID= @TeamID where UserID=@UserID and AgentID=@AgentID
+	Update Users set TeamID= @TeamID where UserID=@UserID
 
-	insert into TeamUser(TeamID,UserID,Status,CreateTime,CreateUserID,ClientID)
-	values(@TeamID,@UserID,1,getdate(),@OperateID,@AgentID)
+	insert into TeamUser(TeamID,UserID,Status,CreateTime,CreateUserID)
+	values(@TeamID,@UserID,1,getdate(),@OperateID)
 
 	set @Err+=@@error
 end
 else --移出成员
 begin
-	Update Users set TeamID= '' where UserID=@UserID and AgentID=@AgentID
+	Update Users set TeamID= '' where UserID=@UserID 
 
 	update TeamUser set Status=9 ,UpdateTime =getdate() where UserID=@UserID 
 

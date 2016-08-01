@@ -20,12 +20,11 @@ as
 	declare @OrderCode nvarchar(20)
 	declare @ProcessID nvarchar(64)
 	declare @OrderImg nvarchar(400)
-	declare @AgentID nvarchar(64)
 	declare @IsShow int
 
 	set @IsShow=1
 
-	select @OrderCode=OrderCode,@OrderImg=OrderImage,@ProcessID=ProcessID,@AgentID=AgentID from Orders where  OrderID=@OrderID 
+	select @OrderCode=OrderCode,@OrderImg=OrderImage,@ProcessID=ProcessID from Orders where  OrderID=@OrderID 
 
 	if(exists(select TaskID from OrderTask where OrderID=@OrderID and Status<>9 and ProcessID=@ProcessID))
 	begin
@@ -36,17 +35,17 @@ as
 
 	if(@IsShow=1)
 	begin
-		insert into OrderTask(TaskID,OrderID,OrderImg,ProcessID,StageID,EndTime,OwnerID,Status,FinishStatus,CreateTime,CreateUserID,ClientID,AgentID,Sort,OrderCode,Title)
+		insert into OrderTask(TaskID,OrderID,OrderImg,ProcessID,StageID,EndTime,OwnerID,Status,FinishStatus,CreateTime,CreateUserID,ClientID,Sort,OrderCode,Title)
 		select NEWID(),@OrderID,@OrderImg,ProcessID,StageID,null,OwnerID,
-		1,0,GETDATE(),OwnerID,ClientID,@AgentID,Sort,@OrderCode,StageName from OrderStage
+		1,0,GETDATE(),OwnerID,ClientID,Sort,@OrderCode,StageName from OrderStage
 		where ProcessID =@ProcessID and status<>9
 		order by Sort
 	end
 	else
 	begin
-		insert into OrderTask(TaskID,OrderID,OrderImg,ProcessID,StageID,EndTime,OwnerID,Status,FinishStatus,CreateTime,CreateUserID,ClientID,AgentID,Sort,OrderCode,Title)
+		insert into OrderTask(TaskID,OrderID,OrderImg,ProcessID,StageID,EndTime,OwnerID,Status,FinishStatus,CreateTime,CreateUserID,ClientID,Sort,OrderCode,Title)
 		select NEWID(),@OrderID,@OrderImg,ProcessID,StageID,null,OwnerID,
-		0,0,GETDATE(),OwnerID,ClientID,@AgentID,Sort,@OrderCode,StageName from OrderStage
+		0,0,GETDATE(),OwnerID,ClientID,Sort,@OrderCode,StageName from OrderStage
 		where ProcessID =@ProcessID and status<>9
 		order by Sort
 

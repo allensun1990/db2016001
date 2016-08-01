@@ -39,7 +39,7 @@ AS
 					join DepotSeat ds on s.DepotID=ds.DepotID
 					join Products p on s.ProductID=p.ProductID 
 					join ProductDetail d on s.ProductDetailID=d.ProductDetailID',
-	@columns='s.ProductDetailID,s.ProductID,p.ProductCode,d.DetailsCode,p.ProductName,d.SaleAttrValue,s.BatchCode,s.StockIn,s.StockOut,s.LogicOut,d.Description ,ds.DepotCode',
+	@columns='s.ProductDetailID,s.ProductID,p.ProductCode,d.DetailsCode,p.ProductName,d.SaleAttrValue,s.StockIn,s.StockOut,s.LogicOut,d.Description ,ds.DepotCode',
 	@key='s.AutoID'
 	set @condition=' s.ClientID='''+@ClientID+''' and P.Status<>9 and d.Status<>9 '
 

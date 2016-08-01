@@ -67,7 +67,6 @@
     <Folder Include="Procedures\Sales" />
     <Folder Include="Procedures\Finance" />
     <Folder Include="Procedures\Products" />
-    <Folder Include="Procedures\Agents" />
     <Folder Include="Procedures\Report" />
     <Folder Include="Procedures\Planwork" />
     <Folder Include="Procedures\RepotLog" />
@@ -153,9 +152,6 @@
     <None Include="Procedures\Custom\P_UpdateCustomerOwner.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Procedures\Custom\P_UpdateCustomerAgent.sql" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Procedures\Custom\P_GetCustomerByID.sql" />
   </ItemGroup>
   <ItemGroup>
@@ -216,12 +212,6 @@
     <None Include="Procedures\Finance\P_DeleteStorageBillingInvoice.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Procedures\Finance\P_GetOrderBills.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Procedures\Finance\P_GetOrderBillByID.sql" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Procedures\Finance\P_CreateBillingPay.sql" />
   </ItemGroup>
   <ItemGroup>
@@ -241,9 +231,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\Products\P_AddCategoryAttr.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Procedures\Products\P_GetBrandList.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\Products\P_GetFilterProducts.sql" />
@@ -288,26 +275,8 @@
     <None Include="Procedures\Stock\P_GetDetailStocks.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Procedures\Agents\P_GetAgentOrders.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Procedures\Agents\P_GetAgentOrderByID.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Procedures\Stock\P_ConfirmAgentOrderOut.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Procedures\Stock\P_ConfirmAgentOrderSend.sql" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Procedures\Manage\M_PayOrderAndAuthorizeClient.sql" />
     <None Include="Procedures\Sales\P_ApplyReturnOrder.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Procedures\Stock\P_InvalidApplyReturn.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Procedures\Stock\P_AuditApplyReturn.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\Sales\P_UpdateReturnQuantity.sql" />
@@ -355,9 +324,6 @@
     <None Include="Procedures\ShoppingCart\P_DeleteCart.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Procedures\Report\R_GetOpportunityStageRate.sql" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Procedures\Sales\P_EditOrder.sql" />
   </ItemGroup>
   <ItemGroup>
@@ -380,12 +346,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\Planwork\Report_AgentAction_Day.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Procedures\Report\R_GetUserOpportunitys.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Procedures\RepotLog\R_GetAgentActions_Log.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\RepotLog\R_GetClientUpcomings.sql" />
@@ -413,7 +373,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\System\P_CreateOrderProcess.sql" />
-    <None Include="Procedures\System\P_DeletetOrderStage.sql" />
     <None Include="Procedures\System\P_InsertOrderStage.sql" />
     <None Include="Procedures\System\P_UpdateOrderProcessDefault.sql" />
     <None Include="Procedures\System\P_UpdateOrderCategory.sql" />
@@ -425,9 +384,6 @@
     <None Include="Procedures\Sales\P_UpdateOrderOriginalID.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Procedures\Task\P_UpdateOrderPlateAttr_old.sql" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Procedures\Sales\P_CreateDHOrder.sql" />
   </ItemGroup>
   <ItemGroup>
@@ -435,9 +391,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\Sales\P_CreateOrderGoodsDoc.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Procedures\RepotLog\R_GetClientActions.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\Sales\P_UpdateOrderCustomer.sql" />
@@ -535,5 +488,8 @@
     <Build Include="Procedures\System\P_UpdateUserAccountPwd.sql" />
     <None Include="Procedures\System\P_BindOtherAccount.sql" />
     <None Include="Procedures\System\P_UnBindOtherAccount.sql" />
+    <Build Include="Procedures\System\P_InsertOrderColor.sql" />
+    <Build Include="Procedures\System\P_InsertTaskColor.sql" />
+    <Build Include="Procedures\Sales\P_DeleteOrderProduct.sql" />
   </ItemGroup>
 </Project>

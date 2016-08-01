@@ -18,7 +18,6 @@ CREATE PROCEDURE [dbo].[P_UpdateOrderClient]
 	@OrderID nvarchar(64),
 	@NewClientID nvarchar(64),
 	@OperateID nvarchar(64)='',
-	@AgentID nvarchar(64)='',
 	@ClientID nvarchar(64)=''
 AS
 
@@ -29,9 +28,9 @@ end
 	
 begin tran
 
-declare @Err int=0,@Status int=-1,@OrderType int,@OwnerID nvarchar(64),@ProcessID nvarchar(64)
+declare @Err int=0,@Status int=-1,@OrderType int,@OwnerID nvarchar(64),@ProcessID nvarchar(64),@CategoryID nvarchar(64)
 
-select @Status=OrderStatus,@OrderType=OrderType from Orders where OrderID=@OrderID and ClientID=@ClientID
+select @Status=OrderStatus,@OrderType=OrderType,@CategoryID=BigCategoryID from Orders where OrderID=@OrderID and ClientID=@ClientID
 
 if(@Status<>0)
 begin
@@ -40,11 +39,9 @@ begin
 end
 
 
-select @AgentID=AgentID from Clients where ClientID=@NewClientID
+select @OwnerID=OwnerID,@ProcessID=ProcessID from OrderProcess where ClientID=@NewClientID and ProcessType=@OrderType and CategoryID=@CategoryID and IsDefault=1
 
-select @OwnerID=OwnerID,@ProcessID=ProcessID from OrderProcess where ClientID=@NewClientID and ProcessType=@OrderType and IsDefault=1
-
-Update Orders set ProcessID=@ProcessID,OwnerID=@OwnerID,ClientID=@NewClientID,AgentID=@AgentID,EntrustClientID=@ClientID,EntrustStatus=1,EntrustTime=getdate() where OrderID=@OrderID
+Update Orders set ProcessID=@ProcessID,OwnerID=@OwnerID,ClientID=@NewClientID,EntrustClientID=@ClientID,EntrustStatus=1,EntrustTime=getdate() where OrderID=@OrderID
 
 set @Err+=@@error
 

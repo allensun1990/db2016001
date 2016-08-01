@@ -19,7 +19,6 @@ CREATE PROCEDURE [dbo].[P_AddAliOrderDownloadPlan]
 @MemberID nvarchar(64),
 @Token nvarchar(64),
 @RefreshToken nvarchar(64),
-@AgentID nvarchar(64),
 @ClientID nvarchar(64)
 AS
 begin tran
@@ -27,8 +26,8 @@ begin tran
 declare @Err int=0
 if(not exists(select MemberID from AliOrderDownloadPlan where ClientID=@ClientID))
 begin
-	insert into AliOrderDownloadPlan(PlanID,UserID,MemberID,Token,RefreshToken,FentSuccessEndTime,BulkSuccessEndTime,AgentID,ClientID,Status,CreateTime,UpdateTime,CreateUserID)
-	values (NEWID(),@UserID,@MemberID,@Token,@RefreshToken,GETDATE(),GETDATE(),@AgentID,@ClientID,1,GETDATE(),GETDATE(),@UserID)
+	insert into AliOrderDownloadPlan(PlanID,UserID,MemberID,Token,RefreshToken,FentSuccessEndTime,BulkSuccessEndTime,ClientID,Status,CreateTime,UpdateTime,CreateUserID)
+	values (NEWID(),@UserID,@MemberID,@Token,@RefreshToken,GETDATE(),GETDATE(),@ClientID,1,GETDATE(),GETDATE(),@UserID)
 	set @Err+=@@ERROR
 end
 

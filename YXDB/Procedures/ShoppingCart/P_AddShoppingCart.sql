@@ -35,8 +35,8 @@ if(@OrderType=11)
 begin
 	if not exists(select AutoID from OrderDetail where OrderID=@GUID and ProductDetailID=@ProductDetailID)
 	begin
-		insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProdiverID)
-		select @GUID,@ProductDetailID,@ProductID,p.SmallUnitID,@Quantity,d.Price,0,@Quantity*d.Price,isnull(d.Description,'')+isnull(d.Remark,''),ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProdiverID
+		insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID)
+		select @GUID,@ProductDetailID,@ProductID,p.UnitID,@Quantity,d.Price,0,@Quantity*d.Price,isnull(d.Description,'')+isnull(d.Remark,''),ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID
 	    from ProductDetail d join Products p  on d.ProductID=p.ProductID where d.ProductDetailID=@ProductDetailID
 	end
 	else
@@ -52,8 +52,8 @@ else if(@OrderType=3) --报损
 begin
 	if not exists(select AutoID from ShoppingCart where ProductDetailID=@ProductDetailID and OrderType=@OrderType and [GUID]=@GUID and DepotID=@DepotID)
 	begin
-		insert into ShoppingCart(OrderType,ProductDetailID,ProductID,DepotID,UnitID,IsBigUnit,Quantity,Price,Remark,CreateTime,UserID,OperateIP,[GUID],ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProdiverID)
-		select @OrderType,@ProductDetailID,@ProductID,@DepotID,p.SmallUnitID,0,@Quantity,d.Price,isnull(d.Description,'')+isnull(d.Remark,''),GETDATE(),@UserID,@OperateIP,@GUID ,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProdiverID
+		insert into ShoppingCart(OrderType,ProductDetailID,ProductID,DepotID,UnitID,Quantity,Price,Remark,CreateTime,UserID,OperateIP,[GUID],ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID)
+		select @OrderType,@ProductDetailID,@ProductID,@DepotID,p.UnitID,@Quantity,d.Price,isnull(d.Description,'')+isnull(d.Remark,''),GETDATE(),@UserID,@OperateIP,@GUID ,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID
 		from ProductDetail d join Products p  on d.ProductID=p.ProductID where d.ProductDetailID=@ProductDetailID
 	end
 	else 
@@ -65,8 +65,8 @@ else
 begin
 	if not exists(select AutoID from ShoppingCart where ProductDetailID=@ProductDetailID and OrderType=@OrderType and [GUID]=@GUID)
 	begin
-		insert into ShoppingCart(OrderType,ProductDetailID,ProductID,DepotID,UnitID,IsBigUnit,Quantity,Price,Remark,CreateTime,UserID,OperateIP,[GUID],ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProdiverID)
-		select @OrderType,@ProductDetailID,@ProductID,@DepotID,p.SmallUnitID,0,@Quantity,d.Price,isnull(d.Description,'')+isnull(d.Remark,''),GETDATE(),@UserID,@OperateIP,@GUID ,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProdiverID
+		insert into ShoppingCart(OrderType,ProductDetailID,ProductID,DepotID,UnitID,Quantity,Price,Remark,CreateTime,UserID,OperateIP,[GUID],ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID)
+		select @OrderType,@ProductDetailID,@ProductID,@DepotID,p.UnitID,@Quantity,d.Price,isnull(d.Description,'')+isnull(d.Remark,''),GETDATE(),@UserID,@OperateIP,@GUID ,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID
 		from ProductDetail d join Products p  on d.ProductID=p.ProductID where d.ProductDetailID=@ProductDetailID
 	end
 	else 

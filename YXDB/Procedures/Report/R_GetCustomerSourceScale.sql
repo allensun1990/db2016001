@@ -19,7 +19,6 @@ CREATE PROCEDURE [dbo].[R_GetCustomerSourceScale]
 	@EndTime nvarchar(50)='',
 	@UserID nvarchar(64)='',
 	@TeamID nvarchar(64)='',
-	@AgentID nvarchar(64),
 	@ClientID nvarchar(64)
 AS
 
@@ -38,10 +37,6 @@ AS
 	begin
 		insert into #UserID select UserID from TeamUser where TeamID=@TeamID and status=1
 		set @SqlText +=' and OwnerID in (select UserID from #UserID) '
-	end
-	else
-	begin
-		set @SqlText +=' and AgentID = '''+@AgentID+''''
 	end
 
 	if(@BeginTime<>'')

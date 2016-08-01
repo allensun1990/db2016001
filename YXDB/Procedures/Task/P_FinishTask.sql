@@ -80,8 +80,8 @@ as
 			--通知阿里待处理日志
 			if(@AliOrderCode is not null and @AliOrderCode<>'')
 			begin
-				insert into AliOrderUpdateLog(LogID,OrderID,AliOrderCode,OrderType,Status,OrderStatus,OrderPrice,FailCount,UpdateTime,CreateTime,Remark,AgentID,ClientID)
-				values(NEWID(),@OrderID,@AliOrderCode,1,0,2,0,0,getdate(),getdate(),'完成打样',@ClientID,@ClientID)
+				insert into AliOrderUpdateLog(LogID,OrderID,AliOrderCode,OrderType,Status,OrderStatus,OrderPrice,FailCount,UpdateTime,CreateTime,Remark,ClientID)
+				values(NEWID(),@OrderID,@AliOrderCode,1,0,2,0,0,getdate(),getdate(),'完成打样',@ClientID)
 				set @Err+=@@error
 			end
 			set @Err+=@@ERROR
@@ -96,8 +96,8 @@ as
 			--通知阿里待处理日志
 			if(@AliOrderCode is not null and @AliOrderCode<>'')
 			begin
-				insert into AliOrderUpdateLog(LogID,OrderID,AliOrderCode,OrderType,Status,OrderStatus,OrderPrice,FailCount,UpdateTime,CreateTime,Remark,AgentID,ClientID)
-				values(NEWID(),@OrderID,@AliOrderCode,2,0,6,0,0,getdate(),getdate(),'大货单生产完成，发货完毕',@ClientID,@ClientID)
+				insert into AliOrderUpdateLog(LogID,OrderID,AliOrderCode,OrderType,Status,OrderStatus,OrderPrice,FailCount,UpdateTime,CreateTime,Remark,ClientID)
+				values(NEWID(),@OrderID,@AliOrderCode,2,0,6,0,0,getdate(),getdate(),'大货单生产完成，发货完毕',@ClientID)
 				set @Err+=@@error
 			end
 		end

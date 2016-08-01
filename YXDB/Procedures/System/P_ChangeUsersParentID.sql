@@ -17,7 +17,7 @@ GO
 CREATE PROCEDURE [dbo].[P_ChangeUsersParentID]
 @UserID nvarchar(64),
 @OldUserID nvarchar(64),
-@AgentID nvarchar(64)
+@ClientID nvarchar(64)
 AS
 
 begin tran
@@ -25,15 +25,15 @@ begin tran
 declare @Err int =0 ,@OldParentID nvarchar(64)
 
 --被替换员工上级ID
-select @OldParentID=ParentID from Users where UserID = @OldUserID and AgentID=@AgentID
+select @OldParentID=ParentID from Users where UserID = @OldUserID and ClientID=@ClientID
  
-Update Users set ParentID=@OldParentID where UserID=@UserID and AgentID=@AgentID
+Update Users set ParentID=@OldParentID where UserID=@UserID and ClientID=@ClientID
 
 --被替换员工下级改到员工下面
 Update Users set ParentID=@UserID where ParentID=@OldUserID
 
 --制空被替换员工上级
-Update Users set ParentID= '' where UserID=@OldUserID and AgentID=@AgentID
+Update Users set ParentID= '' where UserID=@OldUserID and ClientID=@ClientID
 
 set @Err+=@@error
 

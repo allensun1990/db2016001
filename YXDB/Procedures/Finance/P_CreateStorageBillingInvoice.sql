@@ -22,7 +22,6 @@ CREATE PROCEDURE [dbo].[P_CreateStorageBillingInvoice]
 	@InvoiceCode nvarchar(50)='',
 	@Remark nvarchar(4000)='',
 	@UserID nvarchar(64),
-	@AgentID nvarchar(64),
 	@ClientID nvarchar(64)
 AS
 begin tran
@@ -31,8 +30,8 @@ begin tran
 
 	declare @TotalMoney decimal(18,4),@TotalInvoiceMoney decimal(18,4)
 
-	insert into StorageBillingInvoice(InvoiceID,BillingID,Type,Status,InvoiceCode,InvoiceMoney,Remark,CreateTime,CreateUserID,AgentID,ClientID)
-			values(@InvoiceID,@BillingID,@Type,1,@InvoiceCode,@InvoiceMoney,@Remark,getdate(),@UserID,@AgentID,@ClientID)
+	insert into StorageBillingInvoice(InvoiceID,BillingID,Type,Status,InvoiceCode,InvoiceMoney,Remark,CreateTime,CreateUserID,ClientID)
+			values(@InvoiceID,@BillingID,@Type,1,@InvoiceCode,@InvoiceMoney,@Remark,getdate(),@UserID,@ClientID)
 	set @Err+=@@error
 
 	select @TotalMoney=TotalMoney,@TotalInvoiceMoney=InvoiceMoney from StorageBilling where BillingID=@BillingID

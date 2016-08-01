@@ -17,7 +17,7 @@ GO
 CREATE PROCEDURE [dbo].[P_UpdateUserParentID]
 @UserID nvarchar(64),
 @ParentID nvarchar(64),
-@AgentID nvarchar(64)
+@ClientID nvarchar(64)
 AS
 
 begin tran
@@ -25,13 +25,13 @@ begin tran
 declare @Err int =0 
 
 --只能有一个顶点
-if(@ParentID='6666666666' and exists(select AutoID from Users where ParentID='6666666666' and AgentID=@AgentID))
+if(@ParentID='6666666666' and exists(select AutoID from Users where ParentID='6666666666' and ClientID=@ClientID))
 begin
 	rollback tran
 	return
 end
 
-Update Users set ParentID= @ParentID where UserID=@UserID and AgentID=@AgentID
+Update Users set ParentID= @ParentID where UserID=@UserID 
 
 set @Err+=@@error
 

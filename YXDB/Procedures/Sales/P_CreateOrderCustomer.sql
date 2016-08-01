@@ -73,9 +73,9 @@ begin
 	set @DHCount=1
 end
 
-insert into Customer(CustomerID,CustomerPoolID,Name,Type,IndustryID,Extent,CityCode,Address,MobilePhone,OfficePhone,Email,Jobs,Description,SourceID,ActivityID,OwnerID,SourceType,
-						StageID,Status,AllocationTime,OrderTime,CreateTime,CreateUserID,AgentID,ClientID,DemandCount,DYCount,DHCount)
-			select @CustomerID,'',PersonName,1,'',0,CityCode,Address,MobileTele,'','','','通过订单联系人创建','','',OwnerID,@SourceType,'',1,getdate(),getdate(),getdate(),@OperateID,AgentID,ClientID,@DemandCount,@DYCount,@DHCount
+insert into Customer(CustomerID,CustomerPoolID,Name,Type,IndustryID,Extent,CityCode,Address,MobilePhone,OfficePhone,Email,Jobs,Description,SourceID,OwnerID,SourceType,
+					Status,CreateTime,CreateUserID,ClientID,DemandCount,DYCount,DHCount)
+			select @CustomerID,'',PersonName,1,'',0,CityCode,Address,MobileTele,'','','','通过订单联系人创建','',OwnerID,@SourceType,1,getdate(),@OperateID,ClientID,@DemandCount,@DYCount,@DHCount
 			from Orders where OrderID=@OrderID and ClientID=@ClientID
 
 Update Orders set CustomerID=@CustomerID where OrderID=@OrderID and ClientID=@ClientID

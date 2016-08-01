@@ -21,40 +21,16 @@ CREATE PROCEDURE [dbo].P_AddPlateMaking
 @TaskID nvarchar(64),
 @OrderID nvarchar(64),
 @Type nvarchar(64),
-@UserID nvarchar(64),
-@AgentID nvarchar(64)
+@UserID nvarchar(64)
 as
 	declare @PlateID nvarchar(64)=''
 	set @PlateID=NEWID()
 
 	begin tran
 	declare @Err int=0
-	insert into  PlateMaking(PlateID,Title,Remark,Icon,TaskID,OrderID,Type,CreateUserID,AgentID,CreateTime) 
-			values(@PlateID,@Title,@Remark,@Icon,@TaskID,@OrderID,@Type,@UserID,@AgentID,getdate())
+	insert into  PlateMaking(PlateID,Title,Remark,Icon,TaskID,OrderID,Type,CreateUserID,CreateTime) 
+			values(@PlateID,@Title,@Remark,@Icon,@TaskID,@OrderID,@Type,@UserID,getdate())
 			set @Err+=@@ERROR
-
-	--declare @OrderType int=1
-	--declare @OriginalID nvarchar(64)=''
-	--declare @PlateID nvarchar(64)=''
-	--set @PlateID=NEWID()
-
-	--select @OrderType=OrderType,@OriginalID=OriginalID from Orders where OrderID=@OrderID
-
-	--begin tran
-	--declare @Err int=0
-	--if(@OrderType=2)
-	--begin
-	--	set @OrderID=@OriginalID
-	--end
-
-	--insert into  PlateMaking(PlateID,Title,Remark,Icon,TaskID,OrderID,Type,CreateUserID,AgentID,CreateTime) 
-	--		values(@PlateID,@Title,@Remark,@Icon,@TaskID,@OrderID,@Type,@UserID,@AgentID,getdate())
-	--		set @Err+=@@ERROR
-
-	--insert into  PlateMaking(PlateID,Title,Remark,Icon,TaskID,OrderID,Type,CreateUserID,AgentID,CreateTime,OriginalID,OriginalPlateID) 
-	--	select NEWID(),@Title,@Remark,@Icon,@TaskID,OrderID,@Type,@UserID,@AgentID,getdate(),@OrderID,@PlateID from Orders
-	--	where OrderType=2 and OriginalID=@OrderID and OrderStatus = 1
-	--	set @Err+=@@ERROR
 
 	if(@Err>0)
 	begin

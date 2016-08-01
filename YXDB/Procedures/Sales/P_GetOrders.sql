@@ -26,7 +26,6 @@ CREATE PROCEDURE [dbo].[P_GetOrders]
 	@Mark int=-1,
 	@SearchUserID nvarchar(64)='',
 	@SearchTeamID nvarchar(64)='',
-	@SearchAgentID nvarchar(64)='',
 	@EntrustClientID nvarchar(64)='',
 	@Keywords nvarchar(4000),
 	@BeginTime nvarchar(50)='',
@@ -37,7 +36,6 @@ CREATE PROCEDURE [dbo].[P_GetOrders]
 	@totalCount int output ,
 	@pageCount int output,
 	@UserID nvarchar(64)='',
-	@AgentID nvarchar(64),
 	@ClientID nvarchar(64)
 AS
 	declare @tableName nvarchar(4000),
@@ -48,7 +46,7 @@ AS
 
 	select @tableName='Orders o left join Customer cus on o.CustomerID=cus.CustomerID',
 	@columns='o.OrderID,o.OrderCode,o.OrderImage,o.OwnerID,o.OrderType,o.Status,o.TaskCount,o.TaskOver,o.PlanQuantity,o.FinalPrice,o.TotalMoney,o.Price,o.CustomerID,o.IntGoodsCode,o.EndTime,o.GoodsName,
-			o.OrderStatus,o.CreateTime,o.PersonName,o.PlanPrice,o.PlanType,o.ProfitPrice,cus.Name CustomerName,o.AgentID,o.EntrustTime,o.SourceType,o.Mark,o.PlanTime,o.GoodsCode,o.OrderTime ',
+			o.OrderStatus,o.CreateTime,o.PersonName,o.PlanPrice,o.ProfitPrice,cus.Name CustomerName,o.EntrustTime,o.SourceType,o.Mark,o.PlanTime,o.GoodsCode,o.OrderTime,o.ClientID ',
 	@key='o.AutoID',
 	@isAsc=0
 
@@ -106,10 +104,6 @@ AS
 		begin
 			insert into #UserID select UserID from TeamUser where TeamID=@SearchTeamID and status=1
 			set @condition +=' and o.OwnerID in (select UserID from #UserID) '
-		end
-		else if(@SearchAgentID<>'')
-		begin
-			set @condition +=' and o.AgentID = '''+@SearchAgentID+''''
 		end
 		else
 		begin

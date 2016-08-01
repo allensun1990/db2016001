@@ -19,24 +19,23 @@ Create proc [dbo].[P_InsertTaskColor]
  @ColorName nvarchar(64)='',
  @ColorValue nvarchar(64)='',
  @Status int=0, 
- @AgentID nvarchar(64)='',
  @ClientID nvarchar(64)='',
  @CreateUserID nvarchar(64)='',
  @Result int output
 as
 set @result=0
-if((select COUNT(1) from TaskColor where Status<>9 and  ClientID=@ClientID and AgentID=@AgentID and ColorValue=@ColorValue )>0)
+if((select COUNT(1) from TaskColor where Status<>9 and  ClientID=@ClientID and ColorValue=@ColorValue )>0)
 begin
 set @result=-1
 end
 else
 begin
 	declare @ColorID int
-	select @ColorID=isnull(MAX(ColorID),0)+1 from TaskColor where ClientID=@ClientID and AgentID=@AgentID
+	select @ColorID=isnull(MAX(ColorID),0)+1 from TaskColor where ClientID=@ClientID 
 	insert into TaskColor
-	(ColorID,ColorName,ColorValue,Status,AgentID,ClientID,CreateTime,CreateUserID) 
+	(ColorID,ColorName,ColorValue,Status,ClientID,CreateTime,CreateUserID) 
 	values
-	(@ColorID,@ColorName,@ColorValue,@Status,@AgentID,@ClientID,GETDATE(),@CreateUserID)
+	(@ColorID,@ColorName,@ColorValue,@Status,@ClientID,GETDATE(),@CreateUserID)
 	 set @result=@ColorID
  end
 GO

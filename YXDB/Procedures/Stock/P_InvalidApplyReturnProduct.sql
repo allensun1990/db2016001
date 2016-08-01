@@ -17,7 +17,6 @@ GO
 CREATE PROCEDURE [dbo].[P_InvalidApplyReturnProduct]
 @OrderID nvarchar(64),
 @UserID nvarchar(64),
-@AgentID nvarchar(64)='',
 @ClientID nvarchar(64),
 @Result int output,
 @ErrInfo nvarchar(500) output
@@ -27,7 +26,7 @@ begin tran
 
 declare @OrderStatus int,@OrderSendStatus int,@OldOrderID nvarchar(64),@ReturnStatus int,@Err int=0
 
-select @OrderStatus=Status,@OrderSendStatus=SendStatus,@OldOrderID=OriginalID,@ReturnStatus=ReturnStatus  from AgentsOrders where OrderID=@OrderID
+select @OrderStatus=Status,@OrderSendStatus=SendStatus,@OldOrderID=OriginalID,@ReturnStatus=ReturnStatus  from Orders where OrderID=@OrderID
 
 
 if(@ReturnStatus<>1)
@@ -38,11 +37,8 @@ begin
 	return
 end
 
-Update AgentsOrders set ReturnStatus=0 where OrderID=@OrderID
-Update AgentsOrderDetail set ApplyQuantity=0 where OrderID=@OrderID 
-
-update Orders set ReturnStatus=0 where OrderID=@OldOrderID
-Update OrderDetail set ApplyQuantity=0 where OrderID=@OldOrderID
+update Orders set ReturnStatus=0 where OrderID=@OrderID
+Update OrderGoods set ApplyQuantity=0 where OrderID=@OrderID
 
 
 set @Err+=@@Error

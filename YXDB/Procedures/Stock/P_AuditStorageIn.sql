@@ -23,7 +23,6 @@ CREATE PROCEDURE [dbo].[P_AuditStorageIn]
 @BillingCode nvarchar(50),
 @UserID nvarchar(64),
 @OperateIP nvarchar(64),
-@AgentID nvarchar(64)='',
 @ClientID nvarchar(64),
 @Result int output,
 @ErrInfo nvarchar(500) output
@@ -44,7 +43,7 @@ begin
 end
 
 --代理商订单信息
-declare @AutoID int=1,@ProductID nvarchar(64),@ProductDetailID nvarchar(64),@Quantity decimal(18,4),@BatchCode nvarchar(50),@DepotID nvarchar(64),
+declare @AutoID int=1,@ProductID nvarchar(64),@ProductDetailID nvarchar(64),@Quantity decimal(18,4),@DepotID nvarchar(64),
 @sql nvarchar(4000),@GoodsQuantity nvarchar(200),@GoodsAutoID nvarchar(64)
 
 create table #TempTable(ID int identity(1,1),Value nvarchar(4000))
@@ -62,7 +61,7 @@ begin
 
 		set @DepotID=SUBSTRING (@GoodsQuantity , CHARINDEX (':' , @GoodsQuantity)+1 ,LEN(@GoodsQuantity)- CHARINDEX (':' , @GoodsQuantity))
 
-		select @ProductID=ProductID,@ProductDetailID=ProductDetailID,@BatchCode=BatchCode from StorageDetail where DocID=@DocID and AutoID=@GoodsAutoID
+		select @ProductID=ProductID,@ProductDetailID=ProductDetailID from StorageDetail where DocID=@DocID and AutoID=@GoodsAutoID
 
 		if(@Quantity is null or @Quantity=0)
 		begin
@@ -101,14 +100,14 @@ begin
 		end
 		else
 		begin
-			insert into ProductStock(ProductDetailID,ProductID,StockIn,StockOut,BatchCode,WareID,DepotID,ClientID)
-								values (@ProductDetailID,@ProductID,@Quantity,0,@BatchCode,@WareID,@DepotID,@ClientID)
+			insert into ProductStock(ProductDetailID,ProductID,StockIn,StockOut,WareID,DepotID,ClientID)
+								values (@ProductDetailID,@ProductID,@Quantity,0,@WareID,@DepotID,@ClientID)
 		end
 		set @Err+=@@Error
 
 		--处理产品流水
-		insert into ProductStream(ProductDetailID,ProductID,DocID,DocCode,BatchCode,DocDate,DocType,Mark,Quantity,WareID,DepotID,CreateUserID,ClientID)
-							values(@ProductDetailID,@ProductID,@DocID,@DocCode,@BatchCode,CONVERT(varchar(100), GETDATE(), 112),@DocType,0,@Quantity,@WareID,@DepotID,@UserID,@ClientID)
+		insert into ProductStream(ProductDetailID,ProductID,DocID,DocCode,DocDate,DocType,Mark,Quantity,WareID,DepotID,CreateUserID,ClientID)
+							values(@ProductDetailID,@ProductID,@DocID,@DocCode,CONVERT(varchar(100), GETDATE(), 112),@DocType,0,@Quantity,@WareID,@DepotID,@UserID,@ClientID)
 
 		--修改产品入库数
 		--update Products set StockIn=StockIn+@Quantity where ProductID=@ProductID
@@ -120,8 +119,8 @@ begin
 		--更新已入库数量
 		Update StorageDetail set Complete=Complete+@Quantity,DepotID=@DepotID where  AutoID=@GoodsAutoID and DocID=@DocID
 
-		insert into StorageDetail(DocID,ProductDetailID,ProductID,ProdiverID,UnitID,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS )
-			select @NewDocID,ProductDetailID,ProductID,ProdiverID,UnitID,0,@Quantity,Price,Price*@Quantity,WareID,@DepotID,BatchCode,0,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS 
+		insert into StorageDetail(DocID,ProductDetailID,ProductID,ProviderID,UnitID,Quantity,Price,TotalMoney,WareID,DepotID,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS )
+			select @NewDocID,ProductDetailID,ProductID,ProviderID,UnitID,@Quantity,Price,Price*@Quantity,WareID,@DepotID,0,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS 
 			from StorageDetail where AutoID=@GoodsAutoID and DocID=@DocID
 		
 	end

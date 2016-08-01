@@ -18,7 +18,6 @@ CREATE PROCEDURE [dbo].[P_UpdateOrderTotalMoney]
 	@OrderID nvarchar(64),
 	@TotalMoney decimal(18,4)=0 ,
 	@OperateID nvarchar(64)='',
-	@AgentID nvarchar(64)='',
 	@ClientID nvarchar(64)=''
 AS
 	
@@ -35,8 +34,6 @@ begin
 end
 
 Update Orders set TotalMoney=@TotalMoney where OrderID=@OrderID
-
---Update OrderGoods set TotalMoney=@TotalMoney where OrderID=@OrderID
 
 set @Err+=@@error
 

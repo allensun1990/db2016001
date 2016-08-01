@@ -31,39 +31,38 @@ declare @BeginTime nvarchar(50)=CONVERT(nvarchar(20),dateadd(day,-1, GETDATE()),
 		@ReportDate nvarchar(20)=CONVERT(nvarchar(20),dateadd(day,-1, GETDATE()),112)
 
 
-select ObjectType,ActionType,@ReportDate ReportDate, COUNT(AutoID) ReportValue,AgentID,ClientID into #temp from Log_Action
+select ObjectType,ActionType,@ReportDate ReportDate, COUNT(AutoID) ReportValue,ClientID into #temp from Log_Action
 where  CreateTime between @BeginTime and @EndTime
-group by ObjectType,ActionType,AgentID,ClientID,CONVERT(nvarchar(20),CreateTime,112) 
+group by ObjectType,ActionType,ClientID,CONVERT(nvarchar(20),CreateTime,112) 
 
 --行为日志
-insert into Report_AgentAction_Day(ObjectType,ActionType,ReportDate,ReportValue,AgentID,ClientID)
-select ObjectType,ActionType, ReportDate, str(ReportValue),AgentID,ClientID from #temp
+insert into Report_AgentAction_Day(ObjectType,ActionType,ReportDate,ReportValue,ClientID)
+select ObjectType,ActionType, ReportDate, str(ReportValue),ClientID from #temp
 
 --日志处理（新）
-insert into M_Report_AgentAction_Day(AgentID,ClientID,ReportDate)
-select AgentID,ClientID,@ReportDate from Agents
+insert into M_Report_AgentAction_Day(ClientID,ReportDate)
+select ClientID,@ReportDate from Agents
 
-update d set CustomerCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.AgentID=t.AgentID where t.ObjectType=1
-update d set OrdersCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.AgentID=t.AgentID where t.ObjectType=2
-update d set ActivityCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.AgentID=t.AgentID where t.ObjectType=3
-update d set ProductCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.AgentID=t.AgentID where t.ObjectType=4
-update d set UsersCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.AgentID=t.AgentID where t.ObjectType=5
-update d set AgentCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.AgentID=t.AgentID where t.ObjectType=6
-update d set OpportunityCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.AgentID=t.AgentID where t.ObjectType=7
-update d set PurchaseCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.AgentID=t.AgentID where t.ObjectType=8
-update d set WarehousingCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.AgentID=t.AgentID where t.ObjectType=9
-update d set TaskCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.AgentID=t.AgentID where t.ObjectType=10
-update d set DownOrderCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.AgentID=t.AgentID where t.ObjectType=11
-update d set ProductOrderCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.AgentID=t.AgentID where t.ObjectType=12
+update d set CustomerCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.ClientID=t.ClientID where t.ObjectType=1
+update d set OrdersCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.ClientID=t.ClientID where t.ObjectType=2
+update d set ActivityCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.ClientID=t.ClientID where t.ObjectType=3
+update d set ProductCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.ClientID=t.ClientID where t.ObjectType=4
+update d set UsersCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.ClientID=t.ClientID where t.ObjectType=5
+update d set AgentCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.ClientID=t.ClientID where t.ObjectType=6
+update d set OpportunityCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.ClientID=t.ClientID where t.ObjectType=7
+update d set PurchaseCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.ClientID=t.ClientID where t.ObjectType=8
+update d set WarehousingCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.ClientID=t.ClientID where t.ObjectType=9
+update d set TaskCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.ClientID=t.ClientID where t.ObjectType=10
+update d set DownOrderCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.ClientID=t.ClientID where t.ObjectType=11
+update d set ProductOrderCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.ClientID=t.ClientID where t.ObjectType=12
 update d set UserNum=UserCount from ( select isnull(Count(ClientID),0) as UserCount ,Users.ClientID from Users where Status=1  group by Users.ClientID) a join  M_Report_AgentAction_Day d  on a.ClientID=d.ClientID where  d.ReportDate=@ReportDate
 update M_Report_AgentAction_Day set Vitality=cast( round((CustomerCount+OrdersCOunt+ ActivityCount+ProductCount+UsersCount+AgentCount+OpportunityCount+PurchaseCount+WarehousingCount+TaskCount+DownOrderCount+ProductCount+ProductOrderCount)
  / cast(UserNum as decimal(18,4)  ),4) as  decimal(18,4)) where ReportDate=@ReportDate
 
 
 --登录日志
-
-insert into Report_AgentLogin_Day(AgentID,ClientID,ReportDate,ReportUserCount,ReportTimes)
-select AgentID,ClientID,ReportDate,COUNT(UserID),SUM(Times) from
-(select UserID,AgentID,ClientID,@ReportDate ReportDate,COUNT(0) Times from Log_Login 
-where Status=1 and SystemType=2 and CreateTime between @BeginTime and @EndTime group by UserID,AgentID,ClientID,CONVERT(nvarchar(20),CreateTime,112)) r
-group by AgentID,ClientID,ReportDate
+insert into Report_AgentLogin_Day(ClientID,ReportDate,ReportUserCount,ReportTimes)
+select ClientID,ReportDate,COUNT(UserID),SUM(Times) from
+(select UserID,ClientID,@ReportDate ReportDate,COUNT(0) Times from Log_Login 
+where Status=1 and SystemType=2 and CreateTime between @BeginTime and @EndTime group by UserID,ClientID,CONVERT(nvarchar(20),CreateTime,112)) r
+group by ClientID,ReportDate

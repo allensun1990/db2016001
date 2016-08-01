@@ -26,7 +26,6 @@ CREATE PROCEDURE [dbo].[P_UpdateContact]
 @Jobs nvarchar(200)='',
 @Description nvarchar(500)='',
 @CreateUserID nvarchar(64)='',
-@AgentID nvarchar(64)='',
 @ClientID nvarchar(64)
 AS
 begin tran

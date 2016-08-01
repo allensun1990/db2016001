@@ -24,7 +24,6 @@ CREATE PROCEDURE [dbo].[P_GetClientAccountBills]
 	@totalCount int output ,
 	@pageCount int output,
 	@UserID nvarchar(64)='',
-	@AgentID nvarchar(64),
 	@ClientID nvarchar(64)
 AS
 	declare @tableName nvarchar(4000),
@@ -40,7 +39,7 @@ AS
 	@orderColumn='CreateTime desc',
 	@isAsc=0
 
-	set @condition='AgentID='''+@AgentID+''''
+	set @condition='ClientID='''+@ClientID+''''
 
 	create table #UserID(UserID nvarchar(64))
 

@@ -16,12 +16,11 @@ GO
 ************************************************************/
 CREATE PROCEDURE [dbo].[P_GetPayableBillByID]
 	@BillingID nvarchar(64),
-	@AgentID nvarchar(64),
 	@ClientID nvarchar(64)
 AS
 	
-	select * from StorageBilling where BillingID=@BillingID and AgentID=@AgentID
+	select * from StorageBilling where BillingID=@BillingID 
 
-	select * from StorageBillingPay where BillingID=@BillingID and AgentID=@AgentID and Status<>9 order by PayTime desc
+	select * from StorageBillingPay where BillingID=@BillingID and Status<>9 order by PayTime desc
 
-	select * from StorageBillingInvoice  where BillingID=@BillingID and AgentID=@AgentID and Status<>9 order by AutoID desc
+	select * from StorageBillingInvoice  where BillingID=@BillingID and Status<>9 order by AutoID desc

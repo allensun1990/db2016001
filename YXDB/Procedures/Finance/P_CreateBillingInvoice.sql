@@ -28,7 +28,6 @@ CREATE PROCEDURE [dbo].[P_CreateBillingInvoice]
 	@ContactPhone  nvarchar(50)='',
 	@Remark nvarchar(4000)='',
 	@UserID nvarchar(64),
-	@AgentID nvarchar(64),
 	@ClientID nvarchar(64)
 AS
 
@@ -43,11 +42,8 @@ begin tran
 		return
 	end
 
-	insert into BillingInvoice(InvoiceID,BillingID,Type,CustomerType,Status,InvoiceTitle,InvoiceMoney,CityCode,Address,PostalCode,ContactName,ContactPhone,Remark,CreateTime,CreateUserID,AgentID,ClientID)
-			values(@InvoiceID,@BillingID,@Type,@CustomerType,0,@InvoiceTitle,@InvoiceMoney,@CityCode,@Address,@PostalCode,@ContactName,@ContactPhone,@Remark,getdate(),@UserID,@AgentID,@ClientID)
-	set @Err+=@@error
-
-	update Billing set InvoiceStatus=1,InvoiceTime=getdate() where  BillingID=@BillingID
+	insert into BillingInvoice(InvoiceID,BillingID,Type,CustomerType,Status,InvoiceTitle,InvoiceMoney,CityCode,Address,PostalCode,ContactName,ContactPhone,Remark,CreateTime,CreateUserID,ClientID)
+			values(@InvoiceID,@BillingID,@Type,@CustomerType,0,@InvoiceTitle,@InvoiceMoney,@CityCode,@Address,@PostalCode,@ContactName,@ContactPhone,@Remark,getdate(),@UserID,@ClientID)
 	set @Err+=@@error
 
 if(@Err>0)

@@ -16,13 +16,12 @@ GO
 ************************************************************/
 CREATE PROCEDURE [dbo].[P_GetOrderBaseInfoByID]
 	@OrderID nvarchar(64)='',
-	@AgentID nvarchar(64)='',
 	@ClientID nvarchar(64)=''
 AS
 
 select * from Orders where OrderID=@OrderID and ClientID=@ClientID
 
-select s.AutoID,s.ProductDetailID,s.ProductID,s.Quantity,s.Remark ,s.ProductName,s.Loss,s.UnitID,s.Price,s.LossRate,
-s.TotalMoney,s.Imgs ,s.ApplyQuantity,s.ReturnQuantity, s.DetailsCode, s.ProductCode,ProductImage
+select s.AutoID,s.ProductDetailID,s.ProductID,s.Quantity,s.Remark ,s.ProductName,s.Loss,s.UnitID,s.Price,
+s.TotalMoney,s.Imgs , s.DetailsCode, s.ProductCode,ProductImage
 from OrderDetail s where s.OrderID=@OrderID 
 

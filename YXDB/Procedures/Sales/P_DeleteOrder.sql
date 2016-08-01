@@ -17,7 +17,6 @@ GO
 CREATE PROCEDURE [dbo].[P_DeleteOrder]
 	@OrderID nvarchar(64),
 	@OperateID nvarchar(64)='',
-	@AgentID nvarchar(64)='',
 	@ClientID nvarchar(64)=''
 AS
 	
@@ -41,8 +40,8 @@ Update Customer set DemandCount=DemandCount-1 where CustomerID=@CustomerID and D
 
 if(@AliOrderCode is not null and @AliOrderCode<>'')
 begin
-	insert into AliOrderUpdateLog(LogID,OrderID,AliOrderCode,OrderType,Status,OrderStatus,OrderPrice,FailCount,UpdateTime,CreateTime,Remark,AgentID,ClientID)
-	values(NEWID(),@OrderID,@AliOrderCode,@OrderType,0,9,0,0,getdate(),getdate(),'',@ClientID,@ClientID)
+	insert into AliOrderUpdateLog(LogID,OrderID,AliOrderCode,OrderType,Status,OrderStatus,OrderPrice,FailCount,UpdateTime,CreateTime,Remark,ClientID)
+	values(NEWID(),@OrderID,@AliOrderCode,@OrderType,0,9,0,0,getdate(),getdate(),'',@ClientID)
 	set @Err+=@@error
 end
 

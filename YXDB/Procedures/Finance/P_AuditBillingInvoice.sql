@@ -22,7 +22,6 @@ CREATE PROCEDURE [dbo].[P_AuditBillingInvoice]
 	@ExpressID nvarchar(64),
 	@ExpressCode nvarchar(64),
 	@UserID nvarchar(64),
-	@AgentID nvarchar(64),
 	@ClientID nvarchar(64)
 AS
 begin tran
@@ -40,7 +39,6 @@ begin tran
 
 	Update BillingInvoice set Status=1,InvoiceMoney=@InvoiceMoney,InvoiceCode=@InvoiceCode,ExpressID=@ExpressID,ExpressCode=@ExpressCode,ExpressStatus=1,ExpressTime=getdate(),UpdateTime=getdate(),UpdateUserID=@UserID where InvoiceID=@InvoiceID
 
-	update Billing set InvoiceStatus=2,InvoiceTime=getdate(),InvoiceMoney=@InvoiceMoney where  BillingID=@BillingID
 	set @Err+=@@error
 
 if(@Err>0)

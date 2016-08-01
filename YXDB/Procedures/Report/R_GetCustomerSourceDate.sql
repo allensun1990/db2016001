@@ -20,7 +20,6 @@ CREATE PROCEDURE [dbo].[R_GetCustomerSourceDate]
 	@EndTime nvarchar(50)='',
 	@UserID nvarchar(64)='',
 	@TeamID nvarchar(64)='',
-	@AgentID nvarchar(64),
 	@ClientID nvarchar(64)
 AS
 
@@ -42,10 +41,7 @@ AS
 			insert into #UserID select UserID from TeamUser where TeamID=@TeamID and status=1
 			set @SqlText +=' and OwnerID in (select UserID from #UserID) '
 		end
-		else
-		begin
-			set @SqlText +=' and AgentID = '''+@AgentID+''''
-		end
+
 
 		set @SqlText+='group by SourceID,convert(char(6),CreateTime,112)';
 
@@ -77,10 +73,6 @@ AS
 			insert into #UserID select UserID from TeamUser where TeamID=@TeamID and status=1
 			set @SqlText +=' and OwnerID in (select UserID from #UserID) '
 		end
-		else
-		begin
-			set @SqlText +=' and AgentID = '''+@AgentID+''''
-		end
 
 		set @SqlText+='group by SourceID,datename(year,CreateTime)+datename(week,CreateTime)';
 
@@ -111,10 +103,6 @@ AS
 		begin
 			insert into #UserID select UserID from TeamUser where TeamID=@TeamID and status=1
 			set @SqlText +=' and OwnerID in (select UserID from #UserID) '
-		end
-		else
-		begin
-			set @SqlText +=' and AgentID = '''+@AgentID+''''
 		end
 
 		set @SqlText +='group by SourceID,convert(char(8),CreateTime,112)';

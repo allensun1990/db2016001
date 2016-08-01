@@ -16,7 +16,6 @@ GO
 ************************************************************/
 CREATE PROCEDURE [dbo].[R_GetClientUpcomings]
 @UserID nvarchar(64),
-@AgentID nvarchar(64),
 @ClientID nvarchar(64)
 AS
 

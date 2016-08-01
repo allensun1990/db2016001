@@ -22,15 +22,14 @@ CREATE PROCEDURE [dbo].[P_CreateBillingPay]
 	@PayTime datetime,
 	@Remark nvarchar(4000),
 	@UserID nvarchar(64),
-	@AgentID nvarchar(64),
 	@ClientID nvarchar(64)
 AS
 begin tran
 
 	declare @Err int=0
 
-	insert into BillingPay(BillingID,Type,Status,PayType,PayTime,PayMoney,Remark,CreateTime,CreateUserID,AgentID,ClientID)
-			values(@BillingID,@Type,1,@PayType,@PayTime,@PayMoney,@Remark,getdate(),@UserID,@AgentID,@ClientID)
+	insert into BillingPay(BillingID,Type,Status,PayType,PayTime,PayMoney,Remark,CreateTime,CreateUserID,ClientID)
+			values(@BillingID,@Type,1,@PayType,@PayTime,@PayMoney,@Remark,getdate(),@UserID,@ClientID)
 	set @Err+=@@error
 
 

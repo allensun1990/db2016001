@@ -18,7 +18,6 @@ CREATE PROCEDURE [dbo].[P_EffectiveOrderProduct]
 	@OrderID nvarchar(64),
 	@BillingCode nvarchar(50),
 	@OperateID nvarchar(64)='',
-	@AgentID nvarchar(64)='',
 	@ClientID nvarchar(64)='',
 	@Result int output
 AS
@@ -42,18 +41,18 @@ begin
 	select @WareID=WareID from WareHouse where ClientID=@ClientID and Status<>9
 
 	--参数
-	declare @AutoID int=1,@ProductID nvarchar(64),@ProductDetailID nvarchar(64),@Quantity decimal(18,2),@BatchCode nvarchar(50),
+	declare @AutoID int=1,@ProductID nvarchar(64),@ProductDetailID nvarchar(64),@Quantity decimal(18,2),
 	@DRemark nvarchar(4000),@Price decimal(18,4),@UnitID nvarchar(64),@ProviderID nvarchar(64)=''
 
-	select identity(int,1,1) as AutoID,ProductDetailID,ProductID, UnitID,Quantity+Loss Quantity,Price,'' BatchCode,Remark,ProdiverID,
+	select identity(int,1,1) as AutoID,ProductDetailID,ProductID, UnitID,Quantity+Loss Quantity,Price,Remark,ProviderID,
 	ProductName,ProductCode,DetailsCode,ProductImage,ImgS 
 	into #TempProducts 
 	from OrderDetail where OrderID=@OrderID 
 
 	while exists(select AutoID from #TempProducts where AutoID=@AutoID)
 	begin
-		select @ProductID=ProductID,@ProductDetailID=ProductDetailID,@Quantity=Quantity,@BatchCode=BatchCode,@DRemark=Remark,@Price=Price,
-		@UnitID=UnitID,@ProviderID= ProdiverID
+		select @ProductID=ProductID,@ProductDetailID=ProductDetailID,@Quantity=Quantity,@DRemark=Remark,@Price=Price,
+		@UnitID=UnitID,@ProviderID= ProviderID
 		from #TempProducts where AutoID=@AutoID
 
 		if exists(select AutoID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID)
@@ -83,8 +82,8 @@ begin
 		set @Stock=0
 		if(@Quantity>@Stock)
 		begin
-			insert into StorageDetail(DocID,ProductDetailID,ProductID,ProdiverID,UnitID,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS )
-			select @DocID,@ProductDetailID,@ProductID,@ProviderID,@UnitID,0,@Quantity-@Stock,@Price,@Price*(@Quantity-@Stock),@WareID,@DepotID,@BatchCode,0,@DRemark,@ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS 
+			insert into StorageDetail(DocID,ProductDetailID,ProductID,ProdiverID,UnitID,Quantity,Price,TotalMoney,WareID,DepotID,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS )
+			select @DocID,@ProductDetailID,@ProductID,@ProviderID,@UnitID,@Quantity-@Stock,@Price,@Price*(@Quantity-@Stock),@WareID,@DepotID,0,@DRemark,@ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS 
 			from #TempProducts where AutoID=@AutoID
 		end
 		set @Err+=@@Error

@@ -18,7 +18,6 @@ CREATE PROCEDURE [dbo].[P_DeleteBillingInvoice]
 	@InvoiceID nvarchar(64),
 	@BillingID nvarchar(64),
 	@UserID nvarchar(64),
-	@AgentID nvarchar(64),
 	@ClientID nvarchar(64)
 AS
 begin tran
