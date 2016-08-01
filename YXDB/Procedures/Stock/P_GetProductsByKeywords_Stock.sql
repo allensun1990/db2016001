@@ -23,7 +23,7 @@ CREATE PROCEDURE [dbo].[P_GetProductsByKeywords_Stock]
 AS
 	declare @sqlText nvarchar(4000)
 
-	set @sqlText='select s.ProductDetailID,s.ProductID,p.ProductCode,p.ProductName,d.SaleAttrValue,s.BatchCode,s.StockIn,s.StockOut,w.Name WareName,dm.DepotCode,s.DepotID,d.Remark,d.Description from '
+	set @sqlText='select s.ProductDetailID,s.ProductID,p.ProductCode,p.ProductName,d.SaleAttrValue,s.StockIn,s.StockOut,w.Name WareName,dm.DepotCode,s.DepotID,d.Remark,d.Description from '
 
 	set @sqlText+=' ProductStock s 
 					join Products p on s.ProductID=p.ProductID 
@@ -40,7 +40,7 @@ AS
 
 	if(@keyWords <> '')
 	begin
-		set @sqlText +=' and (p.ProductName like ''%'+@keyWords+'%'' or  p.ProductCode like ''%'+@keyWords+'%'' or dm.DepotCode like ''%'+@keyWords+'%'' or  s.BatchCode like ''%'+@keyWords+'%'') '
+		set @sqlText +=' and (p.ProductName like ''%'+@keyWords+'%'' or  p.ProductCode like ''%'+@keyWords+'%'' or dm.DepotCode like ''%'+@keyWords+'%'') '
 	end
 
 	exec(@sqlText)

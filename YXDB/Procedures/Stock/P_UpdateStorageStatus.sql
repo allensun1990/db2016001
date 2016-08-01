@@ -43,11 +43,6 @@ begin
 	update Orders set PurchaseStatus=0 where OrderID=@OriginalID
 end
 
---记录审核日志
-insert into StorageDocAction(DocID,Remark,CreateTime,CreateUserID,OperateIP)
-					values( @DocID,@Remark,getdate(),@UserID,@OperateIP)
-
-
 set @Err+=@@Error
 
 if(@Err>0)

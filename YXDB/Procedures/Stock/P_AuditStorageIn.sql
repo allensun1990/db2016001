@@ -142,10 +142,6 @@ end
 if(@IsOver=1)
 begin
 	Update StorageDoc set Status=2 where  DocID=@DocID
-	if(@OriginalID is not null and @OriginalID<>'')
-	begin
-		update Orders set PurchaseStatus=0 where OrderID=@OriginalID
-	end
 end
 else
 begin

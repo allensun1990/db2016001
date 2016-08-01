@@ -70,8 +70,8 @@ begin
 		--end
 		--else
 		--begin
-		--	insert into ProductStock(ProductDetailID,ProductID,StockIn,StockOut,LogicOut,BatchCode,WareID,DepotID,ClientID)
-		--					values (@ProductDetailID,@ProductID,0,0,0,'',@WareID,@DepotID,@ClientID)
+		--	insert into ProductStock(ProductDetailID,ProductID,StockIn,StockOut,LogicOut,WareID,DepotID,ClientID)
+		--					values (@ProductDetailID,@ProductID,0,0,0,@WareID,@DepotID,@ClientID)
 		--	set @Stock=0
 		--end
 

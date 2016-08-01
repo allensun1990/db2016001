@@ -35,7 +35,7 @@ declare @Err int=0
 if exists(select AutoID from ShoppingCart where UserID=@UserID and [GUID]=@UserID and OrderType=@DocType)
 begin
 	
-	declare @AutoID int=1,@ProductID nvarchar(64),@ProductDetailID nvarchar(64),@BatchCode nvarchar(50),@DepotID nvarchar(64)
+	declare @AutoID int=1,@ProductID nvarchar(64),@ProductDetailID nvarchar(64),@DepotID nvarchar(64)
 
 	select identity(int,1,1) as AutoID,ProductDetailID,ProductID,UnitID,Quantity,Price,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS into #TempProducts 
 	from ShoppingCart 

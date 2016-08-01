@@ -104,8 +104,8 @@ begin
 
 			Update OrderGoods set Complete=Complete+@Quantity where OrderID=@OrderID and AutoID=@GoodsAutoID
 
-			insert into GoodsDocDetail(DocID,GoodsDetailID,GoodsID,UnitID,Quantity,Complete,SurplusQuantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID)
-				select @DocID,GoodsDetailID,GoodsID,'',@Quantity,Complete,CutQuantity-Complete,Price,Price*@Quantity,'','','',0,Remark,@ClientID 
+			insert into GoodsDocDetail(DocID,GoodsDetailID,GoodsID,UnitID,Quantity,Complete,SurplusQuantity,Price,TotalMoney,WareID,DepotID,Status,Remark,ClientID)
+				select @DocID,GoodsDetailID,GoodsID,'',@Quantity,Complete,CutQuantity-Complete,Price,Price*@Quantity,'','',0,Remark,@ClientID 
 				from OrderGoods where OrderID=@OrderID and AutoID=@GoodsAutoID
 		end
 		
@@ -121,7 +121,7 @@ begin
 	if(@DocType=1)
 	begin
 		--参数
-		declare @ProductID nvarchar(64),@ProductDetailID nvarchar(64),@UseQuantity decimal(18,2),@BatchCode nvarchar(50),@BatchAutoID int,@BatchQuantity decimal(18,4),
+		declare @ProductID nvarchar(64),@ProductDetailID nvarchar(64),@UseQuantity decimal(18,2),@BatchAutoID int,@BatchQuantity decimal(18,4),
 		@DRemark nvarchar(4000),@Price decimal(18,4),@UnitID nvarchar(64),@ProviderID nvarchar(64)='',@WareID nvarchar(64),@DepotID nvarchar(64)
 
 		select @AutoID=1,@WareID=WareID from WareHouse where ClientID=@ClientID and Status<>9
@@ -132,7 +132,7 @@ begin
 		from OrderDetail where OrderID=@OrderID 
 
 		--批次临时库存表
-		create table #BatchStock(AutoID int identity(1,1),DepotID nvarchar(64),BatchCode nvarchar(50),Quantity int)
+		create table #BatchStock(AutoID int identity(1,1),DepotID nvarchar(64),Quantity int)
 
 		while exists(select AutoID from #TempProducts where AutoID=@AutoID)
 		begin
@@ -179,8 +179,8 @@ begin
 				if(@BatchQuantity>=@UseQuantity)
 				begin
 
-					insert into StorageDetail(DocID,ProductDetailID,ProductID,ProviderID,UnitID,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS )
-					select @DocID,@ProductDetailID,@ProductID,@ProviderID,@UnitID,0,@UseQuantity,@Price,@Price*@UseQuantity,@WareID,@DepotID,@BatchCode,0,@DRemark,@ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS 
+					insert into StorageDetail(DocID,ProductDetailID,ProductID,ProviderID,UnitID,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS )
+					select @DocID,@ProductDetailID,@ProductID,@ProviderID,@UnitID,0,@UseQuantity,@Price,@Price*@UseQuantity,@WareID,@DepotID,0,@DRemark,@ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS 
 					from #TempProducts where AutoID=@AutoID
 
 					update ProductStock set StockOut=StockOut+@UseQuantity where ProductDetailID=@ProductDetailID  and DepotID=@DepotID 
@@ -193,8 +193,8 @@ begin
 				end
 				else
 				begin
-					insert into StorageDetail(DocID,ProductDetailID,ProductID,ProdiverID,UnitID,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS )
-					select @DocID,@ProductDetailID,@ProductID,@ProviderID,@UnitID,0,@BatchQuantity,@Price,@Price*@BatchQuantity,@WareID,@DepotID,@BatchCode,0,@DRemark,@ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS 
+					insert into StorageDetail(DocID,ProductDetailID,ProductID,ProdiverID,UnitID,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS )
+					select @DocID,@ProductDetailID,@ProductID,@ProviderID,@UnitID,0,@BatchQuantity,@Price,@Price*@BatchQuantity,@WareID,@DepotID,0,@DRemark,@ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS 
 					from #TempProducts where AutoID=@AutoID
 
 					update ProductStock set StockOut=StockOut+@BatchQuantity where ProductDetailID=@ProductDetailID  and DepotID=@DepotID 
