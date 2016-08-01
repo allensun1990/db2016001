@@ -37,16 +37,14 @@ begin
 	
 	declare @AutoID int=1,@ProductID nvarchar(64),@ProductDetailID nvarchar(64),@DepotID nvarchar(64)
 
-	select identity(int,1,1) as AutoID,ProductDetailID,ProductID,UnitID,Quantity,Price,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS into #TempProducts 
+	select identity(int,1,1) as AutoID,ProductDetailID,ProductID,UnitID,Quantity,Price,Remark,ProductName,DepotID,ProductCode,DetailsCode,ProductImage,ImgS into #TempProducts 
 	from ShoppingCart 
 	where UserID=@UserID and [GUID]=@UserID and OrderType=@DocType
 
 	while exists(select AutoID from #TempProducts where AutoID=@AutoID)
 	begin
 		
-		select @ProductID=ProductID,@ProductDetailID=ProductDetailID,@DepotID=DepotID 
-		from #TempProducts where AutoID=@AutoID
-
+		select @ProductID=ProductID,@ProductDetailID=ProductDetailID,@DepotID=DepotID from #TempProducts where AutoID=@AutoID
 
 		if(@DepotID is null or @DepotID='')
 		begin

@@ -30,7 +30,7 @@ AS
 begin tran
 
 
-declare @Err int=0
+declare @Err int=0,@Name nvarchar(64)
  
  set @OtherProcessID=''
 
@@ -46,6 +46,16 @@ end
 else
 begin
 	
+	select @Name=Name from ProcessCategory where CategoryID=@CategoryID
+	if (@ProcessType=1)
+	begin
+		set @Name=@Name+'大货流程'
+	end
+	else
+	begin
+		set @Name=@Name+'打样流程'
+	end
+
 	Insert into OrderCategory(CategoryID,Layers,ClientID,PID) values(@CategoryID,1,@ClientID,'')
 
 	Insert into OrderProcess(ProcessID,ProcessName,ProcessType,CategoryID,IsDefault,Status,PlanDays,OwnerID,CreateUserID,ClientID)
@@ -59,7 +69,7 @@ begin
     set @OtherProcessID = NewID()
 
 	Insert into OrderProcess(ProcessID,ProcessName,ProcessType,CategoryID,IsDefault,Status,PlanDays,OwnerID,CreateUserID,ClientID)
-	values(@OtherProcessID,@ProcessName,@ProcessType%2+1,@CategoryID,1,1,@PlanDays,@OwnerID,@UserID,@ClientID)
+	values(@OtherProcessID,@Name,@ProcessType%2+1,@CategoryID,1,1,@PlanDays,@OwnerID,@UserID,@ClientID)
 
 	set @Err+=@@error
 

@@ -15,6 +15,7 @@ GO
 调试记录： declare @Result exec P_AddPlateMaking @TaskID='0B9E8812-2F90-4C5F-B879-860E54D81C39',@UserID='',@Result=@Result output
 ************************************************************/
 CREATE PROCEDURE [dbo].P_AddPlateMaking
+@PlateID nvarchar(64),
 @Title nvarchar(200),
 @Remark nvarchar(200),
 @Icon nvarchar(200),
@@ -23,9 +24,6 @@ CREATE PROCEDURE [dbo].P_AddPlateMaking
 @Type nvarchar(64),
 @UserID nvarchar(64)
 as
-	declare @PlateID nvarchar(64)=''
-	set @PlateID=NEWID()
-
 	begin tran
 	declare @Err int=0
 	insert into  PlateMaking(PlateID,Title,Remark,Icon,TaskID,OrderID,Type,CreateUserID,CreateTime) 

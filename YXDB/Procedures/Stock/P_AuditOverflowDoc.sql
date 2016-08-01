@@ -105,9 +105,6 @@ Update StorageDetail set Status=1 where  DocID=@DocID
 
 Update StorageDoc set Status=2 where DocID=@DocID
 
---记录审核日志
-insert into StorageDocAction(DocID,Remark,CreateTime,CreateUserID,OperateIP)
-					values( @DocID,'审核单据',getdate(),@UserID,'')
 
 set @Err+=@@Error
 if(@Err>0)

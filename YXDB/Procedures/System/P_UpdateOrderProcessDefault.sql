@@ -17,15 +17,15 @@ GO
 CREATE PROCEDURE [dbo].P_UpdateOrderProcessDefault
 @ProcessID nvarchar(64),
 @ProcessType int,
+@CategoryID nvarchar(64),
 @ClientID nvarchar(64)=''
 AS
 
 begin tran
 
-
 declare @Err int=0
  
-Update OrderProcess set IsDefault=0 where IsDefault=1 and ClientID=@ClientID and ProcessType=@ProcessType
+Update OrderProcess set IsDefault=0 where IsDefault=1 and ClientID=@ClientID and ProcessType=@ProcessType and CategoryID=@CategoryID
 
 Update OrderProcess set IsDefault=1 where ProcessID=@ProcessID
 

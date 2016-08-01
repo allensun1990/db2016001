@@ -68,6 +68,20 @@ values(NEWID(),'加工成本',@CategoryID,            3,     1,      16,  5,'',@
 insert into CategoryItems(ItemID,Name,CategoryID,Type,OrderType,Mark,Sort,Remark,CreateUserID)
 values(NEWID(),'发货',@CategoryID,                3,     1,      15,  6,'',@UserID)
 
+--工艺说明
+insert into CategoryItems(ItemID,Name,CategoryID,Type,OrderType,Mark,Sort,Remark,CreateUserID)
+values(NEWID(),'裁剪',@CategoryID,                4,     1,      0,  1,'',@UserID)
+insert into CategoryItems(ItemID,Name,CategoryID,Type,OrderType,Mark,Sort,Remark,CreateUserID)
+values(NEWID(),'粘衬',@CategoryID,                4,     1,      0,  2,'',@UserID)
+insert into CategoryItems(ItemID,Name,CategoryID,Type,OrderType,Mark,Sort,Remark,CreateUserID)
+values(NEWID(),'缝制工艺',@CategoryID,            4,     1,      0,  3,'',@UserID)
+insert into CategoryItems(ItemID,Name,CategoryID,Type,OrderType,Mark,Sort,Remark,CreateUserID)
+values(NEWID(),'成衣染烫',@CategoryID,            4,     1,      0,  4,'',@UserID)
+insert into CategoryItems(ItemID,Name,CategoryID,Type,OrderType,Mark,Sort,Remark,CreateUserID)
+values(NEWID(),'成衣检验',@CategoryID,            4,     1,      0,  5,'',@UserID)
+insert into CategoryItems(ItemID,Name,CategoryID,Type,OrderType,Mark,Sort,Remark,CreateUserID)
+values(NEWID(),'成品包装',@CategoryID,            4,     1,      0,  6,'',@UserID)
+
 
 --大货-订单tab
 insert into CategoryItems(ItemID, Name,   CategoryID,  Type,OrderType,Mark,Sort,Remark,CreateUserID)
@@ -97,19 +111,19 @@ values(NEWID(),'品控',@CategoryID,                2,     2,      0,    5,'',@U
 insert into CategoryItems(ItemID,Name,CategoryID,Type,OrderType,Mark,Sort,Remark,CreateUserID)
 values(NEWID(),'发货',@CategoryID,                2,     2,      25,   6,'',@UserID)
 
---大货-模块名称
-insert into CategoryItems(ItemID,Name,CategoryID,Type,OrderType,Mark,Sort,Remark,CreateUserID)
-values(NEWID(),'材料',@CategoryID,                3,     2,      21,  1,'',@UserID)
-insert into CategoryItems(ItemID,Name,CategoryID,Type,OrderType,Mark,Sort,Remark,CreateUserID)
-values(NEWID(),'制版',@CategoryID,                3,     2,      22,  2,'',@UserID)
-insert into CategoryItems(ItemID,Name,CategoryID,Type,OrderType,Mark,Sort,Remark,CreateUserID)
-values(NEWID(),'裁剪',@CategoryID,                3,     2,      23,  3,'',@UserID)
-insert into CategoryItems(ItemID,Name,CategoryID,Type,OrderType,Mark,Sort,Remark,CreateUserID)
-values(NEWID(),'车缝',@CategoryID,                3,     2,      24,  4,'',@UserID)
-insert into CategoryItems(ItemID,Name,CategoryID,Type,OrderType,Mark,Sort,Remark,CreateUserID)
-values(NEWID(),'加工成本',@CategoryID,            3,     2,      26,  5,'',@UserID) 
-insert into CategoryItems(ItemID,Name,CategoryID,Type,OrderType,Mark,Sort,Remark,CreateUserID)
-values(NEWID(),'发货',@CategoryID,                3,     2,      25,  6,'',@UserID)
+----大货-模块名称
+--insert into CategoryItems(ItemID,Name,CategoryID,Type,OrderType,Mark,Sort,Remark,CreateUserID)
+--values(NEWID(),'材料',@CategoryID,                3,     2,      21,  1,'',@UserID)
+--insert into CategoryItems(ItemID,Name,CategoryID,Type,OrderType,Mark,Sort,Remark,CreateUserID)
+--values(NEWID(),'制版',@CategoryID,                3,     2,      22,  2,'',@UserID)
+--insert into CategoryItems(ItemID,Name,CategoryID,Type,OrderType,Mark,Sort,Remark,CreateUserID)
+--values(NEWID(),'裁剪',@CategoryID,                3,     2,      23,  3,'',@UserID)
+--insert into CategoryItems(ItemID,Name,CategoryID,Type,OrderType,Mark,Sort,Remark,CreateUserID)
+--values(NEWID(),'车缝',@CategoryID,                3,     2,      24,  4,'',@UserID)
+--insert into CategoryItems(ItemID,Name,CategoryID,Type,OrderType,Mark,Sort,Remark,CreateUserID)
+--values(NEWID(),'加工成本',@CategoryID,            3,     2,      26,  5,'',@UserID) 
+--insert into CategoryItems(ItemID,Name,CategoryID,Type,OrderType,Mark,Sort,Remark,CreateUserID)
+--values(NEWID(),'发货',@CategoryID,                3,     2,      25,  6,'',@UserID)
 
 set @Err+=@@error
 

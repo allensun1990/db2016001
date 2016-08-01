@@ -53,7 +53,7 @@ begin
 
 	Update ClientProductDetails set StockOut=StockOut+@Quantity,LogicOut=LogicOut+@Quantity where ProductDetailID=@ProductDetailID and ClientID=@ClientID
 
-	if exists(select AutoID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID and DepotID=@DepotID and StockIn-StockOut>@Quantity)
+	if exists(select AutoID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID and DepotID=@DepotID and StockIn-StockOut>=@Quantity)
 	begin
 		update ProductStock set StockOut=StockOut+@Quantity where ProductDetailID=@ProductDetailID and WareID=@WareID and DepotID=@DepotID
 	end
@@ -86,9 +86,6 @@ Update StorageDetail set Status=1 where  DocID=@DocID
 
 Update StorageDoc set Status=2 where  DocID=@DocID
 
---记录审核日志
-insert into StorageDocAction(DocID,Remark,CreateTime,CreateUserID,OperateIP)
-					values( @DocID,'审核单据',getdate(),@UserID,'')
 set @Err+=@@Error
 if(@Err>0)
 begin

@@ -4,7 +4,10 @@ values ('108020900','标签设置','','System','LabelSet','','',1,0,'108020000',
 
 
 --删除无效菜单和权限
-delete from Menu where MenuCode in ('103029001','103029003','103030301','103030303','103030401','103030403')
+delete from Menu where MenuCode in ('103029001','103029003','103030301','103030303','103030401','103030403','108020702','108020703',
+									'108020301','108020302','108020303')
+delete from RolePermission where MenuCode in ('103029001','103029003','103030301','103030303','103030401','103030403','108020702',
+											 '108020703','108020301','108020302','108020303')
 
 --客户讨论表
 alter table CustomerReply add ClientID nvarchar(64)
@@ -76,6 +79,10 @@ select CategoryID,ClientID,1,'' from OrderProcess where CategoryID is not null a
 --GO
 update o set BigCategoryID=p.CategoryID from Orders o join OrderProcess p on o.ProcessID=p.ProcessID
 
+
+--任务和订单阶段mark处理
+Update OrderTask set Mark=Mark%10+10 where Mark>0
+Update OrderStage set Mark=Mark%10+10 where Mark>0
 
 --处理待大货为需求单
 Update Orders set OrderStatus=0,Status=0 where Status=4
