@@ -1,5 +1,4 @@
-﻿
-Use [CloudSales1.0_dev]
+﻿Use [CloudSales1.0_dev]
 GO
 IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'P_RefreshMemberLevelID')
 BEGIN

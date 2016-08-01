@@ -36,12 +36,13 @@ alter table  M_Report_AgentAction_Day add Vitality decimal(18,4) default 0.0000
  
 update Customer set IntegerFee=0.00
 
-
 /*新增存储过程*/
 P_InsertClientMemberLevel
 P_UpdateClientMemberLevel
 P_DeleteClientMemberLevel
 P_RefreshMemberLevelID
+P_InsertIntoFeeChange
+P_IntoFeeChangePageList
 P_GetProductListForExport
 M_Get_Report_AgentActionDayPageList
 R_GetClientsGrowDate
@@ -50,6 +51,8 @@ R_GetOrderDetailReeport
 R_StockInOutReport
 P_BindOtherAccount
 P_GetUserByOtherAccount
+
+
 /*修改*/
 R_GetClientsActiveReprot
 M_Get_Report_AgentActionDayReport
