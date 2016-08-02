@@ -29,7 +29,7 @@ GO
 	 
 	 select @ChangeFee=isnull(@ChangeFee,0.000)*isnull(DValue,0.0000) from ClientSetting where KeyType=2 and ClientID=@ClientID
 	 select @OldIntergeFee=TotalIntegerFee,@OldLevelID=MemberLevelID  from  Customer where CustomerID=@CustomerID
-	 set @Remark=isnull(@OrderID,'')+isnull(@Remark,'积分变动')+isnull(@ChangeFee,'')
+	 set @Remark=isnull(@OrderID,'')+isnull(@Remark,'积分变动')+isnull(cast(@ChangeFee as varchar),'')
 	 
 	 exec P_InsertIntoFeeChange @ChangeType,@ChangeFee,@CustomerID,@AgentID,@ClientID,@UpdateUserID,@Remark
 
