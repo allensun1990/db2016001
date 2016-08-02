@@ -13,6 +13,20 @@ create table ClientMemberLevel(
 [ImgUrl] [nvarchar](248) Not NULL,
 )
 
+create table IntegerFeeChange
+(
+AutoID int identity(1,1),
+ChangeType  int not null,
+ChangeFee decimal(18,4),
+OldChangeFee decimal(18,4),
+CreateTime datetime default(getdate()),
+CreateUserID varchar(50),
+CustomerID varchar(50) not null,
+AgentID varchar(50) not null,
+ClientID varchar(50) not null,
+Reamrk varchar(500) 
+)
+
 
 alter table Customer Add IntegerFee decimal(18,2) default(0.00)
 alter table Customer add MemberLevelID varchar(50) 
@@ -22,12 +36,13 @@ alter table  M_Report_AgentAction_Day add Vitality decimal(18,4) default 0.0000
  
 update Customer set IntegerFee=0.00
 
-
 /*新增存储过程*/
 P_InsertClientMemberLevel
 P_UpdateClientMemberLevel
 P_DeleteClientMemberLevel
 P_RefreshMemberLevelID
+P_InsertIntoFeeChange
+P_IntoFeeChangePageList
 P_GetProductListForExport
 M_Get_Report_AgentActionDayPageList
 R_GetClientsGrowDate
@@ -36,6 +51,8 @@ R_GetOrderDetailReeport
 R_StockInOutReport
 P_BindOtherAccount
 P_GetUserByOtherAccount
+
+
 /*修改*/
 R_GetClientsActiveReprot
 M_Get_Report_AgentActionDayReport
