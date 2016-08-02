@@ -19,7 +19,7 @@ create proc P_IntoFeeChangePageList
 @CustomerID varchar(50),
 @AgentID varchar(50),
 @ClientID varchar(50),
-@beginTime varchar(50),
+@BeginTime varchar(50),
 @EndTime varchar(50),
 @PageIndex int,
 @PageSize int,
@@ -40,7 +40,7 @@ declare @tableName nvarchar(4000),
 	set @condition=' ClientID='''+@ClientID+''' and CustomerID='''+@CustomerID+''' '
 	if(@ChangFeeType<>-1)
 	begin
-		set @condition +=' and ChangFeeType = '+convert(nvarchar(2), @ChangFeeType)
+		set @condition +=' and ChangeType = '+convert(nvarchar(2), @ChangFeeType)
 	end
  
 	if(@BeginTime<>'')
@@ -51,5 +51,5 @@ declare @tableName nvarchar(4000),
 
 	 
 	declare @total int,@page int
-	exec P_GetPagerData @tableName,@columns,@condition,@key,' AutoID desc ',@pageSize,@pageIndex,@total out,@page out,@isAsc 
+	exec P_GetPagerData @tableName,@columns,@condition,@key,'',@pageSize,@pageIndex,@total out,@page out,@isAsc 
 	select @totalCount=@total,@pageCount =@page
