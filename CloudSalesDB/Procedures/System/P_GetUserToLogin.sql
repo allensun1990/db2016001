@@ -13,6 +13,7 @@ GO
 编写日期： 2015/4/22
 程序作者： Allen
 调试记录： exec P_GetUserToLogin 'Admin','ADA9D527563353B415575BD5BAAE0469'
+修改记录： Michaux 2016/08/02 添加  and IsLimit=1 登陆过滤掉部分不需要加载的菜单项
 ************************************************************/
 CREATE PROCEDURE [dbo].[P_GetUserToLogin]
 @LoginName nvarchar(200),
@@ -40,7 +41,7 @@ begin
 		select * from Users where UserID=@UserID
 
 		--权限信息
-		select m.* from Menu m left join RolePermission r on r.MenuCode=m.MenuCode 
+		select m.* from Menu m left join RolePermission r on r.MenuCode=m.MenuCode  and IsLimit=1
 		where (RoleID=@RoleID or IsLimit=0 )
 
 	end
