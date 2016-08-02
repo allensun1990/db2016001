@@ -35,7 +35,7 @@ alter table Customer add MemberLevelID varchar(50)
 alter table  M_Report_AgentAction_Day add UserNum int default 1
 alter table  M_Report_AgentAction_Day add Vitality decimal(18,4) default 0.0000
  
-update Customer set IntegerFee=0.00,TotalIntegerFee=0.000
+update Customer set IntegerFee=0.00,TotalIntegerFee=0.000 
 
 /*新增存储过程*/
 P_InsertClientMemberLevel
@@ -67,8 +67,7 @@ E_ImportCustomer
 P_CreateCustomer
 M_DeleteRole
 Rpt_AgentAction_Day
-M_GetClientOrders
-GetUserByMDUserID
+M_GetClientOrders 
 P_GetUserToLogin
 /*配置已存在的客户的客户等级*/
 
@@ -102,3 +101,5 @@ join  M_Report_AgentAction_Day   on a.ClientID=M_Report_AgentAction_Day.ClientID
 
   ----修改
   P_ConfirmAgentOrderSend
+  P_AuditReturnIn
+  P_ConfirmAgentOrderOut

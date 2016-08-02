@@ -21,30 +21,33 @@ GO
  @AgentID varchar(50),
  @ClientID varchar(50),
  @UpdateUserID varchar(50),
- @Remark varchar(50)
+ @Remark varchar(50),
+ @OrderID varchar(50)=''
  as
  begin
 	 declare @LevelID varchar(50),@LevelName varchar(100),@OldIntergeFee decimal(18,2),@OldLevelID varchar(50)
 	 
-	 select @ChangeFee=@ChangeFee*DValue from ClientSetting where KeyType=2 and ClientID=@ClientID
+	 select @ChangeFee=isnull(@ChangeFee,0.000)*isnull(DValue,0.0000) from ClientSetting where KeyType=2 and ClientID=@ClientID
 	 select @OldIntergeFee=TotalIntegerFee,@OldLevelID=MemberLevelID  from  Customer where CustomerID=@CustomerID
-	 set @Remark=isnull(@Remark,'积分变动')+cast(@ChangeFee as varchar)
+	 set @Remark=isnull(@OrderID,'')+isnull(@Remark,'积分变动')+isnull(@OrderID,'')
 	 
 	 exec P_InsertIntoFeeChange @ChangeType,@ChangeFee,@CustomerID,@AgentID,@ClientID,@UpdateUserID,@Remark
 
 	select top 1 @LevelID=LevelID,@LevelName=Name from  ClientMemberLevel  where ClientID=@ClientID and (@OldIntergeFee+@ChangeFee)>IntegFeeMore order  by Origin asc
 	if(@OldLevelID!=@LevelID)
 	begin
-		update Customer set TotalIntegerFee=TotalIntegerFee+case @ChangeType when 1 then @ChangeFee else 0 end ,IntegerFee=IntegerFee+@ChangeFee,MemberLevelID=@LevelID where CustomerID=@CustomerID and ClientID=@ClientID
+		update Customer set TotalIntegerFee=isnull(TotalIntegerFee,0.0000)+case @ChangeType when 1 then @ChangeFee else 0 end ,IntegerFee=IntegerFee+@ChangeFee,MemberLevelID=@LevelID where CustomerID=@CustomerID and ClientID=@ClientID
 		--插入客户等级日志里面
 		insert into CustomerLog (LogGUID,Remark,CreateUserID,OperateIP,GUID,AgentID,ClientID) 
-		values(@CustomerID,'',@UpdateUserID,'',NEWID(),@AgentID,@ClientID) 
+		values(@CustomerID,'客户等级变更为:'+@LevelName+'(操作来自:'+isnull(@OrderID,'')+'订单发货)',@UpdateUserID,'',NEWID(),@AgentID,@ClientID) 
 	end
 	else
 	begin
-		update Customer set  TotalIntegerFee=TotalIntegerFee+case @ChangeType when 1 then @ChangeFee else 0 end ,IntegerFee=IntegerFee+@ChangeFee where CustomerID=@CustomerID and ClientID=@ClientID		
+		update Customer set  TotalIntegerFee=isnull(TotalIntegerFee,0.0000)+case @ChangeType when 1 then @ChangeFee else 0 end ,IntegerFee=IntegerFee+@ChangeFee where CustomerID=@CustomerID and ClientID=@ClientID		
 	end
 
+	insert into CustomerLog (LogGUID,Remark,CreateUserID,OperateIP,GUID,AgentID,ClientID) 
+		values(@CustomerID,@Remark,@UpdateUserID,'',NEWID(),@AgentID,@ClientID) 
 end 
 
  
