@@ -20,16 +20,16 @@ CREATE PROCEDURE [dbo].[P_ConfirmAgentOrderSend]
 @ExpressCode nvarchar(100)='',
 @UserID nvarchar(64),
 @AgentID nvarchar(64)='',
-@ClientID nvarchar(64),
+@ClientID nvarchar(64), 
 @Result int output,
 @ErrInfo nvarchar(500) output
 AS
 
 begin tran
 
-declare @OrderStatus int,@OrderSendStatus int,@OldOrderID nvarchar(64),@ReturnStatus int,@DocID nvarchar(64),@Err int=0
+declare @OrderStatus int,@OrderSendStatus int,@OldOrderID nvarchar(64),@ReturnStatus int,@CustomerID varchar(50),@DocID nvarchar(64),@Err int=0,@TotalFee decimal(18,4),@InterFeeRate decimal(18,4)
 
-select @OrderStatus=Status,@OrderSendStatus=SendStatus,@OldOrderID=OriginalID,@ReturnStatus=ReturnStatus,@DocID=DocID  from AgentsOrders where OrderID=@OrderID
+select @OrderStatus=Status,@OrderSendStatus=SendStatus,@OldOrderID=OriginalID,@ReturnStatus=ReturnStatus,@DocID=DocID,@CustomerID=CustomerID,@TotalFee=TotalMoney  from AgentsOrders where OrderID=@OrderID
 
 
 if(@OrderSendStatus=0)
@@ -54,9 +54,11 @@ begin
 	return
 end
 
+
 Update AgentsOrders set SendStatus=2,ExpressID=@ExpressID,ExpressCode=@ExpressCode where OrderID=@OrderID
 
 update Orders set SendStatus=2,ExpressID=@ExpressID,ExpressCode=@ExpressCode where OrderID=@OldOrderID
+ 
 
 set @Err+=@@Error
 

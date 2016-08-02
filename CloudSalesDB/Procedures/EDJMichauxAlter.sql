@@ -28,21 +28,25 @@ Reamrk varchar(500)
 )
 
 
-alter table Customer Add IntegerFee decimal(18,2) default(0.00)
+alter table Customer Add IntegerFee decimal(18,4) default(0.00)
+alter table Customer Add TotalIntegerFee decimal(18,4) default(0.00)
 alter table Customer add MemberLevelID varchar(50) 
 
 alter table  M_Report_AgentAction_Day add UserNum int default 1
 alter table  M_Report_AgentAction_Day add Vitality decimal(18,4) default 0.0000
  
-update Customer set IntegerFee=0.00
+update Customer set IntegerFee=0.00,TotalIntegerFee=0.000
 
 /*新增存储过程*/
 P_InsertClientMemberLevel
 P_UpdateClientMemberLevel
 P_DeleteClientMemberLevel
+
 P_RefreshMemberLevelID
-P_InsertIntoFeeChange
-P_IntoFeeChangePageList
+P_InsertIntergeFeeChange
+P_IntergeFeeChangePageList
+P_UpdateCustomerIntergeFee
+
 P_GetProductListForExport
 M_Get_Report_AgentActionDayPageList
 R_GetClientsGrowDate
