@@ -15,18 +15,19 @@ GO
 调试记录： exec P_GetOrders 
 ************************************************************/
 CREATE PROCEDURE [dbo].[P_GetOrders]
+	@SearchOrderType int,
 	@SearchType int,
 	@TypeID nvarchar(64)='',
 	@Status int=-1,
 	@PayStatus int=-1,
-	@InvoiceStatus int=-1,
+	@WarningStatus int=-1,
 	@OrderStatus int=1,
 	@ReturnStatus int=-1,
 	@SourceType int=-1,
 	@Mark int=-1,
 	@SearchUserID nvarchar(64)='',
 	@SearchTeamID nvarchar(64)='',
-	@EntrustClientID nvarchar(64)='',
+	@EntrustType nvarchar(10)='',
 	@Keywords nvarchar(4000),
 	@BeginTime nvarchar(50)='',
 	@EndTime nvarchar(50)='',
@@ -54,6 +55,19 @@ AS
 
 	create table #UserID(UserID nvarchar(64))
 
+	if(@SearchOrderType=0)
+	begin
+		set @condition +=' and o.Status = 0 ';
+	end
+	else if(@SearchOrderType=1)
+	begin
+		set @condition +=' and o.OrderType = 1 ';
+	end
+	else if(@SearchOrderType=2)
+	begin
+		set @condition +=' and o.OrderType = 2 ';
+	end
+
 	if(@SearchType=1) --我的
 	begin
 		set @condition +=' and (o.OwnerID = '''+@UserID+''' or o.CreateUserID= '''+@UserID+''')'
@@ -78,22 +92,6 @@ AS
 			set @condition +=' and o.OwnerID in (select UserID from #UserID) '
 		end
 	end
-	else if(@SearchType=4)--委托
-	begin
-		set @condition +=' and o.EntrustClientID = '''+@ClientID+''''
-	end
-	else if(@SearchType=5)--我协助的
-	begin
-		set @condition +=' and o.Status>0 and o.ClientID= '''+@ClientID+'''and  o.EntrustClientID <> '''''
-	end
-	else if(@SearchType=6)--我负责的
-	begin
-		set @condition +=' and o.Status>0  and o.ClientID= '''+@ClientID+'''and  o.EntrustClientID = '''''
-	end
-	else if(@SearchType=7)--我委托的
-	begin
-		set @condition +=' and o.Status>0  and o.EntrustClientID = '''+@ClientID+''''
-	end
 	else --工厂全部订单
 	begin
 		if(@SearchUserID<>'')
@@ -105,10 +103,23 @@ AS
 			insert into #UserID select UserID from TeamUser where TeamID=@SearchTeamID and status=1
 			set @condition +=' and o.OwnerID in (select UserID from #UserID) '
 		end
-		else
-		begin
-			set @condition +=' and o.ClientID = '''+@ClientID+''''
-		end
+	end
+
+	if(@EntrustType = '1')
+	begin
+		set @condition +=' and o.ClientID = '''+@ClientID+''' and o.EntrustClientID = '''''
+	end
+	else if(@EntrustType = '2')
+	begin
+		set @condition +=' and o.ClientID = '''+@ClientID+''' and o.EntrustClientID <> '''''
+	end
+	else if(@EntrustType = '3')
+	begin
+		set @condition +='  and o.EntrustClientID = '''+@ClientID+''' '
+	end
+	else
+	begin
+		set @condition +=' and (o.ClientID = '''+@ClientID+''' or o.EntrustClientID='''+@ClientID+''')'
 	end
 
 	if(@TypeID<>'')
@@ -142,18 +153,18 @@ AS
 	end
 	else
 	begin
-		set @condition +=' and o.OrderStatus <> 8  '
+		set @condition +=' and o.OrderStatus <> 8 '
 	end
 
-	if(@InvoiceStatus=2)
+	if(@WarningStatus=2)
 	begin
 		set @condition +=' and o.OrderStatus = 1 and o.PlanTime< GetDate() '
 	end
-	else if(@InvoiceStatus=1)
+	else if(@WarningStatus=1)
 	begin
 		set @condition +=' and o.OrderStatus = 1 and o.PlanTime > GetDate() and datediff(hour,o.Ordertime,o.PlanTime) > datediff(hour,GetDate(),o.PlanTime)*3 '
 	end
-	else if(@InvoiceStatus=0)
+	else if(@WarningStatus=0)
 	begin
 		set @condition +=' and o.OrderStatus = 1 and o.PlanTime > GetDate() and datediff(hour,o.Ordertime,o.PlanTime) <= datediff(hour,GetDate(),o.PlanTime)*3 '
 	end
@@ -163,20 +174,11 @@ AS
 		set @condition +=' and o.Mark = '+convert(nvarchar(2), @Mark)
 	end
 
-	if(@EntrustClientID = '1')
-	begin
-		set @condition +=' and o.EntrustClientID = '''''
-	end
-	else if(@EntrustClientID = '2')
-	begin
-		set @condition +=' and o.EntrustClientID <> '''''
-	end
-
 	if(@BeginTime<>'')
-		set @condition +=' and o.PlanTime >= '''+@BeginTime+' 0:00:00'''
+		set @condition +=' and o.PlanTime >= '''+@BeginTime+' 0:00:00''';
 
 	if(@EndTime<>'')
-		set @condition +=' and o.PlanTime <=  '''+@EndTime+' 23:59:59'''
+		set @condition +=' and o.PlanTime <=  '''+@EndTime+' 23:59:59''';
 
 	if(@keyWords <> '')
 	begin

@@ -1,13 +1,32 @@
 ﻿
-insert into Menu(MenuCode,Name,Area,Controller,[View],IcoPath,IcoHover,Type,IsHide,PCode,Sort,Layer,IsMenu,IsLimit,Remark) 
-values ('108020900','标签设置','','System','LabelSet','','',1,0,'108020000',8,3,1,1,'')
 
+--处理菜单和权限
+insert into RolePermission(RoleID,MenuCode,CreateTime,CreateUserID,ClientID)
+select RoleID,'102010600',CreateTime,CreateUserID,ClientID from RolePermission where MenuCode='102010100'
+insert into RolePermission(RoleID,MenuCode,CreateTime,CreateUserID,ClientID)
+select RoleID,'102010700',CreateTime,CreateUserID,ClientID from RolePermission where MenuCode='102010100'
+insert into RolePermission(RoleID,MenuCode,CreateTime,CreateUserID,ClientID)
+select RoleID,'102010800',CreateTime,CreateUserID,ClientID from RolePermission where MenuCode='102010100'
 
---删除无效菜单和权限
-delete from Menu where MenuCode in ('103029001','103029003','103030301','103030303','103030401','103030403','108020702','108020703',
-									'108020301','108020302','108020303')
+insert into RolePermission(RoleID,MenuCode,CreateTime,CreateUserID,ClientID)
+select RoleID,'102010601',CreateTime,CreateUserID,ClientID from RolePermission where MenuCode='102010300'
+insert into RolePermission(RoleID,MenuCode,CreateTime,CreateUserID,ClientID)
+select RoleID,'102010701',CreateTime,CreateUserID,ClientID from RolePermission where MenuCode='102010300'
+insert into RolePermission(RoleID,MenuCode,CreateTime,CreateUserID,ClientID)
+select RoleID,'102010801',CreateTime,CreateUserID,ClientID from RolePermission where MenuCode='102010300'
+
 delete from RolePermission where MenuCode in ('103029001','103029003','103030301','103030303','103030401','103030403','108020702',
-											 '108020703','108020301','108020302','108020303')
+											 '108020703','108020301','108020302','108020303','102010100','102010300')
+
+--处理制版工艺类型名称
+alter table PlateMaking add TypeName nvarchar(50)
+GO
+update PlateMaking set TypeName='裁剪' where Type=1
+update PlateMaking set TypeName='粘衬' where Type=2
+update PlateMaking set TypeName='缝制工艺' where Type=3
+update PlateMaking set TypeName='成衣整烫' where Type=4
+update PlateMaking set TypeName='成衣检验' where Type=5
+update PlateMaking set TypeName='成品包装' where Type=6
 
 --客户讨论表
 alter table CustomerReply add ClientID nvarchar(64)

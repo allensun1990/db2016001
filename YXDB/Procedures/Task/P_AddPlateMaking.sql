@@ -21,13 +21,13 @@ CREATE PROCEDURE [dbo].P_AddPlateMaking
 @Icon nvarchar(200),
 @TaskID nvarchar(64),
 @OrderID nvarchar(64),
-@Type nvarchar(64),
+@TypeName nvarchar(50),
 @UserID nvarchar(64)
 as
 	begin tran
 	declare @Err int=0
-	insert into  PlateMaking(PlateID,Title,Remark,Icon,TaskID,OrderID,Type,CreateUserID,CreateTime) 
-			values(@PlateID,@Title,@Remark,@Icon,@TaskID,@OrderID,@Type,@UserID,getdate())
+	insert into  PlateMaking(PlateID,Title,Remark,Icon,TaskID,OrderID,TypeName,CreateUserID,CreateTime) 
+			values(@PlateID,@Title,@Remark,@Icon,@TaskID,@OrderID,@TypeName,@UserID,getdate())
 			set @Err+=@@ERROR
 
 	if(@Err>0)

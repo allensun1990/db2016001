@@ -22,6 +22,7 @@ CREATE PROCEDURE [dbo].[P_GetOrdersByPlanTime]
 	@OrderType int =-1,
 	@OrderStatus int=-1,
 	@ClientID nvarchar(64),
+	@AndWhere nvarchar(4000)='',
 	@PageSize int=20,
 	@PageIndex int=1,
 	@TotalCount int output,
@@ -37,12 +38,13 @@ AS
 	set @columns='cus.Name CustomerName,o.*'
 	set @key='OrderID'
 	set @orderColumn='PlanTime'
-	set @condition='o.status<>9  and o.ClientID='''+@ClientID+''''
+	set @condition='o.status<>9  and (o.ClientID='''+@ClientID+''' or o.EntrustClientID='''+@ClientID+''')' + @AndWhere
 
 	if(@UserID<>'')
 	begin
-		set @condition+=' and o.OwnerID='''+@UserID+''''
+		set @condition+=' and (o.OwnerID='''+@UserID+''' or o.CreateUserID='''+@UserID+''')'
 	end
+
 	if(@OrderType<>-1)
 		set @condition+=' and o.OrderType='+convert(nvarchar(2), @OrderType)
 
