@@ -25,7 +25,7 @@ create proc P_InsertIntoFeeChange
 @Reamrk varchar(500)
 as
 insert into IntegerFeeChange  
-select  @ChangFeeType,@ChangeFee,Customer.IntegerFee+@ChangeFee,GETDATE(),@CreateUserID,@CustomerID,@AgentID,@ClientID,@Reamrk
+select  @ChangFeeType,@ChangeFee,Customer.IntegerFee,GETDATE(),@CreateUserID,@CustomerID,@AgentID,@ClientID,@Reamrk
 from Customer where CustomerID=@CustomerID
 return SCOPE_IDENTITY()
  
