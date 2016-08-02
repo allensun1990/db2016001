@@ -12,7 +12,8 @@ GO
 参数说明：	 
 编写日期： 2015/10/20
 程序作者： Allen
-调试记录： exec P_GetUserByOtherAccount ''
+调试记录： exec P_GetUserByOtherAccount '' 
+修改记录： Michaux 2016/08/02  添加 and IsLimit=1 过滤掉部分不需要加载的菜单项
 ************************************************************/
 CREATE PROCEDURE [dbo].[P_GetUserByOtherAccount]
 @MDUserID nvarchar(64),
@@ -34,7 +35,7 @@ begin
 	select * from Users where UserID=@UserID
 
 	--权限信息
-	select m.* from Menu m left join RolePermission r on r.MenuCode=m.MenuCode 
+	select m.* from Menu m left join RolePermission r on r.MenuCode=m.MenuCode  and IsLimit=1
 	where (RoleID=@RoleID or IsLimit=0 )
 
 end 

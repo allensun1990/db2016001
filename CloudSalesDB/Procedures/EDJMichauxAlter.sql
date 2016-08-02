@@ -69,6 +69,7 @@ M_DeleteRole
 Rpt_AgentAction_Day
 M_GetClientOrders
 GetUserByMDUserID
+P_GetUserToLogin
 /*配置已存在的客户的客户等级*/
 
 create table #memberLevel (Name varchar(50),integFeeMore decimal(18,2),DiscountFee decimal(18,2) ,origin int )
@@ -97,3 +98,7 @@ cast(
 join  M_Report_AgentAction_Day   on a.ClientID=M_Report_AgentAction_Day.ClientID
   
 
+
+
+  ----修改
+  P_ConfirmAgentOrderSend

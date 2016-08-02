@@ -20,8 +20,7 @@ CREATE PROCEDURE [dbo].[P_ConfirmAgentOrderSend]
 @ExpressCode nvarchar(100)='',
 @UserID nvarchar(64),
 @AgentID nvarchar(64)='',
-@ClientID nvarchar(64), 
-@UpdateUserID nvarchar(64), 
+@ClientID nvarchar(64),  
 @Result int output,
 @ErrInfo nvarchar(500) output
 AS
@@ -30,7 +29,7 @@ begin tran
 
 declare @OrderStatus int,@OrderSendStatus int,@OldOrderID nvarchar(64),@ReturnStatus int,@CustomerID varchar(50),@DocID nvarchar(64),@Err int=0,@TotalFee decimal(18,4),@InterFeeRate decimal(18,4)
 
-select @OrderStatus=Status,@OrderSendStatus=SendStatus,@OldOrderID=OriginalID,@ReturnStatus=ReturnStatus,@DocID=DocID,@CustomerID=CustomerID,@TotalFee=TotalMoney  from AgentsOrders where OrderID=@OrderID
+select @OrderStatus=Status,@OrderSendStatus=SendStatus,@OldOrderID=OriginalID,@ReturnStatus=ReturnStatus,@DocID=DocID,@CustomerID=CustomerID,@TotalFee=TotalMoney-ReturnMoney  from AgentsOrders where OrderID=@OrderID
 
 
 if(@OrderSendStatus=0)
@@ -60,7 +59,7 @@ Update AgentsOrders set SendStatus=2,ExpressID=@ExpressID,ExpressCode=@ExpressCo
 
 update Orders set SendStatus=2,ExpressID=@ExpressID,ExpressCode=@ExpressCode where OrderID=@OldOrderID
  
- exec P_UpdateCustomerIntergeFee  1,@TotalFee,@CustomerID,@AgentID,@ClientID,@UpdateUserID,'订单发货积分结算'
+ exec P_UpdateCustomerIntergeFee  1,@TotalFee,@CustomerID,@AgentID,@ClientID,@UserID,'订单发货积分结算'
 
 set @Err+=@@Error
 
