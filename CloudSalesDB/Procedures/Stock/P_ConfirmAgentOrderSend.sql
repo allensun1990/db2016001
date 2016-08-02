@@ -21,6 +21,7 @@ CREATE PROCEDURE [dbo].[P_ConfirmAgentOrderSend]
 @UserID nvarchar(64),
 @AgentID nvarchar(64)='',
 @ClientID nvarchar(64), 
+@UpdateUserID nvarchar(64), 
 @Result int output,
 @ErrInfo nvarchar(500) output
 AS
@@ -59,6 +60,7 @@ Update AgentsOrders set SendStatus=2,ExpressID=@ExpressID,ExpressCode=@ExpressCo
 
 update Orders set SendStatus=2,ExpressID=@ExpressID,ExpressCode=@ExpressCode where OrderID=@OldOrderID
  
+ exec P_UpdateCustomerIntergeFee  1,@TotalFee,@CustomerID,@AgentID,@ClientID,@UpdateUserID,'订单发货积分结算'
 
 set @Err+=@@Error
 
