@@ -28,8 +28,8 @@ as
 	begin 
 		set @i=@i+1
 		declare @levelID varchar(50)  declare @levelName varchar(50) 
-		declare @integerFee decimal(18,2)
-		select @levelID=LevelID,@integerFee=IntegFeeMore,@levelName=Name from ClientMemberLevel where ClientID=@ClientID and Origin=@i and Status<>9 
+		declare @integerFee decimal(18,4)
+		select @levelID=LevelID,@integerFee=TotalIntegFeeMore,@levelName=Name from ClientMemberLevel where ClientID=@ClientID and Origin=@i and Status<>9 
 		--if(@i=1)
 		--begin			
 		--	insert into CustomerLog (LogGUID,Remark,CreateUserID,OperateIP,GUID,AgentID,ClientID) 
