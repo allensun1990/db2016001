@@ -45,7 +45,7 @@ begin
 	set @UserID=NEWID()
 end
 
-declare @Err int ,@DepartID nvarchar(64),@RoleID nvarchar(64),@WareID nvarchar(64),@AliMemberID nvarchar(200)
+declare @Err int ,@DepartID nvarchar(64),@RoleID nvarchar(64),@WareID nvarchar(64),@AliMemberID nvarchar(200),@LoginName nvarchar(100)
 
 select @Err=0,@DepartID=NEWID(),@RoleID=NEWID(),@WareID=NEWID()
 
@@ -66,6 +66,7 @@ begin
 		rollback tran
 		return
 	end
+	set @LoginName=@Account
 end
 else if(@AccountType=2) --手机
 begin
@@ -107,8 +108,8 @@ insert into Role(RoleID,Name,Status,IsDefault,CreateUserID,ClientID) values (@Ro
 
 set @Err+=@@error
 
-insert into Users(UserID,LoginPWD,Name,MobilePhone,Email,Allocation,Status,IsDefault,DepartID,RoleID,CreateUserID,ClientID)
-             values(@UserID,@LoginPWD,@ContactName,@MobilePhone,@Email,1,1,1,@DepartID,@RoleID,@UserID,@ClientID)
+insert into Users(UserID,LoginName,LoginPWD,Name,MobilePhone,Email,Allocation,Status,IsDefault,DepartID,RoleID,CreateUserID,ClientID)
+             values(@UserID,@LoginName,@LoginPWD,@ContactName,@MobilePhone,@Email,1,1,1,@DepartID,@RoleID,@UserID,@ClientID)
 
 insert into UserAccounts(AccountName,AccountType,ProjectID,UserID,ClientID)
 values(@Account,@AccountType,'',@UserID,@ClientID)

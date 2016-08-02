@@ -16,7 +16,7 @@ insert into RolePermission(RoleID,MenuCode,CreateTime,CreateUserID,ClientID)
 select RoleID,'102010801',CreateTime,CreateUserID,ClientID from RolePermission where MenuCode='102010300'
 
 delete from RolePermission where MenuCode in ('103029001','103029003','103030301','103030303','103030401','103030403','108020702',
-											 '108020703','108020301','108020302','108020303','102010100','102010300')
+											 '108020703','108020301','108020302','108020303','102010100','102010300','109000000','109010000','109010100','109010300')
 
 --处理制版工艺类型名称
 alter table PlateMaking add TypeName nvarchar(50)

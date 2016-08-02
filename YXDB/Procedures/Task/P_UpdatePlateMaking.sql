@@ -19,38 +19,13 @@ CREATE PROCEDURE [dbo].P_UpdatePlateMaking
 @Title nvarchar(200),
 @Remark nvarchar(200),
 @Icon nvarchar(200),
-@Type int
+@TypeName nvarchar(200)
 as
 	begin tran
 	declare @Err int=0
 
-	update PlateMaking set Title=@Title,Remark=@Remark,Icon=@Icon,Type=@Type where PlateID=@PlateID
+	update PlateMaking set Title=@Title,Remark=@Remark,Icon=@Icon,TypeName=@TypeName where PlateID=@PlateID
 	set @Err+=@@ERROR
-
-	--declare @OriginalPlateID nvarchar(64)=''
-	--declare @OrderID nvarchar(64)=''
-	--declare @OriginalID nvarchar(64)=''
-
-	--select @OriginalPlateID=OriginalPlateID,@OrderID=OrderID,@OriginalID=OriginalID from PlateMaking where PlateID=@PlateID
-	--if(@OriginalPlateID<>'')
-	--begin
-	--	set @PlateID=@OriginalPlateID
-	--	set @OrderID=@OriginalID
-	--end
-
-	--begin tran
-	--declare @Err int=0
-
-	--update PlateMaking set Title=@Title,Remark=@Remark,Icon=@Icon,Type=@Type where PlateID=@PlateID
-	--	set @Err+=@@ERROR
-
-	--update PlateMaking set Title=@Title,Remark=@Remark,Icon=@Icon,Type=@Type where OriginalPlateID=@PlateID and status<>9
-	--and OrderID in 
-	--( 
-	--	select OrderID from Orders
-	--	where OrderType=2 and OriginalID=@OrderID and OrderStatus = 1
-	--)	
-	--set @Err+=@@ERROR
 
 	if(@Err>0)
 	begin

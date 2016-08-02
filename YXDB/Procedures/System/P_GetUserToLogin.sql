@@ -40,7 +40,7 @@ begin
 		select * from Users where UserID=@UserID
 
 		--权限信息
-		select m.* from Menu m left join RolePermission r on r.MenuCode=m.MenuCode 
+		select m.* from Menu m left join RolePermission r on r.MenuCode=m.MenuCode and IsLimit=1
 		where (RoleID=@RoleID or IsLimit=0 )
 
 	end

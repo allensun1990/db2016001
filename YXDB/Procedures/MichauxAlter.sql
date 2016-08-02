@@ -33,9 +33,6 @@ alter table ShoppingCart drop column BatchCode
 alter table ShoppingCart drop column IsBigUnit
 
 --删除用户表字段
-alter table Users drop constraint DF_Users_LoginName
-GO
-alter table Users drop column LoginName
 
 alter table Users drop constraint DF_Users_MDUserID
 GO
