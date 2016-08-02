@@ -39,7 +39,7 @@ GO
 		update Customer set TotalIntegerFee=isnull(TotalIntegerFee,0.0000)+case @ChangeType when 1 then @ChangeFee else 0 end ,IntegerFee=IntegerFee+@ChangeFee,MemberLevelID=@LevelID where CustomerID=@CustomerID and ClientID=@ClientID
 		--插入客户等级日志里面
 		insert into CustomerLog (LogGUID,Remark,CreateUserID,OperateIP,GUID,AgentID,ClientID) 
-		values(@CustomerID,'客户等级变更为:'+@LevelName+'(操作来自:'+isnull(@OrderID,'')+'订单发货)',@UpdateUserID,'',NEWID(),@AgentID,@ClientID) 
+		values(@CustomerID,'客户等级变更为:'+@LevelName+'(操作来自:'+isnull(@OrderID,'')+'订单发货积分提升)',@UpdateUserID,'',NEWID(),@AgentID,@ClientID) 
 	end
 	else
 	begin
