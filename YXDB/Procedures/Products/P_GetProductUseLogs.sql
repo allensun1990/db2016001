@@ -31,8 +31,8 @@ AS
 
 
 select @tableName='OrderDetail d join Orders o on o.OrderID=d.OrderID ',
-@columns='o.PersonName,o.CityCode,o.Address,o.OrderCode,d.Remark,o.CreateTime,(d.Quantity+d.Loss)*o.PlanQuantity Quantity',@key='d.AutoID'
-set @condition=' d.ProductID='''+@ProductID+''''
+@columns='o.PersonName,o.CityCode,o.Address,o.OrderCode,d.Remark,o.CreateTime,UseQuantity Quantity',@key='d.AutoID'
+set @condition=' d.ProductID='''+@ProductID+''' and o.OrderType=2 and o.Status<>9 and UseQuantity>0 '
 
 declare @total int,@page int
 exec P_GetPagerData @tableName,@columns,@condition,@key,'',@pageSize,@pageIndex,@total out,@page out,1 

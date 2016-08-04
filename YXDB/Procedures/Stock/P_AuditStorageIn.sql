@@ -109,15 +109,15 @@ begin
 		insert into ProductStream(ProductDetailID,ProductID,DocID,DocCode,DocDate,DocType,Mark,Quantity,WareID,DepotID,CreateUserID,ClientID)
 							values(@ProductDetailID,@ProductID,@DocID,@DocCode,CONVERT(varchar(100), GETDATE(), 112),@DocType,0,@Quantity,@WareID,@DepotID,@UserID,@ClientID)
 
-		--修改产品入库数
-		--update Products set StockIn=StockIn+@Quantity where ProductID=@ProductID
-
-		--修改产品明细入库数
-		--update ProductDetail set StockIn=StockIn+@Quantity where ProductDetailID=@ProductDetailID
 		set @Err+=@@Error
 
 		--更新已入库数量
 		Update StorageDetail set Complete=Complete+@Quantity,DepotID=@DepotID where  AutoID=@GoodsAutoID and DocID=@DocID
+
+		if(@OriginalID is not null and @OriginalID<>'')
+		begin
+			Update OrderDetail set InQuantity=InQuantity+@Quantity where OrderID=@OriginalID and  ProductDetailID=@ProductDetailID
+		end
 
 		insert into StorageDetail(DocID,ProductDetailID,ProductID,ProviderID,UnitID,Quantity,Price,TotalMoney,WareID,DepotID,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS )
 			select @NewDocID,ProductDetailID,ProductID,ProviderID,UnitID,@Quantity,Price,Price*@Quantity,WareID,@DepotID,0,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS 
@@ -133,7 +133,7 @@ begin
 	select @TotalMoney=sum(TotalMoney) from StorageDetail where DocID=@NewDocID
 
 	insert into StorageDoc(DocID,DocCode,DocType,DocImage,DocImages,Status,TotalMoney,CityCode,Address,Remark,WareID,CreateUserID,CreateTime,OperateIP,ClientID,OriginalID,OriginalCode)
-		select @NewDocID,@BillingCode,@DocType,DocImage,DocImages,2,isnull( @TotalMoney,0),CityCode,Address,'',WareID,@UserID,GETDATE(),'',ClientID,DocID,DocCode from StorageDoc where DocID=@DocID
+		select @NewDocID,@BillingCode,@DocType,DocImage,DocImages,2,isnull(@TotalMoney,0),CityCode,Address,'',WareID,@UserID,GETDATE(),'',ClientID,DocID,DocCode from StorageDoc where DocID=@DocID
 
 	set @Err+=@@error
 end

@@ -8,7 +8,7 @@ END
 GO
 /***********************************************************
 过程名称： P_UpdateStorageStatus
-功能描述： 编辑单据状态
+功能描述： 删除单据
 参数说明：	 
 编写日期： 2015/10/12
 程序作者： Allen
@@ -40,7 +40,8 @@ update StorageDoc set Status=@Status where DocID=@DocID
 
 if(@DocType=1 and @OriginalID is not null and @OriginalID<>'')
 begin
-	update Orders set PurchaseStatus=0 where OrderID=@OriginalID
+	update o set PurchaseQuantity=PurchaseQuantity-s.Quantity from StorageDetail s join OrderDetail o on s.ProductDetailID=o.ProductDetailID 
+	where o.OrderID=@OriginalID and s.DocID=@DocID and  o.PurchaseQuantity>0
 end
 
 set @Err+=@@Error

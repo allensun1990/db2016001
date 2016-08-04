@@ -25,15 +25,15 @@ begin tran
 
 declare @Err int=0,@Status int,@TotalMoney decimal(18,4)
 
-select @Status=Status from Orders where OrderID=@OrderID  and ClientID=@ClientID
+select @Status=OrderStatus from Orders where OrderID=@OrderID  and ClientID=@ClientID
 
-if(@Status>4)
+if(@Status>1)
 begin
 	rollback tran
 	return
 end
 
-delete from OrderDetail where OrderID=@OrderID and AutoID=@AutoID
+delete from OrderDetail where OrderID=@OrderID and AutoID=@AutoID and PurchaseQuantity=0 and InQuantity=0 and UseQuantity=0
 
 select @TotalMoney=sum(TotalMoney) from OrderDetail where OrderID=@OrderID
 

@@ -28,12 +28,10 @@ set @Result=0
 
 declare @Err int=0,@Status int,@PlanQuantity decimal(18,4),@OrderCode nvarchar(64),@Stock decimal(18,4),@PurchaseStatus int,@DocImage nvarchar(4000),@DocImages nvarchar(64)
 
-
-select @Status=Status,@OrderCode=OrderCode,@PlanQuantity=PlanQuantity,@PurchaseStatus=PurchaseStatus,@DocImage=OrderImage,@DocImages=OrderImages from Orders where OrderID=@OrderID  and ClientID=@ClientID
-
+select @Status=Status,@OrderCode=OrderCode,@PurchaseStatus=PurchaseStatus,@DocImage=OrderImage,@DocImages=OrderImages from Orders where OrderID=@OrderID  and ClientID=@ClientID
 
 --生成采购清单
-if(@PurchaseStatus=0 and exists(select AutoID from OrderGoods where OrderID=@OrderID) and exists(select AutoID from OrderDetail where OrderID=@OrderID))
+if exists(select AutoID from OrderDetail where OrderID=@OrderID)
 begin
 			
 	declare @DocID nvarchar(64)=NEWID(),@WareID nvarchar(64),@DepotID nvarchar(64),@TotalMoney decimal(18,4)
@@ -44,7 +42,7 @@ begin
 	declare @AutoID int=1,@ProductID nvarchar(64),@ProductDetailID nvarchar(64),@Quantity decimal(18,2),
 	@DRemark nvarchar(4000),@Price decimal(18,4),@UnitID nvarchar(64),@ProviderID nvarchar(64)=''
 
-	select identity(int,1,1) as AutoID,ProductDetailID,ProductID, UnitID,Quantity+Loss Quantity,Price,Remark,ProviderID,
+	select identity(int,1,1) as AutoID,ProductDetailID,ProductID, UnitID,Quantity Quantity,Price,Remark,ProviderID,
 	ProductName,ProductCode,DetailsCode,ProductImage,ImgS 
 	into #TempProducts 
 	from OrderDetail where OrderID=@OrderID 
@@ -55,6 +53,12 @@ begin
 		@UnitID=UnitID,@ProviderID= ProviderID
 		from #TempProducts where AutoID=@AutoID
 
+		if(@Quantity is null or @Quantity=0)
+		begin
+			set @AutoID+=1
+			continue;
+		end
+
 		if exists(select AutoID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID)
 		begin
 			select top 1 @DepotID= DepotID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID  order by AutoID desc
@@ -64,28 +68,12 @@ begin
 			select top 1 @DepotID = DepotID from DepotSeat where WareID=@WareID and Status=1 order by Sort 
 		end
 
-		--if exists(select AutoID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID and DepotID=@DepotID and ClientID=@ClientID)
-		--begin
-		--	select @Stock=StockIn-StockOut from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID and DepotID=@DepotID and ClientID=@ClientID
-		--end
-		--else
-		--begin
-		--	insert into ProductStock(ProductDetailID,ProductID,StockIn,StockOut,LogicOut,WareID,DepotID,ClientID)
-		--					values (@ProductDetailID,@ProductID,0,0,0,@WareID,@DepotID,@ClientID)
-		--	set @Stock=0
-		--end
-
-		--if(@Stock<0)
-		--begin
-		--	set @Stock=0
-		--end
-		set @Stock=0
-		if(@Quantity>@Stock)
-		begin
-			insert into StorageDetail(DocID,ProductDetailID,ProductID,ProdiverID,UnitID,Quantity,Price,TotalMoney,WareID,DepotID,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS )
-			select @DocID,@ProductDetailID,@ProductID,@ProviderID,@UnitID,@Quantity-@Stock,@Price,@Price*(@Quantity-@Stock),@WareID,@DepotID,0,@DRemark,@ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS 
+		insert into StorageDetail(DocID,ProductDetailID,ProductID,ProviderID,UnitID,Quantity,Price,TotalMoney,WareID,DepotID,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS )
+			select @DocID,@ProductDetailID,@ProductID,@ProviderID,@UnitID,@Quantity,@Price,@Price*@Quantity,@WareID,@DepotID,0,@DRemark,@ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS 
 			from #TempProducts where AutoID=@AutoID
-		end
+		
+		Update OrderDetail set PurchaseQuantity=PurchaseQuantity+@Quantity,Quantity=0 where OrderID=@OrderID and ProductDetailID=@ProductDetailID
+
 		set @Err+=@@Error
 
 		set @AutoID=@AutoID+1

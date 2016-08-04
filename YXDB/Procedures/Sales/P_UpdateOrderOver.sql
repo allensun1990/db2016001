@@ -37,15 +37,6 @@ Update Orders set OrderStatus=8 where OrderID=@OrderID
 
 Update OrderTask set Status=8 where OrderID=@OrderID
 
-if(@OrderType=1)
-begin
-	Update Customer set DYCount=DYCount-1 where CustomerID=@CustomerID and DYCount>0
-end
-else
-begin
-	Update Customer set DHCount=DHCount-1 where CustomerID=@CustomerID and DHCount>0
-end
-
 set @Err+=@@error
 
 if(@AliOrderCode is not null and @AliOrderCode<>'')

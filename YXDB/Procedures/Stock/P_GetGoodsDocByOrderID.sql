@@ -13,17 +13,11 @@ GO
 编写日期： 2016/7/14
 程序作者： Allen
 调试记录： exec P_GetGoodsDocByOrderID 
-			@UserID='',
-			@KeyWords='',
-			@DocType=1,
-			@Status=-1,
-			@PageSize=10,
-			@PageIndex=2,
-			@ClientID='b00e97c6-1f93-4f61-aea1-74845af9cf28'
+			
 			
 ************************************************************/
 CREATE PROCEDURE [dbo].[P_GetGoodsDocByOrderID]
-	@OriginalID nvarchar(64)='',
+	@OrderID nvarchar(64)='',
 	@TaskID nvarchar(64)='',
 	@DocType int,
 	@ClientID nvarchar(64)
@@ -34,12 +28,12 @@ AS
 	if(@TaskID='')
 	begin
 		insert into #TempDoc
-		select DocID from GoodsDoc where OriginalID=@OriginalID and ClientID=@ClientID and DocType=@DocType
+		select DocID from GoodsDoc where OrderID=@OrderID and ClientID=@ClientID and DocType=@DocType
 	end
 	else
 	begin
 		insert into #TempDoc
-		select DocID from GoodsDoc where OriginalID=@OriginalID and ClientID=@ClientID and DocType=@DocType and TaskID=@TaskID
+		select DocID from GoodsDoc where OrderID=@OrderID and ClientID=@ClientID and DocType=@DocType and TaskID=@TaskID
 	end
 
 	select * from GoodsDoc where DocID in (select DocID from #TempDoc) order by CreateTime desc

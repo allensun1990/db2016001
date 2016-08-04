@@ -181,5 +181,26 @@ update C set DYCount=o.Quantity from Customer c join
 update C set DHCount=o.Quantity from Customer c join
 (select CustomerID,COUNT(AutoID) Quantity from Orders where OrderStatus>0 and OrderStatus<>9 and OrderType=2 group by CustomerID) o on c.CustomerID=o.CustomerID
 
+--处理订单单据表
+alter table GoodsDoc add OrderID nvarchar(64) 
+alter table GoodsDoc add OrderCode nvarchar(64)
+Go
+Update GoodsDoc set OrderID=OriginalID,OrderCode=OriginalCode
+Update GoodsDoc set OriginalID='',OriginalCode=''
+
+alter table GoodsDocDetail add ReturnQuantity int default 0
+Go
+Update GoodsDocDetail set ReturnQuantity=0
+
+--订单材料增加数据
+alter table OrderDetail add PurchaseQuantity decimal(18,4) default 0
+alter table OrderDetail add InQuantity decimal(18,4) default 0
+alter table OrderDetail add UseQuantity decimal(18,4) default 0
+
+Go
+Update OrderDetail set PurchaseQuantity=0
+Update OrderDetail set InQuantity=0
+Update OrderDetail set UseQuantity=0
+
 
 

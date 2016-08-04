@@ -279,12 +279,6 @@
     <None Include="Procedures\Sales\P_ApplyReturnOrder.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Procedures\Sales\P_UpdateReturnQuantity.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Procedures\Sales\P_ApplyReturnProduct.sql" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Procedures\Stock\P_InvalidApplyReturnProduct.sql" />
   </ItemGroup>
   <ItemGroup>
@@ -491,5 +485,7 @@
     <Build Include="Procedures\System\P_InsertOrderColor.sql" />
     <Build Include="Procedures\System\P_InsertTaskColor.sql" />
     <Build Include="Procedures\Sales\P_DeleteOrderProduct.sql" />
+    <None Include="Procedures\Sales\P_CreateGoodsDocReturn.sql" />
+    <None Include="Procedures\Stock\P_CreateProductUseQuantity.sql" />
   </ItemGroup>
 </Project>

@@ -16,6 +16,7 @@ GO
 ************************************************************/
 CREATE PROCEDURE [dbo].[P_UpdateOrderProcess]
 	@OrderID nvarchar(64),
+	@CategoryID nvarchar(64),
 	@ProcessID nvarchar(64),
 	@OperateID nvarchar(64)='',
 	@ClientID nvarchar(64)=''
@@ -26,7 +27,7 @@ begin tran
 declare @Err int=0,@Status int,@OwnerID nvarchar(64)
 select @Status=Status from Orders where OrderID=@OrderID  and ClientID=@ClientID
 
-if(@Status<>0 and @Status<>4)
+if(@Status<>0)
 begin
 	rollback tran
 	return
@@ -34,7 +35,7 @@ end
 
 select @OwnerID=OwnerID from OrderProcess where ProcessID=@ProcessID
 
-Update Orders set ProcessID=@ProcessID,OwnerID=@OwnerID where OrderID=@OrderID
+Update Orders set ProcessID=@ProcessID,OwnerID=@OwnerID,BigCategoryID=@CategoryID where OrderID=@OrderID
 
 set @Err+=@@error
 

@@ -26,7 +26,7 @@ begin tran
 
 declare @Err int=0,@Status int=-1
 
-select @Status=Status from Orders where OrderID=@OrderID and ClientID=@ClientID  and CategoryID=''
+select @Status=Status from Orders where OrderID=@OrderID and ClientID=@ClientID  
 
 if(@Status<>0)
 begin
@@ -34,7 +34,7 @@ begin
 	return
 end
 
-Update Orders set CategoryID=@CategoryID,BigCategoryID=@PID where OrderID=@OrderID
+Update Orders set CategoryID=@CategoryID where OrderID=@OrderID
 
 
 set @Err+=@@error
