@@ -271,5 +271,6 @@
     <Build Include="Procedures\System\P_BindOtherAccount.sql" />
     <Build Include="Procedures\System\P_InsertIntoFeeChange.sql" />
     <Build Include="Procedures\System\P_IntoFeeChangePageList.sql" />
+    <Build Include="Procedures\System\P_UpdateUserAccount_1.sql" />
   </ItemGroup>
 </Project>
