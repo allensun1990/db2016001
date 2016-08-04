@@ -20,6 +20,9 @@ CREATE PROCEDURE [dbo].[P_AddOrderGoods]
 @ValueList nvarchar(max),
 @AttrValueList nvarchar(max),
 @Quantity decimal(18,4),
+@XRemark nvarchar(500)='',
+@YRemark nvarchar(500)='',
+@XYRemark nvarchar(500)='',
 @Description nvarchar(4000),
 @OperateID nvarchar(64),
 @ClientID nvarchar(64)
@@ -50,13 +53,13 @@ begin
 end
 else
 begin
-	insert into OrderGoods(OrderID,GoodsID,GoodsDetailID,Quantity,Price,TotalMoney,Remark)
-	values(@OrderID,@GoodsID,@DetailID,@Quantity,@Price,@Quantity*@Price,@Description)
+	insert into OrderGoods(OrderID,GoodsID,GoodsDetailID,Quantity,Price,TotalMoney,Remark,XRemark,YRemark,XYRemark)
+	values(@OrderID,@GoodsID,@DetailID,@Quantity,@Price,@Quantity*@Price,@Description,@XRemark,@YRemark,@XYRemark)
 end
 
 select @TotalQuantity=sum(Quantity),@TotalMoney=sum(TotalMoney) from OrderGoods where OrderID=@OrderID
 
-Update Orders set PlanQuantity=@TotalQuantity,TotalMoney=@TotalMoney where OrderID=@OrderID
+Update Orders set PlanQuantity=@TotalQuantity where OrderID=@OrderID
 
 
 

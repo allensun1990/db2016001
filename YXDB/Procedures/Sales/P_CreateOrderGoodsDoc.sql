@@ -118,7 +118,7 @@ end
 if exists(select AutoID from GoodsDocDetail where DocID=@DocID)
 begin
 	--处理材料使用量
-	if(@DocType=1)
+	if(@DocType=1000)
 	begin
 		--参数
 		declare @ProductID nvarchar(64),@ProductDetailID nvarchar(64),@UseQuantity decimal(18,2),@BatchAutoID int,@BatchQuantity decimal(18,4),
@@ -179,8 +179,8 @@ begin
 				if(@BatchQuantity>=@UseQuantity)
 				begin
 
-					insert into StorageDetail(DocID,ProductDetailID,ProductID,ProviderID,UnitID,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS )
-					select @DocID,@ProductDetailID,@ProductID,@ProviderID,@UnitID,0,@UseQuantity,@Price,@Price*@UseQuantity,@WareID,@DepotID,0,@DRemark,@ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS 
+					insert into StorageDetail(DocID,ProductDetailID,ProductID,ProviderID,UnitID,Quantity,Price,TotalMoney,WareID,DepotID,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS )
+					select @DocID,@ProductDetailID,@ProductID,@ProviderID,@UnitID,@UseQuantity,@Price,@Price*@UseQuantity,@WareID,@DepotID,0,@DRemark,@ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS 
 					from #TempProducts where AutoID=@AutoID
 
 					update ProductStock set StockOut=StockOut+@UseQuantity where ProductDetailID=@ProductDetailID  and DepotID=@DepotID 
@@ -193,8 +193,8 @@ begin
 				end
 				else
 				begin
-					insert into StorageDetail(DocID,ProductDetailID,ProductID,ProdiverID,UnitID,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS )
-					select @DocID,@ProductDetailID,@ProductID,@ProviderID,@UnitID,0,@BatchQuantity,@Price,@Price*@BatchQuantity,@WareID,@DepotID,0,@DRemark,@ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS 
+					insert into StorageDetail(DocID,ProductDetailID,ProductID,ProdiverID,UnitID,Quantity,Price,TotalMoney,WareID,DepotID,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS )
+					select @DocID,@ProductDetailID,@ProductID,@ProviderID,@UnitID,@BatchQuantity,@Price,@Price*@BatchQuantity,@WareID,@DepotID,0,@DRemark,@ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS 
 					from #TempProducts where AutoID=@AutoID
 
 					update ProductStock set StockOut=StockOut+@BatchQuantity where ProductDetailID=@ProductDetailID  and DepotID=@DepotID 

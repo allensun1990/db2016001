@@ -16,7 +16,11 @@ insert into RolePermission(RoleID,MenuCode,CreateTime,CreateUserID,ClientID)
 select RoleID,'102010801',CreateTime,CreateUserID,ClientID from RolePermission where MenuCode='102010300'
 
 delete from RolePermission where MenuCode in ('103029001','103029003','103030301','103030303','103030401','103030403','108020702',
-											 '108020703','108020301','108020302','108020303','102010100','102010300','109000000','109010000','109010100','109010300')
+											 '108020703','108020301','108020302','108020303','102010100','102010300','109000000','109010000','109010100','109010300',
+											 '102019029','102019030','102019031','102019032','102019013','102019033','102019014','102019015','102019016',
+											'102019017','102019021','102019023','102019006','102019022','102010503','102019003','102019005','102019007',
+											'102019010','102019011','102019012','102019018','102019019','102019020','102019024','102019025','102019026',
+											'102019027','102019028','102019035')
 
 --处理制版工艺类型名称
 alter table PlateMaking add TypeName nvarchar(50)
@@ -40,6 +44,66 @@ Update c set ClientID=u.ClientID from OrderReply c join users u on c.CreateUserI
 
 --同步工厂人数和到期时间
 update C set EndTime=a.EndTime,UserQuantity=a.UserQuantity from agents a join Clients c on a.ClientID=c.ClientID
+
+
+--处理下单明细remark
+Update OrderGoods set Remark=REPLACE(Remark,':','：')
+Update OrderGoods set Remark=REPLACE(Remark,'[','【')
+Update OrderGoods set Remark=REPLACE(Remark,']','】')
+Update OrderGoods set Remark=REPLACE(Remark,' ','')
+GO
+alter table OrderGoods add XRemark nvarchar(200)
+alter table OrderGoods add YRemark nvarchar(200)
+alter table OrderGoods add XYRemark nvarchar(200)
+GO
+update OrderGoods set XYRemark=Remark,XRemark=Remark,YRemark=Remark
+Update OrderGoods set XYRemark=REPLACE(XYRemark,'尺码：','')
+Update OrderGoods set XYRemark=REPLACE(XYRemark,'颜色：','')
+update OrderGoods set XRemark=XYRemark,YRemark=XYRemark
+
+update o set o.XRemark='【'+v.ValueName+'】' from AttrValue v join OrderGoods o on o.XRemark like('%【'+v.ValueName+'】%')  
+where AttrID='c6ced2c2-4808-474b-a301-ab56a751858a'
+
+update OrderGoods set XRemark='【XXL】' where XRemark like('%【XXL】%')  
+
+update OrderGoods set YRemark=REPLACE(YRemark,XRemark,'')
+
+
+---处理成品明细Description
+Update GoodsDetail set Description=REPLACE(Description,':','：')
+Update GoodsDetail set Description=REPLACE(Description,'[','【')
+Update GoodsDetail set Description=REPLACE(Description,']','】')
+Update GoodsDetail set Description=REPLACE(Description,' ','')
+
+--处理材料明细Description
+Update ProductDetail set Description=REPLACE(Description,':','：')
+Update ProductDetail set Description=REPLACE(Description,'[','【')
+Update ProductDetail set Description=REPLACE(Description,']','】')
+Update ProductDetail set Description=REPLACE(Description,' ','')
+
+--处理购物车明细remark
+Update ShoppingCart set Remark=REPLACE(Remark,':','：')
+Update ShoppingCart set Remark=REPLACE(Remark,'[','【')
+Update ShoppingCart set Remark=REPLACE(Remark,']','】')
+Update ShoppingCart set Remark=REPLACE(Remark,' ','')
+
+--处理订单材料明细remark
+Update OrderDetail set Remark=REPLACE(Remark,':','：')
+Update OrderDetail set Remark=REPLACE(Remark,'[','【')
+Update OrderDetail set Remark=REPLACE(Remark,']','】')
+Update OrderDetail set Remark=REPLACE(Remark,' ','')
+
+--处理裁片明细remark
+Update GoodsDocDetail set Remark=REPLACE(Remark,':','：')
+Update GoodsDocDetail set Remark=REPLACE(Remark,'[','【')
+Update GoodsDocDetail set Remark=REPLACE(Remark,']','】')
+Update GoodsDocDetail set Remark=REPLACE(Remark,' ','')
+
+--处理采购明细remark
+Update StorageDetail set Remark=REPLACE(Remark,':','：')
+Update StorageDetail set Remark=REPLACE(Remark,'[','【')
+Update StorageDetail set Remark=REPLACE(Remark,']','】')
+Update StorageDetail set Remark=REPLACE(Remark,' ','')
 
 --购物车单位名称冗余
 alter table ShoppingCart add UnitName nvarchar(20)

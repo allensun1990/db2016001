@@ -25,9 +25,9 @@ CREATE PROCEDURE [dbo].[P_CreateDHOrder]
 	@YXOrderID nvarchar(64)
 AS
 	
-declare @Status int,@OwnerID nvarchar(64),@ProcessID nvarchar(64),@CustomerID nvarchar(64),@TurnTimes int=0
+declare @Status int,@OwnerID nvarchar(64),@ProcessID nvarchar(64),@CustomerID nvarchar(64),@TurnTimes int=0,@CategoryID nvarchar(64)
 
-select @Status=Status,@OwnerID=OwnerID,@ProcessID=ProcessID,@CustomerID=CustomerID from Orders where OrderID=@OriginalID and ClientID=@ClientID
+select @Status=Status,@OwnerID=OwnerID,@CustomerID=CustomerID,@CategoryID=BigCategoryID from Orders where OrderID=@OriginalID and ClientID=@ClientID
 
 if(@Status<>3)
 begin
@@ -35,22 +35,22 @@ begin
 end
 
 --取得默认流程
-if(@OperateID<>'' and exists(select ProcessID from OrderProcess where  ClientID=@ClientID and ProcessType=2 and OwnerID=@OperateID and status<>9 ))
+if(@OperateID<>'' and exists(select ProcessID from OrderProcess where  ClientID=@ClientID and ProcessType=2 and CategoryID=@CategoryID and OwnerID=@OperateID and status<>9 ))
 begin
 	select top 1 @ProcessID=ProcessID,@OwnerID=OwnerID from OrderProcess 
 	where ClientID=@ClientID and ProcessType=2 and OwnerID=@OperateID  and status<>9 order by IsDefault desc
 end
 else
 begin
-	select @ProcessID=ProcessID,@OwnerID=OwnerID from OrderProcess where ClientID=@ClientID and ProcessType=2 and IsDefault=1 and status<>9
+	select @ProcessID=ProcessID,@OwnerID=OwnerID from OrderProcess where ClientID=@ClientID and ProcessType=2 and CategoryID=@CategoryID and IsDefault=1 and status<>9
 end
 
 insert into Orders(OrderID,OrderCode,CategoryID,OrderType,SourceType,OrderStatus,Status,ProcessID,PlanPrice,FinalPrice,PlanQuantity,TaskCount,TaskOver,OrderImage,OriginalID,OriginalCode ,
 					Price,CostPrice,ProfitPrice,TotalMoney,CityCode,Address,PersonName,MobileTele,Remark,CustomerID,OwnerID,CreateTime,ClientID,Platemaking,
-					GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,Discount,OriginalPrice,IntGoodsCode,GoodsName,TurnTimes,YXOrderID)
+					GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,Discount,OriginalPrice,IntGoodsCode,GoodsName,TurnTimes,YXOrderID,CreateUserID)
 select @OrderID,@OrderCode,CategoryID,2,1,0,0,@ProcessID,PlanPrice,@Price,0,0,0,OrderImage,OrderID,OrderCode,
 		Price,CostPrice,ProfitPrice,0,CityCode,Address,PersonName,MobileTele,Remark,CustomerID,@OwnerID,getdate(),ClientID,Platemaking,
-		GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,@Discount,FinalPrice,IntGoodsCode,GoodsName,TurnTimes+1,@YXOrderID from Orders where OrderID=@OriginalID
+		GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,@Discount,FinalPrice,IntGoodsCode,GoodsName,TurnTimes+1,@YXOrderID,@OperateID from Orders where OrderID=@OriginalID
 	
 --复制打样材料列表
 insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID )

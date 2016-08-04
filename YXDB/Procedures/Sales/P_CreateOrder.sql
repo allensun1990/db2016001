@@ -79,7 +79,7 @@ end
 --款号已存在打样单
 if(@SourceType=3 and @GoodsCode<>'' and @OrderType=2 and exists(select AutoID from Orders where OrderType=1 and Status<>9 and GoodsCode=@GoodsCode and ClientID=@ClientID))
 begin
-	select @OriginalID=OrderID,@CustomerID=CustomerID from Orders where OrderType=1 and Status=3 and GoodsCode=@GoodsCode and ClientID=@ClientID
+	select @OriginalID=OrderID from Orders where OrderType=1 and Status=3 and GoodsCode=@GoodsCode and ClientID=@ClientID
 end
 
 if(@OrderType=1)
