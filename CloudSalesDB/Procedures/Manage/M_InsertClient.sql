@@ -131,7 +131,7 @@ insert into Role(RoleID,Name,Status,IsDefault,CreateUserID,AgentID,ClientID) val
 set @Err+=@@error
 
 insert into Users(UserID,LoginName,BindMobilePhone,LoginPWD,Name,MobilePhone,Email,Allocation,Status,IsDefault,DepartID,RoleID,CreateUserID,MDUserID,MDProjectID,AgentID,ClientID)
-				 values(@UserID,'','',@LoginPWD,@ContactName,@MobilePhone,@Email,1,1,1,@DepartID,@RoleID,@UserID,'','',@AgentID,@ClientID)
+				 values(@UserID,'',@MobilePhone,@LoginPWD,@ContactName,@MobilePhone,@Email,1,1,1,@DepartID,@RoleID,@UserID,'','',@AgentID,@ClientID)
 
 insert into UserAccounts(AccountName,AccountType,ProjectID,UserID,AgentID,ClientID)
 values(@Account,@AccountType,@MDProjectID,@UserID,@AgentID,@ClientID)
