@@ -10,7 +10,7 @@ create table ClientMemberLevel(
 [AgentID] [nvarchar](64) NULL,
 [ClientID] [nvarchar](64) Not NULL,
 [Origin] int,
-[ImgUrl] [nvarchar](248) Not NULL,
+[ImgUrl] [nvarchar](248) 
 )
 
 create table IntegerFeeChange
