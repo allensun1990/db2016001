@@ -10,7 +10,7 @@ create table ClientMemberLevel(
 [AgentID] [nvarchar](64) NULL,
 [ClientID] [nvarchar](64) Not NULL,
 [Origin] int,
-[ImgUrl] [nvarchar](248) Not NULL,
+[ImgUrl] [nvarchar](248) 
 )
 
 create table IntegerFeeChange
@@ -69,6 +69,7 @@ M_DeleteRole
 Rpt_AgentAction_Day
 M_GetClientOrders 
 P_GetUserToLogin
+
 /*配置已存在的客户的客户等级*/
 
 create table #memberLevel (Name varchar(50),integFeeMore decimal(18,2),DiscountFee decimal(18,2) ,origin int )

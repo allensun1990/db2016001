@@ -44,3 +44,10 @@ D:\yunxiaokeji\DB\YXDB\obj\Debug\postdeploy.sql
 D:\yunxiaokeji\DB\YXDB\obj\Debug\predeploy.sql
 D:\yunxiaokeji\DB\YXDB\obj\Debug\CloudSalesDB.dll
 D:\yunxiaokeji\DB\YXDB\obj\Debug\CloudSalesDB.pdb
+D:\云霄科技\db2016001\YXDB\bin\Debug\IntFactoryDB.dacpac
+D:\云霄科技\db2016001\YXDB\obj\Debug\Model.xml
+D:\云霄科技\db2016001\YXDB\obj\Debug\refactor.xml
+D:\云霄科技\db2016001\YXDB\obj\Debug\postdeploy.sql
+D:\云霄科技\db2016001\YXDB\obj\Debug\predeploy.sql
+D:\云霄科技\db2016001\YXDB\obj\Debug\CloudSalesDB.dll
+D:\云霄科技\db2016001\YXDB\obj\Debug\CloudSalesDB.pdb

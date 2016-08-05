@@ -131,7 +131,7 @@ insert into Role(RoleID,Name,Status,IsDefault,CreateUserID,AgentID,ClientID) val
 set @Err+=@@error
 
 insert into Users(UserID,LoginName,BindMobilePhone,LoginPWD,Name,MobilePhone,Email,Allocation,Status,IsDefault,DepartID,RoleID,CreateUserID,MDUserID,MDProjectID,AgentID,ClientID)
-				 values(@UserID,'','',@LoginPWD,@ContactName,@MobilePhone,@Email,1,1,1,@DepartID,@RoleID,@UserID,'','',@AgentID,@ClientID)
+				 values(@UserID,'',@MobilePhone,@LoginPWD,@ContactName,@MobilePhone,@Email,1,1,1,@DepartID,@RoleID,@UserID,'','',@AgentID,@ClientID)
 
 insert into UserAccounts(AccountName,AccountType,ProjectID,UserID,AgentID,ClientID)
 values(@Account,@AccountType,@MDProjectID,@UserID,@AgentID,@ClientID)
@@ -251,8 +251,8 @@ begin
 end
 
 
-insert into Customer(CustomerID,Name,Type,IndustryID,CityCode,Address,MobilePhone,Email,AgentID,ClientID,SourceID,StageStatus)
-values(@ClientID,@ClientName,1,@Industry,@CityCode,@Address,@MobilePhone,@Email,@DefaultAgentID,@DefaultClientID ,@SourceID,1)
+insert into Customer(CustomerID,Name,Type,IndustryID,CityCode,Address,MobilePhone,Email,AgentID,ClientID,SourceID,StageStatus,ContactName)
+values(@ClientID,@ClientName,1,@Industry,@CityCode,@Address,@MobilePhone,@Email,@DefaultAgentID,@DefaultClientID ,@SourceID,1,@ContactName)
 
 --插入客户联系人
 if(@ContactName<>'')
