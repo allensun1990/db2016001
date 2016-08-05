@@ -33,9 +33,9 @@ AS
 set @Result=0	
 begin tran
 
-declare @Err int=0, @Status int=0,@OrderType int=1
+declare @Err int=0, @Status int=0,@OrderType int=1,@OriginalID nvarchar(64)
 
-select @Status=OrderStatus,@OrderType=OrderType from Orders  where OrderID=@OrderID and ClientID=@ClientID
+select @Status=OrderStatus,@OrderType=OrderType,@OriginalID=OriginalID from Orders  where OrderID=@OrderID and ClientID=@ClientID
 
 if (@Status>=2)
 begin
@@ -56,12 +56,22 @@ begin
 	begin
 		update Orders set IntGoodsCode=@IntGoodsCode,GoodsName=@GoodsName,PersonName=@PersonName,MobileTele=@MobileTele,CityCode=@CityCode,Address=@Address,PostalCode=@PostalCode,ExpressType=@ExpressType,Remark=@Remark
 			  where OrderID=@OrderID and ClientID=@ClientID 
+
+		Update Orders set IntGoodsCode=@IntGoodsCode,GoodsName=@GoodsName where ClientID=@ClientID and OriginalID=@OrderID
 	end
 end
 else
 begin
-	update Orders set PersonName=@PersonName,MobileTele=@MobileTele,CityCode=@CityCode,Address=@Address,PostalCode=@PostalCode,ExpressType=@ExpressType,Remark=@Remark
-			  where OrderID=@OrderID and ClientID=@ClientID 
+	if(@OriginalID is null or @OriginalID='')
+	begin
+		update Orders set IntGoodsCode=@IntGoodsCode,GoodsName=@GoodsName,PersonName=@PersonName,MobileTele=@MobileTele,CityCode=@CityCode,Address=@Address,PostalCode=@PostalCode,ExpressType=@ExpressType,Remark=@Remark
+				  where OrderID=@OrderID and ClientID=@ClientID 
+	end
+	else
+	begin
+		update Orders set PersonName=@PersonName,MobileTele=@MobileTele,CityCode=@CityCode,Address=@Address,PostalCode=@PostalCode,ExpressType=@ExpressType,Remark=@Remark
+				  where OrderID=@OrderID and ClientID=@ClientID 
+	end
 end
 
 

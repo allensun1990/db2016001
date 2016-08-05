@@ -36,7 +36,7 @@ AS
 	@condition nvarchar(1000)
 	
 	set @tableName='OrderTask t left join OrderTask t2 on t.OrderID=t2.OrderID and t2.Sort=t.Sort-1'
-	set @columns='t.TaskID,t.OrderID,t2.TaskID'
+	set @columns='t.TaskID,t.OrderID,t2.TaskID PTaskID'
 	set @key='t.TaskID'
 	set @orderColumn='t.EndTime'
 	set @condition=' t.status<>8  and t.ClientID='''+@ClientID+''''
@@ -96,10 +96,10 @@ AS
 		end
 	end
 
-	declare @tmp table(TaskID nvarchar(64),OrderID nvarchar(64),PTaskID nvarchar(64))
+	declare @tmp table(AutoID int,TaskID nvarchar(64),OrderID nvarchar(64),PTaskID nvarchar(64))
 	declare @total int,@page int
 
-	insert into @tmp exec P_GetPagerDataColumn @tableName,@columns,@condition,@key,@OrderColumn,@pageSize,@pageIndex,@total out,@page out,0 
+	insert into @tmp exec P_GetPagerData @tableName,@columns,@condition,@key,@OrderColumn,@pageSize,@pageIndex,@total out,@page out,0 
 	select @totalCount=@total,@pageCount =@page
 
 	select  t.*,t2.FinishStatus as PreFinishStatus,t2.Title as PreTitle,t2.OwnerID POwnerID,t2.EndTime PEndTime,t2.CompleteTime PCompleteTime  from OrderTask t

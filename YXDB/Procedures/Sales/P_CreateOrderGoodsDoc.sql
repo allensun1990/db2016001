@@ -132,7 +132,8 @@ begin
 end
 else if(@DocType=2)
 begin
-	Update Orders set SendStatus=1 where OrderID=@OrderID
+	
+	Update Orders set SendStatus=1,SendQuantity=SendQuantity+@TotalQuantity,TotalMoney=(SendQuantity+@TotalQuantity)*FinalPrice where OrderID=@OrderID
 end
 set @Err+=@@error
 

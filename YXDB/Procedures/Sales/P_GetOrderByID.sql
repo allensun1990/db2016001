@@ -26,13 +26,10 @@ select * from Orders where OrderID=@OrderID and (ClientID=@ClientID or EntrustCl
 
 select * from Customer where CustomerID=@CustomerID 
 
-select s.AutoID,s.ProductDetailID,s.ProductID,s.Quantity,s.Remark ,s.ProductName,s.Loss,s.UnitID,s.Price,PurchaseQuantity,InQuantity,UseQuantity,
-s.TotalMoney,s.Imgs , s.DetailsCode, s.ProductCode,ProductImage
-from OrderDetail s where s.OrderID=@OrderID 
+select * from OrderDetail where OrderID=@OrderID 
 
 select * from OrderGoods where OrderID=@OrderID
 
 select * from OrderTask where OrderID=@OrderID and ProcessID=@ProcessID order by Sort
 
-select * from OrderStatusLog  where OrderID=@OrderID
 

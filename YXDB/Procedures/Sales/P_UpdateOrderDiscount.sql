@@ -34,7 +34,7 @@ begin
 	return
 end
 
-Update Orders set Discount=@Discount,FinalPrice=@Price where OrderID=@OrderID
+Update Orders set Discount=@Discount,FinalPrice=@Price,TotalMoney=SendQuantity*@Price where OrderID=@OrderID
 
 Update OrderGoods set Price=@Price,TotalMoney=@Price*Quantity where OrderID=@OrderID
 
