@@ -12,7 +12,7 @@ GO
 参数说明：	 
 编写日期： 2015/10/20
 程序作者： Allen
-调试记录： exec P_GetUserByOtherAccount ''
+调试记录： exec P_GetUserByOtherAccount '' 
 修改记录： Michaux 2016/08/02 添加  and IsLimit=1 登陆过滤掉部分不需要加载的菜单项
 ************************************************************/
 CREATE PROCEDURE [dbo].[P_GetUserByOtherAccount]

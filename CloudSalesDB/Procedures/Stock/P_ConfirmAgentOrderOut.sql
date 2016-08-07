@@ -30,12 +30,12 @@ AS
 
 begin tran
 
-declare @OrderStatus int,@OrderSendStatus int,@OldOrderID nvarchar(64),@ReturnStatus int,@OrderCode nvarchar(64)
+declare @OrderStatus int,@OrderSendStatus int,@OldOrderID nvarchar(64),@ReturnStatus int,@OrderCode nvarchar(64),@CustomerID varchar(50),@TotalFee decimal(18,4)
 
 declare @Err int=0,@ProductID nvarchar(64),@ProductDetailID nvarchar(64),@Quantity int,@Remark nvarchar(500),@Price decimal(18,4),@UnitID nvarchar(64),
 		@DocID nvarchar(64),@BatchCode nvarchar(50),@BatchQuantity int,@DepotID nvarchar(64),@AutoID int=1,@BatchAutoID int=1
 
-select @OrderStatus=Status,@OrderSendStatus=SendStatus,@OldOrderID=OriginalID,@ReturnStatus=ReturnStatus,@OrderCode=OrderCode  from AgentsOrders where OrderID=@OrderID
+select @OrderStatus=Status,@OrderSendStatus=SendStatus,@OldOrderID=OriginalID,@ReturnStatus=ReturnStatus,@OrderCode=OrderCode,@CustomerID=CustomerID,@TotalFee=TotalMoney  from AgentsOrders where OrderID=@OrderID
 
 if(@OrderSendStatus>0 and @OrderStatus=2)
 begin
@@ -145,6 +145,11 @@ select @DocID,@DocCode,2,2,TotalMoney,CityCode,Address,PostalCode,Remark,@OrderI
 Update AgentsOrders set OutStatus=1,SendStatus=@SendStatus,ExpressID=@ExpressID,ExpressCode=@ExpressCode,DocID=@DocID,DocCode=@DocCode where OrderID=@OrderID
 
 update Orders set OutStatus=1,SendStatus=@SendStatus,ExpressID=@ExpressID,ExpressCode=@ExpressCode where OrderID=@OldOrderID
+if(@IsSend>0)
+begin 
+ exec P_UpdateCustomerIntergeFee  1,@TotalFee,@CustomerID,@AgentID,@ClientID,@UserID,'订单发货积分结算,增加：',@OrderCode
+end
+
 
 drop table #BatchStock
 drop table #TempProducts

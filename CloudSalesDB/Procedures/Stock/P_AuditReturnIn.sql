@@ -25,9 +25,9 @@ AS
 
 begin tran
 
-declare @Err int=0,@Status int,@DocCode nvarchar(50),@WareID nvarchar(64),@DocType int
+declare @Err int=0,@Status int,@DocCode nvarchar(50),@WareID nvarchar(64),@DocType int,@ReturnFee decimal(18,4),@CustomerID varchar(50),@OldOrderID varchar(50)
 
-select @Status=Status,@DocCode=DocCode,@WareID=WareID,@DocType=DocType from StorageDoc where DocID=@DocID
+select @Status=Status,@DocCode=DocCode,@WareID=WareID,@DocType=DocType,@ReturnFee=0-TotalMoney,@OldOrderID=OriginalID from StorageDoc where DocID=@DocID
 
 if(@Status>0)
 begin
@@ -80,6 +80,11 @@ Update StorageDetail set Status=1 where  DocID=@DocID
 
 Update StorageDoc set Status=2 where  DocID=@DocID
 
+if(@DocType=6)
+begin
+	select  @CustomerID=CustomerID  from AgentsOrders where OrderID=@OldOrderID
+	exec P_UpdateCustomerIntergeFee  0,@ReturnFee,@CustomerID,@AgentID,@ClientID,@UserID,'订单退货积分扣除结算：',@DocCode
+ end
 insert into StorageDocAction(DocID,Remark,CreateTime,CreateUserID,OperateIP)
 					values( @DocID,'审核单据',getdate(),@UserID,'')
 set @Err+=@@Error
