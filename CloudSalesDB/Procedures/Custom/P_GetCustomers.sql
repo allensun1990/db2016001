@@ -133,7 +133,7 @@ AS
 
 	if(@keyWords <> '')
 	begin
-		set @condition +=' and (cus.Name like ''%'+@keyWords+'%'' or cus.MobilePhone like ''%'+@keyWords+'%'' or cus.Jobs like ''%'+@keyWords+'%'')'
+		set @condition +=' and (cus.Name like ''%'+@keyWords+'%'' or cus.MobilePhone like ''%'+@keyWords+'%'' or cus.ContactName like ''%'+@keyWords+'%'' or cus.Jobs like ''%'+@keyWords+'%'')'
 	end
 
 	declare @total int,@page int
