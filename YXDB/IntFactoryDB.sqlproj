@@ -479,7 +479,7 @@
     <None Include="Procedures\System\P_CreateProcessCategory.sql" />
     <None Include="Procedures\System\P_DeleteProcessCategory.sql" />
     <Build Include="Procedures\System\P_UpdateUserAccount.sql" />
-    <Build Include="Procedures\System\P_UpdateUserAccountPwd.sql" />
+    <None Include="Procedures\System\P_UpdateUserAccountPwd.sql" />
     <None Include="Procedures\System\P_BindOtherAccount.sql" />
     <None Include="Procedures\System\P_UnBindOtherAccount.sql" />
     <Build Include="Procedures\System\P_InsertOrderColor.sql" />
