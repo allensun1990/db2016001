@@ -42,7 +42,7 @@ begin tran
 	end
 	else 
 	begin
-		update Orders set ReturnMoney=ReturnMoney+@PayMoney where  OrderID=@BillingID
+		update Orders set ReturnMoney=ReturnMoney+@PayMoney,PayMoney=PayMoney-@PayMoney where  OrderID=@BillingID
 
 	end
 if(@Err>0)

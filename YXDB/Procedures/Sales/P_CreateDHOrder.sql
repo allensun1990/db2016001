@@ -38,7 +38,7 @@ end
 if(@OperateID<>'' and exists(select ProcessID from OrderProcess where  ClientID=@ClientID and ProcessType=2 and CategoryID=@CategoryID and OwnerID=@OperateID and status<>9 ))
 begin
 	select top 1 @ProcessID=ProcessID,@OwnerID=OwnerID from OrderProcess 
-	where ClientID=@ClientID and ProcessType=2 and OwnerID=@OperateID  and status<>9 order by IsDefault desc
+	where ClientID=@ClientID and ProcessType=2 and OwnerID=@OperateID  and CategoryID=@CategoryID and status<>9 order by IsDefault desc
 end
 else
 begin
