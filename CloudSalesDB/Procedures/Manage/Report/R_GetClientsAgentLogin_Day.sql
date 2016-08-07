@@ -4,7 +4,7 @@ IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'R_GetClientsAge
 BEGIN
 	DROP  Procedure  R_GetClientsAgentLogin_Day
 END
-
+GO
 SET ANSI_NULLS ON
 GO
 

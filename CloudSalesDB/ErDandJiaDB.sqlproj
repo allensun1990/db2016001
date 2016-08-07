@@ -269,9 +269,8 @@
     <Build Include="Procedures\Manage\Report\R_GetClientsAgentLogin_Day.sql" />
     <Build Include="Procedures\Report\R_StockInOutReport.sql" />
     <Build Include="Procedures\System\P_BindOtherAccount.sql" />
-    <Build Include="Procedures\System\P_InsertIntoFeeChange.sql" />
-    <Build Include="Procedures\System\P_IntoFeeChangePageList.sql" />
+    <Build Include="Procedures\System\P_InsertIntergeFeeChange.sql" />
+    <Build Include="Procedures\System\P_IntergeFeeChangePageList.sql" />
     <Build Include="Procedures\System\P_UpdateUserAccount.sql" />
-    <Build Include="Procedures\System\P_UpdateUserAccountPwd.sql" />
   </ItemGroup>
 </Project>
