@@ -12,7 +12,7 @@ GO
 参数说明：	 
 编写日期： 2015/7/1
 程序作者： Allen
-调试记录： exec P_GetProductByIDForDetails 'cba6e56e-4b72-45d2-b72c-3dd0db19438f','162df060-3b7b-4c2a-8609-a86fafca69c6'
+调试记录： exec P_GetProductByIDForDetails 'cba6e56e-4b72-45d2-b72c-3dd0db19438f1','162df060-3b7b-4c2a-8609-a86fafca69c6'
 ************************************************************/
 CREATE PROCEDURE [dbo].[P_GetProductByIDForDetails]
 	@ProductID nvarchar(64),
@@ -33,8 +33,7 @@ from ProductDetail  p left join ClientProductDetails c on p.ProductDetailID=c.Pr
 
 select * from Providers where ProviderID= @ProdiverID
 
-select d.DepotCode,s.* from DepotSeat d left join ProductStock s on d.DepotID=s.DepotID and s.ProductID=@ProductID and s.ClientID=s.ClientID
-where d.ClientID=@ClientID 
+select * from ProductStock where ClientID=@ClientID and ProductID=@ProductID
 
 
  
