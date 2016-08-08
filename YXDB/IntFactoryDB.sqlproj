@@ -488,5 +488,6 @@
     <None Include="Procedures\Sales\P_CreateGoodsDocReturn.sql" />
     <None Include="Procedures\Stock\P_CreateProductUseQuantity.sql" />
     <None Include="Procedures\Sales\P_UpdateOrderBegin.sql" />
+    <None Include="Procedures\Manage\M_DeleteClient.sql" />
   </ItemGroup>
 </Project>

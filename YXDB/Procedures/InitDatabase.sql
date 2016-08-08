@@ -38,10 +38,14 @@ end
 drop table #table
 
 --客户端ID和管理员ID
-declare @UserID nvarchar(64)=NEWID()
+declare @UserID nvarchar(64)=NEWID(),@RoleID nvarchar(64)=NEWID()
+
+
+insert into M_Role(RoleID,Name,IsDefault,Status)
+values(@RoleID,'系统管理员',1,1)
 
 /*后台-初始化数据*/
-insert into M_Users(UserID,LoginName,LoginPWD,Name,IsAdmin,Status,CreateUserID) 
-			values(@UserID,'admin','36B6BE57FE5C93F15E0DA2B455459AB8','云销科技',1,1,@UserID)
+insert into M_Users(UserID,LoginName,LoginPWD,Name,IsAdmin,RoleID,Status,CreateUserID) 
+			values(@UserID,'admin','36B6BE57FE5C93F15E0DA2B455459AB8','云销科技',1,@RoleID,1,@UserID)
 
 

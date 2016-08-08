@@ -33,17 +33,19 @@ begin
 	return
 end
 
-delete from OrderDetail where OrderID=@OrderID and AutoID=@AutoID and PurchaseQuantity=0 and InQuantity=0 and UseQuantity=0
-
-select @TotalMoney=sum(TotalMoney) from OrderDetail where OrderID=@OrderID
-
-if(@TotalMoney is null)
+if exists(select AutoID  from OrderDetail where OrderID=@OrderID and AutoID=@AutoID and PurchaseQuantity=0 and InQuantity=0 and UseQuantity=0)
 begin
-	set @TotalMoney=0
+	delete from OrderDetail where OrderID=@OrderID and AutoID=@AutoID and PurchaseQuantity=0 and InQuantity=0 and UseQuantity=0
+
+	select @TotalMoney=sum(TotalMoney) from OrderDetail where OrderID=@OrderID
+
+	if(@TotalMoney is null)
+	begin
+		set @TotalMoney=0
+	end
+
+	Update Orders set Price=@TotalMoney where OrderID=@OrderID
 end
-
-Update Orders set Price=@TotalMoney where OrderID=@OrderID
-
 set @Err+=@@error
 
 if(@Err>0)

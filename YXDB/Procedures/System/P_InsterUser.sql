@@ -37,7 +37,7 @@ begin tran
 
 set @Result=0
 
-declare @Err int=0,@MaxCount int=0,@Count int
+declare @Err int=0,@MaxCount int=0,@Count int,@Login nvarchar(50)
 
 select @MaxCount=UserQuantity from Clients where ClientID=@ClientID
 
@@ -72,11 +72,13 @@ end
 
 set @Err+=@@error
 
+if(@AccountType=1) set @Login=@LoginName;
+
 
 if(@CreateUserID='') set @CreateUserID=@UserID
 
-insert into Users(UserID,LoginPWD,Name,MobilePhone,Email,CityCode,Address,Jobs,Allocation,Status,IsDefault,ParentID,RoleID,DepartID,CreateUserID,ClientID)
-             values(@UserID,@LoginPWD,@Name,@Mobile,@Email,@CityCode,@Address,@Jobs,1,1,0,@ParentID,@RoleID,@DepartID,@CreateUserID,@ClientID)
+insert into Users(UserID,LoginName,LoginPWD,Name,MobilePhone,Email,CityCode,Address,Jobs,Allocation,Status,IsDefault,ParentID,RoleID,DepartID,CreateUserID,ClientID)
+             values(@UserID,@Login,@LoginPWD,@Name,@Mobile,@Email,@CityCode,@Address,@Jobs,1,1,0,@ParentID,@RoleID,@DepartID,@CreateUserID,@ClientID)
 
 insert into UserAccounts(AccountName,AccountType,ProjectID,UserID,ClientID)
 				 values(@LoginName,@AccountType,'',@UserID,@ClientID)
