@@ -60,4 +60,4 @@ select @OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,
 Update Orders set TurnTimes=TurnTimes+1 where OrderID=@OriginalID
 
 --处理客户需求单数
-Update Customer set DHCount=DHCount+1 where CustomerID=@CustomerID
+Update Customer set DemandCount=DemandCount+1 where CustomerID=@CustomerID

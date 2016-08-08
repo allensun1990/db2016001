@@ -12,7 +12,7 @@ GO
 参数说明：	 
 编写日期： 2015/7/1
 程序作者： Allen
-调试记录： exec P_GetProductByIDForDetails 'CD867D63-B61D-47DE-9C63-0B1A56D68486'
+调试记录： exec P_GetProductByIDForDetails 'cba6e56e-4b72-45d2-b72c-3dd0db19438f','162df060-3b7b-4c2a-8609-a86fafca69c6'
 ************************************************************/
 CREATE PROCEDURE [dbo].[P_GetProductByIDForDetails]
 	@ProductID nvarchar(64),
@@ -21,7 +21,7 @@ AS
 
 declare @ProdiverID nvarchar(64),@CategoryID nvarchar(64)
 
-select @ProdiverID=ProviderID,@CategoryID=CategoryID from Products where ProductID=@ProductID
+select @ProdiverID=ProviderID from Products where ProductID=@ProductID
 
 select p.ProductID,ProductCode,ProductName,UnitID,CategoryID,SaleAttr,AttrList,ValueList,AttrValueList,Price,p.ClientID,
 		Weight,ProductImage,ShapeCode,ProviderID,Description,CreateTime,isnull(c.StockIn,0) StockIn,isnull(c.StockOut,0) StockOut,isnull(c.LogicOut,0) LogicOut
@@ -33,12 +33,8 @@ from ProductDetail  p left join ClientProductDetails c on p.ProductDetailID=c.Pr
 
 select * from Providers where ProviderID= @ProdiverID
 
-select p.AttrID,p.AttrName,c.Type into #AttrTable from ProductAttr p join CategoryAttr c on p.AttrID=c.AttrID 
-where c.Status=1 and c.CategoryID= @CategoryID and p.Status=1 order by p.AutoID
---属性
-select * from #AttrTable
---属性值
-select ValueID,ValueName,AttrID from AttrValue  where AttrID in (select AttrID from #AttrTable) and Status<>9
+select d.DepotCode,s.* from DepotSeat d left join ProductStock s on d.DepotID=s.DepotID and s.ProductID=@ProductID and s.ClientID=s.ClientID
+where d.ClientID=@ClientID 
 
 
  
