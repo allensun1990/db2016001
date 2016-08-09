@@ -27,32 +27,15 @@ AS
 	
 begin tran
 
-declare @Err int=0,@OldStatus int,@OwnerID nvarchar(64),@IsShow int=1,@OrderCode nvarchar(20), @ProcessID nvarchar(64), @OrderImg nvarchar(400),@CategoryID nvarchar(64),
-@NewProcessID nvarchar(64),@OrderType int,@TaskCount int=0,@NewOrderID nvarchar(64),@Title nvarchar(200),@OrderOwnerID nvarchar(64),@OriginalID nvarchar(64),@AliOrderCode nvarchar(50),
-@AliGoodsCode nvarchar(50),@IntGoodsCode nvarchar(100),@CustomerID nvarchar(64)
+declare @Err int=0,@OldStatus int,@OwnerID nvarchar(64),@OrderCode nvarchar(20),@OrderType int,@OriginalID nvarchar(64),@AliOrderCode nvarchar(50),
+@AliGoodsCode nvarchar(50),@IntGoodsCode nvarchar(100),@GoodsName nvarchar(100),@CategoryID nvarchar(64), @GoodsID nvarchar(64)
 
 
-select @OldStatus=Status,@OrderCode=OrderCode,@OrderImg=OrderImage,@ProcessID=ProcessID,@OrderType=OrderType,@Title=GoodsName,@OrderOwnerID=OwnerID,@CategoryID=CategoryID,
-@OriginalID=OriginalID ,@AliOrderCode=AliOrderCode,@AliGoodsCode=GoodsCode,@IntGoodsCode=IntGoodsCode,@CustomerID=CustomerID
+select @OldStatus=Status,@OrderCode=OrderCode,@OrderType=OrderType,@OriginalID=OriginalID ,@AliOrderCode=AliOrderCode,@AliGoodsCode=GoodsCode,
+@IntGoodsCode=IntGoodsCode,@GoodsName=GoodsName,@CategoryID=CategoryID,@GoodsID=GoodsID
 from Orders where OrderID=@OrderID  and ClientID=@ClientID
 
-if(@OldStatus=0 and @Status=1 and @OrderType=1)--开始打样
-begin
-	insert into OrderTask(TaskID,Title,ProductName,OrderType,TaskCode,OrderID,OrderImg,ProcessID,StageID,EndTime,OwnerID,Mark,Status,FinishStatus,CreateTime,CreateUserID,ClientID,Sort,OrderCode,MaxHours)
-	select NEWID(),StageName,@Title,@OrderType,@OrderCode+convert(nvarchar(2),Sort),@OrderID,@OrderImg,ProcessID,StageID,null,OwnerID,Mark,1,0,GETDATE(),OwnerID,ClientID,Sort,@OrderCode,MaxHours from OrderStage
-	where ProcessID =@ProcessID and status<>9
-	order by Sort
-
-	select @TaskCount=count(0) from OrderStage where ProcessID =@ProcessID and status<>9
-
-	Update Orders set Status=@Status,TaskCount=@TaskCount,OrderTime=GetDate(),OrderStatus=1,PlanTime=@PlanTime where OrderID=@OrderID
-
-	--处理客户订单数
-	Update Customer set DemandCount=DemandCount-1,DYCount=DYCount+1 where CustomerID=@CustomerID
-
-	set @Err+=@@error
-end 
-else if(@Status=2 and @OldStatus=1) --打样完成
+if(@Status=2 and @OldStatus=1) --打样完成
 begin
 	Update Orders set Status=@Status where OrderID=@OrderID
 
@@ -62,39 +45,16 @@ else if(@Status=3) --合价完成
 begin
 	if exists(select AutoID from OrderTask where OrderID=@OrderID and FinishStatus<>2)
 	begin
-		set @ErrorInfo='阶段任务尚未全部完成，不能完成合价'
+		set @ErrorInfo='任务尚未全部完成，不能完成核价'
 		rollback tran
 		return
 	end
 
-	declare @GoodsID nvarchar(64)=NewID()
+	set @GoodsID=NEWID()
 
 	Update Orders set Status=@Status,FinalPrice=@FinalPrice,TotalMoney=@FinalPrice,EndTime=getdate(),GoodsID=@GoodsID,OrderStatus=2 where OrderID=@OrderID and Status=2 and OrderType=1
 
-	insert into Goods(GoodsID,GoodsName,GoodsCode,CategoryID,Price,ClientID) values(@GoodsID,@Title,@IntGoodsCode,@CategoryID,@FinalPrice,@ClientID ) 
-
-	set @Err+=@@error
-end
-else if(@Status=5 and @OldStatus=0 and @OrderType=2) --开始生产
-begin
-	
-	if(@OriginalID is null or @OriginalID='')
-	begin
-		set @ErrorInfo='大货单尚未绑定打样单，不能进行生产'
-		rollback tran
-		return
-	end
-
-	insert into OrderTask(TaskID,Title,ProductName,OrderType,TaskCode,OrderID,OrderImg,ProcessID,StageID,EndTime,OwnerID,Mark,Status,FinishStatus,CreateTime,CreateUserID,ClientID,Sort,OrderCode,MaxHours)
-	select NEWID(),StageName,@Title,@OrderType,@OrderCode+convert(nvarchar(2),Sort),@OrderID,@OrderImg,ProcessID,StageID,null,OwnerID,Mark,1,0,GETDATE(),OwnerID,ClientID,Sort,@OrderCode,MaxHours from OrderStage
-	where ProcessID =@ProcessID and status<>9
-	order by Sort
-
-	select @TaskCount=count(0) from OrderStage where ProcessID =@ProcessID and status<>9
-
-	Update Orders set Status=@Status,OrderTime=GetDate(),TaskCount=@TaskCount,OrderStatus=1,PlanTime=@PlanTime where OrderID=@OrderID
-
-	Update Customer set DemandCount=DemandCount-1,DHCount=DHCount+1 where CustomerID=@CustomerID
+	insert into Goods(GoodsID,GoodsName,GoodsCode,CategoryID,Price,ClientID) values(@GoodsID,@GoodsName,@IntGoodsCode,@CategoryID,@FinalPrice,@ClientID ) 
 
 	set @Err+=@@error
 end
@@ -103,12 +63,22 @@ begin
 
 	if exists(select AutoID from OrderTask where OrderID=@OrderID and FinishStatus<>2)
 	begin
-		set @ErrorInfo='阶段任务尚未全部完成，不能交易结束'
+		set @ErrorInfo='任务尚未全部完成，不能结束交易'
 		rollback tran
 		return
 	end
+	
+	if exists (select AutoID from Orders where OrderID=@OriginalID and OrderStatus<>2)
+	begin
+		set @GoodsID=NEWID() 
 
-	Update Orders set Status=@Status,EndTime=getdate(),OrderStatus=2 where OrderID=@OrderID
+		insert into Goods(GoodsID,GoodsName,GoodsCode,CategoryID,Price,ClientID) 
+		values(@GoodsID,@GoodsName,@IntGoodsCode,@CategoryID,@FinalPrice,@ClientID ) 
+
+		Update Orders set Status=3,EndTime=getdate(),OrderStatus=2,GoodsID=@GoodsID where OrderID=@OriginalID
+	end
+
+	Update Orders set Status=@Status,EndTime=getdate(),OrderStatus=2,GoodsID=@GoodsID where OrderID=@OrderID
 
 	set @Err+=@@error
 end
@@ -133,7 +103,7 @@ end
 
 if(@Err>0)
 begin
-	set @ErrorInfo='系统异常，请稍后重试'
+	set @ErrorInfo='操作失败，请稍后重试'
 	rollback tran
 end 
 else

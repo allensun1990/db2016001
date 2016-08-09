@@ -73,7 +73,7 @@ begin
 					GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,Discount,OriginalPrice,IntGoodsCode,GoodsName,TurnTimes,YXOrderID,CreateUserID,OrderTime,PlanTime,EndTime)
 		select @DYOrderID,@DocCode,CategoryID,1,4,1,2,'',FinalPrice,FinalPrice,1,1,1,OrderImage,'','',
 		Price,CostPrice,ProfitPrice,0,CityCode,Address,PersonName,MobileTele,Remark,CustomerID,OwnerID,getdate(),ClientID,Platemaking,
-		GoodsCode,Title,BigCategoryID,OrderImages,'',1,FinalPrice,IntGoodsCode,GoodsName,1,'','',getdate(),PlanTime,EndTime from Orders where OrderID=@OrderID
+		GoodsCode,Title,BigCategoryID,OrderImages,'',1,FinalPrice,IntGoodsCode,GoodsName,1,'','',getdate(),@PlanTime,EndTime from Orders where OrderID=@OrderID
 
 		Update Orders set Status=@Status,OrderTime=GetDate(),TaskCount=@TaskCount,OrderStatus=1,PlanTime=@PlanTime,OriginalID=@DYOrderID,OriginalCode=@DocCode where OrderID=@OrderID
 
