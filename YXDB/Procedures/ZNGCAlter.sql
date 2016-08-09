@@ -64,7 +64,7 @@ update OrderGoods set XRemark=XYRemark,YRemark=XYRemark
 update o set o.XRemark='【'+v.ValueName+'】' from AttrValue v join OrderGoods o on o.XRemark like('%【'+v.ValueName+'】%')  
 where AttrID='c6ced2c2-4808-474b-a301-ab56a751858a'
 
-update OrderGoods set XRemark='【XXL】' where XRemark like('%【XXL】%')  
+update OrderGoods set XRemark='【XXS】' where XRemark like('%【XXS】%')  
 
 update OrderGoods set YRemark=REPLACE(YRemark,XRemark,'')
 
@@ -111,6 +111,9 @@ alter table ShoppingCart add UnitName nvarchar(20)
 update s  set UnitName=u.UnitName from ShoppingCart s join ProductUnit u on s.UnitID=u.UnitID  
 
 --Orders 表 PlanPrice 改为 decimal 类型
+Update Orders set PlanPrice='0' where PlanPrice is null
+Update Orders set PlanPrice='0' where  charindex('-',PlanPrice)>0
+
 alter table Orders alter column PlanPrice decimal(18,4)
 --GO
 alter table Orders add YXOrderID nvarchar(64) null
