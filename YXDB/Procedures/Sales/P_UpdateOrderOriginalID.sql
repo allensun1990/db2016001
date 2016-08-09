@@ -23,9 +23,9 @@ AS
 	
 begin tran
 
-declare @Err int=0,@Status int=-1,@OrderType int,@CustomerID nvarchar(64)
+declare @Err int=0,@Status int=-1,@OrderType int
 
-select @Status=Status,@OrderType=OrderType,@CustomerID=CustomerID from Orders where OrderID=@OrderID and ClientID=@ClientID and OriginalID=''
+select @Status=Status,@OrderType=OrderType from Orders where OrderID=@OrderID and ClientID=@ClientID and OriginalID=''
 
 if(@Status<>0 or @OrderType<>2)
 begin

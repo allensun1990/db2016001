@@ -35,7 +35,7 @@ begin
 	return
 end
 
-Update Orders set CustomerID=@CustomerID,PersonName=@Name,MobileTele=@MobilePhone,CityCode=@CityCode,Address=@Address where OrderID=@OrderID
+Update Orders set CustomerID=@CustomerID,CustomerName=@Name,PersonName=@Name,MobileTele=@MobilePhone,CityCode=@CityCode,Address=@Address where OrderID=@OrderID
 
 --处理客户需求单数
 if(@Status=0)

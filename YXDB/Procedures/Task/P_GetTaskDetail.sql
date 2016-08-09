@@ -12,13 +12,19 @@ GO
 参数说明：	 
 编写日期： 2016/5/18
 程序作者： MU
-调试记录： declare @Result exec P_GetTaskDetail @TaskID='0B9E8812-2F90-4C5F-B879-860E54D81C39',@OwnerID='',@Result=@Result output
+调试记录：  exec P_GetTaskDetail 'ff10aa3a-bbbc-4363-bb36-d587cb99acf5'
 ************************************************************/
 CREATE PROCEDURE [dbo].P_GetTaskDetail
 @TaskID nvarchar(64)
 as
-select * from  OrderTask where TaskID=@TaskID
-select * from  TaskMember where TaskID=@TaskID and status<>9
+Declare @OrderID nvarchar(64)
+
+select @OrderID=OrderID from OrderTask where TaskID=@TaskID
+
+select * from OrderTask where TaskID=@TaskID
+select * from TaskMember where TaskID=@TaskID and status<>9
+select * from Orders where OrderID= @OrderID
+
 		 
 
 

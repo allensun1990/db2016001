@@ -34,9 +34,15 @@ begin tran
 
 declare @Err int=0
 
+--客户名称有变更
+if not exists(select AutoID from Customer where CustomerID=@CustomerID and Name=@Name)
+begin
+	Update Orders set CustomerName=@Name where CustomerID=@CustomerID
+end
 
 Update Customer set Name=@Name,Type=@Type,IndustryID=@IndustryID,Extent=@Extent,CityCode=@CityCode,Address=@Address,MobilePhone=@MobilePhone,OfficePhone=@OfficePhone,
 					Email=@Email,Jobs=@Jobs,Description=@Description,FirstName=dbo.fun_getFirstPY(left(@Name,1)) where CustomerID=@CustomerID
+
 
 set @Err+=@@error
 if(@Err>0)

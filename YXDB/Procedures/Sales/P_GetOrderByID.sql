@@ -18,18 +18,13 @@ CREATE PROCEDURE [dbo].[P_GetOrderByID]
 	@OrderID nvarchar(64)='',
 	@ClientID nvarchar(64)=''
 AS
-declare @CustomerID nvarchar(64),@Status int ,@ProcessID nvarchar(64)
-
-select @CustomerID=CustomerID,@Status=Status,@ProcessID=ProcessID from Orders where OrderID=@OrderID and (ClientID=@ClientID or EntrustClientID=@ClientID)
 
 select * from Orders where OrderID=@OrderID and (ClientID=@ClientID or EntrustClientID=@ClientID)
-
-select * from Customer where CustomerID=@CustomerID 
 
 select * from OrderDetail where OrderID=@OrderID 
 
 select * from OrderGoods where OrderID=@OrderID
 
-select * from OrderTask where OrderID=@OrderID and ProcessID=@ProcessID order by Sort
+select * from OrderTask where OrderID=@OrderID order by Sort
 
 

@@ -73,7 +73,7 @@ begin
 		set @GoodsID=NEWID() 
 
 		insert into Goods(GoodsID,GoodsName,GoodsCode,CategoryID,Price,ClientID) 
-		values(@GoodsID,@GoodsName,@IntGoodsCode,@CategoryID,@FinalPrice,@ClientID ) 
+		values(@GoodsID,@GoodsName,@IntGoodsCode,@CategoryID,@FinalPrice,@ClientID) 
 
 		Update Orders set Status=3,EndTime=getdate(),OrderStatus=2,GoodsID=@GoodsID where OrderID=@OriginalID
 	end

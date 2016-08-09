@@ -34,9 +34,9 @@ AS
 	@key nvarchar(100),
 	@condition nvarchar(1000)
 	
-	set @tableName='Orders o left join Customer cus on o.CustomerID=cus.CustomerID'
-	set @columns='cus.Name CustomerName,o.*'
-	set @key='OrderID'
+	set @tableName='Orders o '
+	set @columns='o.*'
+	set @key='o.AutoID'
 	set @orderColumn='PlanTime'
 	set @condition='o.status<>9  and (o.ClientID='''+@ClientID+''' or o.EntrustClientID='''+@ClientID+''')' + @AndWhere
 

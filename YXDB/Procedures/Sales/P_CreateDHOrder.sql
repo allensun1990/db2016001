@@ -47,10 +47,10 @@ end
 
 insert into Orders(OrderID,OrderCode,CategoryID,OrderType,SourceType,OrderStatus,Status,ProcessID,PlanPrice,FinalPrice,PlanQuantity,TaskCount,TaskOver,OrderImage,OriginalID,OriginalCode ,
 					Price,CostPrice,ProfitPrice,TotalMoney,CityCode,Address,PersonName,MobileTele,Remark,CustomerID,OwnerID,CreateTime,ClientID,Platemaking,
-					GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,Discount,OriginalPrice,IntGoodsCode,GoodsName,TurnTimes,YXOrderID,CreateUserID)
+					GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,Discount,OriginalPrice,IntGoodsCode,GoodsName,TurnTimes,YXOrderID,CreateUserID,CustomerName)
 select @OrderID,@OrderCode,CategoryID,2,1,0,0,@ProcessID,PlanPrice,@Price,0,0,0,OrderImage,OrderID,OrderCode,
 		Price,CostPrice,ProfitPrice,0,CityCode,Address,PersonName,MobileTele,Remark,CustomerID,@OwnerID,getdate(),ClientID,Platemaking,
-		GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,@Discount,FinalPrice,IntGoodsCode,GoodsName,TurnTimes+1,@YXOrderID,@OperateID from Orders where OrderID=@OriginalID
+		GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,@Discount,FinalPrice,IntGoodsCode,GoodsName,TurnTimes+1,@YXOrderID,@OperateID,CustomerName from Orders where OrderID=@OriginalID
 	
 --复制打样材料列表
 insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID )

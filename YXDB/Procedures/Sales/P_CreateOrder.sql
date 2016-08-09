@@ -45,8 +45,7 @@ begin tran
 
 set @Result=0
 
-declare @Err int=0,@OwnerID nvarchar(64),@ProcessID nvarchar(64),@OriginalID nvarchar(64)='',@TurnTimes int=1
-
+declare @Err int=0,@OwnerID nvarchar(64),@ProcessID nvarchar(64),@OriginalID nvarchar(64)='',@TurnTimes int=0,@CustomerName nvarchar(100)
 
 if(@AliOrderCode<>'' and exists(select AutoID from Orders where AliOrderCode=@AliOrderCode))
 begin
@@ -58,7 +57,11 @@ end
 --处理客户需求单数
 if(@CustomerID='' and @Mobile<>'' and @Mobile is not null and exists (select AutoID from Customer where MobilePhone=@Mobile and ClientID=@ClientID))
 begin
-	select @CustomerID=CustomerID from  Customer where MobilePhone=@Mobile and ClientID=@ClientID
+	select @CustomerID=CustomerID,@CustomerName=Name from Customer where MobilePhone=@Mobile and ClientID=@ClientID
+end
+else if(@CustomerID is not null and @CustomerID<>'')
+begin
+	select @CustomerName=Name from Customer where CustomerID=@CustomerID
 end
 
 if exists (select AutoID from Orders where OrderCode=@OrderCode and ClientID=@ClientID)
@@ -82,16 +85,15 @@ begin
 	select @OriginalID=OrderID from Orders where OrderType=1 and Status=3 and GoodsCode=@GoodsCode and ClientID=@ClientID
 end
 
-if(@OrderType=1)
-begin
-	set @PlanQuantity=1
-	set @TurnTimes=0
-end
+
+set @PlanQuantity=@OrderType % 2
+
+set @TurnTimes=(@OrderType+1) % 2
 
 insert into Orders(OrderID,OrderCode,AliOrderCode,Status,CustomerID,OrderImage,OrderImages,PersonName,MobileTele,CityCode,Address,OwnerID,CreateUserID,OriginalID,PlanTime,
-				ClientID,ProcessID,SourceType,OrderType,PlanPrice,Remark,PlanQuantity,BigCategoryID,CategoryID,GoodsCode,Title,ExpressCode,Discount,GoodsName,TurnTimes)
+				ClientID,ProcessID,SourceType,OrderType,PlanPrice,Remark,PlanQuantity,BigCategoryID,CategoryID,GoodsCode,Title,ExpressCode,Discount,GoodsName,TurnTimes,CustomerName)
 		values (@OrderID,@OrderCode,@AliOrderCode,0,@CustomerID,@OrderImg,@OrderImages,@Name,@Mobile,@CityCode,@Address,@OwnerID,@UserID,@OriginalID,@PlanTime,
-				@ClientID,@ProcessID,@SourceType,@OrderType,@PlanPrice,@Remark,@PlanQuantity,@BigCategoryID,@CategoryID,@GoodsCode,@Title,@ExpressCode,1,@Title,@TurnTimes)
+				@ClientID,@ProcessID,@SourceType,@OrderType,@PlanPrice,@Remark,@PlanQuantity,@BigCategoryID,@CategoryID,@GoodsCode,@Title,@ExpressCode,1,@Title,@TurnTimes,@CustomerName)
 
 --款号已存在打样单
 if(@OriginalID<>'')

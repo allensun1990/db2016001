@@ -417,13 +417,9 @@
     <None Include="Procedures\ZNGCAlter.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Procedures\Task\P_CreateTask.sql" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Procedures\Products\P_UpdateAttrValueSort.sql" />
     <None Include="Procedures\AliOrder\P_AddAliOrderDownloadPlan.sql" />
     <None Include="Procedures\System\P_GetUserByOtherAccount.sql" />
-    <None Include="Procedures\Sales\p_GetOrderBaseInfoByID.sql" />
     <None Include="Procedures\Sales\P_UpdateOrderOver.sql" />
     <None Include="Procedures\P_GetPagerData.sql" />
   </ItemGroup>

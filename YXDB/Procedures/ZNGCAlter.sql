@@ -202,8 +202,9 @@ Update OrderDetail set PurchaseQuantity=0
 Update OrderDetail set InQuantity=0
 Update OrderDetail set UseQuantity=0
 
---处理订单发货总数
+--处理订单发货总数和客户名称
 alter table Orders add SendQuantity int default 0
+alter table Orders add CustomerName nvarchar(100)
 GO
 Update Orders set SendQuantity=0
 
@@ -211,6 +212,8 @@ update o set SendQuantity=t.Quantity from Orders o join
 (select OrderID,SUM(SendQuantity) Quantity from OrderGoods group by OrderID) t on o.OrderID=t.OrderID
 
 update Orders set TotalMoney=SendQuantity*FinalPrice
+GO
+Update o set CustomerName=c.Name from Orders o join Customer c on o.CustomerID=c.CustomerID
 
 
 

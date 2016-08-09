@@ -45,9 +45,8 @@ AS
 	@key nvarchar(100),
 	@isAsc int
 
-	select @tableName='Orders o left join Customer cus on o.CustomerID=cus.CustomerID',
-	@columns='o.OrderID,o.OrderCode,o.OrderImage,o.OwnerID,o.OrderType,o.Status,o.TaskCount,o.TaskOver,o.PlanQuantity,o.FinalPrice,o.TotalMoney,o.Price,o.CustomerID,o.IntGoodsCode,o.EndTime,o.GoodsName,
-			o.OrderStatus,o.CreateTime,o.PersonName,o.PlanPrice,o.ProfitPrice,cus.Name CustomerName,o.EntrustTime,o.SourceType,o.Mark,o.PlanTime,o.GoodsCode,o.OrderTime,o.ClientID ',
+	select @tableName='Orders o',
+	@columns='o.* ',
 	@key='o.AutoID',
 	@isAsc=0
 
