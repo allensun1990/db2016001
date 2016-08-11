@@ -38,7 +38,7 @@ declare @Err int=0,@OrderStatus int,@OwnerID nvarchar(64),@OrderCode nvarchar(64
 @OrderType int,@TotalQuantity int=0
 
 select @OrderStatus=OrderStatus,@OwnerID=OwnerID,@OrderCode=OrderCode,@DocImage=OrderImage,@DocImages=OrderImages,@OrderType=OrderType
-from Orders where OrderID=@OrderID and ClientID=@ClientID
+from Orders where OrderID=@OrderID and (ClientID=@ClientID or EntrustClientID=@ClientID)
 
 --进行的订单才能操作
 if(@OrderStatus<>1)

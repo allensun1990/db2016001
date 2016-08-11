@@ -41,7 +41,7 @@ end
 
 select @OwnerID=OwnerID,@ProcessID=ProcessID from OrderProcess where ClientID=@NewClientID and ProcessType=@OrderType and CategoryID=@CategoryID and IsDefault=1
 
-Update Orders set ProcessID=@ProcessID,OwnerID=@OwnerID,ClientID=@NewClientID,EntrustClientID=@ClientID,EntrustStatus=1,EntrustTime=getdate() where OrderID=@OrderID
+Update Orders set ProcessID=@ProcessID,OwnerID=@OwnerID,EntrustClientID=@NewClientID,EntrustStatus=1,EntrustTime=getdate() where OrderID=@OrderID and ClientID=@ClientID
 
 set @Err+=@@error
 

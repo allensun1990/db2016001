@@ -41,7 +41,7 @@ begin
 end
 
 Update Customer set Name=@Name,Type=@Type,IndustryID=@IndustryID,Extent=@Extent,CityCode=@CityCode,Address=@Address,MobilePhone=@MobilePhone,OfficePhone=@OfficePhone,
-					Email=@Email,Jobs=@Jobs,Description=@Description,FirstName=dbo.fun_getFirstPY(left(@Name,1)) where CustomerID=@CustomerID
+					Email=@Email,Jobs=@Jobs,Description=@Description,FirstName=dbo.fun_getFirstPY(left(@Name,1)) where CustomerID=@CustomerID and ClientID=@ClientID
 
 
 set @Err+=@@error

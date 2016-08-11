@@ -109,7 +109,6 @@ begin
 	select @OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID  from OrderDetail where OrderID=@OriginalID
 
 end
-else 
 
 Update Customer set DemandCount=DemandCount+1 where CustomerID=@CustomerID
 

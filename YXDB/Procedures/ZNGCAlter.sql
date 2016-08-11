@@ -136,6 +136,8 @@ alter table Clients add RegisterType int default 0
 update Clients set RegisterType=1
 Update Clients set RegisterType=3 where AliMemberID<>'' and  AliMemberID is not null
 
+update Users set LoginName='',BindMobilePhone='',AliMemberID='',WeiXinID='' where Status=9
+
 --用户名
 insert into UserAccounts(AccountName,AccountType,ProjectID,UserID,ClientID)
 select LoginName,1,'',UserID,ClientID from Users where LoginName is not null and LoginName<>''
@@ -217,6 +219,9 @@ update o set SendQuantity=t.Quantity from Orders o join
 update Orders set TotalMoney=SendQuantity*FinalPrice
 GO
 Update o set CustomerName=c.Name from Orders o join Customer c on o.CustomerID=c.CustomerID
+
+--订单和委托订单ID更换
+update Orders set ClientID=EntrustClientID,EntrustClientID=ClientID where EntrustClientID<>''
 
 
 

@@ -27,7 +27,7 @@ begin tran
 declare @Err int=0,@Status int,@TotalMoney decimal(18,4),@PurchaseStatus int, @OrderType int
 
 
-select @Status=OrderStatus,@PurchaseStatus=PurchaseStatus,@OrderType=@OrderType from Orders where OrderID=@OrderID  and ClientID=@ClientID
+select @Status=OrderStatus,@PurchaseStatus=PurchaseStatus,@OrderType=@OrderType from Orders where OrderID=@OrderID 
 
 
 if(@Status<>1)

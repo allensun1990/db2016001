@@ -30,9 +30,9 @@ AS
 
 
 declare @GoodsID nvarchar(64),@Status int,@GoodsDetailID nvarchar(64),@Price decimal(18,4),@OriginalPrice decimal(18,4),
-@DetailID nvarchar(64),@TotalQuantity decimal(18,4),@TotalMoney decimal(18,4)
+@DetailID nvarchar(64),@TotalQuantity decimal(18,4),@TotalMoney decimal(18,4),@OldClientID nvarchar(64)
 
-select @GoodsID=GoodsID,@Status=Status,@Price=FinalPrice,@OriginalPrice=OriginalPrice from Orders where OrderID=@OrderID
+select @GoodsID=GoodsID,@Status=Status,@Price=FinalPrice,@OriginalPrice=OriginalPrice,@OldClientID=ClientID from Orders where OrderID=@OrderID
 
 
 if exists(select AutoID from GoodsDetail where GoodsID=@GoodsID  and replace(Description,' ','')=replace(@Description,' ',''))
@@ -43,7 +43,7 @@ else
 begin
 	set @DetailID=NEWID()
 	INSERT INTO GoodsDetail(GoodsDetailID,GoodsID,[SaleAttr],[AttrValue],[SaleAttrValue],[Price] ,[Description],[CreateUserID] ,[ClientID])
-				VALUES(@DetailID,@GoodsID,@AttrList,@ValueList,@AttrValueList,@OriginalPrice,@Description,@OperateID,@ClientID);
+				VALUES(@DetailID,@GoodsID,@AttrList,@ValueList,@AttrValueList,@OriginalPrice,@Description,@OperateID,@OldClientID);
 end
 
 

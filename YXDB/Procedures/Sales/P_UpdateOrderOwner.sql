@@ -25,15 +25,14 @@ begin tran
 
 declare @Err int=0,@OldOwnerID nvarchar(64),@Status int
 
-select @OldOwnerID=OwnerID,@Status=Status from Orders where OrderID=@OrderID  and ClientID=@ClientID
-
+select @OldOwnerID=OwnerID,@Status=Status from Orders where OrderID=@OrderID and (ClientID=@ClientID or EntrustClientID=@ClientID)
 if(@OldOwnerID=@UserID)
 begin
 	rollback tran
 	return
 end
 
-update Orders set OwnerID=@UserID where OrderID=@OrderID and ClientID=@ClientID
+update Orders set OwnerID=@UserID where OrderID=@OrderID 
 
 set @Err+=@@error
 

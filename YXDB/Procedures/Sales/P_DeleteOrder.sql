@@ -24,7 +24,8 @@ begin tran
 
 declare @Err int=0,@Status int,@AliOrderCode nvarchar(64),@OrderType int,@CustomerID nvarchar(64)
 
-select @Status=Status,@AliOrderCode=AliOrderCode,@OrderType=OrderType,@CustomerID=CustomerID from Orders where OrderID=@OrderID  and ClientID=@ClientID
+select @Status=Status,@AliOrderCode=AliOrderCode,@OrderType=OrderType,@CustomerID=CustomerID 
+from Orders where OrderID=@OrderID and (ClientID=@ClientID or EntrustClientID=@ClientID)
 
 if(@Status <> 0)
 begin

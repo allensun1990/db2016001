@@ -25,13 +25,18 @@ CREATE PROCEDURE [dbo].[P_CreateDHOrder]
 	@YXOrderID nvarchar(64)
 AS
 	
-declare @Status int,@OwnerID nvarchar(64),@ProcessID nvarchar(64),@CustomerID nvarchar(64),@TurnTimes int=0,@CategoryID nvarchar(64)
+declare @Status int,@OwnerID nvarchar(64),@ProcessID nvarchar(64),@CustomerID nvarchar(64),@TurnTimes int=0,@CategoryID nvarchar(64),@DYClientID nvarchar(64)
 
-select @Status=Status,@OwnerID=OwnerID,@CustomerID=CustomerID,@CategoryID=BigCategoryID from Orders where OrderID=@OriginalID and ClientID=@ClientID
+select @Status=Status,@OwnerID=OwnerID,@CustomerID=CustomerID,@CategoryID=BigCategoryID,@DYClientID=ClientID from Orders where OrderID=@OriginalID
 
 if(@Status<>3)
 begin
 	return
+end
+
+if(@DYClientID<>@ClientID)
+begin
+	set @CustomerID=''
 end
 
 --取得默认流程
@@ -49,7 +54,7 @@ insert into Orders(OrderID,OrderCode,CategoryID,OrderType,SourceType,OrderStatus
 					Price,CostPrice,ProfitPrice,TotalMoney,CityCode,Address,PersonName,MobileTele,Remark,CustomerID,OwnerID,CreateTime,ClientID,Platemaking,
 					GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,Discount,OriginalPrice,IntGoodsCode,GoodsName,TurnTimes,YXOrderID,CreateUserID,CustomerName)
 select @OrderID,@OrderCode,CategoryID,2,1,0,0,@ProcessID,PlanPrice,@Price,0,0,0,OrderImage,OrderID,OrderCode,
-		Price,CostPrice,ProfitPrice,0,CityCode,Address,PersonName,MobileTele,Remark,CustomerID,@OwnerID,getdate(),ClientID,Platemaking,
+		Price,CostPrice,ProfitPrice,0,CityCode,Address,PersonName,MobileTele,Remark,@CustomerID,@OwnerID,getdate(),@ClientID,Platemaking,
 		GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,@Discount,FinalPrice,IntGoodsCode,GoodsName,TurnTimes+1,@YXOrderID,@OperateID,CustomerName from Orders where OrderID=@OriginalID
 	
 --复制打样材料列表

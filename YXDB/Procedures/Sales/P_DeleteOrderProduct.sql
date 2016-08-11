@@ -23,11 +23,11 @@ AS
 	
 begin tran
 
-declare @Err int=0,@Status int,@TotalMoney decimal(18,4)
+declare @Err int=0,@Status int=-1,@TotalMoney decimal(18,4)
 
-select @Status=OrderStatus from Orders where OrderID=@OrderID  and ClientID=@ClientID
+select @Status=OrderStatus from Orders where OrderID=@OrderID  and (ClientID=@ClientID or EntrustClientID=@ClientID)
 
-if(@Status>1)
+if(@Status>1 or @Status<0)
 begin
 	rollback tran
 	return

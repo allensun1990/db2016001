@@ -20,7 +20,6 @@ CREATE PROCEDURE [dbo].[P_GetCustomers]
 	@SourceType int=-1,
 	@SourceID nvarchar(64)='',
 	@StageID nvarchar(64)='',
-	@ActivityID nvarchar(64)='',
 	@Status int=-1,
 	@Mark int=-1,
 	@SearchUserID nvarchar(64)='',

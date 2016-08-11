@@ -29,7 +29,7 @@ select @Status=OrderStatus,@OrderType=OrderType,@OldCustomerID=CustomerID from O
 
 select @Name=Name,@MobilePhone=MobilePhone,@CityCode=CityCode,@Address=Address from Customer where CustomerID=@CustomerID
 
-if(@Status>1)
+if(@Status>1 or @Status<0)
 begin
 	rollback tran
 	return
