@@ -18,7 +18,8 @@ CREATE PROCEDURE [dbo].[P_BindOtherAccount]
 @UserID nvarchar(64),
 @AccountType int,
 @Account nvarchar(200),
-@ClientID nvarchar(64)
+@ClientID nvarchar(64),
+@ProjectID nvarchar(200)=''
 AS
 
 IF not EXISTS(select AutoID from UserAccounts where AccountName=@Account and AccountType = @AccountType)
@@ -27,8 +28,10 @@ begin
 	begin
 		Update Clients set AliMemberID=@Account where ClientID=@ClientID
 	end
-	insert into UserAccounts(AccountName,AccountType,UserID,ClientID)
-	values(@Account,@AccountType,@UserID,@ClientID)
+	insert into UserAccounts(AccountName,AccountType,UserID,ClientID,ProjectID)
+	values(@Account,@AccountType,@UserID,@ClientID,@ProjectID)
+
+
 end
 
  
