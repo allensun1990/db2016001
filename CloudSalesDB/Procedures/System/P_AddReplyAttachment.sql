@@ -1,0 +1,54 @@
+﻿ Use [CloudSales1.0_dev]
+GO
+IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'P_AddReplyAttachment')
+BEGIN
+	DROP  Procedure  P_AddReplyAttachment
+END
+
+GO
+/***********************************************************
+过程名称： P_AddReplyAttachment
+功能描述： 添加任务讨论附件
+参数说明：	 
+编写日期： 2016/5/18
+程序作者： MU
+调试记录： declare @Result exec P_AddReplyAttachment @TaskID='0B9E8812-2F90-4C5F-B879-860E54D81C39',@OwnerID='',@Result=@Result output
+************************************************************/
+CREATE PROCEDURE [dbo].P_AddReplyAttachment
+@ReplyID nvarchar(64),
+@Type int=1,
+@ServerUrl nvarchar(200),
+@FilePath nvarchar(200),
+@FileName nvarchar(200),
+@OriginalName nvarchar(200),
+@ThumbnailName nvarchar(200),
+@Size int=0,
+@UserID nvarchar(64),
+@AgentID nvarchar(64),
+@ClientID nvarchar(64)
+as
+	declare @AttachmentID nvarchar(64)=newid()
+	declare @error int=0
+
+	insert into Attachment(AttachmentID,Type,ServerUrl,FilePath,FileName,OriginalName,ThumbnailName,Size,CreateUserID,ReplyID,AgentID,ClientID)
+	values(@AttachmentID,@Type,@ServerUrl,@FilePath,@FileName,@OriginalName,@ThumbnailName,@Size,@UserID,@ReplyID,@AgentID,@ClientID)
+	set @error+=@@ERROR
+
+	if(@error>0)
+	begin
+		return 0
+	end 
+	else
+	begin
+		return 1
+	end
+
+
+
+
+		 
+
+
+
+
+
