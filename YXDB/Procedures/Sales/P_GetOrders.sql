@@ -110,11 +110,11 @@ AS
 	end
 	else if(@EntrustType = '2')
 	begin
-		set @condition +=' and o.ClientID = '''+@ClientID+''' and o.EntrustClientID <> '''''
+		set @condition +='  and o.EntrustClientID = '''+@ClientID+''''
 	end
 	else if(@EntrustType = '3')
 	begin
-		set @condition +='  and o.EntrustClientID = '''+@ClientID+''' '
+		set @condition +=' and o.ClientID = '''+@ClientID+''' and o.EntrustClientID <> '''''
 	end
 	else
 	begin

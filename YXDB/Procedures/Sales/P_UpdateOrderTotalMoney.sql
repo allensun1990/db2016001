@@ -25,14 +25,6 @@ begin tran
 
 declare @Err int=0,@Status int
 
-select @Status=Status from Orders where OrderID=@OrderID  and ClientID=@ClientID
-
-if(@Status>6 or @Status<5)
-begin
-	rollback tran
-	return
-end
-
 Update Orders set TotalMoney=@TotalMoney where OrderID=@OrderID
 
 set @Err+=@@error

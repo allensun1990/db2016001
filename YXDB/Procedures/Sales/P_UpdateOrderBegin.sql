@@ -25,15 +25,24 @@ AS
 	
 begin tran
 
-declare @Err int=0,@OldStatus int,@OwnerID nvarchar(64),@IsShow int=1,@OrderCode nvarchar(20), @ProcessID nvarchar(64), @OrderImg nvarchar(400),@CategoryID nvarchar(64),
-@NewProcessID nvarchar(64),@OrderType int,@TaskCount int=0,@NewOrderID nvarchar(64),@Title nvarchar(200),@OrderOwnerID nvarchar(64),@OriginalID nvarchar(64),@AliOrderCode nvarchar(50),
-@AliGoodsCode nvarchar(50),@IntGoodsCode nvarchar(100),@CustomerID nvarchar(64),@Status int
+declare @Err int=0,@OldStatus int,@OrderClientID nvarchar(64),@OrderCode nvarchar(20), @ProcessID nvarchar(64), @OrderImg nvarchar(400),@CategoryID nvarchar(64),
+@OrderType int,@TaskCount int=0,@Title nvarchar(200),@OriginalID nvarchar(64),@AliOrderCode nvarchar(50),
+@AliGoodsCode nvarchar(50),@IntGoodsCode nvarchar(100),@CustomerID nvarchar(64),@Status int,@GoodsID nvarchar(64),@GoodsName nvarchar(200)
 
 
-select @OldStatus=Status,@OrderCode=OrderCode,@OrderImg=OrderImage,@ProcessID=ProcessID,@OrderType=OrderType,@Title=GoodsName,@OrderOwnerID=OwnerID,@CategoryID=CategoryID,
-@OriginalID=OriginalID ,@AliOrderCode=AliOrderCode,@AliGoodsCode=GoodsCode,@IntGoodsCode=IntGoodsCode,@CustomerID=CustomerID
+select @OldStatus=Status,@OrderCode=OrderCode,@OrderImg=OrderImage,@ProcessID=ProcessID,@OrderType=OrderType,@Title=GoodsName,@CategoryID=CategoryID,
+@OriginalID=OriginalID ,@AliOrderCode=AliOrderCode,@AliGoodsCode=GoodsCode,@IntGoodsCode=IntGoodsCode,@CustomerID=CustomerID,@OrderClientID=ClientID,
+@GoodsID=GoodsID,@GoodsName=GoodsName
 from Orders where OrderID=@OrderID and (ClientID=@ClientID or EntrustClientID=@ClientID)
 
+if((@GoodsID is null or @GoodsID='') and exists(select AutoID from Goods where ClientID=@OrderClientID and GoodsCode=@IntGoodsCode and Status<>9))
+begin
+	set @ErrorInfo='款式编码已存在，请更换后再操作'
+	rollback tran
+	return
+end
+
+set @GoodsID=NEWID()
 
 if(@OldStatus=0 and  @OrderType=1)--开始打样
 begin
@@ -46,7 +55,9 @@ begin
 
 	select @TaskCount=count(0) from OrderStage where ProcessID =@ProcessID and status<>9
 
-	Update Orders set Status=@Status,TaskCount=@TaskCount,OrderTime=GetDate(),OrderStatus=1,PlanTime=@PlanTime where OrderID=@OrderID
+	insert into Goods(GoodsID,GoodsName,GoodsCode,CategoryID,Price,ClientID) values(@GoodsID,@GoodsName,@IntGoodsCode,@CategoryID,0,@OrderClientID ) 
+
+	Update Orders set Status=@Status,TaskCount=@TaskCount,OrderTime=GetDate(),OrderStatus=1,PlanTime=@PlanTime,GoodsID=@GoodsID where OrderID=@OrderID
 
 	--处理客户订单数
 	Update Customer set DemandCount=DemandCount-1,DYCount=DYCount+1 where CustomerID=@CustomerID
@@ -69,14 +80,16 @@ begin
 		
 		declare @DYOrderID nvarchar(64)=NewID()
 
+		insert into Goods(GoodsID,GoodsName,GoodsCode,CategoryID,Price,ClientID) values(@GoodsID,@GoodsName,@IntGoodsCode,@CategoryID,0,@OrderClientID ) 
+
 		insert into Orders(OrderID,OrderCode,CategoryID,OrderType,SourceType,OrderStatus,Status,ProcessID,PlanPrice,FinalPrice,PlanQuantity,TaskCount,TaskOver,OrderImage,OriginalID,OriginalCode ,
 					Price,CostPrice,ProfitPrice,TotalMoney,CityCode,Address,PersonName,MobileTele,Remark,CustomerID,OwnerID,CreateTime,ClientID,Platemaking,
-					GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,Discount,OriginalPrice,IntGoodsCode,GoodsName,TurnTimes,YXOrderID,CreateUserID,OrderTime,PlanTime,EndTime,EntrustClientID)
+					GoodsCode,Title,BigCategoryID,OrderImages,Discount,OriginalPrice,IntGoodsCode,GoodsID,GoodsName,TurnTimes,YXOrderID,CreateUserID,OrderTime,PlanTime,EndTime,EntrustClientID)
 		select @DYOrderID,@DocCode,CategoryID,1,4,1,2,'',FinalPrice,FinalPrice,1,1,1,OrderImage,'','',
 		Price,CostPrice,ProfitPrice,0,CityCode,Address,PersonName,MobileTele,Remark,CustomerID,OwnerID,getdate(),ClientID,Platemaking,
-		GoodsCode,Title,BigCategoryID,OrderImages,'',1,FinalPrice,IntGoodsCode,GoodsName,1,'','',getdate(),@PlanTime,EndTime,EntrustClientID from Orders where OrderID=@OrderID
+		GoodsCode,Title,BigCategoryID,OrderImages,1,FinalPrice,IntGoodsCode,@GoodsID,GoodsName,1,'','',getdate(),@PlanTime,EndTime,EntrustClientID from Orders where OrderID=@OrderID
 
-		Update Orders set Status=@Status,OrderTime=GetDate(),TaskCount=@TaskCount,OrderStatus=1,PlanTime=@PlanTime,OriginalID=@DYOrderID,OriginalCode=@DocCode where OrderID=@OrderID
+		Update Orders set Status=@Status,OrderTime=GetDate(),GoodsID=@GoodsID,TaskCount=@TaskCount,OrderStatus=1,PlanTime=@PlanTime,OriginalID=@DYOrderID,OriginalCode=@DocCode where OrderID=@OrderID
 
 		Update Customer set DemandCount=DemandCount-1,DHCount=DHCount+1,DYCount=DYCount+1 where CustomerID=@CustomerID
 	end

@@ -33,9 +33,9 @@ AS
 set @Result=0	
 begin tran
 
-declare @Err int=0, @Status int=0,@OrderType int,@OriginalID nvarchar(64),@GoodsID nvarchar(64),@OldClientID nvarchar(64)
+declare @Err int=0, @Status int=0,@OrderType int,@OriginalID nvarchar(64),@GoodsID nvarchar(64),@OrderClientID nvarchar(64)
 
-select @Status=OrderStatus,@OrderType=OrderType,@OriginalID=OriginalID,@GoodsID=GoodsID,@OldClientID=ClientID 
+select @Status=OrderStatus,@OrderType=OrderType,@OriginalID=OriginalID,@GoodsID=GoodsID,@OrderClientID=ClientID 
 from Orders  where OrderID=@OrderID and (ClientID=@ClientID or EntrustClientID=@ClientID)
 
 if (@Status>=2)
@@ -45,7 +45,7 @@ begin
 	return
 end 
 
-if(@GoodsID<>'' and  exists(select AutoID from Goods where GoodsID<>@GoodsID and ClientID=@OldClientID and GoodsCode=@IntGoodsCode))
+if(@GoodsID<>'' and  exists(select AutoID from Goods where GoodsID<>@GoodsID and ClientID=@OrderClientID and GoodsCode=@IntGoodsCode))
 begin
 	set @Result=3
 	rollback tran
@@ -55,23 +55,17 @@ end
 if(@OrderType=1)
 begin
 	update Orders set IntGoodsCode=@IntGoodsCode,GoodsName=@GoodsName,PersonName=@PersonName,MobileTele=@MobileTele,CityCode=@CityCode,Address=@Address,PostalCode=@PostalCode,ExpressType=@ExpressType,Remark=@Remark
-			where OrderID=@OrderID and ClientID=@ClientID 
+			where OrderID=@OrderID 
 
-	Update Orders set IntGoodsCode=@IntGoodsCode,GoodsName=@GoodsName where ClientID=@ClientID and OriginalID=@OrderID
+	Update Orders set IntGoodsCode=@IntGoodsCode,GoodsName=@GoodsName where OriginalID=@OrderID
 
 end
 else
 begin
-	if(@OriginalID is null or @OriginalID='')
-	begin
-		update Orders set IntGoodsCode=@IntGoodsCode,GoodsName=@GoodsName,PersonName=@PersonName,MobileTele=@MobileTele,CityCode=@CityCode,Address=@Address,PostalCode=@PostalCode,ExpressType=@ExpressType,Remark=@Remark
+	update Orders set IntGoodsCode=@IntGoodsCode,GoodsName=@GoodsName,PersonName=@PersonName,MobileTele=@MobileTele,CityCode=@CityCode,Address=@Address,PostalCode=@PostalCode,ExpressType=@ExpressType,Remark=@Remark
 				  where OrderID=@OrderID
-	end
-	else
-	begin
-		update Orders set PersonName=@PersonName,MobileTele=@MobileTele,CityCode=@CityCode,Address=@Address,PostalCode=@PostalCode,ExpressType=@ExpressType,Remark=@Remark
-				  where OrderID=@OrderID 
-	end
+	
+	Update Orders set IntGoodsCode=@IntGoodsCode,GoodsName=@GoodsName where OrderID=@OriginalID
 end
 
 if(@GoodsID<>'')

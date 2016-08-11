@@ -28,7 +28,9 @@ set @Result=0
 
 declare @Err int=0,@Status int,@PlanQuantity decimal(18,4),@OrderCode nvarchar(64),@Stock decimal(18,4),@PurchaseStatus int,@DocImage nvarchar(4000),@DocImages nvarchar(64)
 
-select @Status=Status,@OrderCode=OrderCode,@PurchaseStatus=PurchaseStatus,@DocImage=OrderImage,@DocImages=OrderImages from Orders where OrderID=@OrderID  and ClientID=@ClientID
+select @Status=Status,@OrderCode=OrderCode,@PurchaseStatus=PurchaseStatus,@DocImage=OrderImage,@DocImages=OrderImages 
+from Orders where OrderID=@OrderID  and (ClientID=@ClientID or EntrustClientID=@ClientID)
+
 
 --生成采购清单
 if exists(select AutoID from OrderDetail where OrderID=@OrderID)

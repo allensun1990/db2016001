@@ -25,7 +25,7 @@ AS
 begin tran
 
 declare @Err int=0,@Status int,@OwnerID nvarchar(64)
-select @Status=Status from Orders where OrderID=@OrderID  and ClientID=@ClientID
+select @Status=Status from Orders where OrderID=@OrderID and (ClientID=@ClientID or EntrustClientID=@ClientID)
 
 if(@Status<>0)
 begin

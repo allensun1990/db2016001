@@ -26,9 +26,9 @@ begin tran
 set @Result=0
 
 --订单信息
-declare @Err int=0,@Status int=-1,@OrderType nvarchar(64),@OldClientID nvarchar(64),@ProcessID nvarchar(64),@OwnerID nvarchar(64),@CategoryID nvarchar(64)
+declare @Err int=0,@Status int=-1,@OrderType nvarchar(64),@OrderClientID nvarchar(64),@ProcessID nvarchar(64),@OwnerID nvarchar(64),@CategoryID nvarchar(64)
 
-select @Status=Status,@OrderType=OrderType,@OldClientID=ClientID,@CategoryID=BigCategoryID from Orders where OrderID=@OrderID and (ClientID=@ClientID or EntrustClientID=@ClientID)
+select @Status=Status,@OrderType=OrderType,@OrderClientID=ClientID,@CategoryID=BigCategoryID from Orders where OrderID=@OrderID and (ClientID=@ClientID or EntrustClientID=@ClientID)
 
 if(@Status<>0)
 begin
@@ -37,7 +37,7 @@ begin
 end
 
 
-select @OwnerID=OwnerID,@ProcessID=ProcessID from OrderProcess where ClientID=@OldClientID and CategoryID=@CategoryID and ProcessType=@OrderType and IsDefault=1
+select @OwnerID=OwnerID,@ProcessID=ProcessID from OrderProcess where ClientID=@OrderClientID and CategoryID=@CategoryID and ProcessType=@OrderType and IsDefault=1
 
 Update Orders set ProcessID=@ProcessID,OwnerID=@OwnerID,EntrustClientID='',EntrustStatus=2 where OrderID=@OrderID
 

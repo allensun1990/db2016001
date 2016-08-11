@@ -28,12 +28,12 @@ AS
 begin tran
 
 declare @Err int=0,@OldStatus int,@OwnerID nvarchar(64),@OrderCode nvarchar(20),@OrderType int,@OriginalID nvarchar(64),@AliOrderCode nvarchar(50),
-@AliGoodsCode nvarchar(50),@IntGoodsCode nvarchar(100),@GoodsName nvarchar(100),@CategoryID nvarchar(64), @GoodsID nvarchar(64)
+@AliGoodsCode nvarchar(50),@IntGoodsCode nvarchar(100),@GoodsName nvarchar(100),@CategoryID nvarchar(64), @GoodsID nvarchar(64),@OrderClientID nvarchar(64)
 
 
 select @OldStatus=Status,@OrderCode=OrderCode,@OrderType=OrderType,@OriginalID=OriginalID ,@AliOrderCode=AliOrderCode,@AliGoodsCode=GoodsCode,
-@IntGoodsCode=IntGoodsCode,@GoodsName=GoodsName,@CategoryID=CategoryID,@GoodsID=GoodsID
-from Orders where OrderID=@OrderID  and ClientID=@ClientID
+@IntGoodsCode=IntGoodsCode,@GoodsName=GoodsName,@CategoryID=CategoryID,@GoodsID=GoodsID,@OrderClientID=ClientID
+from Orders where OrderID=@OrderID and (ClientID=@ClientID or EntrustClientID=@ClientID)
 
 if(@Status=2 and @OldStatus=1) --打样完成
 begin
@@ -50,11 +50,17 @@ begin
 		return
 	end
 
-	set @GoodsID=NEWID()
+	if(@GoodsID is null or @GoodsID='')
+	begin
+		set @GoodsID=NEWID()
+		insert into Goods(GoodsID,GoodsName,GoodsCode,CategoryID,Price,ClientID) values(@GoodsID,@GoodsName,@IntGoodsCode,@CategoryID,@FinalPrice,@OrderClientID) 
+	end
+	else
+	begin
+		Update Goods set Price=@FinalPrice where GoodsID=@GoodsID
+	end
 
-	Update Orders set Status=@Status,FinalPrice=@FinalPrice,TotalMoney=@FinalPrice,EndTime=getdate(),GoodsID=@GoodsID,OrderStatus=2 where OrderID=@OrderID and Status=2 and OrderType=1
-
-	insert into Goods(GoodsID,GoodsName,GoodsCode,CategoryID,Price,ClientID) values(@GoodsID,@GoodsName,@IntGoodsCode,@CategoryID,@FinalPrice,@ClientID ) 
+	Update Orders set Status=@Status,FinalPrice=@FinalPrice,EndTime=getdate(),GoodsID=@GoodsID,OrderStatus=2 where OrderID=@OrderID and Status=2 and OrderType=1
 
 	set @Err+=@@error
 end
@@ -70,15 +76,10 @@ begin
 	
 	if exists (select AutoID from Orders where OrderID=@OriginalID and OrderStatus<>2)
 	begin
-		set @GoodsID=NEWID() 
-
-		insert into Goods(GoodsID,GoodsName,GoodsCode,CategoryID,Price,ClientID) 
-		values(@GoodsID,@GoodsName,@IntGoodsCode,@CategoryID,@FinalPrice,@ClientID) 
-
-		Update Orders set Status=3,EndTime=getdate(),OrderStatus=2,GoodsID=@GoodsID where OrderID=@OriginalID
+		Update Orders set Status=3,EndTime=getdate(),OrderStatus=2 where OrderID=@OriginalID
 	end
 
-	Update Orders set Status=@Status,EndTime=getdate(),OrderStatus=2,GoodsID=@GoodsID where OrderID=@OrderID
+	Update Orders set Status=@Status,EndTime=getdate(),OrderStatus=2 where OrderID=@OrderID
 
 	set @Err+=@@error
 end

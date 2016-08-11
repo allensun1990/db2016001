@@ -26,19 +26,14 @@ begin tran
 
 declare @Err int=0,@Status int,@TotalMoney decimal(18,4),@PurchaseStatus int
 
-select @Status=OrderStatus,@PurchaseStatus=PurchaseStatus from Orders where OrderID=@OrderID  and ClientID=@ClientID
-
-if(@Status<>1)
-begin
-	rollback tran
-	return
-end
+select @Status=OrderStatus,@PurchaseStatus=PurchaseStatus from Orders 
+where OrderID=@OrderID  and (ClientID=@ClientID or EntrustClientID=@ClientID)
 
 update OrderDetail set Quantity=@Quantity,TotalMoney=Price*(@Quantity+PurchaseQuantity) where OrderID=@OrderID and AutoID=@AutoID
 
 select @TotalMoney=sum(TotalMoney) from OrderDetail where OrderID=@OrderID
 
-Update Orders set Price=@TotalMoney where OrderID=@OrderID
+Update Orders set Price=@TotalMoney where OrderID=@OrderID 
 
 set @Err+=@@error
 

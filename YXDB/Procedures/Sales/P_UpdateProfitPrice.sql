@@ -25,7 +25,7 @@ begin tran
 
 declare @Err int=0,@Status int
 
-select @Status=Status from Orders where OrderID=@OrderID  and ClientID=@ClientID
+select @Status=Status from Orders where OrderID=@OrderID 
 
 if(@Status>=3)
 begin
@@ -33,7 +33,7 @@ begin
 	return
 end
 
-Update Orders set ProfitPrice=@Profit where OrderID=@OrderID
+Update Orders set ProfitPrice=@Profit where OrderID=@OrderID and (ClientID=@ClientID or EntrustClientID=@ClientID)
 
 set @Err+=@@error
 
