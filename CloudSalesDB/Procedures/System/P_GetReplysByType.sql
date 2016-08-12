@@ -31,20 +31,25 @@ declare @tableName nvarchar(4000),
 	@key nvarchar(100)
 
 	declare @tmp table(rowid nvarchar(50) default('0') null ,ReplyID nvarchar(64))
-	declare @total int,@page int
-
-	set @tableName=case @Type when 1 then 'CustomerReply' when 2 then 'OrderReply' when 3 then 'ActivityReply'  else 'OrderReply' end
+	declare @total int,@page int 
+	set @tableName=case @Type when 1 then 'CustomerReply' when 2 then 'OrderReply' when 3 then 'ActivityReply'  else 'OpportunityReply' end
 	set @columns='ReplyID'
 	set @key='ReplyID'
-	set @orderColumn='createtime desc'
-	set @condition='status<>9 and AgentID='''+@AgentID+''' and  guid='''+@ID+''''
-
+	set @orderColumn='AutoID desc'
+	set @condition=' Status<>9 and AgentID='''+@AgentID+''' and  Guid='''+@ID+''''
+	 
 
 	insert into @tmp exec P_GetPagerData @tableName,@columns,@condition,@key,@orderColumn,@PageSize,@PageIndex,@total out,@page out,0 
 
 	select @totalCount=@total,@pageCount =@page
+	if(@Type=1)
+		 select * from CustomerReply where ReplyID in( select ReplyID from  @tmp ) order by createtime desc
+	else if(@Type=2)
+		select * from OrderReply where ReplyID in( select ReplyID from  @tmp ) order by createtime desc
+	else if(@Type=3)
+		select * from ActivityReply where ReplyID in( select ReplyID from  @tmp ) order by createtime desc
+	else
+		select * from OpportunityReply where ReplyID in( select ReplyID from  @tmp ) order by createtime desc
 
-	set @sql='select * from '+@tableName+' where ReplyID in( select ReplyID from  @tmp ) order by createtime desc'
-	exec(@sql)
 	select * from Attachment  where  ReplyID in ( select ReplyID from  @tmp )
  
