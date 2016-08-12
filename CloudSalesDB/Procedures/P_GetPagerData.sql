@@ -46,6 +46,8 @@ begin
 end
 declare @CommandSQL nvarchar(4000)
 set @CommandSQL= 'select @totalCount=count(0) from '+@tableName+' where '+@condition
+
+
 exec sp_executesql @CommandSQL,N'@totalCount int output',@totalCount output
 set @pageCount=CEILING(@totalCount * 1.0/@pageSize)
 
@@ -55,7 +57,7 @@ begin
 	begin
 		set	@orderColumn=@orderColumn+','
 	end
-	set @CommandSQL='select top '+str(@pageSize)+' '+@columns+' from '+@tableName+' where '+@condition+' order by '+@orderColumn+@key+' '+@orderby
+	set @CommandSQL='select top '+str(@pageSize)+'  ''0'' as rowid, '+@columns+' from '+@tableName+' where '+@condition+' order by '+@orderColumn+@key+' '+@orderby
 end
 else
 begin
@@ -68,5 +70,5 @@ begin
 		set	@orderColumn=@orderColumn+','
 	end
 	set @CommandSQL='select * from (select row_number() over( order by '+@orderColumn+@key+' '+@orderby+') as rowid , '+@columns+' from '+@tableName+' where '+@condition+'  ) as dt where rowid between '+str((@pageIndex-1) * @pageSize + 1)+' and '+str(@pageIndex* @pageSize)
-end
+end 
 exec (@CommandSQL)
