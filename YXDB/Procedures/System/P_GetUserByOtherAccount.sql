@@ -16,7 +16,8 @@ GO
 ************************************************************/
 CREATE PROCEDURE [dbo].[P_GetUserByOtherAccount]
 @AccountType int,
-@Account nvarchar(64)
+@Account nvarchar(200),
+@ProjectID nvarchar(200)=''
 AS
 
 declare @UserID nvarchar(64),@ClientID nvarchar(64),@RoleID nvarchar(64)
@@ -32,6 +33,9 @@ begin
 	select m.* from Menu m left join RolePermission r on r.MenuCode=m.MenuCode  and IsLimit=1
 	where (RoleID=@RoleID or IsLimit=0 )
 
+	--更新微信公众号openid
+	if(@AccountType=4 and @ProjectID<>'')
+		update UserAccounts set ProjectID=@ProjectID  where AccountName=@Account and AccountType = @AccountType
 end
 
  
