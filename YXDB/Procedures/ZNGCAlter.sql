@@ -35,12 +35,18 @@ update PlateMaking set TypeName='成品包装' where Type=6
 --客户讨论表
 alter table CustomerReply add ClientID nvarchar(64)
 --GO
-Update c set ClientID=u.ClientID from CustomerReply c join users u on c.CreateUserID=u.UserID
+Update CustomerReply set ClientID=AgentID 
 
 --订单讨论表
 alter table OrderReply add ClientID nvarchar(64)
 --GO
-Update c set ClientID=u.ClientID from OrderReply c join users u on c.CreateUserID=u.UserID
+Update OrderReply set ClientID=AgentID
+
+--转移任务讨论
+insert into TaskReply(ReplyID,GUID,Content,CreateUserID,FromReplyID,FromReplyUserID,FromReplyAgentID,CreateTime,ClientID)
+select r.ReplyID,o.TaskID,r.Content,r.CreateUserID,r.FromReplyID,r.FromReplyUserID,r.FromReplyAgentID,r.CreateTime,r.ClientID 
+from OrderReply r join OrderTask o on r.GUID=o.OrderID and r.StageID=o.StageID 
+
 
 --同步工厂人数和到期时间
 update C set EndTime=a.EndTime,UserQuantity=a.UserQuantity from agents a join Clients c on a.ClientID=c.ClientID
