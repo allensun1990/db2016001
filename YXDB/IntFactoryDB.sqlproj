@@ -486,5 +486,7 @@
     <None Include="Procedures\Sales\P_UpdateOrderBegin.sql" />
     <None Include="Procedures\Manage\M_DeleteClient.sql" />
     <None Include="Procedures\System\P_DeletetOrderStage.sql" />
+    <None Include="Procedures\Task\GetPushTaskByPreTaskID.sql" />
+    <Build Include="Procedures\Task\P_GetPushTasksByOrderID.sql" />
   </ItemGroup>
 </Project>
