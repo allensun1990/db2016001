@@ -195,8 +195,9 @@ update C set DHCount=o.Quantity from Customer c join
 --处理订单单据表
 alter table GoodsDoc add OrderID nvarchar(64) 
 alter table GoodsDoc add OrderCode nvarchar(64)
+alter table GoodsDoc add OwnerID nvarchar(64)
 Go
-Update GoodsDoc set OrderID=OriginalID,OrderCode=OriginalCode
+Update GoodsDoc set OrderID=OriginalID,OrderCode=OriginalCode,OwnerID=CreateUserID
 Update GoodsDoc set OriginalID='',OriginalCode=''
 
 alter table GoodsDocDetail add ReturnQuantity int default 0
