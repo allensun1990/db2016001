@@ -29,6 +29,9 @@ where OrderID=@orderid and Sort=@sort+1 and FinishStatus<>2
 if(@onwerid<>'')
 	select ProjectID as OpenID,@pretitle as PreTitle,@title as Title,@onwerid as OnwerID from UserAccounts
 	where UserID=@onwerid and AccountType=4 and ProjectID<>''
+else 
+	select ProjectID as OpenID,@pretitle as PreTitle,@title as Title,@onwerid as OnwerID from UserAccounts
+	where 1=2
 
 		 
 
