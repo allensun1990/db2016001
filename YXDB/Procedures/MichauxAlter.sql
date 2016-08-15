@@ -360,7 +360,14 @@ alter table dbo.M_Report_AgentAction_Day drop column AgentID
 GO
 alter table dbo.OperateLog drop column AgentID
 alter table dbo.OrderColor drop column AgentID
+
 alter table dbo.OrderReply drop column AgentID
+alter table OrderReply drop column StageID 
+GO
+alter table OrderReply drop constraint DF_OrderReply_Mark
+GO
+alter table OrderReply drop column Mark 
+
 alter table dbo.Orders drop column AgentID
 alter table dbo.OrdersLog drop column AgentID
 alter table dbo.OrderTask drop column AgentID

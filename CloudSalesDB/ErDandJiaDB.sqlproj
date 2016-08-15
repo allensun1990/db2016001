@@ -272,5 +272,7 @@
     <Build Include="Procedures\System\P_InsertIntergeFeeChange.sql" />
     <Build Include="Procedures\System\P_IntergeFeeChangePageList.sql" />
     <Build Include="Procedures\System\P_UpdateUserAccount.sql" />
+    <Build Include="Procedures\System\P_GetReplysByType.sql" />
+    <Build Include="Procedures\System\P_AddReplyAttachment.sql" />
   </ItemGroup>
 </Project>
