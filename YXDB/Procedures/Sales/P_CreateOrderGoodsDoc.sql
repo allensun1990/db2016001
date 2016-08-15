@@ -25,16 +25,19 @@ CREATE PROCEDURE [dbo].[P_CreateOrderGoodsDoc]
 	@ExpressID nvarchar(64)='',
 	@ExpressCode nvarchar(50)='',
 	@Remark nvarchar(4000)='',
+	@OwnerID nvarchar(64)='',
 	@OperateID nvarchar(64)='',
 	@ClientID nvarchar(64)
 AS
 begin tran
 
-declare @Err int=0,@OrderStatus int,@OwnerID nvarchar(64),@OrderCode nvarchar(64),@AutoID int=1,@GoodsQuantity nvarchar(200),@sql nvarchar(4000),@CutStatus int,
+declare @Err int=0,@OrderStatus int,@OrderCode nvarchar(64),@AutoID int=1,@GoodsQuantity nvarchar(200),@sql nvarchar(4000),@CutStatus int,
 @GoodsAutoID int,@Quantity int,@TotalMoney decimal(18,4),@DocImage nvarchar(4000),@DocImages nvarchar(64),@AliOrderCode nvarchar(100)='',@ProcessID nvarchar(64),
 @OrderType int,@TotalQuantity int=0
 
-select @OrderStatus=OrderStatus,@OwnerID=OwnerID,@OrderCode=OrderCode,@DocImage=OrderImage,@DocImages=OrderImages,@AliOrderCode=AliOrderCode,@ProcessID=ProcessID,@OrderType=OrderType ,@CutStatus=CutStatus
+if(@OwnerID='') set @OwnerID=@OperateID
+
+select @OrderStatus=OrderStatus,@OrderCode=OrderCode,@DocImage=OrderImage,@DocImages=OrderImages,@AliOrderCode=AliOrderCode,@ProcessID=ProcessID,@OrderType=OrderType ,@CutStatus=CutStatus
 from Orders where OrderID=@OrderID and (ClientID=@ClientID or EntrustClientID=@ClientID)
 
 --进行的订单才能操作
@@ -47,8 +50,8 @@ end
 --打样单
 if(@OrderType=1)
 begin
-	insert into GoodsDoc(DocID,DocCode,DocType,DocImage,DocImages,Status,TotalMoney,CityCode,Address,Remark,ExpressID,ExpressCode,WareID,CreateUserID,CreateTime,OperateIP,ClientID,OrderID,OrderCode,TaskID)
-			values(@DocID,@DocCode,@DocType,@DocImage,@DocImages,2,0,'','',@Remark,@ExpressID,@ExpressCode,'',@OperateID,GETDATE(),'',@ClientID,@OrderID,@OrderCode,@TaskID)
+	insert into GoodsDoc(DocID,DocCode,DocType,DocImage,DocImages,Status,TotalMoney,CityCode,Address,Remark,ExpressID,ExpressCode,WareID,OwnerID,CreateUserID,CreateTime,OperateIP,ClientID,OrderID,OrderCode,TaskID)
+			values(@DocID,@DocCode,@DocType,@DocImage,@DocImages,2,0,'','',@Remark,@ExpressID,@ExpressCode,'',@OwnerID,@OperateID,GETDATE(),'',@ClientID,@OrderID,@OrderCode,@TaskID)
 
 	commit tran
 	return
@@ -120,8 +123,8 @@ begin
 
 	select @TotalMoney=sum(TotalMoney) from GoodsDocDetail where DocID=@DocID
 
-	insert into GoodsDoc(DocID,DocCode,DocType,DocImage,DocImages,Status,TotalMoney,Quantity,CityCode,Address,Remark,ExpressID,ExpressCode,WareID,CreateUserID,CreateTime,OperateIP,ClientID,OrderID,OrderCode,TaskID)
-			values(@DocID,@DocCode,@DocType,@DocImage,@DocImages,2,@TotalMoney,@TotalQuantity,'','',@Remark,@ExpressID,@ExpressCode,'',@OperateID,GETDATE(),'',@ClientID,@OrderID,@OrderCode,@TaskID)
+	insert into GoodsDoc(DocID,DocCode,DocType,DocImage,DocImages,Status,TotalMoney,Quantity,CityCode,Address,Remark,ExpressID,ExpressCode,WareID,OwnerID,CreateUserID,CreateTime,OperateIP,ClientID,OrderID,OrderCode,TaskID)
+			values(@DocID,@DocCode,@DocType,@DocImage,@DocImages,2,@TotalMoney,@TotalQuantity,'','',@Remark,@ExpressID,@ExpressCode,'',@OwnerID,@OperateID,GETDATE(),'',@ClientID,@OrderID,@OrderCode,@TaskID)
 
 	set @Err+=@@error
 end
