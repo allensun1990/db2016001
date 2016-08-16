@@ -489,5 +489,6 @@
     <None Include="Procedures\Task\GetPushTaskByPreTaskID.sql" />
     <None Include="Procedures\Task\P_CreateTaskReply.sql" />
     <Build Include="Procedures\Task\P_GetPushTasksByOrderID.sql" />
+    <None Include="Procedures\Task\P_GetPushTaskByOrderID.sql" />
   </ItemGroup>
 </Project>

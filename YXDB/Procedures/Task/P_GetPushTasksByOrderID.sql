@@ -20,7 +20,7 @@ as
 declare @PlanTime datetime
 select @PlanTime=PlanTime from orders where OrderID=@OrderID
 
-select u.ProjectID as OpenID,t.Title,t.OwnerID,@PlanTime as EndTime  from OrderTask as t,UserAccounts u
+select u.ProjectID as OpenID,t.Title,t.OwnerID,@PlanTime as EndTime,u.ClientID  from OrderTask as t,UserAccounts u
 where t.OwnerID=u.UserID and  t.OrderID=@OrderID and
  u.AccountType=4 and u.ProjectID<>''
  order by t.sort asc
