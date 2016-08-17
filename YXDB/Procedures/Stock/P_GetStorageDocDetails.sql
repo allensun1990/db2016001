@@ -12,7 +12,7 @@ GO
 参数说明：	 
 编写日期： 2016/7/16
 程序作者： Allen
-调试记录： exec P_GetStorageDocDetails '25A3D084-7CE9-42ED-8BA6-5DDC26B30569'
+调试记录： exec P_GetStorageDocDetails 'da74b0db-fd56-406d-83f9-edc7668ba18a'
 			
 			
 ************************************************************/

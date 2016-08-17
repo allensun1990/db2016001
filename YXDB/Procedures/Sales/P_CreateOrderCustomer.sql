@@ -82,6 +82,8 @@ insert into Customer(CustomerID,CustomerPoolID,Name,Type,IndustryID,Extent,CityC
 
 Update Orders set CustomerID=@CustomerID,CustomerName=@Name where OrderID=@OrderID 
 
+Update Orders set CustomerName=@Name where CustomerID=@CustomerID and OrderID<>@OrderID and CustomerName<>@Name
+
 set @Err+=@@error
 
 if(@Err>0)
