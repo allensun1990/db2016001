@@ -1,20 +1,20 @@
 ﻿Use IntFactory
 GO
-IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'P_GetPushTaskByPreTaskID')
+IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'P_GetPushTaskForFinishTask')
 BEGIN
-	DROP  Procedure  P_GetPushTaskByPreTaskID
+	DROP  Procedure  P_GetPushTaskForFinishTask
 END
 
 GO
 /***********************************************************
-过程名称： P_GetPushTaskByPreTaskID
-功能描述： 获取需push任务通过上级TaskID
+过程名称： P_GetPushTaskForFinishTask
+功能描述： 获取任务完成通知下级任务的推送push
 参数说明：	 
 编写日期： 2016/8/12
 程序作者： MU
-调试记录：  exec P_GetPushTaskByPreTaskID '1085e427-130c-4758-ad1d-2ce3a87a3266'
+调试记录：  exec P_GetPushTaskForFinishTask '1085e427-130c-4758-ad1d-2ce3a87a3266'
 ************************************************************/
-CREATE PROCEDURE [dbo].P_GetPushTaskByPreTaskID
+CREATE PROCEDURE [dbo].P_GetPushTaskForFinishTask
 @TaskID nvarchar(64)
 as
 declare @orderid nvarchar(64),@sort int,
