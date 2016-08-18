@@ -486,11 +486,12 @@
     <None Include="Procedures\Sales\P_UpdateOrderBegin.sql" />
     <None Include="Procedures\Manage\M_DeleteClient.sql" />
     <None Include="Procedures\System\P_DeletetOrderStage.sql" />
-    <None Include="Procedures\Task\GetPushTaskByPreTaskID.sql" />
+    <None Include="Procedures\Task\P_GetPushTaskForFinishTask.sql" />
     <None Include="Procedures\Task\P_CreateTaskReply.sql" />
-    <Build Include="Procedures\Task\P_GetPushTasksByOrderID.sql" />
-    <None Include="Procedures\Task\P_GetPushTaskByOrderID.sql" />
+    <Build Include="Procedures\Task\P_GetPushTasksForNewOrder.sql" />
+    <None Include="Procedures\Task\P_GetPushTaskForChangeOrderOwner.sql" />
     <None Include="Procedures\Sales\P_UpdateProductPlanQuantity.sql" />
+    <None Include="Procedures\Task\P_GetPushTaskForChangeTaskOwner.sql" />
     <None Include="Procedures\Sales\P_UpdateProductOrderQuantity.sql" />
   </ItemGroup>
 </Project>

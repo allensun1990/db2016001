@@ -17,7 +17,7 @@ GO
 CREATE PROCEDURE [dbo].P_GetTasks
 @KeyWords nvarchar(64)='',
 @OwnerID nvarchar(64)='',
-@IsParticipate int=0,
+@FilterType int=1,
 @Status int=-1,
 @FinishStatus int=-1,
 @OrderType int=-1,
@@ -25,6 +25,8 @@ CREATE PROCEDURE [dbo].P_GetTasks
 @OrderStageID nvarchar(64)='-1',
 @ColorMark int=-1,
 @TaskType int=-1,
+@InvoiceStatus int=-1,
+@PreFinishStatus int=-1,
 @BeginDate nvarchar(100)='',
 @EndDate nvarchar(100)='',
 @BeginEndDate nvarchar(100)='',
@@ -32,8 +34,7 @@ CREATE PROCEDURE [dbo].P_GetTasks
 @TaskOrderColumn int=0,
 @IsAsc int=0,
 @ClientID nvarchar(64),
-@InvoiceStatus int=-1,
-@PreFinishStatus int=-1,
+
 @PageSize int=20,
 @PageIndex int=1,
 @TotalCount int output,
@@ -51,7 +52,7 @@ AS
 	set @orderColumn='t.createtime'
 	set @condition=' 1=1 '
 
-	if(@IsParticipate=1)
+	if(@FilterType=2)
 	begin
 		set @condition+=' and t.TaskID in( select distinct TaskID from TaskMember where Status<>9 and MemberID='''+@OwnerID+''' )'
 	end
@@ -68,13 +69,13 @@ AS
 		set @condition+=' and  ( t.Title like ''%'+@KeyWords+'%'''+' or t.OrderCode like ''%'+@KeyWords+'%'' or t.TaskCode like ''%'+@KeyWords+'%'')'
 	
 	if(@Status<>-1)
-		set @condition+=' and t.Status='+ convert(nvarchar(2), @Status)
+		set @condition+=' and t.Status='+ str(@Status)
 
 	if(@FinishStatus<>-1)
-		set @condition+=' and t.FinishStatus='+ convert(nvarchar(2), @FinishStatus)
+		set @condition+=' and t.FinishStatus='+ str(@FinishStatus)
 
 	if(@PreFinishStatus<>-1)
-		set @condition+=' and t2.FinishStatus='+ convert(nvarchar(2), @PreFinishStatus)
+		set @condition+=' and t2.FinishStatus='+ str(@PreFinishStatus)
 
 	if(@OrderProcessID<>'-1')
 		set @condition+=' and t.ProcessID='''+ @OrderProcessID+''''
@@ -83,14 +84,14 @@ AS
 		set @condition+=' and t.StageID='''+ @OrderStageID+''''
 
 	if(@OrderType<>-1)
-		set @condition+=' and t.OrderType='+ convert(nvarchar(2), @OrderType)
+		set @condition+=' and t.OrderType='+ str(@OrderType)
 
 	if(@ColorMark<>-1)
-		set @condition+=' and t.ColorMark='+ convert(nvarchar(2), @ColorMark)
+		set @condition+=' and t.ColorMark='+ str(@ColorMark)
 
 	if(@TaskType<>-1)
 	begin
-		set @condition+=' and right(t.Mark,1)='+ convert(nvarchar(2), @TaskType)
+		set @condition+=' and right(t.Mark,1)='+ str(@TaskType)
 	end
 
 	if(@BeginDate<>'')
