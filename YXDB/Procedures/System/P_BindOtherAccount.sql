@@ -24,6 +24,11 @@ AS
 
 IF not EXISTS(select AutoID from UserAccounts where AccountName=@Account and AccountType = @AccountType)
 begin	
+	IF EXISTS(select AutoID from UserAccounts where UserID=@UserID and AccountType=@AccountType)
+	begin
+		return
+	end
+
 	if(@AccountType=3)
 	begin
 		Update Clients set AliMemberID=@Account where ClientID=@ClientID
