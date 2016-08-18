@@ -32,10 +32,10 @@ declare @Err int=0,@Status int,@OrderCode nvarchar(50),@DocID nvarchar(64)=NewID
 
 select @Status=OrderStatus,@OrderCode=OrderCode,@DocImage=OrderImage,@DocImages=OrderImages from Orders where OrderID=@OrderID
 
-if(@Status>1)
+if(@Status>2)
 begin
 	set @Result=2 
-	set @ErrInfo='订单已完成！'
+	set @ErrInfo='订单已关闭！'
 	rollback tran
 	return
 end
