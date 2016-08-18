@@ -28,25 +28,27 @@ CREATE PROCEDURE [dbo].[P_AddShoppingCart]
 AS
 begin tran
 
-declare @Err int=0,@TotalMoney decimal(18,4)=0
+declare @Err int=0,@TotalMoney decimal(18,4)=0,@PlanQuantity int
 
 --订单或者任务
 if(@OrderType=11)
 begin
+	select @PlanQuantity=PlanQuantity from Orders where OrderID=@GUID
+
 	if not exists(select AutoID from OrderDetail where OrderID=@GUID and ProductDetailID=@ProductDetailID)
 	begin
-		insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID)
-		select @GUID,@ProductDetailID,@ProductID,p.UnitID,@Quantity,d.Price,0,@Quantity*d.Price,isnull(d.Description,'')+isnull(d.Remark,''),ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID
+		insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,OrderQuantity,Quantity,PlanQuantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID)
+		select @GUID,@ProductDetailID,@ProductID,p.UnitID,@PlanQuantity,@Quantity,@PlanQuantity*@Quantity,d.Price,0,@PlanQuantity*@Quantity*d.Price,isnull(d.Description,'')+isnull(d.Remark,''),ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID
 	    from ProductDetail d join Products p  on d.ProductID=p.ProductID where d.ProductDetailID=@ProductDetailID
 	end
 	else
 	begin
-		update OrderDetail set Quantity=Quantity+@Quantity,TotalMoney=(Quantity+@Quantity+Loss)*Price where OrderID=@GUID and ProductDetailID=@ProductDetailID
+		update OrderDetail set Quantity=Quantity+@Quantity,PlanQuantity=(Quantity+@Quantity)*OrderQuantity,TotalMoney=((Quantity+@Quantity)*OrderQuantity+PurchaseQuantity)*Price where OrderID=@GUID and ProductDetailID=@ProductDetailID
 	end
 
 	select @TotalMoney=sum(TotalMoney) from OrderDetail where OrderID=@GUID
 
-	update Orders set Price=isnull(@TotalMoney,0),TotalMoney=isnull(@TotalMoney,0)*PlanQuantity where OrderID=@GUID
+	update Orders set Price=isnull(@TotalMoney,0) where OrderID=@GUID
 end
 else if(@OrderType=3) --报损
 begin

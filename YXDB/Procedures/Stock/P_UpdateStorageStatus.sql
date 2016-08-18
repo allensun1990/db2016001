@@ -25,7 +25,7 @@ AS
 
 begin tran
 
-declare @Err int,@DocType int,@OldStatus int,@OriginalID  nvarchar(64)
+declare @Err int,@DocType int,@OldStatus int,@OriginalID  nvarchar(64),@TotalMoney decimal(18,4)
 set @Err=0
 
 select @DocType=DocType,@OldStatus=Status,@OriginalID=OriginalID from StorageDoc where DocID=@DocID
@@ -40,8 +40,13 @@ update StorageDoc set Status=@Status where DocID=@DocID
 
 if(@DocType=1 and @OriginalID is not null and @OriginalID<>'')
 begin
-	update o set PurchaseQuantity=PurchaseQuantity-s.Quantity from StorageDetail s join OrderDetail o on s.ProductDetailID=o.ProductDetailID 
-	where o.OrderID=@OriginalID and s.DocID=@DocID and  o.PurchaseQuantity>0
+	update o set PurchaseQuantity=PurchaseQuantity-s.Quantity,TotalMoney=(o.PlanQuantity+o.PurchaseQuantity-s.Quantity)*o.Price from StorageDetail s join OrderDetail o on s.ProductDetailID=o.ProductDetailID 
+	where o.OrderID=@OriginalID and s.DocID=@DocID
+
+	select @TotalMoney=sum(TotalMoney) from OrderDetail where OrderID=@OriginalID
+
+	Update Orders set Price=@TotalMoney where OrderID=@OriginalID
+
 end
 
 set @Err+=@@Error
