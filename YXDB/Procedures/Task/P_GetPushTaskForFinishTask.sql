@@ -33,6 +33,12 @@ else
 	select ProjectID as OpenID,@pretitle as PreTitle,@title as Title,@ownerid as OwnerID,ClientID from UserAccounts
 	where 1=2
 
+if(not exists( select taskid from ordertask where orderid=@orderid and status<>8  and FinishStatus<>2))
+begin
+	select *,u.ProjectID as OpenID  from orders as o, UserAccounts u  where o.OwnerID=u.UserID and o.OrderID=@orderid and o.OrderStatus<>2 and
+u.AccountType=4 and u.ProjectID<>''
+end
+
 		 
 
 
