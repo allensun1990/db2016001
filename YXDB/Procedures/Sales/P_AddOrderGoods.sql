@@ -57,9 +57,16 @@ begin
 	values(@OrderID,@GoodsID,@DetailID,@Quantity,@Price,@Quantity*@Price,@Description,@XRemark,@YRemark,@XYRemark)
 end
 
-select @TotalQuantity=sum(Quantity),@TotalMoney=sum(TotalMoney) from OrderGoods where OrderID=@OrderID
+select @TotalQuantity=sum(Quantity) from OrderGoods where OrderID=@OrderID
 
-Update Orders set PlanQuantity=@TotalQuantity where OrderID=@OrderID
+update OrderDetail set OrderQuantity=@TotalQuantity,PlanQuantity=Quantity*@TotalQuantity,TotalMoney=Price*Quantity*@TotalQuantity 
+where OrderID=@OrderID 
+
+select @TotalMoney=sum(TotalMoney) from OrderDetail where OrderID=@OrderID
+
+Update Orders set PlanQuantity=@TotalQuantity,Price=isnull(@TotalMoney,0) where OrderID=@OrderID
+
+
 
 
 

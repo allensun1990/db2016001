@@ -23,9 +23,9 @@ AS
 	
 begin tran
 
-declare @Err int=0,@Status int=-1,@OrderType int
+declare @Err int=0,@Status int=-1,@OrderType int,@PlanQuantity int,@TotalMoney decimal(18,4)
 
-select @Status=Status,@OrderType=OrderType from Orders where OrderID=@OrderID and ClientID=@ClientID and OriginalID=''
+select @Status=Status,@OrderType=OrderType,@PlanQuantity=PlanQuantity from Orders where OrderID=@OrderID and ClientID=@ClientID and OriginalID=''
 
 if(@Status<>0 or @OrderType<>2)
 begin
@@ -33,18 +33,20 @@ begin
 	return
 end
 
+--复制打样材料列表
+insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,OrderQuantity,Quantity,PlanQuantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID )
+select @OrderID,ProductDetailID,ProductID,UnitID,@PlanQuantity,Quantity,@PlanQuantity*Quantity,Price,Loss,TotalMoney*@PlanQuantity,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID  from OrderDetail where OrderID=@OriginalID
+
+select @TotalMoney=sum(TotalMoney) from OrderDetail where OrderID=@OrderID
+
 Update Orders set OriginalID=@OriginalID where OrderID=@OrderID
 
 Update Orders set TurnTimes=TurnTimes+1 where OrderID=@OriginalID
 
 update o set OriginalCode=od.OrderCode,BigCategoryID=od.BigCategoryID,CategoryID=od.CategoryID,FinalPrice=od.FinalPrice,TotalMoney=od.FinalPrice*o.PlanQuantity,IntGoodsCode=od.IntGoodsCode,GoodsName=od.GoodsName,
-			 Price=od.Price,ProfitPrice=od.ProfitPrice,CostPrice=od.CostPrice,Platemaking=od.Platemaking,GoodsID=od.GoodsID,OriginalPrice=od.FinalPrice,TurnTimes=od.TurnTimes 
+			 Price=isnull(@TotalMoney,0),ProfitPrice=od.ProfitPrice,CostPrice=od.CostPrice,Platemaking=od.Platemaking,GoodsID=od.GoodsID,OriginalPrice=od.FinalPrice,TurnTimes=od.TurnTimes 
 			 from Orders o join Orders od on o.OriginalID=od.OrderID where o.OrderID=@OrderID
 	
---复制打样材料列表
-insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID )
-select @OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID  from OrderDetail where OrderID=@OriginalID
-
 
 set @Err+=@@error
 

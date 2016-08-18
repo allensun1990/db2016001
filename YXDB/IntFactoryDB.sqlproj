@@ -490,5 +490,7 @@
     <None Include="Procedures\Task\P_CreateTaskReply.sql" />
     <Build Include="Procedures\Task\P_GetPushTasksByOrderID.sql" />
     <None Include="Procedures\Task\P_GetPushTaskByOrderID.sql" />
+    <None Include="Procedures\Sales\P_UpdateProductPlanQuantity.sql" />
+    <None Include="Procedures\Sales\P_UpdateProductOrderQuantity.sql" />
   </ItemGroup>
 </Project>

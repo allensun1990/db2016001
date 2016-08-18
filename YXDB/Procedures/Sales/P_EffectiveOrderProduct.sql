@@ -44,7 +44,7 @@ begin
 	declare @AutoID int=1,@ProductID nvarchar(64),@ProductDetailID nvarchar(64),@Quantity decimal(18,2),
 	@DRemark nvarchar(4000),@Price decimal(18,4),@UnitID nvarchar(64),@ProviderID nvarchar(64)=''
 
-	select identity(int,1,1) as AutoID,ProductDetailID,ProductID, UnitID,Quantity Quantity,Price,Remark,ProviderID,
+	select identity(int,1,1) as AutoID,ProductDetailID,ProductID, UnitID,PlanQuantity Quantity,Price,Remark,ProviderID,
 	ProductName,ProductCode,DetailsCode,ProductImage,ImgS 
 	into #TempProducts 
 	from OrderDetail where OrderID=@OrderID 
@@ -74,7 +74,7 @@ begin
 			select @DocID,@ProductDetailID,@ProductID,@ProviderID,@UnitID,@Quantity,@Price,@Price*@Quantity,@WareID,@DepotID,0,@DRemark,@ClientID,ProductName,ProductCode,DetailsCode,ProductImage,ImgS 
 			from #TempProducts where AutoID=@AutoID
 		
-		Update OrderDetail set PurchaseQuantity=PurchaseQuantity+@Quantity,Quantity=0 where OrderID=@OrderID and ProductDetailID=@ProductDetailID
+		Update OrderDetail set PurchaseQuantity=PurchaseQuantity+@Quantity,PlanQuantity=0,OrderQuantity=0 where OrderID=@OrderID and ProductDetailID=@ProductDetailID
 
 		set @Err+=@@Error
 

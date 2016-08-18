@@ -28,14 +28,6 @@ begin
 	select @OrderType=OrderType,@GUID=[GUID] from ShoppingCart where AutoID=@AutoID
 
 	update ShoppingCart set Quantity=@Quantity where AutoID=@AutoID and [GUID]=@GUID
-
-	if(@OrderType=11)
-	begin
-		select @TotalMoney=sum(Quantity*Price) from ShoppingCart where OrderType=@OrderType and [GUID]=@GUID
-
-		update Orders set TotalMoney=isnull(@TotalMoney,0) where OrderID=@GUID
-	end
-
 end
 
 set @Err+=@@error

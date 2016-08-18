@@ -36,7 +36,7 @@ begin
 	return
 end
 
-update OrderDetail set Price=@Price,TotalMoney=@Price*(Quantity+PurchaseQuantity) where OrderID=@OrderID and AutoID=@AutoID
+update OrderDetail set Price=@Price,TotalMoney=@Price*(PlanQuantity+PurchaseQuantity) where OrderID=@OrderID and AutoID=@AutoID
 
 select @TotalMoney=sum(TotalMoney) from OrderDetail where OrderID=@OrderID
 
