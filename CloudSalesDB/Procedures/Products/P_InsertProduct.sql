@@ -44,6 +44,8 @@ CREATE PROCEDURE [dbo].[P_InsertProduct]
 @ShapeCode nvarchar(50)='',
 @CreateUserID nvarchar(64),
 @ClientID nvarchar(64),
+@CMGoodsID varchar(64),
+@CMGoodsCode varchar(64),
 @ProductID nvarchar(64) output,
 @Result int output--1：成功；0失败
 AS
@@ -82,11 +84,11 @@ END
 INSERT INTO [Products]([ProductID],[ProductCode],[ProductName],[GeneralName],[IsCombineProduct],[BrandID],[BigUnitID],[UnitID],[BigSmallMultiple] ,
 						[CategoryID],[CategoryIDList],[SaleAttr],[AttrList],[ValueList],[AttrValueList],[CommonPrice],[Price],[PV],[TaxRate],[Status],
 						[OnlineTime],[UseType],[IsNew],[IsRecommend] ,[IsDiscount],[DiscountValue],[SaleCount],[Weight] ,[ProductImage],[EffectiveDays],
-						[ShapeCode] ,[ProviderID],[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID],IsAllow,IsAutoSend,HasDetails,WarnCount)
+						[ShapeCode] ,[ProviderID],[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID],IsAllow,IsAutoSend,HasDetails,WarnCount,CMGoodsID,CMGoodsCode)
 			VALUES(@ProductID,@ProductCode,@ProductName,@GeneralName,@IsCombineProduct,@BrandID,@BigUnitID,@UnitID,@BigSmallMultiple,
 				@CategoryID,@PIDList,@SaleAttr,@AttrList,@ValueList,@AttrValueList,@CommonPrice,@Price,@Price,0,@Status,
 				getdate(),0,@Isnew,@IsRecommend,1,@DiscountValue,0,@Weight,@ProductImg,@EffectiveDays,@ShapeCode,@ProviderID,@Description,@CreateUserID,
-				getdate(),getdate(),'',@ClientID,@IsAllow,@IsAutoSend,@HasDetails,@WarnCount);
+				getdate(),getdate(),'',@ClientID,@IsAllow,@IsAutoSend,@HasDetails,@WarnCount,@CMGoodsID,@CMGoodsCode);
 
 INSERT INTO ProductDetail(ProductDetailID,[ProductID],DetailsCode ,[SaleAttr],[AttrValue],[SaleAttrValue],[Price],[BigPrice],[Status],
 					Weight,ImgS,[ShapeCode] ,[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID],IsDefault)

@@ -1,41 +1,40 @@
 ﻿Use [CloudSales1.0_dev]
 GO
-IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'P_AuditStorageIn')
+IF EXISTS (SELECT * FROM sysobjects WHERE type = 'P' AND name = 'P_AuditStoreDocPart')
 BEGIN
-	DROP  Procedure  P_AuditStorageIn
+	DROP  Procedure  P_AuditStoreDocPart
 END
 
 GO
 /***********************************************************
-过程名称： P_AuditStorageIn
-功能描述： 采购审核
+过程名称： P_AuditStoreDocPart
+功能描述： 审核未处理的入库单
 参数说明：	 
-编写日期： 2015/9/24
-程序作者： Allen
-调试记录： exec P_AuditStorageIn 
+编写日期： 2016/8/22
+程序作者： Michaux
+调试记录： exec P_AuditStoreDocPart 
 ************************************************************/
-CREATE PROCEDURE [dbo].[P_AuditStorageIn]
-@DocID nvarchar(64),
-@DocType int,
+
+create proc P_AuditStoreDocPart
+@DocID nvarchar(64), 
+@OriginID varchar(64),
 @ProductsDetails nvarchar(4000),
 @IsOver int=0,
-@Remark nvarchar(4000)='',
-@BillingCode nvarchar(50),
+@Remark nvarchar(4000)='', 
 @UserID nvarchar(64),
 @OperateIP nvarchar(64),
 @AgentID nvarchar(64)='',
 @ClientID nvarchar(64),
 @Result int output,
 @ErrInfo nvarchar(500) output
-AS
+as
 
 begin tran
 
-declare @Err int=0,@Status int,@DocCode nvarchar(50),@WareID nvarchar(64),@TotalMoney decimal(18,4),@NewDocID nvarchar(64)=NEWID(),@OriginalID  nvarchar(64),
-@RealMoney decimal(18,4)=0
+declare @Err int=0,@Status int,@WareID nvarchar(64),@DocType int,@DocCode varchar(64),@TotalMoney decimal(18,4),
+@RealMoney decimal(18,4)=0 
 
-select @Status=Status,@DocCode=DocCode,@WareID=WareID,@TotalMoney=TotalMoney,@OriginalID=OriginalID from StorageDoc where DocID=@DocID
-
+select @Status=Status,@WareID=WareID,@TotalMoney=TotalMoney,@DocCode=DocCode,@DocType=DocType from StorageDoc where DocID=@OriginID
 if(@Status>1)
 begin
 	set @Result=2 
@@ -43,10 +42,9 @@ begin
 	rollback tran
 	return
 end
-
 --代理商订单信息
 declare @AutoID int=1,@ProductID nvarchar(64),@ProductDetailID nvarchar(64),@Quantity decimal(18,4),@BatchCode nvarchar(50),@DepotID nvarchar(64),
-@sql nvarchar(4000),@GoodsQuantity nvarchar(200),@GoodsAutoID nvarchar(64)
+@sql nvarchar(4000),@GoodsQuantity nvarchar(200),@GoodsAutoID nvarchar(64),@Price decimal(18,4),@BillingCode varchar(64)
 
 create table #TempTable(ID int identity(1,1),Value nvarchar(4000))
 set @sql='select col='''+ replace(@ProductsDetails,',',''' union all select ''')+''''
@@ -69,7 +67,7 @@ begin
 			continue;
 		end
 
-		select @ProductID=ProductID,@ProductDetailID=ProductDetailID,@BatchCode=BatchCode from StorageDetail where DocID=@DocID and AutoID=@GoodsAutoID
+		select @ProductID=ProductID,@ProductDetailID=ProductDetailID,@Price=price,@BatchCode=BatchCode from StoragePartDetail where DocID=@DocID and AutoID=@GoodsAutoID
 
 		if exists(select AutoID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID and DepotID=@DepotID  and ClientID=@ClientID)
 		begin
@@ -85,7 +83,7 @@ begin
 		--处理产品流水
 		insert into ProductStream(ProductDetailID,ProductID,DocID,DocCode,BatchCode,DocDate,DocType,Mark,Quantity,WareID,DepotID,CreateUserID,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage)
 							select @ProductDetailID,@ProductID,@DocID,@DocCode,@BatchCode,CONVERT(varchar(100), GETDATE(), 112),@DocType,0,@Quantity,@WareID,@DepotID,@UserID,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage
-							from StorageDetail where AutoID=@GoodsAutoID and DocID=@DocID
+							from StorageDetail where ProductDetailID=@ProductDetailID and DocID=@OriginID
 
 		--修改产品入库数
 		update Products set StockIn=StockIn+@Quantity where ProductID=@ProductID
@@ -96,47 +94,45 @@ begin
 
 		--更新已入库数量
 		Update StorageDetail set Complete=Complete+@Quantity,DepotID=@DepotID where  AutoID=@GoodsAutoID and DocID=@DocID
-
-		insert into StoragePartDetail(DocID,ProductDetailID,ProductID,UnitID,IsBigUnit,Quantity,CompleteNum,Price,TotalMoney,CompleteMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage )
-			select @NewDocID,ProductDetailID,ProductID,UnitID,0,@Quantity,@Quantity,Price,Price*@Quantity,Price*@Quantity,WareID,@DepotID,BatchCode,0,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage 
-			from StorageDetail where AutoID=@GoodsAutoID and DocID=@DocID
+		
+		--更新实际入库数量
+		update StoragePartDetail set Complete=@Quantity,CompleteMoney=@Quantity*@Price where DocID=@DocID and AutoID=@GoodsAutoID 
 		
 	end
 	set @AutoID+=1
 end
 
-if exists(select AutoID from StoragePartDetail where DocID=@NewDocID)
-begin
-	
-	select @RealMoney=isnull(sum(CompleteMoney),0) from StoragePartDetail where DocID=@NewDocID
+select @RealMoney=TotalMoney,@BillingCode=DocCode from StorageDocPart where DocID=@DocID
 
-	insert into StorageDocPart(DocID,DocCode,DocType,Status,TotalMoney,CityCode,Address,Remark,WareID,CreateUserID,CreateTime,OperateIP,ClientID,OriginalID,OriginalCode)
-		select @NewDocID,@BillingCode,1,2,@RealMoney,CityCode,Address,'',WareID,@UserID,GETDATE(),'',ClientID,DocID,DocCode from StorageDoc where DocID=@DocID
+select @RealMoney=@RealMoney+isnull(sum(CompleteMoney),0) from StoragePartDetail where DocID=@DocID
 
-	insert into StorageDocAction(DocID,Remark,CreateTime,CreateUserID,OperateIP)
-			values( @DocID,'审核入库',getdate(),@UserID,'')
+update StorageDocPart set TotalMoney=@RealMoney where DocID=@DocID
 
-	set @Err+=@@error
-end
-
+insert into StorageDocAction(DocID,Remark,CreateTime,CreateUserID,OperateIP)
+			values( @OriginID,'审核入库',getdate(),@UserID,'')
+			
 if(@IsOver=1)
-begin
-	Update StorageDoc set Status=2,RealMoney=RealMoney+@RealMoney where  DocID=@DocID
+begin 
+	
+	Update StorageDoc set Status=2,RealMoney=RealMoney+@RealMoney where  DocID=@OriginID
 
-	select @TotalMoney=sum(TotalMoney) from StorageDocPart where OriginalID=@DocID
+	select @TotalMoney=sum(TotalMoney) from StorageDocPart where DocID=@DocID
 
 	insert into StorageBilling(BillingID,BillingCode,DocID,DocCode,TotalMoney,Type,Status,PayStatus,InvoiceStatus,AgentID,ClientID,CreateUserID)
-		   values(NEWID(),@BillingCode,@DocID,@DocCode,isnull(@TotalMoney,0),1,1,0,0,@AgentID,@ClientID,@UserID)
+		   values(NEWID(),@BillingCode,@OriginID,@DocCode,isnull(@TotalMoney,0),1,1,0,0,@AgentID,@ClientID,@UserID)
 end
 else
 begin
 	Update StorageDoc set Status=1,RealMoney=RealMoney+@RealMoney where  DocID=@DocID
 end
 
+
 set @Err+=@@Error
 
 if(@Err>0)
 begin
+	set @Result=1 
+	set @ErrInfo='程序错误，请联系管理员！'
 	rollback tran
 end 
 else

@@ -19,14 +19,32 @@
 
 GO
   
+ alter table storageDoc add SourceType int default(1)
+ go
+ update storageDoc set SourceType=1
+
+ alter table StoragePartDetail add Complete int default(0)
+ go
+ alter table StoragePartDetail add CompleteMoney decimal(18,4) default(0)
+ go
+ update StoragePartDetail set Complete=Quantity,CompleteMoney=TotalMoney
+  
+alter table  clients  add OtherSysID varchar(2000) default('')
+
   P_GetPagerData
   P_ConfirmAgentOrderSend
   P_AuditReturnIn
   P_ConfirmAgentOrderOut
-
+  P_InsertProduct
+  P_GetPurchases
+  P_UpdateProduct
+  P_AuditStorageIn
+  P_GetStorageDocDetails
   /*ÐÂÔö*/
   P_GetReplysByType
   P_AddReplyAttachment
- 
+  P_AddPurchaseDoc
+  P_InsertStoreDocPart
+  P_AuditStoreDocPart
 
  
