@@ -18,16 +18,19 @@ CREATE PROCEDURE [dbo].P_GetPushTaskForFinishTask
 @TaskID nvarchar(64)
 as
 declare @orderid nvarchar(64),@sort int,
-@pretitle nvarchar(200),@title nvarchar(200),@ownerid nvarchar(64)
+@pretitle nvarchar(200),@title nvarchar(200),@ownerid nvarchar(64),@goodsname nvarchar(200)='',@ordertype int=1
 
 select @orderid=OrderID,@pretitle=Title,@sort=Sort from OrderTask
 where TaskID=@TaskID
+
+select @goodsname=goodsname,@ordertype=ordertype from Orders
+where OrderID=@orderid
 
 select @ownerid=OwnerID,@title=Title from OrderTask
 where OrderID=@orderid and Sort=@sort+1 and FinishStatus<>2
 
 if(@ownerid<>'')
-	select ProjectID as OpenID,@pretitle as PreTitle,@title as Title,@ownerid as OwnerID,ClientID from UserAccounts
+	select ProjectID as OpenID,@pretitle as PreTitle,@title as Title,@ownerid as OwnerID,ClientID,@goodsname as goodsname,@ordertype as ordertype  from UserAccounts
 	where UserID=@ownerid and AccountType=4 and ProjectID<>''
 else 
 	select ProjectID as OpenID,@pretitle as PreTitle,@title as Title,@ownerid as OwnerID,ClientID from UserAccounts

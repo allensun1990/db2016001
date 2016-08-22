@@ -17,7 +17,7 @@ GO
 CREATE PROCEDURE [dbo].P_GetPushTaskForChangeOrderOwner
 @OrderID nvarchar(64)
 as
-select o.OrderCode as Title,o.PlanTime as EndTime,u.ProjectID as OpenID,u.ClientID,o.OwnerID from orders as o,UserAccounts as u
+select o.OrderCode as Title,o.PlanTime as EndTime,u.ProjectID as OpenID,u.ClientID,o.OwnerID,o.ordertype,o.goodsname from orders as o,UserAccounts as u
 where o.OwnerID=u.UserID and o.OrderID=@OrderID and o.OrderStatus<>2 and
 u.AccountType=4 and u.ProjectID<>''
 		 
