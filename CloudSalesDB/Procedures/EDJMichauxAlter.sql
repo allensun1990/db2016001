@@ -18,6 +18,7 @@
 )  
 
 GO
+
   
  alter table storageDoc add SourceType int default(1)
  go
