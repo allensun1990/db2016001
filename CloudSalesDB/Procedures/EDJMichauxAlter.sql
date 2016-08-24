@@ -41,6 +41,7 @@ alter table  clients  add OtherSysID varchar(2000) default('')
   P_UpdateProduct
   P_AuditStorageIn
   P_GetStorageDocDetails
+  M_InsertClient
   /*ÐÂÔö*/
   P_GetReplysByType
   P_AddReplyAttachment

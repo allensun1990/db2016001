@@ -36,7 +36,7 @@ declare @Err int=0,@Status int,@DocCode nvarchar(50),@WareID nvarchar(64),@Total
 
 select @Status=Status,@DocCode=DocCode,@WareID=WareID,@TotalMoney=TotalMoney,@OriginalID=OriginalID from StorageDoc where DocID=@DocID
 
-if(@Status>1)
+if(@Status>1 and  @Status!=3)
 begin
 	set @Result=2 
 	set @ErrInfo='采购单已完成操作！'
@@ -97,7 +97,7 @@ begin
 		--更新已入库数量
 		Update StorageDetail set Complete=Complete+@Quantity,DepotID=@DepotID where  AutoID=@GoodsAutoID and DocID=@DocID
 
-		insert into StoragePartDetail(DocID,ProductDetailID,ProductID,UnitID,IsBigUnit,Quantity,CompleteNum,Price,TotalMoney,CompleteMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage )
+		insert into StoragePartDetail(DocID,ProductDetailID,ProductID,UnitID,IsBigUnit,Quantity,Complete,Price,TotalMoney,CompleteMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage )
 			select @NewDocID,ProductDetailID,ProductID,UnitID,0,@Quantity,@Quantity,Price,Price*@Quantity,Price*@Quantity,WareID,@DepotID,BatchCode,0,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage 
 			from StorageDetail where AutoID=@GoodsAutoID and DocID=@DocID
 		

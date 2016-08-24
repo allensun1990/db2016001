@@ -19,22 +19,32 @@ create proc P_InsertStoreDocPart
 @BillingCode varchar(64),
 @Remarks Varchar(4000),
 @Nums varchar(2000),
-@OrderID varchar(50)
+@OrderID varchar(50),
+@UserID varchar(50),
+@ErrInfo nvarchar(500) output
 as
 
-declare @Err int=0,@remark varchar(200),@i int,@j int ,@NewDocID varchar(64) ,@TempRemarks varchar(4000),@TempNums varchar(2000),@Quantity int ,@pid varchar(64)
+declare @Err int=0,@remark varchar(200),@i int,@j int ,@NewDocID varchar(64) ,@TempRemarks varchar(4000),@TempNums varchar(2000),@Quantity int ,@pid varchar(64),@Status int
 select  @NewDocID=newid(), @TempRemarks=@Remarks, @TempNums=@Nums,@i=CHARINDEX(',',@TempRemarks,0)
 begin tran
+
+select @Status=Status from StorageDoc where DocID=@OrderID
+if(@Status>1 and  @Status!=3)
+begin	
+	set @ErrInfo=case @Status when 2 then '采购单已完成操作！' else '采购单已作废' end
+	rollback tran
+	return -1
+end
 
 while @i>0
 begin	
 	set @remark=SUBSTRING(@TempRemarks,0,@i)
 	set @j=CHARINDEX(',',@TempNums,0)
 	set @Quantity=cast(SUBSTRING(@TempNums,0,@j) as int)
-	 if(charindex(':',@remark,0)>0)
+	 if(charindex(':[',@remark,0)>0)
 	 begin
-		set @pid=SUBSTRING(@remark,0,charindex(':',@remark,0))
-		set @remark=SUBSTRING(@remark,charindex(':',@remark,0)+1,len(@remark))
+		set @pid=SUBSTRING(@remark,0,charindex(':[',@remark,0))
+		set @remark=SUBSTRING(@remark,charindex(':[',@remark,0)+1,len(@remark))
 	 end
 
 	insert into StoragePartDetail(DocID,ProductDetailID,ProductID,UnitID,IsBigUnit,Quantity,Complete,Price,TotalMoney,CompleteMoney,WareID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage )
@@ -54,6 +64,7 @@ begin
 	insert into StorageDocPart(DocID,DocCode,DocType,Status,TotalMoney,CityCode,Address,Remark,WareID,CreateUserID,CreateTime,OperateIP,ClientID,OriginalID,OriginalCode)
 		select @NewDocID,@BillingCode,1,0,@RealMoney,CityCode,Address,'',WareID,'',GETDATE(),'',ClientID,DocID,DocCode from StorageDoc where DocID=@OrderID
  
+	update StorageDoc set Status=3 where DocID=@OrderID
 
 	set @Err+=@@error
 end

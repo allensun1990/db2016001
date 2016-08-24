@@ -35,7 +35,7 @@ declare @Err int=0,@Status int,@WareID nvarchar(64),@DocType int,@DocCode varcha
 @RealMoney decimal(18,4)=0 
 
 select @Status=Status,@WareID=WareID,@TotalMoney=TotalMoney,@DocCode=DocCode,@DocType=DocType from StorageDoc where DocID=@OriginID
-if(@Status>1)
+if(@Status>1 and  @Status!=3)
 begin
 	set @Result=2 
 	set @ErrInfo='采购单已完成操作！'
@@ -82,7 +82,7 @@ begin
 
 		--处理产品流水
 		insert into ProductStream(ProductDetailID,ProductID,DocID,DocCode,BatchCode,DocDate,DocType,Mark,Quantity,WareID,DepotID,CreateUserID,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage)
-							select @ProductDetailID,@ProductID,@DocID,@DocCode,@BatchCode,CONVERT(varchar(100), GETDATE(), 112),@DocType,0,@Quantity,@WareID,@DepotID,@UserID,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage
+							select @ProductDetailID,@ProductID,@OriginID,@DocCode,@BatchCode,CONVERT(varchar(100), GETDATE(), 112),@DocType,0,@Quantity,@WareID,@DepotID,@UserID,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage
 							from StorageDetail where ProductDetailID=@ProductDetailID and DocID=@OriginID
 
 		--修改产品入库数
@@ -93,7 +93,7 @@ begin
 		set @Err+=@@Error
 
 		--更新已入库数量
-		Update StorageDetail set Complete=Complete+@Quantity,DepotID=@DepotID where  AutoID=@GoodsAutoID and DocID=@DocID
+		Update StorageDetail set Complete=Complete+@Quantity,DepotID=@DepotID where ProductDetailID=@ProductDetailID and DocID=@OriginID 
 		
 		--更新实际入库数量
 		update StoragePartDetail set Complete=@Quantity,CompleteMoney=@Quantity*@Price where DocID=@DocID and AutoID=@GoodsAutoID 
@@ -106,7 +106,7 @@ select @RealMoney=TotalMoney,@BillingCode=DocCode from StorageDocPart where DocI
 
 select @RealMoney=@RealMoney+isnull(sum(CompleteMoney),0) from StoragePartDetail where DocID=@DocID
 
-update StorageDocPart set TotalMoney=@RealMoney where DocID=@DocID
+update StorageDocPart set status=2,UpdateTime=getdate(), CreateUserID=@UserID,TotalMoney=@RealMoney where DocID=@DocID
 
 insert into StorageDocAction(DocID,Remark,CreateTime,CreateUserID,OperateIP)
 			values( @OriginID,'审核入库',getdate(),@UserID,'')
@@ -123,7 +123,7 @@ begin
 end
 else
 begin
-	Update StorageDoc set Status=1,RealMoney=RealMoney+@RealMoney where  DocID=@DocID
+	Update StorageDoc set Status=1,RealMoney=RealMoney+@RealMoney where  DocID=@OriginID
 end
 
 
