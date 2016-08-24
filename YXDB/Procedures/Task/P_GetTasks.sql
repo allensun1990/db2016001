@@ -34,7 +34,6 @@ CREATE PROCEDURE [dbo].P_GetTasks
 @TaskOrderColumn int=0,
 @IsAsc int=0,
 @ClientID nvarchar(64),
-
 @PageSize int=20,
 @PageIndex int=1,
 @TotalCount int output,
@@ -47,7 +46,7 @@ AS
 	@key nvarchar(100)
 	
 	set @tableName='OrderTask t left join OrderTask t2 on t.OrderID=t2.OrderID and t2.Sort=t.Sort-1'
-	set @columns='t.*,t2.FinishStatus as PreFinishStatus,t2.Title as PreTitle,t2.OwnerID POwnerID,t2.EndTime PEndTime,t2.CompleteTime PCompleteTime'
+	set @columns='t.TaskID,t.OrderID,t2.TaskID PTaskID'
 	set @key='t.TaskID'
 	set @orderColumn='t.createtime'
 	set @condition=' 1=1 '
@@ -142,9 +141,18 @@ AS
 		set @orderby='asc'
 	end
 
+	declare @tmp table(AutoID int,TaskID nvarchar(64),OrderID nvarchar(64),PTaskID nvarchar(64))
 	declare @total int,@page int
-	exec P_GetPagerData @tableName,@columns,@condition,@key,@OrderColumn,@pageSize,@pageIndex,@total out,@page out,0 
+
+	insert into @tmp exec P_GetPagerData @tableName,@columns,@condition,@key,@OrderColumn,@pageSize,@pageIndex,@total out,@page out,0 
 	select @totalCount=@total,@pageCount =@page
+
+	select  t.*,t2.FinishStatus as PreFinishStatus,t2.Title as PreTitle,t2.OwnerID POwnerID,t2.EndTime PEndTime,t2.CompleteTime PCompleteTime  from OrderTask t
+	join @tmp tmp on t.TaskID=tmp.TaskID
+	left join OrderTask t2 on t2.TaskID=tmp.PTaskID 
+
+	select * from orders 
+	where orderid in ( select OrderID from @tmp)
 
 
 

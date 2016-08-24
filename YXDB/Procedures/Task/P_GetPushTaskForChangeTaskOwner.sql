@@ -12,18 +12,21 @@ GO
 参数说明：	 
 编写日期： 2016/8/18
 程序作者： MU
-调试记录：  exec P_GetPushTaskForChangeTaskOwner '2ef3ce07-1e21-4a46-9706-02ade5ccf7c9'
+调试记录：  exec P_GetPushTaskForChangeTaskOwner '9ccdf558-0e31-4b35-9308-06ae26897f56'
 ************************************************************/
 CREATE PROCEDURE [dbo].P_GetPushTaskForChangeTaskOwner
 @TaskID nvarchar(64)
 as
 declare @goodsname nvarchar(200)='',@ordertype int=1
+declare @tmp table(Title nvarchar(100),EndTime datetime,OwnerID nvarchar(64),ClientID nvarchar(64),GoodsName nvarchar(100),OrderType int )
+
 select @goodsname=o.goodsname, @ordertype=o.ordertype from orders as o ,ordertask as t
 where o.orderid=t.orderid
 
-select t.Title,t.EndTime,u.ProjectID as OpenID,u.ClientID,t.OwnerID,@goodsname as goodsname,@ordertype as ordertype  from ordertask as t,UserAccounts as u
-where t.OwnerID=u.UserID and t.TaskID=@TaskID and t.FinishStatus<>2 and
-u.AccountType=4 and u.ProjectID<>''
+insert into @tmp select Title,EndTime,OwnerID,ClientID,@goodsname,@ordertype from ordertask where TaskID=@TaskID and FinishStatus<>2
+
+if(exists(select OwnerID from @tmp))
+	select t.*,u.ProjectID as OpenID from @tmp as t left join UserAccounts as u on t.OwnerID=u.UserID and u.AccountType=4 and u.ProjectID<>''
 		 
 
 

@@ -12,14 +12,19 @@ GO
 参数说明：	 
 编写日期： 2016/8/16
 程序作者： MU
-调试记录：  exec P_GetPushTaskForChangeOrderOwner '2ef3ce07-1e21-4a46-9706-02ade5ccf7c9'
+调试记录：  exec P_GetPushTaskForChangeOrderOwner '735935d3-0ac3-4cb3-bb71-97994beebc5b'
 ************************************************************/
 CREATE PROCEDURE [dbo].P_GetPushTaskForChangeOrderOwner
 @OrderID nvarchar(64)
 as
-select o.OrderCode as Title,o.PlanTime as EndTime,u.ProjectID as OpenID,u.ClientID,o.OwnerID,o.ordertype,o.goodsname from orders as o,UserAccounts as u
-where o.OwnerID=u.UserID and o.OrderID=@OrderID and o.OrderStatus<>2 and
-u.AccountType=4 and u.ProjectID<>''
+declare @tmp table(Title nvarchar(100),EndTime datetime,OwnerID nvarchar(64),ClientID nvarchar(64),GoodsName nvarchar(100),OrderType int )
+
+insert into  @tmp select o.OrderCode ,o.PlanTime ,o.OwnerID,ClientID,o.goodsname,o.ordertype from orders as o
+where  o.OrderID=@OrderID and o.OrderStatus<>2 
+
+if(exists(select OwnerID from @tmp))
+	select o.*,u.ProjectID as OpenID from @tmp as o left join UserAccounts as u on o.OwnerID=u.UserID and u.AccountType=4 and u.ProjectID<>''
+
 		 
 
 
