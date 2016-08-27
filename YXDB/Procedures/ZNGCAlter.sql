@@ -1,5 +1,5 @@
 ﻿
-update t set CreateUserID=g.CreateUserID,OwnerID=g.OwnerID from GoodsDoc g join GoodsDoc t on g.DocID=t.OriginalID
+update t set CreateUserID=g.CreateUserID,OwnerID=g.OwnerID,CreateTime=g.CreateTime from GoodsDoc g join GoodsDoc t on g.DocID=t.OriginalID
 
 
 insert into Menu(MenuCode,Name,Area,Controller,[View],IcoPath,IcoHover,Type,IsHide,PCode,Sort,Layer,IsMenu,IsLimit,Remark) 

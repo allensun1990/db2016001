@@ -35,12 +35,12 @@ set @Result=0
 
 declare @Err int=0,@OrderStatus int,@OwnerID nvarchar(64),@OrderCode nvarchar(64),@AutoID int=1,@GoodsQuantity nvarchar(200),@sql nvarchar(4000),
 @GoodsDetailID nvarchar(64),@Quantity int,@TotalMoney decimal(18,4),@DocImage nvarchar(4000),@DocImages nvarchar(64),
-@OrderType int,@TotalQuantity int=0
+@OrderType int,@TotalQuantity int=0,@CreateTime datetime
 
 select @OrderStatus=OrderStatus,@OrderCode=OrderCode,@DocImage=OrderImage,@DocImages=OrderImages,@OrderType=OrderType
 from Orders where OrderID=@OrderID and (ClientID=@ClientID or EntrustClientID=@ClientID)
 
-select @OwnerID=OwnerID from GoodsDoc where DocID=@OriginalID
+select @OwnerID=OwnerID,@CreateTime=CreateTime from GoodsDoc where DocID=@OriginalID
 
 --进行的订单才能操作
 if(@OrderStatus<>1)
@@ -98,7 +98,7 @@ end
 if exists(select AutoID from GoodsDocDetail where DocID=@DocID)
 begin
 	insert into GoodsDoc(DocID,DocCode,DocType,DocImage,DocImages,Status,TotalMoney,Quantity,CityCode,Address,Remark,ExpressID,ExpressCode,WareID,CreateUserID,CreateTime,OperateIP,ClientID,OriginalID,OrderID,OrderCode,TaskID,OwnerID)
-			values(@DocID,@DocCode,@DocType,@DocImage,@DocImages,2,0,@TotalQuantity,'','',@Remark,@ExpressID,@ExpressCode,'',@OperateID,GETDATE(),'',@ClientID,@OriginalID,@OrderID,@OrderCode,@TaskID,@OwnerID)
+			values(@DocID,@DocCode,@DocType,@DocImage,@DocImages,2,0,@TotalQuantity,'','',@Remark,@ExpressID,@ExpressCode,'',@OperateID,@CreateTime,'',@ClientID,@OriginalID,@OrderID,@OrderCode,@TaskID,@OwnerID)
 
 	set @Err+=@@error
 end

@@ -28,13 +28,19 @@ AS
 	create table #UserID(UserID nvarchar(64))
 
 	set @SqlText ='insert into #TempData select OwnerID,sum(Quantity) Quantity,DocType  from GoodsDoc '
-	set @SqlText+=' where  ClientID='''+@ClientID+''' and CreateTime between '''+@BeginTime+''' and dateadd(day,1,'''+@EndTime+''')'
+	set @SqlText+=' where  ClientID='''+@ClientID+''''
+
+	if(@BeginTime<>'')
+		set @SqlText +=' and CreateTime >= '''+@BeginTime+' 0:00:00''';
+
+	if(@EndTime<>'')
+		set @SqlText +=' and CreateTime <= '''+@EndTime+' 23:59:59''';
 
 	if(@UserID<>'')
 	begin
 		set @SqlText +=' and OwnerID = '''+@UserID+''''
 		insert into #ResultDate(UserID,CutQuantity,SewnQuantity,SewnReturn,TotalQuantity,Status)
-		select UserID,0 ,0 ,0 ,0  ,Status  from Users  where ClientID=@UserID
+		select UserID,0 ,0 ,0 ,0  ,Status  from Users  where UserID=@UserID
 	end
 	else if(@TeamID<>'')
 	begin
