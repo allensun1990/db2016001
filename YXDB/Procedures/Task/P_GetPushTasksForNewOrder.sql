@@ -18,11 +18,11 @@ CREATE PROCEDURE [dbo].P_GetPushTasksForNewOrder
 @OrderID nvarchar(64)
 as
 declare @PlanTime datetime,@goodsname nvarchar(200)='',@ordertype int=1
-declare @tmp table(Title nvarchar(100),OwnerID nvarchar(64),ClientID nvarchar(64))
+declare @tmp table(TaskID nvarchar(64),Title nvarchar(100),OwnerID nvarchar(64),ClientID nvarchar(64))
 
 select @PlanTime=PlanTime,@goodsname=goodsname,@ordertype=ordertype from orders where OrderID=@OrderID
 
-insert into @tmp select t.Title,t.OwnerID,t.ClientID  from OrderTask  as t
+insert into @tmp select t.TaskID,t.Title,t.OwnerID,t.ClientID  from OrderTask  as t
 where  t.OrderID=@OrderID 
  order by t.sort asc
 
