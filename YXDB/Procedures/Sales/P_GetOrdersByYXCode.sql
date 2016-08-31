@@ -12,6 +12,7 @@ GO
 参数说明：	 
 编写日期： 2016/7/11
 程序作者： MU
+修改信息： Michaux 2016-08-31 clientid in 查询
 调试记录： 
 declare @TotalCount int=0
 declare @PageCount int=0
@@ -40,9 +41,9 @@ as
 	set @orderColumn='createtime desc'
 	set @condition=' OrderType=1 and OrderStatus=2 '
 
-	set @condition+=' and  CustomerID in ( select CustomerID from customer where YXClientCode='''+@YXCode+''' )'
+	--set @condition+=' and  CustomerID in ( select CustomerID from customer where YXClientCode='''+@YXCode+''' )'
 	if(@ClientID<>'')
-		set @condition+=' and ClientID='''+@ClientID+''''
+		set @condition+='  and ClientID in ('''+@ClientID+''')'
 
 	exec P_GetPagerData @tableName,@columns,@condition,@key,@orderColumn,@PageSize,@PageIndex,@total out,@page out,0 
 
