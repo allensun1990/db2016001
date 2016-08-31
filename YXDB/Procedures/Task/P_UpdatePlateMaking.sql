@@ -17,7 +17,7 @@ GO
 CREATE PROCEDURE [dbo].P_UpdatePlateMaking
 @PlateID nvarchar(64),
 @Title nvarchar(200),
-@Remark nvarchar(200),
+@Remark nvarchar(500),
 @Icon nvarchar(200),
 @TypeName nvarchar(200)
 as

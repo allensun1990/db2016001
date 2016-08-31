@@ -27,7 +27,7 @@ AS
 
 	set @sqlText+=' Products p join ProductDetail d on p.ProductID=d.ProductID and ((p.HasDetails=1 and d.IsDefault=0) or (p.HasDetails=0 and d.IsDefault=1)) left join Providers B on P.ProviderID=B.ProviderID '
 
-	set @sqlText+='where p.ClientID='''+@ClientID+''' and P.Status<>9 and d.Status<>9 '
+	set @sqlText+='where p.ClientID='''+@ClientID+''' and P.Status=1 and d.Status=1 '
 
 	if(@WareID<>'')
 	begin

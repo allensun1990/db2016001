@@ -17,7 +17,7 @@ GO
 CREATE PROCEDURE [dbo].P_AddPlateMaking
 @PlateID nvarchar(64),
 @Title nvarchar(200),
-@Remark nvarchar(200),
+@Remark nvarchar(500),
 @Icon nvarchar(200),
 @TaskID nvarchar(64),
 @OrderID nvarchar(64),
