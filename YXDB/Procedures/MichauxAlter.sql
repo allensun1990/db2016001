@@ -19,3 +19,5 @@ Operater nvarchar(64)--操作人
 GO
 
 P_GetOrdersByYXCode
+P_CreateDHOrder
+P_SetCustomerYXinfo

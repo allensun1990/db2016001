@@ -21,7 +21,7 @@ exec P_GetOrdersByYXCode @YXCode='6dd96291-f34e-440e-94c7-1a37c388eb46',@ClientI
 ************************************************************/
 CREATE PROCEDURE [dbo].P_GetOrdersByYXCode
 @YXCode nvarchar(64),
-@ClientID nvarchar(64)='',
+@ClientID nvarchar(1000)='',
 @PageSize int=20,
 @PageIndex int=1,
 @TotalCount int output,
