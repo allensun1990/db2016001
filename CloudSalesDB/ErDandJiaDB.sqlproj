@@ -274,5 +274,8 @@
     <Build Include="Procedures\System\P_UpdateUserAccount.sql" />
     <Build Include="Procedures\System\P_GetReplysByType.sql" />
     <Build Include="Procedures\System\P_AddReplyAttachment.sql" />
+    <Build Include="Procedures\Stock\P_AddPurchaseDoc.sql" />
+    <Build Include="Procedures\Stock\P_InsertStoreDocPart.sql" />
+    <Build Include="Procedures\Stock\P_AuditStoreDocPart.sql" />
   </ItemGroup>
 </Project>
