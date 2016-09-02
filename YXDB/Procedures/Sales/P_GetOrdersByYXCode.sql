@@ -20,9 +20,9 @@ exec P_GetOrdersByYXCode @YXCode='6dd96291-f34e-440e-94c7-1a37c388eb46',@ClientI
 @TotalCount=@TotalCount out,@PageCount=@PageCount out
 ************************************************************/
 CREATE PROCEDURE [dbo].P_GetOrdersByYXCode
-@YXCode nvarchar(64),
+@YXCode nvarchar(64)='',
 @ClientID nvarchar(1000)='',
-@keyWords nvarchar(500),
+@keyWords nvarchar(500)='',
 @PageSize int=20,
 @PageIndex int=1,
 @TotalCount int output,
@@ -34,22 +34,25 @@ as
 	@orderColumn nvarchar(100),
 	@key nvarchar(100)
 
-	declare @total int,@page int
-
-	set @tableName='Orders'
-	set @columns='*'
-	set @key='OrderID'
+	set @tableName='Goods'
+	set @columns='GoodsID'
+	set @key='GoodsID'
 	set @orderColumn='createtime desc'
-	set @condition=' OrderType=1 and OrderStatus=2 '
-
+	set @condition=' Status=1 and IsPublic=2 '
+	
 	--set @condition+=' and  CustomerID in ( select CustomerID from customer where YXClientCode='''+@YXCode+''' )'
 	if(@ClientID<>'')
 		set @condition+='  and ClientID in ('''+@ClientID+''')'
 	if(@keyWords<>'') 
-		set @condition+='  and (IntGoodsCode like ''%'+@keyWords+'%'' or  GoodsName like ''%'+@keyWords+'%'') '
-	exec P_GetPagerData @tableName,@columns,@condition,@key,@orderColumn,@PageSize,@PageIndex,@total out,@page out,0 
+		set @condition+='  and (GoodsCode like ''%'+@keyWords+'%'' or  GoodsName like ''%'+@keyWords+'%'') '
+
+	declare @total int,@page int
+	declare @tmp table(AutoID int,GoodsID nvarchar(64))
+	insert into @tmp exec P_GetPagerData @tableName,@columns,@condition,@key,@orderColumn,@PageSize,@PageIndex,@total out,@page out,0 
 
 	select @totalCount=@total,@pageCount =@page
+
+	select * from orders where goodsid in (select goodsid from @tmp) and orderstatus=2 and ordertype=1
 
 		 
 
