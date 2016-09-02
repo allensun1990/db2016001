@@ -22,7 +22,7 @@ AS
 
 	select DocID into #TempDoc from StorageDocPart where OriginalID=@DocID
 
-	select DocID,DocCode,CreateTime,CreateUserID from StorageDocPart where DocID in (select DocID from #TempDoc) order by CreateTime desc
+	select DocID,DocCode,CreateTime,CreateUserID,Status from StorageDocPart where DocID in (select DocID from #TempDoc) order by CreateTime desc
 
 	select * from StoragePartDetail where DocID in (select DocID from #TempDoc)
  

@@ -22,12 +22,17 @@ CREATE PROCEDURE [dbo].[P_CreateDHOrder]
 	@OrderCode nvarchar(50),
 	@OperateID nvarchar(64)='',
 	@ClientID nvarchar(64),
-	@YXOrderID nvarchar(64)
+	@YXOrderID nvarchar(64),
+	@YXClientID varchar(64),
+	@PersonName varchar(64),
+	@MobileTele varchar(64),
+	@CityCode varchar(64),
+	@Address varchar(64)
 AS
 	
-declare @Status int,@OwnerID nvarchar(64),@ProcessID nvarchar(64),@CustomerID nvarchar(64),@TurnTimes int=0,@CategoryID nvarchar(64),@DYClientID nvarchar(64)
+declare @Status int,@OwnerID nvarchar(64),@ProcessID nvarchar(64),@CustomerID nvarchar(64),@TurnTimes int=0,@CategoryID nvarchar(64),@DYClientID nvarchar(64),@CustomerName varchar(64)
 
-select @Status=Status,@OwnerID=OwnerID,@CustomerID=CustomerID,@CategoryID=BigCategoryID,@DYClientID=ClientID from Orders where OrderID=@OriginalID
+select @Status=Status,@OwnerID=OwnerID,@CustomerID=CustomerID,@CategoryID=BigCategoryID,@DYClientID=ClientID,@CustomerName=CustomerName from Orders where OrderID=@OriginalID
 
 if(@Status<>3)
 begin
@@ -37,6 +42,7 @@ end
 if(@DYClientID<>@ClientID)
 begin
 	set @CustomerID=''
+	set @CustomerName=''
 end
 
 --取得默认流程
@@ -52,15 +58,25 @@ end
 
 declare @SourceType int=2
 if(@YXOrderID<>'')
+begin
 	set @SourceType=5
-
-insert into Orders(OrderID,OrderCode,CategoryID,OrderType,SourceType,OrderStatus,Status,ProcessID,PlanPrice,FinalPrice,PlanQuantity,TaskCount,TaskOver,OrderImage,OriginalID,OriginalCode ,
-					Price,CostPrice,ProfitPrice,TotalMoney,CityCode,Address,PersonName,MobileTele,Remark,CustomerID,OwnerID,CreateTime,ClientID,Platemaking,
-					GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,Discount,OriginalPrice,IntGoodsCode,GoodsName,TurnTimes,YXOrderID,CreateUserID,CustomerName)
+	SELECT  @CustomerID=CustomerID,@CustomerName=Name FROM Customer where ClientID=@ClientID and YXClientID=@YXClientID and Status<>9
+	insert into Orders(OrderID,OrderCode,CategoryID,OrderType,SourceType,OrderStatus,Status,ProcessID,PlanPrice,FinalPrice,PlanQuantity,TaskCount,TaskOver,OrderImage,OriginalID,OriginalCode ,
+						Price,CostPrice,ProfitPrice,TotalMoney,CityCode,Address,PersonName,MobileTele,Remark,CustomerID,OwnerID,CreateTime,ClientID,Platemaking,
+						GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,Discount,OriginalPrice,IntGoodsCode,GoodsName,TurnTimes,YXOrderID,CreateUserID,CustomerName)
+	select @OrderID,@OrderCode,CategoryID,2,@SourceType,0,0,@ProcessID,PlanPrice,@Price,0,0,0,OrderImage,OrderID,OrderCode,
+			Price,CostPrice,ProfitPrice,0,@CityCode,@Address,@PersonName,@MobileTele,Remark,@CustomerID,@OwnerID,getdate(),@ClientID,Platemaking,
+			GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,@Discount,FinalPrice,IntGoodsCode,GoodsName,TurnTimes+1,@YXOrderID,@OperateID,@CustomerName from Orders where OrderID=@OriginalID
+end 
+else
+begin
+	insert into Orders(OrderID,OrderCode,CategoryID,OrderType,SourceType,OrderStatus,Status,ProcessID,PlanPrice,FinalPrice,PlanQuantity,TaskCount,TaskOver,OrderImage,OriginalID,OriginalCode ,
+						Price,CostPrice,ProfitPrice,TotalMoney,CityCode,Address,PersonName,MobileTele,Remark,CustomerID,OwnerID,CreateTime,ClientID,Platemaking,
+						GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,Discount,OriginalPrice,IntGoodsCode,GoodsName,TurnTimes,YXOrderID,CreateUserID,CustomerName)
 select @OrderID,@OrderCode,CategoryID,2,@SourceType,0,0,@ProcessID,PlanPrice,@Price,0,0,0,OrderImage,OrderID,OrderCode,
-		Price,CostPrice,ProfitPrice,0,CityCode,Address,PersonName,MobileTele,Remark,@CustomerID,@OwnerID,getdate(),@ClientID,Platemaking,
-		GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,@Discount,FinalPrice,IntGoodsCode,GoodsName,TurnTimes+1,@YXOrderID,@OperateID,CustomerName from Orders where OrderID=@OriginalID
-	
+			Price,CostPrice,ProfitPrice,0,CityCode,Address,PersonName,MobileTele,Remark,@CustomerID,@OwnerID,getdate(),@ClientID,Platemaking,
+			GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,@Discount,FinalPrice,IntGoodsCode,GoodsName,TurnTimes+1,@YXOrderID,@OperateID,@CustomerName from Orders where OrderID=@OriginalID
+end
 --复制打样材料列表
 insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID )
 select @OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,0,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID  from OrderDetail where OrderID=@OriginalID

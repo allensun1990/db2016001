@@ -16,11 +16,12 @@ GO
 			@UserID='2606068a-681c-47df-8338-ddb8fb0e1895',
 			@KeyWords='',
 			@DocType=1,
+			@SourceType=-1,
 			@Status=-1,
 			@PageSize=20,
 			@PageIndex=1,
 			@ClientID='f24d8a95-5fa4-41ef-b5ad-390b834618c3'
-			
+修改信息： Michaux 2016/08/19 添加下单类型
 ************************************************************/
 CREATE PROCEDURE [dbo].[P_GetPurchases]
 	@UserID nvarchar(64)='',
@@ -30,6 +31,7 @@ CREATE PROCEDURE [dbo].[P_GetPurchases]
 	@ProviderID nvarchar(64)='',
 	@BeginTime nvarchar(50)='',
 	@EndTime nvarchar(50)='',
+	@SourceType int =-1,
 	@PageSize int,
 	@PageIndex int,
 	@TotalCount int=0 output ,
@@ -61,7 +63,10 @@ AS
 	begin
 		set @condition += ' and s.WareID='''+@WareID+''''
 	end
-
+	if(@SourceType>-1)
+	begin
+	set @condition += ' and s.SourceType='+str(@SourceType) 
+	end 
 	if(@ProviderID<>'')
 	begin
 		set @condition += ' and s.ProviderID='''+@ProviderID+''''

@@ -31,6 +31,7 @@ CREATE PROCEDURE [dbo].[M_InsertClient]
 @Address nvarchar(200)='',
 @Description nvarchar(200)='',
 @CompanyID nvarchar(200)='',
+@OtherSysID nvarchar(100)='',
 @CompanyCode nvarchar(200)='',
 @CustomerID nvarchar(64)='',
 @CreateUserID nvarchar(64)='',
@@ -104,6 +105,7 @@ end
 if(@RegisterType=4) --智能工厂
 begin
 	set @IsIntFactory=1
+	set @MDProjectID=@CompanyID
 end
 
 --客户端编码不能重复
@@ -113,8 +115,8 @@ begin
 end
 
 --客户端
-insert into Clients(ClientID,CompanyName,ContactName,MobilePhone,Status,Industry,CityCode,Address,Description,AgentID,CreateUserID,UserQuantity,EndTime,ClientCode) 
-				values(@ClientID,@ClientName,@ContactName,@MobilePhone,1,@Industry,@CityCode,@Address,@Description,@AgentID,@CreateUserID,20,'2016-9-30 23:59:59',@ClientCode )--dateadd(MONTH, 2, GETDATE())
+insert into Clients(ClientID,CompanyName,ContactName,MobilePhone,Status,Industry,CityCode,Address,Description,AgentID,CreateUserID,UserQuantity,EndTime,ClientCode,OtherSysID) 
+				values(@ClientID,@ClientName,@ContactName,@MobilePhone,1,@Industry,@CityCode,@Address,@Description,@AgentID,@CreateUserID,20,'2016-9-30 23:59:59',@ClientCode ,@OtherSysID)--dateadd(MONTH, 2, GETDATE())
 
 set @Err+=@@error
 

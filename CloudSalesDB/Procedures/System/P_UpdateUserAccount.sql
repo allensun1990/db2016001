@@ -45,7 +45,11 @@ values(@LoginName,1,@UserID,@AgentID,@ClientID)
 
 if(@LoginPwd<>'')
 begin
-	update Users set LoginPWD=@LoginPwd where UserID=@UserID
+	update Users set LoginName=@LoginName,LoginPWD=@LoginPwd where UserID=@UserID
+end
+else
+begin
+	update Users set LoginName=@LoginName where UserID=@UserID
 end
 
 set @Err+=@@error

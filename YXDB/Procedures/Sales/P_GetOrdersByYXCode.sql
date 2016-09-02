@@ -12,6 +12,7 @@ GO
 参数说明：	 
 编写日期： 2016/7/11
 程序作者： MU
+修改信息： Michaux 2016-08-31 clientid in 查询
 调试记录： 
 declare @TotalCount int=0
 declare @PageCount int=0
@@ -20,7 +21,8 @@ exec P_GetOrdersByYXCode @YXCode='6dd96291-f34e-440e-94c7-1a37c388eb46',@ClientI
 ************************************************************/
 CREATE PROCEDURE [dbo].P_GetOrdersByYXCode
 @YXCode nvarchar(64),
-@ClientID nvarchar(64)='',
+@ClientID nvarchar(1000)='',
+@keyWords nvarchar(500),
 @PageSize int=20,
 @PageIndex int=1,
 @TotalCount int output,
@@ -40,10 +42,11 @@ as
 	set @orderColumn='createtime desc'
 	set @condition=' OrderType=1 and OrderStatus=2 '
 
-	set @condition+=' and  CustomerID in ( select CustomerID from customer where YXClientCode='''+@YXCode+''' )'
+	--set @condition+=' and  CustomerID in ( select CustomerID from customer where YXClientCode='''+@YXCode+''' )'
 	if(@ClientID<>'')
-		set @condition+=' and ClientID='''+@ClientID+''''
-
+		set @condition+='  and ClientID in ('''+@ClientID+''')'
+	if(@keyWords<>'') 
+		set @condition+='  and (IntGoodsCode like ''%'+@keyWords+'%'' or  GoodsName like ''%'+@keyWords+'%'') '
 	exec P_GetPagerData @tableName,@columns,@condition,@key,@orderColumn,@PageSize,@PageIndex,@total out,@page out,0 
 
 	select @totalCount=@total,@pageCount =@page
