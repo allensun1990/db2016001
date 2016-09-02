@@ -494,5 +494,6 @@
     <None Include="Procedures\Task\P_GetPushTaskForChangeTaskOwner.sql" />
     <None Include="Procedures\Sales\P_UpdateProductOrderQuantity.sql" />
     <None Include="Procedures\Report\R_GetUserWorkloadDate.sql" />
+    <None Include="Procedures\Sales\P_GetGoodsByID.sql" />
   </ItemGroup>
 </Project>
