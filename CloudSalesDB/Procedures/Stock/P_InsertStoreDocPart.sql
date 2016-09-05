@@ -21,6 +21,7 @@ create proc P_InsertStoreDocPart
 @Nums varchar(2000),
 @OrderID varchar(50),
 @UserID varchar(50),
+@AutoID varchar(50),
 @ErrInfo nvarchar(500) output
 as
 
@@ -35,7 +36,12 @@ begin
 	rollback tran
 	return -1
 end
-
+if(exists(select autoid from StorageDocPart where OriginalID=@OrderID and remark=@AutoID))
+begin 
+	set @ErrInfo ='此批次发货单已同步，不能重复同步' 
+	rollback tran
+	return -1
+end
 while @i>0
 begin	
 	set @remark=SUBSTRING(@TempRemarks,0,@i)
@@ -62,7 +68,7 @@ begin
 	select @RealMoney=isnull(sum(CompleteMoney),0) from StoragePartDetail where DocID=@NewDocID
 
 	insert into StorageDocPart(DocID,DocCode,DocType,Status,TotalMoney,CityCode,Address,Remark,WareID,CreateUserID,CreateTime,OperateIP,ClientID,OriginalID,OriginalCode)
-		select @NewDocID,@BillingCode,1,0,@RealMoney,CityCode,Address,'',WareID,'',GETDATE(),'',ClientID,DocID,DocCode from StorageDoc where DocID=@OrderID
+		select @NewDocID,@BillingCode,1,0,@RealMoney,CityCode,Address,@AutoID,WareID,'',GETDATE(),'',ClientID,DocID,DocCode from StorageDoc where DocID=@OrderID
  
 	update StorageDoc set Status=3 where DocID=@OrderID
 
