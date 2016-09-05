@@ -1,5 +1,6 @@
 ﻿
-Create  table OtherSyncTaskRecord(
+Create  table OtherSyncTaskRecord
+(
 AutoID int identity(1,1),
 OrderID nvarchar(64), --本地单据ID 
 OtherSysID nvarchar(64), --外部单据ID
@@ -15,6 +16,3 @@ CreateUserID nvarchar(64),
 UpdateTime datetime,
 Operater nvarchar(64)--操作人
 )
-P_GetOrdersByYXCode
-P_CreateDHOrder
-P_SetCustomerYXinfo
