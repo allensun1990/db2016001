@@ -33,7 +33,7 @@ begin
 		continue
 	end
 	set @execSQL =' Truncate table '+ @tablename
-	exec (@execSQL)
+	--exec (@execSQL)
 end
 drop table #table
 
