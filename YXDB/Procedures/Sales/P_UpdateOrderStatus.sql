@@ -73,11 +73,6 @@ begin
 		rollback tran
 		return
 	end
-	
-	--if exists (select AutoID from Orders where OrderID=@OriginalID and OrderStatus<>2)
-	--begin
-	--	Update Orders set Status=3,EndTime=getdate(),OrderStatus=2 where OrderID=@OriginalID
-	--end
 
 	Update Orders set Status=@Status,EndTime=getdate(),OrderStatus=2 where OrderID=@OrderID
 

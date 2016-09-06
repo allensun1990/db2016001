@@ -24,17 +24,33 @@ AS
 	
 begin tran
 
-declare @Err int=0,@Status int,@TotalMoney decimal(18,4),@PurchaseStatus int
+declare @Err int=0,@Status int,@TotalMoney decimal(18,4),@PurchaseStatus int,@OrderType int,@OrderAttrID nvarchar(64),@AvgPrice decimal(18,4)
 
-select @Status=OrderStatus,@PurchaseStatus=PurchaseStatus from Orders 
+select @Status=OrderStatus,@PurchaseStatus=PurchaseStatus,@OrderType=OrderType from Orders 
 where OrderID=@OrderID  and (ClientID=@ClientID or EntrustClientID=@ClientID)
 
-update OrderDetail set Quantity=@Quantity,PlanQuantity=@Quantity*OrderQuantity,TotalMoney=Price*(@Quantity*OrderQuantity + PurchaseQuantity) where OrderID=@OrderID and AutoID=@AutoID
+if(@OrderType=1)
+begin
+	select @OrderAttrID=OrderAttrID from OrderDetail where OrderID=@OrderID and AutoID=@AutoID
 
-select @TotalMoney=sum(TotalMoney) from OrderDetail where OrderID=@OrderID
+	update OrderDetail set Quantity=@Quantity,TotalMoney=Price*@Quantity where OrderID=@OrderID and AutoID=@AutoID
 
-Update Orders set Price=@TotalMoney where OrderID=@OrderID 
+	select @TotalMoney=sum(TotalMoney) from OrderDetail where OrderID=@OrderID and OrderAttrID=@OrderAttrID
 
+	update OrderAttrs set Price=isnull(@TotalMoney,0) where OrderAttrID=@OrderAttrID 
+
+	select @AvgPrice=avg(Price) from OrderAttrs where OrderID=@OrderID and Price>0
+
+	update Orders set Price=isnull(@AvgPrice,0) where OrderID=@OrderID
+end
+else
+begin
+	update OrderDetail set Quantity=@Quantity,PlanQuantity=@Quantity*OrderQuantity,TotalMoney=Price*(@Quantity*OrderQuantity + PurchaseQuantity) where OrderID=@OrderID and AutoID=@AutoID
+
+	select @TotalMoney=sum(TotalMoney) from OrderDetail where OrderID=@OrderID
+
+	Update Orders set Price=@TotalMoney where OrderID=@OrderID 
+end
 set @Err+=@@error
 
 if(@Err>0)

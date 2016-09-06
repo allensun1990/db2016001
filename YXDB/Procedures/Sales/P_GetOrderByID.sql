@@ -27,4 +27,6 @@ select * from OrderGoods where OrderID=@OrderID
 
 select * from OrderTask where OrderID=@OrderID order by Sort
 
+select * from OrderAttrs where OrderID=@OrderID
+
 

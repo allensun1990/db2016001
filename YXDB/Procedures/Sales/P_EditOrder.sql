@@ -62,10 +62,9 @@ begin
 end
 else
 begin
-	update Orders set IntGoodsCode=@IntGoodsCode,GoodsName=@GoodsName,PersonName=@PersonName,MobileTele=@MobileTele,CityCode=@CityCode,Address=@Address,PostalCode=@PostalCode,ExpressType=@ExpressType,Remark=@Remark
+	update Orders set PersonName=@PersonName,MobileTele=@MobileTele,CityCode=@CityCode,Address=@Address,PostalCode=@PostalCode,ExpressType=@ExpressType,Remark=@Remark
 				  where OrderID=@OrderID
 	
-	Update Orders set IntGoodsCode=@IntGoodsCode,GoodsName=@GoodsName where OrderID=@OriginalID
 end
 
 if(@GoodsID<>'')

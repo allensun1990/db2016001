@@ -480,7 +480,7 @@
     <None Include="Procedures\System\P_UnBindOtherAccount.sql" />
     <Build Include="Procedures\System\P_InsertOrderColor.sql" />
     <Build Include="Procedures\System\P_InsertTaskColor.sql" />
-    <Build Include="Procedures\Sales\P_DeleteOrderProduct.sql" />
+    <None Include="Procedures\Sales\P_DeleteOrderProduct.sql" />
     <None Include="Procedures\Sales\P_CreateGoodsDocReturn.sql" />
     <None Include="Procedures\Stock\P_CreateProductUseQuantity.sql" />
     <None Include="Procedures\Sales\P_UpdateOrderBegin.sql" />

@@ -30,22 +30,21 @@ AS
 
 
 declare @GoodsID nvarchar(64),@Status int,@GoodsDetailID nvarchar(64),@Price decimal(18,4),@OriginalPrice decimal(18,4),
-@DetailID nvarchar(64),@TotalQuantity decimal(18,4),@TotalMoney decimal(18,4),@OrderClientID nvarchar(64)
+@DetailID nvarchar(64),@TotalQuantity decimal(18,4),@TotalMoney decimal(18,4),@OrderClientID nvarchar(64),@OrderType int
 
-select @GoodsID=GoodsID,@Status=Status,@Price=FinalPrice,@OriginalPrice=OriginalPrice,@OrderClientID=ClientID from Orders where OrderID=@OrderID
+select @GoodsID=isnull(GoodsID,''),@Status=Status,@Price=FinalPrice,@OriginalPrice=OriginalPrice,@OrderClientID=ClientID,@OrderType=OrderType from Orders where OrderID=@OrderID
 
 
-if exists(select AutoID from GoodsDetail where GoodsID=@GoodsID  and replace(Description,' ','')=replace(@Description,' ',''))
+if (@GoodsID<>'' and exists(select AutoID from GoodsDetail where GoodsID=@GoodsID  and replace(Description,' ','')=replace(@Description,' ','')))
 begin
 	select @DetailID=GoodsDetailID from GoodsDetail where GoodsID=@GoodsID  and replace(Description,' ','')=replace(@Description,' ','')
 end
-else
+else if(@GoodsID<>'')
 begin
 	set @DetailID=NEWID()
 	INSERT INTO GoodsDetail(GoodsDetailID,GoodsID,[SaleAttr],[AttrValue],[SaleAttrValue],[Price] ,[Description],[CreateUserID] ,[ClientID])
 				VALUES(@DetailID,@GoodsID,@AttrList,@ValueList,@AttrValueList,@OriginalPrice,@Description,@OperateID,@OrderClientID);
 end
-
 
 if exists(select AutoID from OrderGoods where GoodsDetailID=@DetailID and OrderID=@OrderID)
 begin
@@ -59,12 +58,30 @@ end
 
 select @TotalQuantity=sum(Quantity) from OrderGoods where OrderID=@OrderID
 
-update OrderDetail set OrderQuantity=@TotalQuantity,PlanQuantity=Quantity*@TotalQuantity,TotalMoney=Price*Quantity*@TotalQuantity 
-where OrderID=@OrderID 
+if(@OrderType=1)
+begin
+	if not exists(select AutoID from OrderAttrs where OrderID=@OrderID and replace(AttrName,' ','')=replace(@XRemark,' ','') and AttrType=1)
+	begin
+		insert into OrderAttrs(OrderAttrID,OrderID,GoodsID,AttrName,AttrType,Price,FinalPrice)
+		values(NewID(),@OrderID,'',@XRemark,1,0,0)
+	end
 
-select @TotalMoney=sum(TotalMoney) from OrderDetail where OrderID=@OrderID
+	if not exists(select AutoID from OrderAttrs where OrderID=@OrderID and replace(AttrName,' ','')=replace(@YRemark,' ','') and AttrType=2)
+	begin
+		insert into OrderAttrs(OrderAttrID,OrderID,GoodsID,AttrName,AttrType,Price,FinalPrice)
+		values(NewID(),@OrderID,'',@YRemark,2,0,0)
+	end
+	Update Orders set PlanQuantity=@TotalQuantity where OrderID=@OrderID
+end
+else
+begin
+	update OrderDetail set OrderQuantity=@TotalQuantity,PlanQuantity=Quantity*@TotalQuantity,TotalMoney=Price*Quantity*@TotalQuantity 
+	where OrderID=@OrderID 
 
-Update Orders set PlanQuantity=@TotalQuantity,Price=isnull(@TotalMoney,0) where OrderID=@OrderID
+	select @TotalMoney=sum(TotalMoney) from OrderDetail where OrderID=@OrderID
+
+	Update Orders set PlanQuantity=@TotalQuantity,Price=isnull(@TotalMoney,0) where OrderID=@OrderID
+end
 
 
 

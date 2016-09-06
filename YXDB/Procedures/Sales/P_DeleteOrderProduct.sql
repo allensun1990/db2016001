@@ -23,9 +23,9 @@ AS
 	
 begin tran
 
-declare @Err int=0,@Status int=-1,@TotalMoney decimal(18,4)
+declare @Err int=0,@Status int=-1,@TotalMoney decimal(18,4),@OrderType int,@OrderAttrID nvarchar(64),@AvgPrice decimal(18,4)
 
-select @Status=OrderStatus from Orders where OrderID=@OrderID  and (ClientID=@ClientID or EntrustClientID=@ClientID)
+select @Status=OrderStatus,@OrderType=OrderType from Orders where OrderID=@OrderID  and (ClientID=@ClientID or EntrustClientID=@ClientID)
 
 if(@Status>1 or @Status<0)
 begin
@@ -35,16 +35,29 @@ end
 
 if exists(select AutoID  from OrderDetail where OrderID=@OrderID and AutoID=@AutoID and PurchaseQuantity=0 and InQuantity=0 and UseQuantity=0)
 begin
-	delete from OrderDetail where OrderID=@OrderID and AutoID=@AutoID and PurchaseQuantity=0 and InQuantity=0 and UseQuantity=0
-
-	select @TotalMoney=sum(TotalMoney) from OrderDetail where OrderID=@OrderID
-
-	if(@TotalMoney is null)
+	if(@OrderType=1) --打样单
 	begin
-		set @TotalMoney=0
-	end
+		select @OrderAttrID=OrderAttrID from OrderDetail where OrderID=@OrderID and AutoID=@AutoID
 
-	Update Orders set Price=@TotalMoney where OrderID=@OrderID
+		delete from OrderDetail where OrderID=@OrderID and AutoID=@AutoID and PurchaseQuantity=0 and InQuantity=0 and UseQuantity=0
+
+		select @TotalMoney=sum(TotalMoney) from OrderDetail where OrderID=@OrderID and OrderAttrID=@OrderAttrID
+
+		update OrderAttrs set Price=isnull(@TotalMoney,0) where OrderAttrID=@OrderAttrID 
+
+		select @AvgPrice=avg(Price) from OrderAttrs where OrderID=@OrderID and Price>0
+
+		update Orders set Price=isnull(@AvgPrice,0) where OrderID=@OrderID
+
+	end
+	else
+	begin
+		delete from OrderDetail where OrderID=@OrderID and AutoID=@AutoID and PurchaseQuantity=0 and InQuantity=0 and UseQuantity=0
+
+		select @TotalMoney=sum(TotalMoney) from OrderDetail where OrderID=@OrderID
+
+		Update Orders set Price=isnull(@TotalMoney,0) where OrderID=@OrderID
+	end
 end
 set @Err+=@@error
 

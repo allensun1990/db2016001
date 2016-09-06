@@ -78,28 +78,22 @@ begin
 	if(@OriginalID is null or @OriginalID='')
 	begin
 		
+		set @ErrorInfo='大货单尚未绑定打样单'
+		rollback tran
+		return
+
 		declare @DYOrderID nvarchar(64)=NewID()
 
 		insert into Goods(GoodsID,GoodsName,GoodsCode,CategoryID,Price,ClientID) values(@GoodsID,@GoodsName,@IntGoodsCode,@CategoryID,0,@OrderClientID ) 
 
-		insert into Orders(OrderID,OrderCode,CategoryID,OrderType,SourceType,OrderStatus,Status,ProcessID,PlanPrice,FinalPrice,PlanQuantity,TaskCount,TaskOver,OrderImage,OriginalID,OriginalCode ,
-					Price,CostPrice,ProfitPrice,TotalMoney,CityCode,Address,PersonName,MobileTele,Remark,CustomerID,OwnerID,CreateTime,ClientID,Platemaking,
-					GoodsCode,Title,BigCategoryID,OrderImages,Discount,OriginalPrice,IntGoodsCode,GoodsID,GoodsName,TurnTimes,YXOrderID,CreateUserID,OrderTime,PlanTime,EndTime,EntrustClientID)
-		select @DYOrderID,@DocCode,CategoryID,1,4,1,2,'',FinalPrice,FinalPrice,1,1,1,OrderImage,'','',
-		Price,CostPrice,ProfitPrice,0,CityCode,Address,PersonName,MobileTele,Remark,CustomerID,OwnerID,getdate(),ClientID,Platemaking,
-		GoodsCode,Title,BigCategoryID,OrderImages,1,FinalPrice,IntGoodsCode,@GoodsID,GoodsName,1,'','',getdate(),@PlanTime,EndTime,EntrustClientID from Orders where OrderID=@OrderID
-
 		Update Orders set Status=@Status,OrderTime=GetDate(),GoodsID=@GoodsID,TaskCount=@TaskCount,OrderStatus=1,PlanTime=@PlanTime,OriginalID=@DYOrderID,OriginalCode=@DocCode where OrderID=@OrderID
 
-		Update Customer set DemandCount=DemandCount-1,DHCount=DHCount+1,DYCount=DYCount+1 where CustomerID=@CustomerID
 	end
-	else
-	begin
 
-		Update Orders set Status=@Status,OrderTime=GetDate(),TaskCount=@TaskCount,OrderStatus=1,PlanTime=@PlanTime where OrderID=@OrderID
+	Update Orders set Status=@Status,OrderTime=GetDate(),TaskCount=@TaskCount,OrderStatus=1,PlanTime=@PlanTime where OrderID=@OrderID
 
-		Update Customer set DemandCount=DemandCount-1,DHCount=DHCount+1 where CustomerID=@CustomerID
-	end
+	Update Customer set DemandCount=DemandCount-1,DHCount=DHCount+1 where CustomerID=@CustomerID
+
 	set @Err+=@@error
 end
 else

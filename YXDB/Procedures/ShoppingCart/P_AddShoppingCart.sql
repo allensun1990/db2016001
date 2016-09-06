@@ -23,32 +23,62 @@ CREATE PROCEDURE [dbo].[P_AddShoppingCart]
 @DepotID nvarchar(64)='',
 @GUID nvarchar(64)='',
 @UserID nvarchar(64),
+@OrderAttrID nvarchar(64)='',
 @Remark nvarchar(max),
 @OperateIP nvarchar(50)
 AS
 begin tran
 
-declare @Err int=0,@TotalMoney decimal(18,4)=0,@PlanQuantity int
+declare @Err int=0,@TotalMoney decimal(18,4)=0,@PlanQuantity int,@Type int,@AttrName nvarchar(100),@AvgPrice decimal(18,4)
 
 --订单或者任务
 if(@OrderType=11)
 begin
-	select @PlanQuantity=PlanQuantity from Orders where OrderID=@GUID
+	select @PlanQuantity=PlanQuantity,@Type=OrderType from Orders where OrderID=@GUID
 
-	if not exists(select AutoID from OrderDetail where OrderID=@GUID and ProductDetailID=@ProductDetailID)
+	--打样单单
+	if(@Type=1) 
 	begin
-		insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,OrderQuantity,Quantity,PlanQuantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID)
-		select @GUID,@ProductDetailID,@ProductID,p.UnitID,@PlanQuantity,@Quantity,@PlanQuantity*@Quantity,d.Price,0,@PlanQuantity*@Quantity*d.Price,isnull(d.Description,'')+isnull(d.Remark,''),ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID
-	    from ProductDetail d join Products p  on d.ProductID=p.ProductID where d.ProductDetailID=@ProductDetailID
+		select @AttrName=AttrName from OrderAttrs where OrderAttrID=@OrderAttrID
+
+		if not exists(select AutoID from OrderDetail where OrderID=@GUID and ProductDetailID=@ProductDetailID and OrderAttrID=@OrderAttrID)
+		begin
+			insert into OrderDetail(OrderID,OrderAttrID,SalesAttr,ProductDetailID,ProductID,UnitID,OrderQuantity,Quantity,PlanQuantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID)
+			select @GUID,@OrderAttrID,@AttrName,@ProductDetailID,@ProductID,p.UnitID,1,@Quantity,@Quantity,d.Price,0,@Quantity*d.Price,isnull(d.Description,'')+isnull(d.Remark,''),ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID
+			from ProductDetail d join Products p  on d.ProductID=p.ProductID where d.ProductDetailID=@ProductDetailID
+		end
+		else
+		begin
+			update OrderDetail set Quantity=Quantity+@Quantity,PlanQuantity=(Quantity+@Quantity),TotalMoney=(Quantity+@Quantity)*Price 
+			where OrderID=@GUID and ProductDetailID=@ProductDetailID and OrderAttrID=@OrderAttrID 
+		end
+
+		select @TotalMoney=sum(TotalMoney) from OrderDetail where OrderID=@GUID and OrderAttrID=@OrderAttrID
+
+		update OrderAttrs set Price=isnull(@TotalMoney,0) where OrderAttrID=@OrderAttrID
+
+		select @AvgPrice=avg(Price) from OrderAttrs where OrderID=@GUID and Price>0
+
+		update Orders set Price=isnull(@AvgPrice,0) where OrderID=@GUID
 	end
 	else
 	begin
-		update OrderDetail set Quantity=Quantity+@Quantity,PlanQuantity=(Quantity+@Quantity)*OrderQuantity,TotalMoney=((Quantity+@Quantity)*OrderQuantity+PurchaseQuantity)*Price where OrderID=@GUID and ProductDetailID=@ProductDetailID
+		if not exists(select AutoID from OrderDetail where OrderID=@GUID and ProductDetailID=@ProductDetailID)
+		begin
+			insert into OrderDetail(OrderID,OrderAttrID,SalesAttr,ProductDetailID,ProductID,UnitID,OrderQuantity,Quantity,PlanQuantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID)
+			select @GUID,@OrderAttrID,@AttrName,@ProductDetailID,@ProductID,p.UnitID,@PlanQuantity,@Quantity,@PlanQuantity*@Quantity,d.Price,0,@PlanQuantity*@Quantity*d.Price,isnull(d.Description,'')+isnull(d.Remark,''),ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID
+			from ProductDetail d join Products p  on d.ProductID=p.ProductID where d.ProductDetailID=@ProductDetailID
+		end
+		else
+		begin
+			update OrderDetail set Quantity=Quantity+@Quantity,PlanQuantity=(Quantity+@Quantity)*OrderQuantity,TotalMoney=((Quantity+@Quantity)*OrderQuantity+PurchaseQuantity)*Price 
+			where OrderID=@GUID and ProductDetailID=@ProductDetailID
+		end
+
+		select @TotalMoney=sum(TotalMoney) from OrderDetail where OrderID=@GUID
+
+		update Orders set Price=isnull(@TotalMoney,0) where OrderID=@GUID
 	end
-
-	select @TotalMoney=sum(TotalMoney) from OrderDetail where OrderID=@GUID
-
-	update Orders set Price=isnull(@TotalMoney,0) where OrderID=@GUID
 end
 else if(@OrderType=3) --报损
 begin
