@@ -59,6 +59,8 @@ begin
 
 	Update Orders set Status=@Status,TaskCount=@TaskCount,OrderTime=GetDate(),OrderStatus=1,PlanTime=@PlanTime,GoodsID=@GoodsID where OrderID=@OrderID
 
+	update OrderAttrs set GoodsID=@GoodsID where OrderID=@OrderID
+
 	--处理客户订单数
 	Update Customer set DemandCount=DemandCount-1,DYCount=DYCount+1 where CustomerID=@CustomerID
 

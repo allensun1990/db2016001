@@ -100,14 +100,9 @@ if(@OriginalID<>'')
 begin
 	Update Orders set TurnTimes=TurnTimes+1 where OrderID=@OriginalID
 	
-	update o set OriginalCode=od.OrderCode,BigCategoryID=od.BigCategoryID,CategoryID=od.CategoryID,FinalPrice=od.FinalPrice,TotalMoney=od.FinalPrice*o.PlanQuantity,IntGoodsCode=od.IntGoodsCode,GoodsName=od.GoodsName,
-			 Price=od.Price,ProfitPrice=od.ProfitPrice,CostPrice=od.CostPrice,Platemaking=od.Platemaking,GoodsID=od.GoodsID,OriginalPrice=od.FinalPrice,TurnTimes=od.TurnTimes
+	update o set OriginalCode=od.OrderCode,BigCategoryID=od.BigCategoryID,CategoryID=od.CategoryID,FinalPrice=od.FinalPrice,TotalMoney=0,IntGoodsCode=od.IntGoodsCode,GoodsName=od.GoodsName,
+			 Price=0,ProfitPrice=od.ProfitPrice,CostPrice=od.CostPrice,Platemaking=od.Platemaking,GoodsID=od.GoodsID,OriginalPrice=od.FinalPrice,TurnTimes=od.TurnTimes
 			 from Orders o join Orders od on o.OriginalID=od.OrderID where o.OrderID=@OrderID
-
-	--复制打样材料列表
-	insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID )
-	select @OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,0,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID  from OrderDetail where OrderID=@OriginalID
-
 end
 
 Update Customer set DemandCount=DemandCount+1 where CustomerID=@CustomerID

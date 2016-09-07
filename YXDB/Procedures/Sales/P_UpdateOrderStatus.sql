@@ -54,6 +54,8 @@ begin
 	begin
 		set @GoodsID=NEWID()
 		insert into Goods(GoodsID,GoodsName,GoodsCode,CategoryID,Price,ClientID) values(@GoodsID,@GoodsName,@IntGoodsCode,@CategoryID,@FinalPrice,@OrderClientID) 
+
+		update OrderAttrs set GoodsID=@GoodsID where OrderID=@OrderID 
 	end
 	else
 	begin

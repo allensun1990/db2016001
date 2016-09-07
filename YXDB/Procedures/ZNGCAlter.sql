@@ -17,13 +17,13 @@ FinalPrice decimal(18,4) default 0
 
 --制版属性
 insert into OrderAttrs(OrderAttrID,OrderID,GoodsID,AttrName,AttrType,Price,FinalPrice)
-select NEWID(),o.OriginalID,g.GoodsID,XRemark,1,AVG(g.Price),AVG(g.Price) from OrderGoods g join Orders o on g.OrderID=o.OrderID 
+select NEWID(),o.OriginalID,g.GoodsID,XRemark,1,0,0 from OrderGoods g join Orders o on g.OrderID=o.OrderID 
 where o.OriginalID<>''
 group by o.OriginalID,XRemark,g.GoodsID 
 
 --规格属性
 insert into OrderAttrs(OrderAttrID,OrderID,GoodsID,AttrName,AttrType,Price,FinalPrice)
-select NEWID(),o.OriginalID,g.GoodsID,YRemark,2,AVG(g.Price),AVG(g.Price) from OrderGoods g join Orders o on g.OrderID=o.OrderID 
+select NEWID(),o.OriginalID,g.GoodsID,YRemark,2,AVG(g.Price/PlanQuantity),AVG(g.Price/PlanQuantity) from OrderGoods g join Orders o on g.OrderID=o.OrderID 
 where o.OriginalID<>''
 group by o.OriginalID,YRemark,g.GoodsID 
 

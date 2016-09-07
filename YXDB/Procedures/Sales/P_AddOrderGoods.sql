@@ -48,7 +48,7 @@ end
 
 if exists(select AutoID from OrderGoods where GoodsDetailID=@DetailID and OrderID=@OrderID)
 begin
-	Update OrderGoods set Quantity=Quantity+@Quantity,TotalMoney=@Price*(Quantity+@Quantity) where GoodsDetailID=@DetailID and OrderID=@OrderID
+	Update OrderGoods set Quantity=Quantity+@Quantity,TotalMoney=Price*(Quantity+@Quantity) where GoodsDetailID=@DetailID and OrderID=@OrderID
 end
 else
 begin
@@ -75,6 +75,12 @@ begin
 end
 else
 begin
+
+	--复制打样材料列表
+	insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID )
+	select @OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,Loss,0,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID  from OrderDetail where OrderID=@OriginalID
+
+
 	update OrderDetail set OrderQuantity=@TotalQuantity,PlanQuantity=Quantity*@TotalQuantity,TotalMoney=Price*Quantity*@TotalQuantity 
 	where OrderID=@OrderID 
 
