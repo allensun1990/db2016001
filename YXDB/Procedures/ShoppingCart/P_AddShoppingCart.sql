@@ -69,11 +69,6 @@ begin
 			select @GUID,@OrderAttrID,@AttrName,@ProductDetailID,@ProductID,p.UnitID,@PlanQuantity,@Quantity,@PlanQuantity*@Quantity,d.Price,0,@PlanQuantity*@Quantity*d.Price,isnull(d.Description,'')+isnull(d.Remark,''),ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID
 			from ProductDetail d join Products p  on d.ProductID=p.ProductID where d.ProductDetailID=@ProductDetailID
 		end
-		else
-		begin
-			update OrderDetail set Quantity=Quantity+@Quantity,PlanQuantity=(Quantity+@Quantity)*OrderQuantity,TotalMoney=((Quantity+@Quantity)*OrderQuantity+PurchaseQuantity)*Price 
-			where OrderID=@GUID and ProductDetailID=@ProductDetailID
-		end
 
 		select @TotalMoney=sum(TotalMoney) from OrderDetail where OrderID=@GUID
 
