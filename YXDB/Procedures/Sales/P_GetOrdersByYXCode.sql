@@ -25,6 +25,8 @@ CREATE PROCEDURE [dbo].P_GetOrdersByYXCode
 @keyWords nvarchar(500)='',
 @PageSize int=20,
 @PageIndex int=1,
+@OrderByColumn nvarchar(100)='',
+@IsAsc int =0,
 @TotalCount int output,
 @PageCount int output
 as
@@ -40,7 +42,14 @@ as
 	set @orderColumn='createtime desc'
 	set @condition=' Status=1 and IsPublic=2 '
 	
-	--set @condition+=' and  CustomerID in ( select CustomerID from customer where YXClientCode='''+@YXCode+''' )'
+	if(@OrderByColumn<>'')
+	begin
+		set @orderColumn=@OrderByColumn
+		if(@IsAsc=1)
+			set @orderColumn+='  asc'
+		else
+		 set @orderColumn+='  desc'
+	end 
 	if(@ClientID<>'')
 		set @condition+='  and ClientID in ('''+@ClientID+''')'
 	if(@keyWords<>'') 
