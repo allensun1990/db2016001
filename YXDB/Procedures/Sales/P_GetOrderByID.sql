@@ -23,10 +23,10 @@ select * from Orders where OrderID=@OrderID and (ClientID=@ClientID or EntrustCl
 
 select * from OrderDetail where OrderID=@OrderID 
 
-select * from OrderGoods where OrderID=@OrderID
+select * from OrderGoods where OrderID=@OrderID order by YRemark,Sort 
 
 select * from OrderTask where OrderID=@OrderID order by Sort
 
-select * from OrderAttrs where OrderID=@OrderID
+select * from OrderAttrs where OrderID=@OrderID order by Sort
 
 

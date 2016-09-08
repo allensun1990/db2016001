@@ -12,8 +12,12 @@ GoodsID nvarchar(64),
 AttrName nvarchar(100),
 AttrType int,
 Price decimal(18,4) default 0,
-FinalPrice decimal(18,4) default 0
+FinalPrice decimal(18,4) default 0,
+Sort int default 0
 )
+
+--大货下单表
+alter table OrderGoods add Sort int default 0
 
 --制版属性
 insert into OrderAttrs(OrderAttrID,OrderID,GoodsID,AttrName,AttrType,Price,FinalPrice)
@@ -40,3 +44,25 @@ where o.AttrType=2 and o.OrderID in
 update d set OrderAttrID=o.OrderAttrID,SalesAttr=o.AttrName from OrderAttrs o join OrderDetail d on o.OrderID=d.OrderID
 where o.AttrType=2 and o.AutoID in
 (select MAX(AutoID) from OrderAttrs where AttrType=2 group by OrderID having count(0)>1)
+
+--尺码排序问题
+update OrderAttrs set Sort=0
+GO
+update o set Sort=a.Sort from OrderAttrs o join AttrValue a on o.AttrName='【'+a.ValueName+'】'
+where o.AttrType=1 and a.Status=1
+GO
+update o set Sort=a.Sort from OrderAttrs o join AttrValue a on o.AttrName='【'+a.ValueName+'】'
+where o.AttrType=1 and a.Status=9 and o.Sort=0
+GO
+update OrderAttrs set Sort=999 where Sort=0 and AttrType=1
+
+--大货单尺码排序问题
+update OrderGoods set Sort=0
+GO
+update o set Sort=a.Sort from OrderGoods o join AttrValue a on o.XRemark='【'+a.ValueName+'】'
+where  a.Status=1
+GO
+update o set Sort=a.Sort from OrderGoods o join AttrValue a on o.XRemark='【'+a.ValueName+'】'
+where  a.Status=9 and o.Sort=0
+GO
+update OrderGoods set Sort=999 where Sort=0 

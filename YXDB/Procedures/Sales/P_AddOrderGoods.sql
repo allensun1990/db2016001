@@ -25,6 +25,7 @@ CREATE PROCEDURE [dbo].[P_AddOrderGoods]
 @XYRemark nvarchar(500)='',
 @Description nvarchar(4000),
 @OperateID nvarchar(64),
+@Sort int=0,
 @ClientID nvarchar(64)
 AS
 
@@ -32,9 +33,9 @@ AS
 declare @GoodsID nvarchar(64),@Status int,@GoodsDetailID nvarchar(64),@Price decimal(18,4),@OriginalPrice decimal(18,4),@OriginalID nvarchar(64),
 @DetailID nvarchar(64),@TotalQuantity decimal(18,4),@TotalMoney decimal(18,4),@OrderClientID nvarchar(64),@OrderType int
 
-select @GoodsID=isnull(GoodsID,''),@Status=Status,@Price=FinalPrice,@OriginalPrice=OriginalPrice,@OrderClientID=ClientID,@OrderType=OrderType,@OriginalID=OriginalID 
+select @GoodsID=isnull(GoodsID,''),@Status=Status,@Price=FinalPrice,@OriginalPrice=OriginalPrice,@OrderClientID=ClientID,@OrderType=OrderType,
+		@OriginalID=OriginalID
 from Orders where OrderID=@OrderID
-
 
 if (@GoodsID<>'' and exists(select AutoID from GoodsDetail where GoodsID=@GoodsID  and replace(Description,' ','')=replace(@Description,' ','')))
 begin
@@ -53,8 +54,8 @@ begin
 end
 else
 begin
-	insert into OrderGoods(OrderID,GoodsID,GoodsDetailID,Quantity,Price,TotalMoney,Remark,XRemark,YRemark,XYRemark)
-	values(@OrderID,@GoodsID,@DetailID,@Quantity,@Price,@Quantity*@Price,@Description,@XRemark,@YRemark,@XYRemark)
+	insert into OrderGoods(OrderID,GoodsID,GoodsDetailID,Quantity,Price,TotalMoney,Remark,XRemark,YRemark,XYRemark,Sort)
+	values(@OrderID,@GoodsID,@DetailID,@Quantity,@Price,@Quantity*@Price,@Description,@XRemark,@YRemark,@XYRemark,@Sort)
 end
 
 select @TotalQuantity=sum(Quantity) from OrderGoods where OrderID=@OrderID
@@ -63,14 +64,14 @@ if(@OrderType=1)
 begin
 	if not exists(select AutoID from OrderAttrs where OrderID=@OrderID and replace(AttrName,' ','')=replace(@XRemark,' ','') and AttrType=1)
 	begin
-		insert into OrderAttrs(OrderAttrID,OrderID,GoodsID,AttrName,AttrType,Price,FinalPrice)
-		values(NewID(),@OrderID,'',@XRemark,1,0,0)
+		insert into OrderAttrs(OrderAttrID,OrderID,GoodsID,AttrName,AttrType,Price,FinalPrice,Sort)
+		values(NewID(),@OrderID,@GoodsID,@XRemark,1,0,0,@Sort)
 	end
 
 	if not exists(select AutoID from OrderAttrs where OrderID=@OrderID and replace(AttrName,' ','')=replace(@YRemark,' ','') and AttrType=2)
 	begin
 		insert into OrderAttrs(OrderAttrID,OrderID,GoodsID,AttrName,AttrType,Price,FinalPrice)
-		values(NewID(),@OrderID,'',@YRemark,2,0,0)
+		values(NewID(),@OrderID,@GoodsID,@YRemark,2,0,0)
 	end
 	Update Orders set PlanQuantity=@TotalQuantity where OrderID=@OrderID
 end
