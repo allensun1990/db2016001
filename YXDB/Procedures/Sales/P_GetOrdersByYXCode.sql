@@ -52,14 +52,14 @@ as
 		set @condition+='  and ClientID in ('''''+@ClientID+''''')'
 		
 	if(@keyWords<>'') 
-		set @condition+='  and (GoodsCode like ''%'+@keyWords+'%'' or  GoodsName like ''%'+@keyWords+'%'') '
+		set @condition+='  and (GoodsCode like ''''%'+@keyWords+'%'''' or  GoodsName like ''''%'+@keyWords+'%'''') '
 
 	if(@CategoryID<>'') 
-		set @condition+='  and CategoryID in (select CategoryID  from Category where Status<>9 and PIDList like ''%'+@CategoryID+'%'' ) '
+		set @condition+='  and CategoryID in (select CategoryID  from Category where Status<>9 and PIDList like ''''%'+@CategoryID+'%'''' ) '
 	if(@BeginPrice<>'') 
-		set @condition+='  and Price>='''+@BeginPrice+''' '
+		set @condition+='  and Price>='''''+@BeginPrice+''''' '
 	if(@EndPrice<>'') 
-		set @condition+='  and Price< '''+@EndPrice+''' ' 
+		set @condition+='  and Price< '''''+@EndPrice+''''' ' 
 
 	set @Sql='declare @total int,@page int'
 	set @Sql+=' declare @tmp table(AutoID int,GoodsID nvarchar(64),Price decimal(18,4),CreateTime datetime,SaleCount int) '
