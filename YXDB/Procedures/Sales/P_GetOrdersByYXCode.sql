@@ -40,7 +40,7 @@ as
 	@Sql nvarchar(4000)
 
 	set @tableName='Goods'
-	set @columns='GoodsID,Price,CreateTime'
+	set @columns='GoodsID,Price,CreateTime,SaleCount'
 	set @key='GoodsID'
 	set @orderColumn='Goods.createtime desc'
 	if(@OrderBy<>'')
@@ -48,7 +48,7 @@ as
 	
 	set @condition=' Status=1 and IsPublic=2 '
 	
-	if(@ClientID<>'')
+	if(@ClientID<>'-1')
 		set @condition+='  and ClientID in ('''''+@ClientID+''''')'
 		
 	if(@keyWords<>'') 
