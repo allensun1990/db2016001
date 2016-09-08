@@ -36,21 +36,24 @@ as
 	@columns nvarchar(4000),
 	@condition nvarchar(4000),
 	@orderColumn nvarchar(100),
-	@key nvarchar(100)
+	@key nvarchar(100),
+	@Sql nvarchar(4000)
 
 	set @tableName='Goods'
-	set @columns='GoodsID'
+	set @columns='GoodsID,Price,CreateTime'
 	set @key='GoodsID'
-	set @orderColumn='createtime desc'
+	set @orderColumn='Goods.createtime desc'
 	if(@OrderBy<>'')
 		set @orderColumn=@OrderBy
 	
 	set @condition=' Status=1 and IsPublic=2 '
 	
 	if(@ClientID<>'')
-		set @condition+='  and ClientID in ('''+@ClientID+''')'
+		set @condition+='  and ClientID in ('''''+@ClientID+''''')'
+		
 	if(@keyWords<>'') 
 		set @condition+='  and (GoodsCode like ''%'+@keyWords+'%'' or  GoodsName like ''%'+@keyWords+'%'') '
+
 	if(@CategoryID<>'') 
 		set @condition+='  and CategoryID in (select CategoryID  from Category where Status<>9 and PIDList like ''%'+@CategoryID+'%'' ) '
 	if(@BeginPrice<>'') 
@@ -58,16 +61,20 @@ as
 	if(@EndPrice<>'') 
 		set @condition+='  and Price< '''+@EndPrice+''' ' 
 
-	declare @total int,@page int
-	declare @tmp table(AutoID int,GoodsID nvarchar(64))
-	insert into @tmp exec P_GetPagerData @tableName,@columns,@condition,@key,@orderColumn,@PageSize,@PageIndex,@total out,@page out,0 
+	set @Sql='declare @total int,@page int'
+	set @Sql+=' declare @tmp table(AutoID int,GoodsID nvarchar(64),Price decimal(18,4),CreateTime datetime,SaleCount int) '
+	
+	set @Sql+=' insert into @tmp exec P_GetPagerData '''+@tableName+''','''+@columns+''','''+@condition+''','''+@key+''','''+@orderColumn+''','+str( @PageSize,2)+','+str(@PageIndex,4)+',@total out,@page out,0 '
+	
+	set @Sql+='select  orders.* from @tmp as goods join orders on goods.GoodsID=orders.goodsid
+	where orders.orderstatus=2 and orders.ordertype=1 order by '+@orderColumn
+	
+	set @Sql+='  select @TotalCount=@total,@PageCount =@page '
 
-	select @totalCount=@total,@pageCount =@page
+	exec SP_EXECUTESQL @Sql,N'@TotalCount int out,@PageCount int out',@totalcount out,@pagecount out
 
-	select * from orders where goodsid in (select goodsid from @tmp) and orderstatus=2 and ordertype=1
 
-		 
-
+ 
 
 
 
