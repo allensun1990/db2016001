@@ -74,6 +74,7 @@
     <Folder Include="Procedures\AliOrder" />
     <Folder Include="Procedures\Manage\Report" />
     <Folder Include="function" />
+    <Folder Include="Procedures\Manage\HelpCenter" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\InitDatabase.sql" />
@@ -495,5 +496,10 @@
     <None Include="Procedures\Sales\P_UpdateProductOrderQuantity.sql" />
     <None Include="Procedures\Report\R_GetUserWorkloadDate.sql" />
     <None Include="Procedures\Sales\P_GetGoodsByID.sql" />
+    <None Include="Procedures\Manage\HelpCenter\M_DeleteHelpType.sql" />
+    <None Include="Procedures\Manage\HelpCenter\M_GetHelpContents.sql" />
+    <None Include="Procedures\Manage\HelpCenter\M_GetHelpTypes.sql" />
+    <None Include="Procedures\Manage\HelpCenter\M_InsertHelpContent.sql" />
+    <None Include="Procedures\Manage\HelpCenter\M_InsertHelpType.sql" />
   </ItemGroup>
 </Project>

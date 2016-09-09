@@ -5,8 +5,6 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "ErDandJiaDB", "CloudSalesDB
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "IntFactoryDB", "YXDB\IntFactoryDB.sqlproj", "{44D829EF-6464-4BC3-ADB7-E6B80BF2AF7B}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Int.HelpCenterDB", "Int.HelpCenterDB\Int.HelpCenterDB.sqlproj", "{9FD09E57-D67B-41B1-A9BC-B24B2938432F}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,12 +23,6 @@ Global
 		{44D829EF-6464-4BC3-ADB7-E6B80BF2AF7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44D829EF-6464-4BC3-ADB7-E6B80BF2AF7B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{44D829EF-6464-4BC3-ADB7-E6B80BF2AF7B}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{9FD09E57-D67B-41B1-A9BC-B24B2938432F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9FD09E57-D67B-41B1-A9BC-B24B2938432F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9FD09E57-D67B-41B1-A9BC-B24B2938432F}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{9FD09E57-D67B-41B1-A9BC-B24B2938432F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9FD09E57-D67B-41B1-A9BC-B24B2938432F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9FD09E57-D67B-41B1-A9BC-B24B2938432F}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
