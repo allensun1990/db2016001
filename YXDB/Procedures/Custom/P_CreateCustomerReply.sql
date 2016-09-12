@@ -24,21 +24,7 @@ CREATE PROCEDURE [dbo].[P_CreateCustomerReply]
 @FromReplyUserID nvarchar(64)='',
 @FromReplyAgentID nvarchar(64)=''
 AS
-begin tran
-
-declare @Err int=0
-
 insert into CustomerReply(ReplyID,GUID,Content,CreateUserID,ClientID,FromReplyID,FromReplyUserID,FromReplyAgentID)
                                 values(@ReplyID,@GUID,@Content,@CreateUserID,@ClientID,@FromReplyID,@FromReplyUserID,@FromReplyAgentID)
-
-if(@Err>0)
-begin
-	rollback tran
-end 
-else
-begin
-	commit tran
-end
-
  
 
