@@ -46,6 +46,10 @@ if(@AccountType=3)
 begin
 	select @AgentID=AgentID,@ClientID=ClientID from Agents where MDProjectID=@MDProjectID
 end
+else if(@AccountType=4)
+begin
+	select @AgentID=AgentID,@ClientID=ClientID from Agents where CMClientID=@MDProjectID
+end
 
 select @MaxCount=UserQuantity from Agents where AgentID=@AgentID
 
@@ -65,9 +69,19 @@ begin
 	rollback tran
 	return
 end
-
---明道账号已存在
-if(@AccountType=3 and exists(select AutoID from UserAccounts where AccountName=@Account and ProjectID=@MDProjectID and AccountType=3 ))
+else if(@AccountType=3 and exists(select AutoID from UserAccounts where AccountName=@Account and ProjectID=@MDProjectID and AccountType=3 )) --明道账号已存在
+begin
+	set @Result=2
+	rollback tran
+	return
+end
+else if(@AccountType=4 and exists(select AutoID from UserAccounts where AccountName=@Account and ProjectID=@MDProjectID and AccountType=4 )) --厂盟账号已存在
+begin
+	set @Result=2
+	rollback tran
+	return
+end
+else if(exists(select AutoID from UserAccounts where AccountName=@Account and AccountType=@AccountType ))
 begin
 	set @Result=2
 	rollback tran
@@ -86,8 +100,18 @@ begin
 	set @CreateUserID=@UserID
 end
 
-insert into Users(UserID,LoginName,LoginPWD,Name,MobilePhone,Email,CityCode,Address,Jobs,Allocation,Status,IsDefault,ParentID,RoleID,DepartID,CreateUserID,MDUserID,MDProjectID,AgentID,ClientID)
+if(@AccountType=4)
+begin
+	insert into Users(UserID,LoginName,LoginPWD,Name,MobilePhone,Email,CityCode,Address,Jobs,Allocation,Status,IsDefault,ParentID,RoleID,DepartID,CreateUserID,MDUserID,MDProjectID,AgentID,ClientID)
+             values(@UserID,@Account,@LoginPWD,@Name,@Mobile,@Email,@CityCode,@Address,@Jobs,1,1,0,@ParentID,@RoleID,@DepartID,@CreateUserID,'','',@AgentID,@ClientID)
+
+end
+else
+begin
+	insert into Users(UserID,LoginName,LoginPWD,Name,MobilePhone,Email,CityCode,Address,Jobs,Allocation,Status,IsDefault,ParentID,RoleID,DepartID,CreateUserID,MDUserID,MDProjectID,AgentID,ClientID)
              values(@UserID,@Account,@LoginPWD,@Name,@Mobile,@Email,@CityCode,@Address,@Jobs,1,1,0,@ParentID,@RoleID,@DepartID,@CreateUserID,@Account,@MDProjectID,@AgentID,@ClientID)
+
+end
 
 insert into UserAccounts(AccountName,AccountType,ProjectID,UserID,AgentID,ClientID)
 				 values(@Account,@AccountType,@MDProjectID,@UserID,@AgentID,@ClientID)

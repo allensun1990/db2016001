@@ -44,7 +44,7 @@ insert into Providers(ProviderID,Name,Contact,MobileTele,Email,Website,CityCode,
 
 if(@CMClientID<>'')
 begin
-	Update Agents set IsIntFactory=1 where AgentID=@AgentID and IsIntFactory=0
+	Update Agents set CMClientID=@CMClientID where AgentID=@AgentID 
 end
 
 if(@Err>0)

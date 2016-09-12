@@ -31,7 +31,6 @@ CREATE PROCEDURE [dbo].[M_InsertClient]
 @Address nvarchar(200)='',
 @Description nvarchar(200)='',
 @CompanyID nvarchar(200)='',
-@OtherSysID nvarchar(100)='',
 @CompanyCode nvarchar(200)='',
 @CustomerID nvarchar(64)='',
 @CreateUserID nvarchar(64)='',
@@ -48,7 +47,7 @@ begin
 	set @UserID=NEWID()
 end
 
-declare @Err int ,@DepartID nvarchar(64),@RoleID nvarchar(64),@AgentID nvarchar(64),@WareID nvarchar(64),@MDProjectID nvarchar(64)='',@IsIntFactory int=0
+declare @Err int ,@DepartID nvarchar(64),@RoleID nvarchar(64),@AgentID nvarchar(64),@WareID nvarchar(64),@MDProjectID nvarchar(64)='',@CMClientID nvarchar(64)=''
 
 select @Err=0,@DepartID=NEWID(),@RoleID=NEWID(),@AgentID=NEWID(),@WareID=NEWID()
 
@@ -100,12 +99,16 @@ begin
 
 	set @MDProjectID=@CompanyID
 end
-
-
-if(@RegisterType=4) --智能工厂
+else if(@RegisterType=4) --智能工厂
 begin
-	set @IsIntFactory=1
-	set @MDProjectID=@CompanyID
+	--明道网络已存在
+	if exists(select AgentID from Agents where CMClientID=@CompanyID)
+	begin
+		set @Result=2
+		rollback tran
+		return
+	end
+	set @CMClientID=@CompanyID
 end
 
 --客户端编码不能重复
@@ -115,14 +118,14 @@ begin
 end
 
 --客户端
-insert into Clients(ClientID,CompanyName,ContactName,MobilePhone,Status,Industry,CityCode,Address,Description,AgentID,CreateUserID,UserQuantity,EndTime,ClientCode,OtherSysID) 
-				values(@ClientID,@ClientName,@ContactName,@MobilePhone,1,@Industry,@CityCode,@Address,@Description,@AgentID,@CreateUserID,20,'2016-9-30 23:59:59',@ClientCode ,@OtherSysID)--dateadd(MONTH, 2, GETDATE())
+insert into Clients(ClientID,CompanyName,ContactName,MobilePhone,Status,Industry,CityCode,Address,Description,AgentID,CreateUserID,UserQuantity,EndTime,ClientCode,RegisterType) 
+				values(@ClientID,@ClientName,@ContactName,@MobilePhone,1,@Industry,@CityCode,@Address,@Description,@AgentID,@CreateUserID,20,dateadd(MONTH, 1, GETDATE()),@ClientCode,@RegisterType)
 
 set @Err+=@@error
 
 --直营代理商
-insert into Agents(AgentID,CompanyName,Status,RegisterType,IsDefault,MDProjectID,ClientID,UserQuantity,EndTime,IsIntFactory) 
-			values(@AgentID,'公司直营',1,@RegisterType,1,@MDProjectID,@ClientID,20,'2016-9-30 23:59:59',@IsIntFactory)
+insert into Agents(AgentID,CompanyName,Status,RegisterType,IsDefault,MDProjectID,ClientID,UserQuantity,EndTime,CMClientID) 
+			values(@AgentID,'公司直营',1,@RegisterType,1,@MDProjectID,@ClientID,20,dateadd(MONTH, 1, GETDATE()),@CMClientID)
 
 --部门
 insert into Department(DepartID,Name,Status,CreateUserID,AgentID,ClientID) values (@DepartID,'系统管理',1,@UserID,@AgentID,@ClientID)
@@ -132,15 +135,29 @@ set @Err+=@@error
 insert into Role(RoleID,Name,Status,IsDefault,CreateUserID,AgentID,ClientID) values (@RoleID,'系统管理员',1,1,@UserID,@AgentID,@ClientID)
 set @Err+=@@error
 
-insert into Users(UserID,LoginName,BindMobilePhone,LoginPWD,Name,MobilePhone,Email,Allocation,Status,IsDefault,DepartID,RoleID,CreateUserID,MDUserID,MDProjectID,AgentID,ClientID)
+if(@RegisterType=4)
+begin
+	insert into Users(UserID,LoginName,BindMobilePhone,LoginPWD,Name,MobilePhone,Email,Allocation,Status,IsDefault,DepartID,RoleID,CreateUserID,MDUserID,MDProjectID,AgentID,ClientID)
 				 values(@UserID,'',@MobilePhone,@LoginPWD,@ContactName,@MobilePhone,@Email,1,1,1,@DepartID,@RoleID,@UserID,'','',@AgentID,@ClientID)
 
-insert into UserAccounts(AccountName,AccountType,ProjectID,UserID,AgentID,ClientID)
-values(@Account,@AccountType,@MDProjectID,@UserID,@AgentID,@ClientID)
+	--供应商
+	insert into Providers(ProviderID,Name,Contact,MobileTele,Email,Website,CityCode,Address,Remark,CreateTime,CreateUserID,AgentID,ClientID,CMClientID,ProviderType)
+					 values (NEWID(),@ClientName,@ContactName,@MobilePhone,'','','','','',GETDATE(),@UserID,@AgentID,@ClientID,@CompanyID,1)
+end
+else
+begin
+	insert into Users(UserID,LoginName,BindMobilePhone,LoginPWD,Name,MobilePhone,Email,Allocation,Status,IsDefault,DepartID,RoleID,CreateUserID,MDUserID,MDProjectID,AgentID,ClientID)
+				 values(@UserID,'',@MobilePhone,@LoginPWD,@ContactName,@MobilePhone,@Email,1,1,1,@DepartID,@RoleID,@UserID,'','',@AgentID,@ClientID)
 
---供应商
-insert into Providers(ProviderID,Name,Contact,MobileTele,Email,Website,CityCode,Address,Remark,CreateTime,CreateUserID,AgentID,ClientID)
+	--供应商
+	insert into Providers(ProviderID,Name,Contact,MobileTele,Email,Website,CityCode,Address,Remark,CreateTime,CreateUserID,AgentID,ClientID)
 					 values (NEWID(),'公司自营',@ContactName,@MobilePhone,'','','','','',GETDATE(),@UserID,@AgentID,@ClientID)
+end
+
+insert into UserAccounts(AccountName,AccountType,ProjectID,UserID,AgentID,ClientID)
+	values(@Account,@AccountType,@CompanyID,@UserID,@AgentID,@ClientID)
+
+
 
 
 --系统默认参数

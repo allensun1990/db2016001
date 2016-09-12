@@ -15,7 +15,7 @@ GO
 调试记录： exec P_BindOtherAccount 
 ************************************************************/
 CREATE PROCEDURE [dbo].[P_BindOtherAccount]
-@ClientiD nvarchar(64),
+@ClientID nvarchar(64),
 @AgentID nvarchar(64),
 @UserID nvarchar(64),
 @ProjectID nvarchar(64),
@@ -26,23 +26,34 @@ AS
  
 	set @Result=''
 	declare @OriginalWeiXinID nvarchar(64)=''
-  
-	if(	@ProjectID<>'')
-	begin 
-		select @OriginalWeiXinID=AccountName from UserAccounts where  UserID=@UserID  AND ClientiD=@ClientiD  and AccountName=@AccountName and ProjectID=@ProjectID
-	end
-	else
+	
+	if(@AccountType=4 and exists(select AutoID from Agents where CMClientID=@ProjectID))
 	begin
-		select @OriginalWeiXinID=AccountName from UserAccounts where  UserID=@UserID  AND ClientiD=@ClientiD  and AccountName=@AccountName
-	end
-
-	if(@OriginalWeiXinID<>'' )
-	begin
-			 set @Result='此外部账号被使用过，不能重复绑定'
+		set @Result='此工厂已被绑定，不能重复操作'
 		return @Result
 	end
-	insert into UserAccounts values( @AccountName,@ProjectID,@AccountType,@UserID,@AgentID,@ClientiD)
-	if(isnull(SCOPE_IDENTITY(),0)<=0)
+	else if(@AccountType=4 and exists(select AutoID from Agents where AgentID=@AgentID and CMClientID<>'' and CMClientID is not null))
 	begin
-		set @Result='操作失败'
-	end  
+		set @Result='此账户已绑定工厂，不能重复绑定'
+		return @Result
+	end
+
+	if exists(select AutoID from UserAccounts where UserID=@UserID and AccountType=@AccountType)
+	begin
+		set @Result='用户已绑定此账号，不能重复绑定'
+		return @Result
+	end
+
+	if(	@ProjectID<>'' and exists(select AutoID from UserAccounts where AccountName=@AccountName and ProjectID=@ProjectID and AccountType=@AccountType))
+	begin 
+		set @Result='此外部账号被使用过，不能重复绑定'
+		return @Result
+	end
+	else if (@ProjectID='' and exists(select AutoID from UserAccounts where AccountName=@AccountName and AccountType=@AccountType))
+	begin
+		set @Result='此外部账号被使用过，不能重复绑定'
+		return @Result
+	end
+
+	insert into UserAccounts (AccountName,ProjectID,AccountType,UserID,AgentID,ClientID)
+	values( @AccountName,@ProjectID,@AccountType,@UserID,@AgentID,@ClientID)
