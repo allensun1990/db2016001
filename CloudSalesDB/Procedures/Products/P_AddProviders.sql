@@ -29,7 +29,7 @@ CREATE PROCEDURE [dbo].[P_AddProviders]
 @CreateUserID nvarchar(64),
 @AgentID nvarchar(64),
 @ClientID nvarchar(64),
-@ProviderType int =1  --0：手动注册 1：智能工厂 2：二当家
+@ProviderType int =0  --0：手动注册 1：智能工厂 2：二当家
 AS
 
 if(@CMClientID<>'' and exists(select AutoID from Providers where ClientID=@ClientID and CMClientID=@CMClientID and Status<>9))
