@@ -35,10 +35,7 @@ CREATE PROCEDURE [dbo].[P_CreateCustomer]
 @CreateUserID nvarchar(64)='',
 @ClientID nvarchar(64)
 AS
-begin tran
-
-declare @Err int=0,@CustomerPoolID nvarchar(64)
-
+declare @CustomerPoolID nvarchar(64)
 
 if not exists (select AutoID from Customer where MobilePhone=@MobilePhone and ClientID=@ClientID)
 begin
@@ -46,16 +43,6 @@ begin
 						Status,CreateTime,CreateUserID,ClientID,FirstName)
 	values(@CustomerID,@CustomerPoolID,@Name,@Type,@IndustryID,@Extent,@CityCode,@Address,@MobilePhone,@OfficePhone,@Email,@Jobs,@Description,@SourceID,@OwnerID,3,
 						1,getdate(),@CreateUserID,@ClientID,dbo.fun_getFirstPY(left(@Name,1)) )
-end
-set @Err+=@@error
-
-if(@Err>0)
-begin
-	rollback tran
-end 
-else
-begin
-	commit tran
 end
 
  

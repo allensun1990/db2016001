@@ -30,7 +30,7 @@ CREATE PROCEDURE [dbo].[P_CreateContact]
 AS
 begin tran
 
-declare @Err int=0,@Type int=0,@OwnerID nvarchar(64)
+declare @Type int=0,@OwnerID nvarchar(64)
 
 select @OwnerID=OwnerID from Customer where CustomerID=@CustomerID
 
@@ -42,14 +42,6 @@ end
 insert into Contact(ContactID,Name,Type,MobilePhone,OfficePhone,CityCode,Email,Jobs,Address,Status,OwnerID,CustomerID,CreateUserID,ClientID,Description)
 	values(@ContactID,@Name,@Type,@MobilePhone,@OfficePhone,@CityCode,@Email,@Jobs,@Address,1,'',@CustomerID,@CreateUserID,@ClientID,@Description)
 
-if(@Err>0)
-begin
-	rollback tran
-end 
-else
-begin
-	commit tran
-end
 
  
 

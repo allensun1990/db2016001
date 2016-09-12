@@ -29,16 +29,16 @@ CREATE PROCEDURE [dbo].[P_AddCustomerReplyAttachment]
 as
 	declare @AttachmentID nvarchar(64)=newid()
 	declare @error int=0
+
 	begin tran
 
 	insert into Attachment(AttachmentID,Type,ServerUrl,FilePath,FileName,OriginalName,ThumbnailName,Size,CreateUserID,ClientID)
 	values(@AttachmentID,@Type,@ServerUrl,@FilePath,@FileName,@OriginalName,@ThumbnailName,@Size,@UserID,@ClientID)
-	set @error+=@@ERROR
 
 	insert into CustomerReplyAttachmentRelation(CustomerID,ReplyID,AttachmentID)
 	values(@CustomerID,@ReplyID,@AttachmentID)
-	set @error+=@@ERROR
 
+	set @error+=@@ERROR
 	if(@error>0)
 	begin
 		rollback tran

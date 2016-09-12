@@ -19,10 +19,8 @@ CREATE PROCEDURE [dbo].[P_GetCustomerByID]
 	@ClientID nvarchar(64)
 AS
 
-
 select * from Customer where CustomerID=@CustomerID and ClientID=@ClientID
 
---select * from Contact where 1<>1 and CustomerID=@CustomerID and Status<>9
 
  
 
