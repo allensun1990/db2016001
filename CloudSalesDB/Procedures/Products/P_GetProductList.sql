@@ -55,7 +55,7 @@ AS
 	end
 	if(@Status>-1)
 	begin 
-		set @condition +=' and P.Status>='+cast(@Status  as varchar)
+		set @condition +=' and P.Status>='+cast(@Status as varchar)
 	end
 	if(@BeginPrice<>'')
 	begin
@@ -66,12 +66,12 @@ AS
 	begin
 		set @condition +=' and p.Price<='+@EndPrice
 	end
-	if(@orderColumn<>'')
-	begin
-		set @key=@orderColumn
-	end
+	--if(@orderColumn<>'')
+	--begin
+	--	set @key=''
+	--end
 	declare @total int,@page int
-	exec P_GetPagerData @tableName,@columns,@condition,@key,'',@pageSize,@pageIndex,@total out,@page out,@isAsc 
+	exec P_GetPagerData @tableName,@columns,@condition,@key,@orderColumn,@pageSize,@pageIndex,@total out,@page out,@isAsc 
 	select @totalCount=@total,@pageCount =@page
  
 
