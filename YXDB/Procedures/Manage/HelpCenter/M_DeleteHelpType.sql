@@ -20,32 +20,13 @@ CREATE PROCEDURE [dbo].[M_DeleteHelpType]
 	@TypeID nvarchar(64),
 	@Result int output --0：失败，1：成功，2 分类下还有数据
 AS
-	begin tran
-	declare @Err int 
-	
 	if exists(select * from M_HelpContent where Status<>9 and TypeID=@TypeID)
 	begin
 		set @Result=2
-		commit tran
 		return
 	end
-	else
-	begin
-		update M_HelpType set Status=9 where TypeID=@TypeID
-	end
-	
-	set @Err+=@@error
-	if (@Err>0)
-	begin
-		set @Result=0
-		rollback tran
-	end
-	else
-	begin
-		set @Result=1
-		commit tran
-	end
-	
-	
+
+	update M_HelpType set Status=9 where TypeID=@TypeID
+		
 GO
 

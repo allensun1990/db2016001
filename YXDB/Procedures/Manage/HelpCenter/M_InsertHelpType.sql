@@ -25,35 +25,13 @@ CREATE PROCEDURE [dbo].[M_InsertHelpType]
 	@UserID nvarchar(64),
 	@Result int output --0：失败，1：成功，2 分类名称已存在
 AS
-	begin tran
-
-	declare @Err int 
 	if exists(select TypeID from M_HelpType where Status<>9 and Name=@Name and ModuleType=@ModuleType)
 	begin
 		set @Result=2
-		rollback tran
 		return
 	end
-	else
-	begin		
-		insert into M_HelpType (TypeID,Name,Remark,ModuleType,Icon,CreateUserID) values(@TypeID,@Name,@Remark,@ModuleType,@Img,@UserID)
-	end
-	
-	set @Err+=@@error
-		if (@Err>0)
-		begin
-			set @Result=0
-			rollback tran
-		end
-		else
-		begin
-			set @Result=1
-			commit tran
-		end
-
-
-
-
+		
+	insert into M_HelpType (TypeID,Name,Remark,ModuleType,Icon,CreateUserID) values(@TypeID,@Name,@Remark,@ModuleType,@Img,@UserID)
 
 GO
 
