@@ -34,7 +34,6 @@ declare @Err int
 	begin
 		update Customer set YXAgentID=@YXAgentID,YXClientID=@YXClientID,YXClientCode=@YXClientCode
 		where ClientID=@ClientID and CustomerID=@CustomerID
-		set @Err+=@@error
 	end
 	else
 	begin
@@ -42,8 +41,6 @@ declare @Err int
 		begin
 			update Customer set YXAgentID=@YXAgentID,YXClientID=@YXClientID,YXClientCode=@YXClientCode
 			where ClientID=@ClientID and MobilePhone=@MobilePhone and status<>9
-
-			set @Err+=@@error
 		end
 		else
 		begin
@@ -51,25 +48,24 @@ declare @Err int
 			begin
 				update Customer set YXAgentID=@YXAgentID,YXClientID=@YXClientID,YXClientCode=@YXClientCode 
 				where  ClientID=@ClientID and YXClientID=@YXClientID and status<>9
-				set @Err+=@@error
 			end
 			else
 			begin
 				insert into Customer(CustomerID,Name,Type,MobilePhone,SourceType,Status,CreateTime,ClientID,FirstName,YXAgentID,YXClientID,YXClientCode)
 				values(newid(),@Name,0,@MobilePhone,3,1,getdate(),@ClientID,dbo.fun_getFirstPY(left(@Name,1)),@YXAgentID,@YXClientID,@YXClientCode)
 			end
-			set @Err+=@@error
 		end
 	end
 
-if(@Err>0)
-begin
-	rollback tran
-end 
-else
-begin
-	commit tran
-end
+	set @Err+=@@error
+	if(@Err>0)
+	begin
+		rollback tran
+	end 
+	else
+	begin
+		commit tran
+	end
 
  
 

@@ -18,7 +18,6 @@ CREATE PROCEDURE [dbo].P_GetTaskDetail
 @TaskID nvarchar(64)
 as
 Declare @OrderID nvarchar(64)
-
 select @OrderID=OrderID from OrderTask where TaskID=@TaskID
 
 select * from OrderTask where TaskID=@TaskID

@@ -20,19 +20,16 @@ CREATE PROCEDURE [dbo].[P_UpdateCustomerOwner]
 	@OperateID nvarchar(64)='',
 	@ClientID nvarchar(64)=''
 AS
-	
-begin tran
-
 declare @Err int=0,@OldOwnerID nvarchar(64)
 
 select @OldOwnerID=OwnerID from Customer where CustomerID=@CustomerID  and ClientID=@ClientID
 
 if(@OldOwnerID=@UserID)
 begin
-	rollback tran
 	return
 end
 
+begin tran
 update Customer set OwnerID=@UserID where CustomerID=@CustomerID and ClientID=@ClientID
 update Contact set OwnerID=@UserID where CustomerID=@CustomerID and ClientID=@ClientID
 

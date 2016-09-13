@@ -40,7 +40,6 @@ as
 	set @orderColumn='createtime desc'
 	set @condition=' [guid]='''+@TaskID+''''
 
-
 	insert into @tmp exec P_GetPagerData @tableName,@columns,@condition,@key,@orderColumn,@PageSize,@PageIndex,@total out,@page out,0 
 
 	select @totalCount=@total,@pageCount =@page

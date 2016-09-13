@@ -19,26 +19,16 @@ CREATE PROCEDURE [dbo].P_LockTask
 @UserID nvarchar(64),
 @Result int output --0：失败，1：成功，2: 任务没有被解锁,3:没有权限
 as
-	declare @OrderID nvarchar(64)
 	declare @OwnerID nvarchar(64)
-	declare @OrderOwnerID nvarchar(64)
-
 	set @Result=0
-	select @OrderID=OrderID,@OwnerID=OwnerID from OrderTask where TaskID=@TaskID and LockStatus=2 and status<>9
+
+	select @OwnerID=OwnerID from OrderTask where TaskID=@TaskID and LockStatus=2 and status<>9
 	--任务没有被解锁
 	if(@OwnerID is null)
 	begin
 		set @Result=2
 		return
 	end
-
-	--select @OrderOwnerID=OwnerID from Orders where OrderID=@OrderID
-	----没权限操作
-	--if(@OwnerID<>@UserID and @OrderOwnerID<>@UserID)
-	--begin
-	--	set @Result=3
-	--	return
-	--end
 
 	--将任务锁定
 	update OrderTask set LockStatus=1 where TaskID=@TaskID

@@ -30,7 +30,6 @@ as
 	declare @Err int=0
 
 	update orders set Platemaking=@Platehtml where OrderID=@OrderID
-	set @Err+=@@ERROR
 
 	update orders set Platemaking=@Platehtml 
 	where OrderID in 

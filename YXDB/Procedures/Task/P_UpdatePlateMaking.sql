@@ -21,20 +21,8 @@ CREATE PROCEDURE [dbo].P_UpdatePlateMaking
 @Icon nvarchar(200),
 @TypeName nvarchar(200)
 as
-	begin tran
-	declare @Err int=0
-
 	update PlateMaking set Title=@Title,Remark=@Remark,Icon=@Icon,TypeName=@TypeName where PlateID=@PlateID
-	set @Err+=@@ERROR
 
-	if(@Err>0)
-	begin
-		rollback tran
-	end 
-	else
-	begin
-		commit tran
-	end
 
 
 		 
