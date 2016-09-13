@@ -9,7 +9,7 @@ END
 GO
 /***********************************************************
 过程名称： P_AddPurchaseDoc
-功能描述： 创建单据
+功能描述： 创建 采购单据和供应商订单
 参数说明：	 
 编写日期： 2016/08/18
 程序作者： Michaux
@@ -24,19 +24,22 @@ CREATE PROCEDURE [dbo].[P_AddPurchaseDoc]
 @DocType int,
 @SourceType int=1,
 @TotalMoney decimal(18,2)=0,
+@PersonName varchar(50)='',
+@MobilePhone varchar(50)='',
 @CityCode nvarchar(10)='',
 @Address nvarchar(500)='',
 @Remark nvarchar(500)='',
 @WareID nvarchar(64)='', 
 @UserID nvarchar(64), 
+@AgentID nvarchar(64),
 @ClientID nvarchar(64)
 AS
 
 begin tran
-	declare @Err int=0,@NewCode nvarchar(50),@ProviderName nvarchar(200),
+	declare @Err int=0,@NewCode nvarchar(50),@ProviderName nvarchar(200),@OrderID nvarchar(64),@OrderCode nvarchar(64),@prociderType int,@CustomerID varchar(64),@OwnerID varchar(64),
 	@ProductDetailID varchar(64),@DepotID nvarchar(64),@AutoID int,@sql varchar(4000) 
 	
-	select  @AutoID=1,@NewCode=@DocCode+convert(nvarchar(10),@AutoID) 
+	select  @AutoID=1,@NewCode=@DocCode+convert(nvarchar(10),@AutoID),@OrderID=NEWID(),@CustomerID='',@OwnerID=''
 	
 	declare	@TempTable table(ID varchar(64),Quantity int)
 	set @sql='select ID='''+ replace(@ProductDetails,',',''' union all select ''')+''''
@@ -53,7 +56,7 @@ begin tran
 	from ProductDetail  a join Products b on a.ProductID=b.ProductID join @TempTable c on c.ID=a.ProductDetailID 	
 	where  b.ProductID=@ProductID   and a.ClientID=@ClientID
 
-	select @ProviderName=Name,@ProviderID=ProviderID  from Providers where CMClientID=@ProviderID and ClientID=@ClientID
+	select @ProviderName=Name,@ProviderID=ProviderID,@prociderType=ProviderType  from Providers where CMClientID=@ProviderID and ClientID=@ClientID
 
 	while exists(select AutoID from #TempDetail where AutoID=@AutoID)
 	begin	
@@ -70,6 +73,9 @@ begin tran
 
 		insert into StorageDetail(DocID,ProductDetailID,ProductID,UnitID,UnitName,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage)
 		select @DocID,ProductDetailID,@ProductID,UnitID,'',0,Quantity,Price,Price*Quantity,@WareID,@DepotID,'',0,Remark,@ClientID,ProductName,ProductCode,DetailsCode,isnull(ImgS,ProductImage) from #TempDetail  where  AutoID=@AutoID
+		
+		insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,UnitName,IsBigUnit,Quantity,Price,TotalMoney,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,CreateTime,CreateUserID,ProviderID,ProviderName)
+		select @OrderID,ProductDetailID,@ProductID,UnitID,'',0,Quantity,Price,Price*Quantity,@DepotID,'',0,Remark,@ClientID,ProductName,ProductCode,DetailsCode,isnull(ImgS,ProductImage),GETDATE(),@UserID,@ProviderID,@ProviderName from #TempDetail  where  AutoID=@AutoID
 		set @Err+=@@Error
 		set @AutoID=@AutoID+1
 	end
@@ -79,6 +85,14 @@ begin tran
 	insert into StorageDoc(DocID,DocCode,DocType,Status,TotalMoney,CityCode,Address,Remark,WareID,ProviderID,CreateUserID,CreateTime,OperateIP,ClientID,ProviderName,SourceType)
 	values(@DocID,@NewCode,@DocType,0,@TotalMoney,@CityCode,@Address,@Remark,@WareID,@ProviderID,@UserID,GETDATE(),'',@ClientID,@ProviderName,@SourceType)
  
+ 
+ if(@prociderType=2)
+ begin
+	select top 1 @CustomerID=Customerid,@OwnerID=OwnerID from Customer where ChildClientid=@ProviderID and Clientid=@ClientID
+ end
+
+	insert into Orders(OrderID,OrderCode,TypeID,Status,SendStatus,OutStatus,ReturnStatus,TotalMoney,CityCode,Address,PersonName,MobileTele,Remark,CreateUserID,CreateTime,OperateIP,AgentID,ClientID,SourceType,CustomerID,OwnerID)
+	values(@OrderID,@NewCode,'',0,0,0,0,@TotalMoney,@CityCode,@Address,@PersonName,@MobilePhone,@Remark,@UserID,GETDATE(),'',@AgentID,@ClientID,2,@CustomerID,@OwnerID)
 	set @Err+=@@Error
 
 if(@Err>0)
