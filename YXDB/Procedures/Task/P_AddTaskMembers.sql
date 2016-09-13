@@ -25,11 +25,11 @@ as
 	if(not exists(select taskid from ordertask where taskid=@TaskID and OwnerID=@UserID))
 	begin
 		set @Result=2
+		return
 	end
 
 	set @sql='insert into TaskMember(TaskID,MemberID,CreateTime,CreateUserID,status,PermissionType) select '''+@TaskID+''',MemberID,getdate(),'''+@UserID+''',1,1  from (  select MemberID='''+ replace(@MemberIDs,',',''' union all select ''')+''' ) as valueTB'
 	exec (@sql)
-
 	set  @Result=1
 		 
 

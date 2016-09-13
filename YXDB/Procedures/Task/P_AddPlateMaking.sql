@@ -24,21 +24,9 @@ CREATE PROCEDURE [dbo].P_AddPlateMaking
 @TypeName nvarchar(50),
 @UserID nvarchar(64)
 as
-	begin tran
-
-	declare @Err int=0
 	insert into  PlateMaking(PlateID,Title,Remark,Icon,TaskID,OrderID,TypeName,CreateUserID,CreateTime) 
 			values(@PlateID,@Title,@Remark,@Icon,@TaskID,@OrderID,@TypeName,@UserID,getdate())
-			set @Err+=@@ERROR
 
-	if(@Err>0)
-	begin
-		rollback tran
-	end 
-	else
-	begin
-		commit tran
-	end
 
 		 
 

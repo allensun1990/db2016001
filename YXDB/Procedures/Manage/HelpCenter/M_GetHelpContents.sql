@@ -34,7 +34,6 @@ AS
 	@condition nvarchar(4000),	
 	@isAsc int
 	
-
 	select @tableName ='M_HelpContent as c left join M_Helptype as t on c.typeid=t.typeid',
 	@columns='c.*,t.name as typename,t.moduletype ',
 	@key='c.ContentID',

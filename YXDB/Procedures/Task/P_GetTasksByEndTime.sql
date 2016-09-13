@@ -45,10 +45,10 @@ AS
 		set @condition+=' and t.OwnerID='''+@UserID+''''
 
 	if(@OrderType<>-1)
-		set @condition+=' and t.OrderType='+convert(nvarchar(2), @OrderType)
+		set @condition+=' and t.OrderType='+str(@OrderType,2)
 
 	if(@FinishStatus<>-1)
-		set @condition+=' and t.FinishStatus='+convert(nvarchar(2), @FinishStatus)
+		set @condition+=' and t.FinishStatus='+str(@FinishStatus,2)
 	else
 		set @condition+=' and t.FinishStatus>0'
 
@@ -62,7 +62,7 @@ AS
 
 	if(@TaskType<>-1)
 	begin
-		set @condition+=' and right(t.Mark,1)='+ convert(nvarchar(2), @TaskType)
+		set @condition+=' and right(t.Mark,1)='+ str(@TaskType,2)
 	end
 
 	if(@StartEndTime<>'')

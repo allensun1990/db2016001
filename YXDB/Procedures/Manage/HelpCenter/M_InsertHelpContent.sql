@@ -26,30 +26,13 @@ CREATE PROCEDURE [dbo].[M_InsertHelpContent]
 	@Detail text,
 	@Result int output --0：失败，1：成功，2 分类名称已存在
 AS
-	begin tran
-
-	declare @Err int 
 	if exists(select 1 from M_HelpContent where Status<>9 and Title=@Title)
 	begin
 		set @Result=2
-		commit tran
 		return
 	end
-	else
-	begin
-		insert into M_HelpContent(ContentID,TypeID,Sort,Title,KeyWords,CreateUserID,Detail) values(@ContentID,@TypeID,@Sort,@Title,@KeyWords,@UserID,@Detail)	
-	end
-	
-	set @Err+=@@error
-		if (@Err>0)
-		begin
-			set @Result=0
-			rollback tran
-		end
-		else
-		begin
-			set @Result=1
-			commit tran
-		end
+
+	insert into M_HelpContent(ContentID,TypeID,Sort,Title,KeyWords,CreateUserID,Detail) values(@ContentID,@TypeID,@Sort,@Title,@KeyWords,@UserID,@Detail)	
+
 GO
 

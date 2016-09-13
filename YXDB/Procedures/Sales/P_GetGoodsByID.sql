@@ -18,7 +18,9 @@ CREATE PROCEDURE [dbo].[P_GetGoodsByID]
 	@GoodsID nvarchar(64)='',
 	@ClientID nvarchar(64)=''
 AS
-select * from Goods where GoodsID=@GoodsID and ClientID=@ClientID
+select * from Goods as g,orders as o where 
+g.GoodsID=o.GoodsID and o.ordertype=1 and 
+g.GoodsID=@GoodsID and g.ClientID=@ClientID
 
 
 

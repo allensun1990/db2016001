@@ -19,13 +19,6 @@ CREATE PROCEDURE [dbo].P_UpdateTaskOwner
 @OwnerID nvarchar(64),
 @Result int output --0：失败，1：成功，2: 完成状态为未接受
 as
-
- -- if(exists (select taskid from ordertask where taskid=@TaskID and finishstatus>0) )
-	--begin
-	--	set @Result=2
-	--	return
-	--end
-
 	update ordertask set OwnerID=@OwnerID where taskid=@TaskID
 
 	set  @Result=1

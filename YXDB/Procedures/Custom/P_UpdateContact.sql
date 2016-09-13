@@ -28,23 +28,9 @@ CREATE PROCEDURE [dbo].[P_UpdateContact]
 @CreateUserID nvarchar(64)='',
 @ClientID nvarchar(64)
 AS
-begin tran
-
-declare @Err int=0
-
-
 Update Contact set Name=@Name,CityCode=@CityCode,Address=@Address,MobilePhone=@MobilePhone,OfficePhone=@OfficePhone,
 					Email=@Email,Jobs=@Jobs,Description=@Description where ContactID=@ContactID
 
-set @Err+=@@error
-if(@Err>0)
-begin
-	rollback tran
-end 
-else
-begin
-	commit tran
-end
 
  
 

@@ -30,6 +30,7 @@ CREATE PROCEDURE [dbo].[P_GetProductList]
 	@EndPrice nvarchar(20)='',
 	@keyWords nvarchar(4000),
 	@orderColumn nvarchar(500)='',
+	@Status int=-1,
 	@isAsc int=0,
 	@pageSize int,
 	@pageIndex int,
@@ -43,16 +44,19 @@ AS
 	@key nvarchar(100)
 
 	select @tableName=' Products P left join Brand B on P.BrandID=B.BrandID left join Providers pr on p.ProviderID=pr.ProviderID ',@columns='P.*,B.Name BrandName,pr.Name ProviderName ',@key='P.AutoID'
-	set @condition=' P.ClientID='''+@ClientID+''' and P.Status<>9 '
+	set @condition=' P.ClientID='''+@ClientID+''' and P.Status <>9 '
 	if(@keyWords <> '')
 	begin
 		set @condition +=' and (ProductName like ''%'+@keyWords+'%'' or  ProductCode like ''%'+@keyWords+'%'' or  GeneralName like ''%'+@keyWords+'%'') '
 	end
 		if(@CategoryID<>'' and @CategoryID<> '-1')
 	begin
-		set @condition +=' and P.CategoryIDList like ''%'+@CategoryID+'%'''
+		set @condition +=' and P.CategoryIDList like ''%'+@CategoryID+'%'' '
 	end
-
+	if(@Status>-1)
+	begin 
+		set @condition +=' and P.Status>='+cast(@Status as varchar)
+	end
 	if(@BeginPrice<>'')
 	begin
 		set @condition +=' and p.Price>='+@BeginPrice
@@ -62,6 +66,10 @@ AS
 	begin
 		set @condition +=' and p.Price<='+@EndPrice
 	end
+	--if(@orderColumn<>'')
+	--begin
+	--	set @key=''
+	--end
 	declare @total int,@page int
 	exec P_GetPagerData @tableName,@columns,@condition,@key,@orderColumn,@pageSize,@pageIndex,@total out,@page out,@isAsc 
 	select @totalCount=@total,@pageCount =@page
