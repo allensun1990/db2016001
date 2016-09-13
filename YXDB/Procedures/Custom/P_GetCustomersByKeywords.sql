@@ -23,7 +23,6 @@ AS
 	declare @condition nvarchar(4000)
 	set @condition='ClientID='''+@ClientID+''' and Status<>9 '
 
-
 	if(@UserID<>'')
 	begin
 		set @condition +=' and OwnerID = '''+@UserID+''''

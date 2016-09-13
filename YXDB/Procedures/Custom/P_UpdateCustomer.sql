@@ -31,7 +31,6 @@ CREATE PROCEDURE [dbo].[P_UpdateCustomer]
 @ClientID nvarchar(64)
 AS
 begin tran
-
 declare @Err int=0
 
 --客户名称有变更
@@ -41,8 +40,7 @@ begin
 end
 
 Update Customer set Name=@Name,Type=@Type,IndustryID=@IndustryID,Extent=@Extent,CityCode=@CityCode,Address=@Address,MobilePhone=@MobilePhone,OfficePhone=@OfficePhone,
-					Email=@Email,Jobs=@Jobs,Description=@Description,FirstName=dbo.fun_getFirstPY(left(@Name,1)) where CustomerID=@CustomerID and ClientID=@ClientID
-
+		Email=@Email,Jobs=@Jobs,Description=@Description,FirstName=dbo.fun_getFirstPY(left(@Name,1)) where CustomerID=@CustomerID and ClientID=@ClientID
 
 set @Err+=@@error
 if(@Err>0)

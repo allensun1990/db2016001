@@ -33,12 +33,11 @@ as
 
 	insert into Attachment(AttachmentID,Type,ServerUrl,FilePath,FileName,OriginalName,ThumbnailName,Size,CreateUserID,ClientID)
 	values(@AttachmentID,@Type,@ServerUrl,@FilePath,@FileName,@OriginalName,@ThumbnailName,@Size,@UserID,@ClientID)
-	set @error+=@@ERROR
 
 	insert into TaskReplyAttachmentRelation(TaskID,ReplyID,AttachmentID)
 	values(@TaskID,@ReplyID,@AttachmentID)
-	set @error+=@@ERROR
 
+	set @error+=@@ERROR
 	if(@error>0)
 	begin
 		rollback tran

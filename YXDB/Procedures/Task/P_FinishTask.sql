@@ -59,11 +59,9 @@ as
 	declare @Err int=0
 	--更新任务进行状态为完成且加锁
 	update OrderTask set FinishStatus=2,CompleteTime=GETDATE(),LockStatus=1 where TaskID=@TaskID
-	set @Err+=@@ERROR
 
 	--更新任务对应的订单的任务完成数
 	update Orders set TaskOver=TaskOver+1 where OrderID=@OrderID
-	set @Err+=@@ERROR
 
 	--若订单对应的任务全部完成 自动更改订单状态
 	if(not exists( select taskid from ordertask where orderid=@OrderID and status<>8 and FinishStatus<>2 ))
@@ -82,14 +80,11 @@ as
 			begin
 				insert into AliOrderUpdateLog(LogID,OrderID,AliOrderCode,OrderType,Status,OrderStatus,OrderPrice,FailCount,UpdateTime,CreateTime,Remark,ClientID)
 				values(NEWID(),@OrderID,@AliOrderCode,1,0,2,0,0,getdate(),getdate(),'完成打样',@ClientID)
-				set @Err+=@@error
 			end
-			set @Err+=@@ERROR
 		end
 		else
 		begin
 			update orders set status=6 where orderid=@OrderID
-			set @Err+=@@ERROR
 
 			Insert into OrderStatusLog(OrderID,Status,CreateUserID) values(@OrderID,6,@UserID)
 
@@ -98,11 +93,11 @@ as
 			begin
 				insert into AliOrderUpdateLog(LogID,OrderID,AliOrderCode,OrderType,Status,OrderStatus,OrderPrice,FailCount,UpdateTime,CreateTime,Remark,ClientID)
 				values(NEWID(),@OrderID,@AliOrderCode,2,0,6,0,0,getdate(),getdate(),'大货单生产完成，发货完毕',@ClientID)
-				set @Err+=@@error
 			end
 		end
 	end
 
+	set @Err+=@@error
 	if(@Err>0)
 	begin
 		rollback tran
