@@ -18,6 +18,14 @@ alter table Providers add ProviderType int default 0
 GO
 Update Providers set ProviderType=0
 
+--增加订单来源
+alter table Orders add SourceType int default 1
+GO
+Update Orders set SourceType=1
+
+--客户增加
+alter table Customer add ChildClientID nvarchar(64) 
+
 --单据表
  alter table storageDoc add SourceType int default(1)
  go

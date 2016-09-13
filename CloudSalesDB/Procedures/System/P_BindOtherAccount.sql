@@ -24,36 +24,44 @@ CREATE PROCEDURE [dbo].[P_BindOtherAccount]
 @Result nvarchar(200) output
 AS
  
+declare @Err int=0
+
+ begin tran
+
 	set @Result=''
-	declare @OriginalWeiXinID nvarchar(64)=''
-	
-	if(@AccountType=4 and exists(select AutoID from Agents where CMClientID=@ProjectID))
-	begin
-		set @Result='此工厂已被绑定，不能重复操作'
-		return @Result
-	end
-	else if(@AccountType=4 and exists(select AutoID from Agents where AgentID=@AgentID and CMClientID<>'' and CMClientID is not null))
-	begin
-		set @Result='此账户已绑定工厂，不能重复绑定'
-		return @Result
-	end
 
 	if exists(select AutoID from UserAccounts where UserID=@UserID and AccountType=@AccountType)
 	begin
 		set @Result='用户已绑定此账号，不能重复绑定'
-		return @Result
+		rollback tran
+		return 
 	end
 
 	if(	@ProjectID<>'' and exists(select AutoID from UserAccounts where AccountName=@AccountName and ProjectID=@ProjectID and AccountType=@AccountType))
 	begin 
 		set @Result='此外部账号被使用过，不能重复绑定'
-		return @Result
+		rollback tran
+		return 
 	end
 	else if (@ProjectID='' and exists(select AutoID from UserAccounts where AccountName=@AccountName and AccountType=@AccountType))
 	begin
 		set @Result='此外部账号被使用过，不能重复绑定'
-		return @Result
+		rollback tran
+		return 
 	end
+	set @Err+=@@error
+
 
 	insert into UserAccounts (AccountName,ProjectID,AccountType,UserID,AgentID,ClientID)
-	values( @AccountName,@ProjectID,@AccountType,@UserID,@AgentID,@ClientID)
+	values(@AccountName,@ProjectID,@AccountType,@UserID,@AgentID,@ClientID)
+	set @Err+=@@error
+
+	if(@Err>0)
+	begin
+		set @Result='账号绑定失败'
+		rollback tran
+	end 
+	else
+	begin
+		commit tran
+	end

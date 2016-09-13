@@ -38,7 +38,7 @@ AS
 begin tran
 
 declare @Err int=0,@StageID nvarchar(64),@LevelID varchar(50),@AllocationTime datetime=null
-	select top 1 @LevelID=LevelID from ClientMemberLevel where Status<>9  order by Origin asc
+	select top 1 @LevelID=LevelID from ClientMemberLevel where Status<>9  and Origin =1
 --新客户阶段
 --select @StageID=StageID from  CustomStage where ClientID=@ClientID and Mark=1
 
