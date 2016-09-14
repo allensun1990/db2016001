@@ -23,8 +23,16 @@ alter table Orders add SourceType int default 1
 GO
 Update Orders set SourceType=1
 
---客户增加
+--客户增加下级客户ID
 alter table Customer add ChildClientID nvarchar(64) 
+
+-- 处理产品规格信息 重复执行
+update p set AttrValue=REPLACE(AttrValue,ValueID,ValueName) from ProductDetail p 
+join AttrValue a on p.AttrValue like '%'+a.ValueID+'%' and p.ClientID=a.ClientID
+
+update p set SaleAttrValue=REPLACE(SaleAttrValue,ValueID,ValueName) from ProductDetail p 
+join AttrValue a on p.SaleAttrValue like '%'+a.ValueID+'%' and p.ClientID=a.ClientID
+
 
 --单据表
  alter table storageDoc add SourceType int default(1)
