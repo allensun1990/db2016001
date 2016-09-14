@@ -21,6 +21,7 @@ CREATE PROCEDURE [dbo].[M_InsertHelpContent]
 	@TypeID nvarchar(64),
 	@Sort nvarchar(64),
 	@Title nvarchar(64),
+	@MainImg nvarchar(200)='',
 	@KeyWords nvarchar(64),
 	@UserID nvarchar(64),
 	@Detail text,
@@ -32,7 +33,9 @@ AS
 		return
 	end
 
-	insert into M_HelpContent(ContentID,TypeID,Sort,Title,KeyWords,CreateUserID,Detail) values(@ContentID,@TypeID,@Sort,@Title,@KeyWords,@UserID,@Detail)	
+	insert into M_HelpContent(ContentID,TypeID,Sort,Title,KeyWords,CreateUserID,Detail,MainImg) 
+	values(@ContentID,@TypeID,@Sort,@Title,@KeyWords,@UserID,@Detail,@MainImg)	
 
+	set @Result=1
 GO
 
