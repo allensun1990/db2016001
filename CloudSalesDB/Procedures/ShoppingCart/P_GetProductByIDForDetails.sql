@@ -35,7 +35,7 @@ end
 
 
 select p.AttrID,p.AttrName,c.Type from ProductAttr p join CategoryAttr c on p.AttrID=c.AttrID 
-where c.Status=1 and c.CategoryID= @CategoryID and p.Status=1 order by p.AutoID
+where c.Status=1 and c.CategoryID= @CategoryID and p.Status=1 order by  c.Sort,c.AutoID
 
  
 
