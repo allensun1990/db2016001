@@ -33,6 +33,10 @@ join AttrValue a on p.AttrValue like '%'+a.ValueID+'%' and p.ClientID=a.ClientID
 update p set SaleAttrValue=REPLACE(SaleAttrValue,ValueID,ValueName) from ProductDetail p 
 join AttrValue a on p.SaleAttrValue like '%'+a.ValueID+'%' and p.ClientID=a.ClientID
 
+--处理分类规格排序
+alter table  CategoryAttr add Sort int default 1
+GO
+Update CategoryAttr set Sort=1
 
 --单据表
  alter table storageDoc add SourceType int default(1)

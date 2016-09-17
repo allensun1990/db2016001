@@ -38,7 +38,7 @@ begin
 	return
 end
 
-declare @Err int, @OldAttr nvarchar(4000),@OldSales nvarchar(4000)
+declare @Err int, @OldAttr nvarchar(4000),@OldSales nvarchar(4000),@sql nvarchar(4000),@AutoID int=1,@AttrID nvarchar(64)
 set @Err=0
 
 select @OldAttr=AttrList,@OldSales=SaleAttr from Category where CategoryID=@CategoryID
@@ -61,18 +61,20 @@ if(@SaleAttr<>@OldSales)
 begin
 	Update CategoryAttr set Status=9,UpdateTime=getdate() where CategoryID=@CategoryID and Type=2 --and CHARINDEX(AttrID,@SaleAttr)=0
 
-	insert into CategoryAttr(CategoryID,AttrID,Status,Type,CreateUserID,CreateTime)
-	select @CategoryID,AttrID,1,2,@UserID,getdate() from ProductAttr 
-	where ClientID=ClientID and Status<>9 and CHARINDEX(AttrID,@SaleAttr)>0
+	create table #TempTable(ID int identity(1,1),Value nvarchar(4000))
+	set @sql='select col='''+ replace(@SaleAttr,',',''' union all select ''')+''''
+	insert into #TempTable exec (@sql)
+	while exists(select ID from #TempTable where ID=@AutoID)
+	begin
+		select @AttrID=Value from #TempTable where ID=@AutoID
+		if(@AttrID is not null and @AttrID<>'')
+		begin
+			insert into CategoryAttr(CategoryID,AttrID,Status,Type,CreateUserID,CreateTime,Sort)
+			values (@CategoryID,@AttrID,1,2,@UserID,getdate(),@AutoID)
 
-	--if(@SaleAttr is null or @SaleAttr='')
-	--begin
-	--	update Products set HasDetails=0 where @CategoryID=CategoryID
-	--end
-	--else
-	--begin
-	--	update Products set HasDetails=1 where @CategoryID=CategoryID
-	--end
+		end
+		set @AutoID+=1
+	end
 end
 
 if(@Err>0)

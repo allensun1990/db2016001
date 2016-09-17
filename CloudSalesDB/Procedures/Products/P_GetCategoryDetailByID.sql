@@ -20,7 +20,7 @@ AS
 
 select * from Category where CategoryID=@CategoryID
 
-select AttrID,[Type] from CategoryAttr where Status=1 and CategoryID= @CategoryID 
+select AttrID,[Type] from CategoryAttr where Status=1 and CategoryID= @CategoryID  order by Sort,AutoID
 
 
 

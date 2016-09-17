@@ -21,7 +21,7 @@ CREATE PROCEDURE [dbo].[P_UpdateProduct]
 @GeneralName nvarchar(200),
 @IsCombineProduct int,
 @ProviderID nvarchar(64)='',
-@BrandID nvarchar(64),
+@BrandID nvarchar(64)='',
 @BigUnitID nvarchar(64),
 @UnitID nvarchar(64),
 @BigSmallMultiple int,

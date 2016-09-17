@@ -39,7 +39,7 @@ begin
 	return
 end
 
-declare @Err int,@PIDList nvarchar(max),@Layers int=0 
+declare @Err int,@PIDList nvarchar(max),@Layers int=0,@sql nvarchar(4000),@AutoID int=1,@AttrID nvarchar(64)
 set @Err=0
 set @CategoryID=NEWID()
 if(@PID is not null and @PID<>'')
@@ -55,11 +55,26 @@ end
 insert into Category(CategoryID,CategoryCode,CategoryName,PID,PIDList,Layers,SaleAttr,AttrList,Status,Description,CreateUserID,ClientID)
 				values(@CategoryID,@CategoryCode,@CategoryName,@PID,@PIDList,@Layers,@SaleAttr,@AttrList,@Status,@Description,@CreateUserID,@ClientID)
 
+--属性				
 insert into CategoryAttr(CategoryID,AttrID,Status,Type,CreateUserID,CreateTime)
 select @CategoryID,AttrID,1,1,@CreateUserID,getdate() from ProductAttr where ClientID=ClientID and Status<>9 and @AttrList like '%'+AttrID+'%'
 
-insert into CategoryAttr(CategoryID,AttrID,Status,Type,CreateUserID,CreateTime)
-select @CategoryID,AttrID,1,2,@CreateUserID,getdate() from ProductAttr where ClientID=ClientID and Status<>9 and @SaleAttr like '%'+AttrID+'%'
+--规格
+create table #TempTable(ID int identity(1,1),Value nvarchar(4000))
+set @sql='select col='''+ replace(@SaleAttr,',',''' union all select ''')+''''
+insert into #TempTable exec (@sql)
+while exists(select ID from #TempTable where ID=@AutoID)
+begin
+	select @AttrID=Value from #TempTable where ID=@AutoID
+	if(@AttrID is not null and @AttrID<>'')
+	begin
+		insert into CategoryAttr(CategoryID,AttrID,Status,Type,CreateUserID,CreateTime,Sort)
+        values (@CategoryID,@AttrID,1,2,@CreateUserID,getdate(),@AutoID)
+
+	end
+	set @AutoID+=1
+end
+
 
 set @Err+=@@error
 
