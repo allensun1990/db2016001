@@ -50,7 +50,7 @@ end
 
 set @Err+=@@error
 
-Update Providers set Status=9  where ProviderID=@ProviderID
+Update Providers set Status=9  where ProviderID=@ProviderID and ProviderType<>1
 
 if(@Err>0)
 begin

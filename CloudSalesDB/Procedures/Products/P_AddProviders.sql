@@ -44,7 +44,7 @@ end
 
 begin tran
 
-declare @Err int=0,@PAgentID nvarchar(64)
+declare @Err int=0,@PAgentID nvarchar(64),@SourceType nvarchar(64)
 
 insert into Providers(ProviderID,Name,Contact,MobileTele,Email,Website,CityCode,Address,Remark,CreateTime,CMClientID,CMClientCode,CreateUserID,AgentID,ClientID,ProviderType)
                values(@ProviderID ,@Name,@Contact ,@MobileTele,@Email,'',@CityCode,@Address,@Remark,getdate(),@CMClientID,@CMClientCode,@CreateUserID,@AgentID,@ClientID,@ProviderType)
@@ -55,14 +55,15 @@ begin
 	Update Agents set CMClientID=@CMClientID where AgentID=@AgentID and (CMClientID ='' or CMClientID is null)
 end
 set @Err+=@@error
-if(@CMClientID<>'' and  @ProviderType=2)
+if(@CMClientID<>'' and  @ProviderType=2 and not exists(select AutoID from Customer where ChildClientID=@CMClientID and ClientID=@ClientID))
 begin
 	
 	select @PAgentID=AgentID from Clients where ClientID=@CMClientID
+	select @SourceType=SourceID from CustomSource where SourceCode='Source-Self' and ClientID=@CMClientID
 
 	insert into Customer(CustomerID,Name,ContactName,Type,IndustryID,Extent,CityCode,Address,MobilePhone,OfficePhone,Email,Jobs,Description,SourceID,ActivityID,
 					StageID,OwnerID,Status,AllocationTime,OrderTime,CreateTime,CreateUserID,AgentID,ClientID,MemberLevelID,IntegerFee,ChildClientID)
-	select NewID(),CompanyName,ContactName,1,'','',CityCode,Address,MobilePhone,'','','','','','',
+	select NewID(),CompanyName,ContactName,1,'','',CityCode,Address,MobilePhone,'','','','',@SourceType,'',
 					2,'',1,null,null,getdate(),'',@PAgentID,@CMClientID,'',0,@ClientID from Clients where ClientID=@ClientID
 end
 set @Err+=@@error

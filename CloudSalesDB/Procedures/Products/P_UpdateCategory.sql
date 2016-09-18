@@ -20,6 +20,8 @@ CREATE PROCEDURE [dbo].[P_UpdateCategory]
 @CategoryCode nvarchar(200),
 @AttrList nvarchar(4000),
 @SaleAttr nvarchar(4000),
+@AttrListStr nvarchar(4000)='',
+@SaleAttrStr nvarchar(4000)='',
 @Status int,
 @Description nvarchar(4000),
 @UserID nvarchar(64),
@@ -43,7 +45,8 @@ set @Err=0
 
 select @OldAttr=AttrList,@OldSales=SaleAttr from Category where CategoryID=@CategoryID
 
-Update Category set CategoryName=@CategoryName,CategoryCode=@CategoryCode,Status=@Status,AttrList=@AttrList,SaleAttr=@SaleAttr,Description=@Description,UpdateTime=getdate() 
+Update Category set CategoryName=@CategoryName,CategoryCode=@CategoryCode,Status=@Status,AttrList=@AttrList,AttrListStr=@AttrListStr,
+					SaleAttr=@SaleAttr,SaleAttrStr=@SaleAttrStr,Description=@Description,UpdateTime=getdate() 
 where CategoryID=@CategoryID
 
 set @Err+=@@error
@@ -52,15 +55,26 @@ if(@AttrList<>@OldAttr)
 begin
 	Update CategoryAttr set Status=9,UpdateTime=getdate() where CategoryID=@CategoryID and Type=1 -- and CHARINDEX(AttrID,@AttrList)=0
 
-	insert into CategoryAttr(CategoryID,AttrID,Status,Type,CreateUserID,CreateTime)
-	select @CategoryID,AttrID,1,1,@UserID,getdate() from ProductAttr 
-	where ClientID=ClientID and Status<>9 and CHARINDEX(AttrID,@AttrList)>0
+	create table #TempTableAttr(ID int identity(1,1),Value nvarchar(4000))
+	set @sql='select col='''+ replace(@SaleAttr,',',''' union all select ''')+''''
+	insert into #TempTableAttr exec (@sql)
+	while exists(select ID from #TempTableAttr where ID=@AutoID)
+	begin
+		select @AttrID=Value from #TempTableAttr where ID=@AutoID
+		if(@AttrID is not null and @AttrID<>'')
+		begin
+			insert into CategoryAttr(CategoryID,AttrID,Status,Type,CreateUserID,CreateTime,Sort)
+			values (@CategoryID,@AttrID,1,1,@UserID,getdate(),@AutoID)
+
+		end
+		set @AutoID+=1
+	end
 end
 
 if(@SaleAttr<>@OldSales)
 begin
 	Update CategoryAttr set Status=9,UpdateTime=getdate() where CategoryID=@CategoryID and Type=2 --and CHARINDEX(AttrID,@SaleAttr)=0
-
+	set @AutoID=1
 	create table #TempTable(ID int identity(1,1),Value nvarchar(4000))
 	set @sql='select col='''+ replace(@SaleAttr,',',''' union all select ''')+''''
 	insert into #TempTable exec (@sql)

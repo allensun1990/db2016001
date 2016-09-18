@@ -194,6 +194,9 @@ insert into CustomSource(SourceID,SourceCode,SourceName,IsSystem,IsChoose,Status
 
 insert into CustomSource(SourceID,SourceCode,SourceName,IsSystem,IsChoose,Status,CreateUserID,ClientID)
 					values(NEWID(),'Source-Activity','活动',1,0,1,@UserID,@ClientID)
+
+insert into CustomSource(SourceID,SourceCode,SourceName,IsSystem,IsChoose,Status,CreateUserID,ClientID)
+					values(NEWID(),'Source-Self','关注店铺',1,0,1,@UserID,@ClientID)
 					
 --客户阶段
 insert into CustomStage(StageID,StageName,Sort,Status,Mark,PID,CreateUserID,ClientID)

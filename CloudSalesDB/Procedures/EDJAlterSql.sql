@@ -26,6 +26,10 @@ Update Orders set SourceType=1
 --客户增加下级客户ID
 alter table Customer add ChildClientID nvarchar(64) 
 
+--处理客户来源
+insert into CustomSource(SourceID,SourceCode,SourceName,IsSystem,IsChoose,Status,CreateUserID,ClientID)
+					select NEWID(),'Source-Self','关注店铺',1,0,1,CreateUserID,ClientID from Clients
+
 -- 处理产品规格信息 重复执行
 update p set AttrValue=REPLACE(AttrValue,ValueID,ValueName) from ProductDetail p 
 join AttrValue a on p.AttrValue like '%'+a.ValueID+'%' and p.ClientID=a.ClientID
@@ -33,10 +37,28 @@ join AttrValue a on p.AttrValue like '%'+a.ValueID+'%' and p.ClientID=a.ClientID
 update p set SaleAttrValue=REPLACE(SaleAttrValue,ValueID,ValueName) from ProductDetail p 
 join AttrValue a on p.SaleAttrValue like '%'+a.ValueID+'%' and p.ClientID=a.ClientID
 
+--处理分类
+alter table Category add SaleAttrStr nvarchar(4000)
+alter table Category add AttrListStr nvarchar(4000)
+GO
+Update Category set SaleAttrStr=SaleAttr,AttrListStr=AttrList
+
+--重复执行
+update p set SaleAttrStr=REPLACE(SaleAttrStr,AttrID,AttrName) from Category p 
+join ProductAttr a on SaleAttrStr like '%'+a.AttrID+'%' and p.ClientID=a.ClientID
+
+update p set AttrListStr=REPLACE(AttrListStr,AttrID,AttrName) from Category p 
+join ProductAttr a on AttrListStr like '%'+a.AttrID+'%' and p.ClientID=a.ClientID
+
 --处理分类规格排序
 alter table  CategoryAttr add Sort int default 1
 GO
 Update CategoryAttr set Sort=1
+
+--产品冗余单位
+alter table Products add UnitName nvarchar(20) 
+GO
+update p set UnitName=u.UnitName from Products p join ProductUnit u on p.UnitID=u.UnitID
 
 --单据表
  alter table storageDoc add SourceType int default(1)

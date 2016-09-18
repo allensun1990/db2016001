@@ -18,8 +18,10 @@ CREATE PROCEDURE [dbo].[P_InsertCategory]
 @CategoryCode nvarchar(200),
 @CategoryName nvarchar(200),
 @PID nvarchar(64),
-@AttrList nvarchar(4000),
-@SaleAttr nvarchar(4000),
+@AttrList nvarchar(4000)='',
+@SaleAttr nvarchar(4000)='',
+@AttrListStr nvarchar(4000)='',
+@SaleAttrStr nvarchar(4000)='',
 @Status int,
 @Description nvarchar(4000),
 @CreateUserID nvarchar(64),
@@ -52,14 +54,10 @@ begin
 	set @Layers=1
 end
 
-insert into Category(CategoryID,CategoryCode,CategoryName,PID,PIDList,Layers,SaleAttr,AttrList,Status,Description,CreateUserID,ClientID)
-				values(@CategoryID,@CategoryCode,@CategoryName,@PID,@PIDList,@Layers,@SaleAttr,@AttrList,@Status,@Description,@CreateUserID,@ClientID)
+insert into Category(CategoryID,CategoryCode,CategoryName,PID,PIDList,Layers,SaleAttr,SaleAttrStr,AttrList,AttrListStr,Status,Description,CreateUserID,ClientID)
+				values(@CategoryID,@CategoryCode,@CategoryName,@PID,@PIDList,@Layers,@SaleAttr,@SaleAttrStr,@AttrList,@AttrListStr,@Status,@Description,@CreateUserID,@ClientID)
 
---属性				
-insert into CategoryAttr(CategoryID,AttrID,Status,Type,CreateUserID,CreateTime)
-select @CategoryID,AttrID,1,1,@CreateUserID,getdate() from ProductAttr where ClientID=ClientID and Status<>9 and @AttrList like '%'+AttrID+'%'
-
---规格
+--属性		
 create table #TempTable(ID int identity(1,1),Value nvarchar(4000))
 set @sql='select col='''+ replace(@SaleAttr,',',''' union all select ''')+''''
 insert into #TempTable exec (@sql)
@@ -69,8 +67,24 @@ begin
 	if(@AttrID is not null and @AttrID<>'')
 	begin
 		insert into CategoryAttr(CategoryID,AttrID,Status,Type,CreateUserID,CreateTime,Sort)
-        values (@CategoryID,@AttrID,1,2,@CreateUserID,getdate(),@AutoID)
+        values (@CategoryID,@AttrID,1,1,@CreateUserID,getdate(),@AutoID)
+	end
+	set @AutoID+=1
+end		
 
+truncate table #TempTable
+
+set @AutoID=1
+--规格
+set @sql='select col='''+ replace(@SaleAttr,',',''' union all select ''')+''''
+insert into #TempTable exec (@sql)
+while exists(select ID from #TempTable where ID=@AutoID)
+begin
+	select @AttrID=Value from #TempTable where ID=@AutoID
+	if(@AttrID is not null and @AttrID<>'')
+	begin
+		insert into CategoryAttr(CategoryID,AttrID,Status,Type,CreateUserID,CreateTime,Sort)
+        values (@CategoryID,@AttrID,1,2,@CreateUserID,getdate(),@AutoID)
 	end
 	set @AutoID+=1
 end
