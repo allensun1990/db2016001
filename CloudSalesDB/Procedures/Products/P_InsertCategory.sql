@@ -59,7 +59,7 @@ insert into Category(CategoryID,CategoryCode,CategoryName,PID,PIDList,Layers,Sal
 
 --属性		
 create table #TempTable(ID int identity(1,1),Value nvarchar(4000))
-set @sql='select col='''+ replace(@SaleAttr,',',''' union all select ''')+''''
+set @sql='select col='''+ replace(@AttrList,',',''' union all select ''')+''''
 insert into #TempTable exec (@sql)
 while exists(select ID from #TempTable where ID=@AutoID)
 begin

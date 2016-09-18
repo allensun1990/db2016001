@@ -56,7 +56,7 @@ begin
 	Update CategoryAttr set Status=9,UpdateTime=getdate() where CategoryID=@CategoryID and Type=1 -- and CHARINDEX(AttrID,@AttrList)=0
 
 	create table #TempTableAttr(ID int identity(1,1),Value nvarchar(4000))
-	set @sql='select col='''+ replace(@SaleAttr,',',''' union all select ''')+''''
+	set @sql='select col='''+ replace(@AttrList,',',''' union all select ''')+''''
 	insert into #TempTableAttr exec (@sql)
 	while exists(select ID from #TempTableAttr where ID=@AutoID)
 	begin
