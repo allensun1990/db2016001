@@ -92,6 +92,7 @@ begin tran
 		select @NewProductID=ProductID from Products where ClientID=@ClientID and CMGoodsID=@ProductID
 	end
 
+	--处理规格产品
 	set @sql='select ID='''+ replace(@ProductDetails,',',''' union all select ''')+''''
 	set @sql= replace(@sql,':',''',Quantity=''') 
 	insert into @TempDetailTable(ID,Quantity) exec (@sql)
@@ -146,7 +147,7 @@ begin tran
 	values(@DocID,@NewCode,@DocType,0,@TotalMoney,@CityCode,@Address,@Remark,@WareID,@ProviderID,@UserID,GETDATE(),'',@ClientID,@ProviderName,2) 
 	set @Err+=@@Error
 
-
+	--销售订单
 	select top 1 @CustomerID=CustomerID,@OwnerID=OwnerID,@NewAgentID=AgentID from Customer where ChildClientID=@ClientID and ClientID=@CMClientID
 	if(@NewAgentID is null or @NewAgentID='')
 	begin
