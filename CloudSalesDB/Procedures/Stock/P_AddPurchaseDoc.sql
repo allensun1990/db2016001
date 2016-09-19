@@ -18,7 +18,7 @@ GO
 CREATE PROCEDURE [dbo].[P_AddPurchaseDoc]
 @ProductID nvarchar(64),
 @ProductDetails nvarchar(4000),
-@ProviderID nvarchar(64),
+@CMClientID nvarchar(64),
 @DocID nvarchar(64),
 @DocCode nvarchar(64),
 @DocType int,
@@ -35,152 +35,126 @@ CREATE PROCEDURE [dbo].[P_AddPurchaseDoc]
 @ClientID nvarchar(64)
 AS
 
+if(@CMClientID=@ClientID)
+begin
+	return
+end 
+
 begin tran
-	declare @Err int=0,@NewCode nvarchar(50),@ProviderName nvarchar(200),@OrderID nvarchar(64),@OrderCode nvarchar(64),@prociderType int,@CustomerID varchar(64),@OwnerID varchar(64),
-	@ProductDetailID varchar(64),@DepotID nvarchar(64),@AutoID int,@sql varchar(4000) ,@PProviderID varchar(50),@temppoductid varchar(64)
-	select  @AutoID=1,@NewCode=@DocCode+convert(nvarchar(10),@AutoID),@OrderID=NEWID(),@CustomerID='',@OwnerID='',@PProviderID=''
+
+	declare @Err int=0,@AutoID int,@sql varchar(4000),@NewCode nvarchar(64),@OrderID nvarchar(64),@OrderCode nvarchar(64),
+	@CustomerID varchar(64)='',@OwnerID varchar(64)='',@Quantity int,@NewAgentID nvarchar(64),
+	@ProductDetailID varchar(64),@DepotID nvarchar(64),@NewProductID nvarchar(64),@NewProductDetailID nvarchar(64),@DRemark nvarchar(4000),
+	@ProviderID varchar(64),@ProviderType int,@ProviderName nvarchar(200)
+
+	select  @AutoID=1,@NewCode=@DocCode+convert(nvarchar(10),@AutoID),@OrderID=NEWID()
 	
-	declare	@TempTable table(ID varchar(64),Quantity int)
-	declare	@TempDetailTable table(ID varchar(64),Quantity int,status int default(0)) 	
+	select @ProviderID=ProviderID,@ProviderType=ProviderType,@ProviderName=Name 
+	from Providers where ClientID=@ClientID and CMClientID=@CMClientID and Status=1
+	--店铺未关注
+	if(@ProviderID is null or @ProviderID='')
+	begin
+		rollback tran
+		return
+	end
+
+	declare	@TempDetailTable table(AutoID int identity(1,1), ID varchar(64), Quantity int)
 
 	if(@WareID='')
 	begin
 		select top 1 @WareID=WareID from WareHouse where Status=1 and ClientID=@ClientID
 	end   
 
-	if(@ProviderID=@ClientID)
+	--不存在产品
+	if not exists(select AutoID from Products where ClientID=@ClientID and CMGoodsID=@ProductID)
 	begin
-		set @temppoductid=@ProductID
-		set @sql='select ID='''+ replace(@ProductDetails,',',''' union all select ''')+''''
-		set @sql= replace(@sql,':',''',Quantity=''') 
-		insert into @TempTable(ID,Quantity) exec (@sql)
-		/*自家店铺*/
-		select @ProviderName=Name,@PProviderID=CMClientID,@prociderType=ProviderType  from Providers where ClientID=@ClientID and ProviderType=1	
-	end 
-	else
-	begin 
-		set @sql='select ID='''+ replace(@ProductDetails,',',''' union all select ''')+''''
-		set @sql= replace(@sql,':',''',Quantity=''') 
-		insert into @TempDetailTable(ID,Quantity) exec (@sql)
+		set @NewProductID= NewID()
+		INSERT INTO [Products]([ProductID],[ProductCode],[ProductName],[GeneralName],[IsCombineProduct],[BrandID],[BigUnitID],[UnitName],[BigSmallMultiple] ,
+						[CategoryID],[CategoryIDList],[SaleAttr],SaleAttrStr,[AttrList],[ValueList],[AttrValueList],AttrValueStr,[CommonPrice],[Price],[PV],[TaxRate],[Status],
+						[OnlineTime],[UseType],[IsNew],[IsRecommend] ,[IsDiscount],[DiscountValue],[SaleCount],[Weight] ,[ProductImage],[EffectiveDays],
+						[ShapeCode] ,[ProviderID],[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID],IsAllow,IsAutoSend,HasDetails,WarnCount,CMGoodsID,CMGoodsCode)
+			select @NewProductID,[ProductCode],[ProductName],[GeneralName],[IsCombineProduct],'','',[UnitName],1 ,
+						'','','',SaleAttrStr,'','','',AttrValueStr,[CommonPrice],[Price],[PV],[TaxRate],[Status],
+						getdate(),[UseType],1,0 ,1,1,0,[Weight] ,[ProductImage],[EffectiveDays],
+						[ShapeCode] ,@ProviderID,[Description],@UserID,getdate() ,getdate(),[OperateIP] ,@ClientID,0,0,1,WarnCount,ProductID,ProductCode
+						from [Products] where ProductID=@ProductID
+		set @Err+=@@Error
 
-		/*关注店铺需验证产品是否存在*/
-		select @ProviderName=Name,@PProviderID=CMClientID,@prociderType=ProviderType  from Providers where ProviderID=@ProviderID and ClientID=@ClientID
-		select @temppoductid=productid  from products where CMGoodsID=@ProductID and ClientID=@ClientID
-		--如果产品为空插入
-		if(isnull(@temppoductid,'')='') 
-		begin
-			set @temppoductid=newid()
-			insert into products(productid,productcode,productname,unitname,CommonPrice,price,pv,taxrate,isnew,[weight],ProductImage,EffectiveDays,WarnCount,ProviderID,[Description],CreateUserID,ClientID,CMGoodsID,CMGoodsCode)
-			select @temppoductid,productcode,productname,unitname,CommonPrice,price,pv,taxrate,1,[weight],ProductImage,EffectiveDays,WarnCount,@PProviderID,[Description],@UserID,@ClientID,productid,productcode from  products where productid=@ProductID 
-			set @Err+=@@Error
-
-			INSERT INTO ProductDetail(ProductDetailID,[ProductID],DetailsCode ,[SaleAttr],[AttrValue],[SaleAttrValue],[Price],[BigPrice],[Status],
+		INSERT INTO ProductDetail(ProductDetailID,[ProductID],DetailsCode ,[SaleAttr],[AttrValue],[SaleAttrValue],[Price],[BigPrice],[Status],
 					Weight,ImgS,[ShapeCode] ,[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID],IsDefault)
-				select NEWID(),@temppoductid,ProductCode,'','','',Price,Price,1,
-					[Weight],ProductImage,'','',CreateUserID,getdate(),getdate(),'',@ClientID,1 from products where productid=@temppoductid
-			set @Err+=@@Error
-		end
-		--验证明细是否存在 
-		declare @detailstrs nvarchar(4000)
-		set @detailstrs=''
-		while exists(select ID from @TempDetailTable where [Status]=0) 
-		begin			
-			declare @tempDetailID varchar(50),@detailID varchar(50),@tempremark varchar(300),@quantity int
-			set @detailID=''
-			select top 1 @tempDetailID=ID,@quantity=Quantity from @TempDetailTable where status=0  
+			select NEWID(),@NewProductID,'','','','',[Price],[Price],1,Weight,ProductImage,'','',@UserID,getdate(),getdate(),'',@ClientID,1 
+			from [Products] where ProductID=@ProductID
 
-			select  @detailID=ProductDetailID from ProductDetail   where  ProductID=@temppoductid   
-			and	remark=(
-				select  isnull(remark,'') from ProductDetail  where ProductDetailID =@tempDetailID and ProductID=@ProductID
-			)
-			if(isnull(@detailID,'')='')
-			begin 
-				set @detailID=NEWID()
-				INSERT INTO ProductDetail(ProductDetailID,[ProductID],DetailsCode,BigPrice ,[SaleAttr],[AttrValue],[SaleAttrValue],[Price],[Status],Remark,IsDefault,
-					[Weight],ImgS,[ShapeCode] ,[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID])
-				select @detailID,@temppoductid,DetailsCode,BigPrice,'','','',Price,1,Remark,0,
-					[Weight],ImgS,ShapeCode,[Description],@UserID,getdate(),getdate(),'',@ClientID from ProductDetail where ProductDetailID=@tempDetailID
-				set @Err+=@@Error
-				Update Products set HasDetails=1 where ProductID=@temppoductid and HasDetails=0 				
-			end
-			else
-			begin
-				update ProductDetail set status=1 where ProductDetailID=@detailID and Status=9
-			end
-			set @detailstrs=@detailID+':'+cast(@quantity as varchar)+','+@detailstrs
-			update @TempDetailTable set [status]=1 where  ID=@tempDetailID
-		end
-		set @detailstrs=substring(@detailstrs,0,len(@detailstrs))
-		set @sql='select ID='''+ replace(@detailstrs,',',''' union all select ''')+''''
-		set @sql= replace(@sql,':',''',Quantity=''') 
-		insert into @TempTable(ID,Quantity) exec (@sql)
+		set @Err+=@@Error
 	end
-	--1.本地采购单明细生成
-	select identity(int,1,1) as AutoID,ProductDetailID,a.ProductID,UnitID,Quantity,a.Price,a.Remark,
-	ProductName,ProductCode,DetailsCode,ProductImage,ImgS  into #TempDetail
-	from ProductDetail  a join Products b on a.ProductID=b.ProductID join @TempTable c on c.ID=a.ProductDetailID 	
-	where  b.ProductID=@temppoductid  
-	while exists(select AutoID from #TempDetail where AutoID=@AutoID)
-	begin	
-		select @ProductDetailID=ProductDetailID from #TempDetail where AutoID=@AutoID
-		
-		if exists(select AutoID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID)
+	else
+	begin
+		select @NewProductID=ProductID from Products where ClientID=@ClientID and CMGoodsID=@ProductID
+	end
+
+	set @sql='select ID='''+ replace(@ProductDetails,',',''' union all select ''')+''''
+	set @sql= replace(@sql,':',''',Quantity=''') 
+	insert into @TempDetailTable(ID,Quantity) exec (@sql)
+
+	while exists(select AutoID from @TempDetailTable where AutoID=@AutoID)
+	begin
+		select @ProductDetailID=ID,@Quantity=Quantity from @TempDetailTable where AutoID=@AutoID
+		select @DRemark=Remark from ProductDetail where ProductDetailID=@ProductDetailID
+		--规格产品不存在
+		if not exists(select AutoID from ProductDetail where ProductID=@NewProductID and Remark=@DRemark)
 		begin
-			select top 1 @DepotID= DepotID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID
+			set @NewProductDetailID=NEWID()
+			INSERT INTO ProductDetail(ProductDetailID,[ProductID],DetailsCode,BigPrice ,[SaleAttr],[AttrValue],[SaleAttrValue],[Price],[Status],Remark,IsDefault,
+				[Weight],ImgS,[ShapeCode] ,[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID])
+			select @NewProductDetailID,@NewProductID,DetailsCode,BigPrice,[SaleAttr],[AttrValue],[SaleAttrValue],Price,1,Remark,IsDefault,
+				[Weight],ImgS,ShapeCode,[Description],@UserID,getdate(),getdate(),'',@ClientID from ProductDetail where ProductDetailID=@ProductDetailID
+		end
+		else
+		begin
+			select @NewProductDetailID=ProductDetailID from ProductDetail where ProductID=@NewProductID and Remark=@DRemark
+		end
+
+		--处理货位
+		if exists(select AutoID from ProductStock where ProductDetailID=@NewProductDetailID and WareID=@WareID)
+		begin
+			select top 1 @DepotID= DepotID from ProductStock where ProductDetailID=@NewProductDetailID and WareID=@WareID
 		end
 		else
 		begin
 			select top 1 @DepotID = DepotID from DepotSeat where WareID=@WareID and Status=1
 		end
 
+		--插入采购单
 		insert into StorageDetail(DocID,ProductDetailID,ProductID,UnitID,UnitName,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage)
-		select @DocID,ProductDetailID,@ProductID,UnitID,'',0,Quantity,Price,Price*Quantity,@WareID,@DepotID,'',0,Remark,@ClientID,ProductName,ProductCode,DetailsCode,isnull(ImgS,ProductImage) from #TempDetail  where  AutoID=@AutoID
-		set @Err+=@@Error		
+			select @DocID,@NewProductDetailID,@NewProductID,p.UnitID,p.UnitName,0,@Quantity,d.Price,d.Price*@Quantity,@WareID,@DepotID,'',0,Remark,@ClientID,p.ProductName,p.ProductCode,d.DetailsCode,d.ImgS 
+			from ProductDetail d join Products p on d.ProductID=p.ProductID 
+			where d.ProductDetailID=@NewProductDetailID
+		
+		--店铺插入销售订单
+		insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,UnitName,IsBigUnit,Quantity,Price,TotalMoney,DepotID,BatchCode,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,CreateTime,CreateUserID,ProviderID,ProviderName)
+			select @OrderID,@NewProductDetailID,@NewProductID,p.UnitID,p.UnitName,0,@Quantity,d.Price,d.Price*@Quantity,'','',Remark,@CMClientID,p.ProductName,p.ProductCode,d.DetailsCode,d.ImgS,GETDATE(),@UserID,'','' 
+			from ProductDetail d join Products p on d.ProductID=p.ProductID 
+			where d.ProductDetailID=@NewProductDetailID
+
 		set @AutoID=@AutoID+1
 	end
-	drop table #TempDetail	
+
+	--采购单
 	select @TotalMoney=sum(TotalMoney) from StorageDetail where DocID=@DocID
+
 	insert into StorageDoc(DocID,DocCode,DocType,Status,TotalMoney,CityCode,Address,Remark,WareID,ProviderID,CreateUserID,CreateTime,OperateIP,ClientID,ProviderName,SourceType)
-	values(@DocID,@NewCode,@DocType,0,@TotalMoney,@CityCode,@Address,@Remark,@WareID,@ProviderID,@UserID,GETDATE(),'',@ClientID,@ProviderName,@SourceType) 
+	values(@DocID,@NewCode,@DocType,0,@TotalMoney,@CityCode,@Address,@Remark,@WareID,@ProviderID,@UserID,GETDATE(),'',@ClientID,@ProviderName,2) 
 	set @Err+=@@Error
 
-	if(@prociderType=2)
+
+	select top 1 @CustomerID=CustomerID,@OwnerID=OwnerID,@NewAgentID=AgentID from Customer where ChildClientID=@ClientID and ClientID=@CMClientID
+	if(@NewAgentID is null or @NewAgentID='')
 	begin
-		--2.供应商销售订单明细
-		set @AutoID=1
-		select identity(int,1,1) as AutoID,ProductDetailID,a.ProductID,UnitID,Quantity,a.Price,a.Remark,
-		ProductName,ProductCode,DetailsCode,ProductImage,ImgS  into #TempPDetail
-		from ProductDetail  a join Products b on a.ProductID=b.ProductID join @TempDetailTable c on c.ID=a.ProductDetailID 	
-		where  b.ProductID=@ProductID 
-		print @ProductID
-		select * from  #TempPDetail
-		while exists(select AutoID from #TempPDetail where AutoID=@AutoID)
-		begin	
-			select @ProductDetailID=ProductDetailID from #TempPDetail where AutoID=@AutoID		
-			if exists(select AutoID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID)
-			begin
-				select top 1 @DepotID= DepotID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID
-			end
-			else
-			begin
-				select top 1 @DepotID = DepotID from DepotSeat where WareID=@WareID and Status=1
-			end
-			insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,UnitName,IsBigUnit,Quantity,Price,TotalMoney,DepotID,BatchCode,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,CreateTime,CreateUserID,ProviderID,ProviderName)
-			select @OrderID,ProductDetailID,@ProductID,UnitID,'',0,Quantity,Price,Price*Quantity,@DepotID,'',Remark,@PProviderID,ProductName,ProductCode,DetailsCode,isnull(ImgS,ProductImage),GETDATE(),@UserID,@ProviderID,@ProviderName from #TempPDetail  where  AutoID=@AutoID
-			set @Err+=@@Error
-			set @AutoID=@AutoID+1
-		end			
-
-		drop table #TempPDetail	
-
-		declare @TypeID nvarchar(64)
-		select @TypeID=TypeID from OrderType where TypeCode='SelfServicOrder' and Clientid=@PProviderID
-		select top 1 @CustomerID=Customerid,@OwnerID=OwnerID from Customer where ChildClientid=@ClientID and Clientid=@PProviderID
-		insert into Orders(OrderID,OrderCode,TypeID,Status,SendStatus,OutStatus,ReturnStatus,TotalMoney,CityCode,Address,PersonName,MobileTele,Remark,CreateUserID,CreateTime,OperateIP,AgentID,ClientID,SourceType,CustomerID,OwnerID)
-		values(@OrderID,@NewCode,isnull(@TypeID,''),1,0,0,0,@TotalMoney,@CityCode,@Address,@PersonName,@MobilePhone,@Remark,@UserID,GETDATE(),'',@AgentID,@PProviderID,2,@CustomerID,@OwnerID)
-		set @Err+=@@Error
-	end	
-
+		select @NewAgentID=AgentID from Clients where ClientID=@CMClientID
+	end
+	insert into Orders(OrderID,OrderCode,TypeID,Status,SendStatus,OutStatus,ReturnStatus,TotalMoney,CityCode,Address,PersonName,MobileTele,Remark,CreateUserID,CreateTime,OperateIP,AgentID,ClientID,SourceType,CustomerID,OwnerID)
+	values(@OrderID,@NewCode,'',1,0,0,0,@TotalMoney,@CityCode,@Address,@PersonName,@MobilePhone,@Remark,@UserID,GETDATE(),'',@NewAgentID,@CMClientID,2,@CustomerID,@OwnerID)
+	set @Err+=@@Error
 if(@Err>0)
 begin
 	rollback tran
