@@ -1,4 +1,5 @@
 ﻿
+
 --关联智能工厂
 alter table Clients add RegisterType int
 Go
@@ -30,13 +31,6 @@ alter table Customer add ChildClientID nvarchar(64)
 insert into CustomSource(SourceID,SourceCode,SourceName,IsSystem,IsChoose,Status,CreateUserID,ClientID)
 					select NEWID(),'Source-Self','关注店铺',1,0,1,CreateUserID,ClientID from Clients
 
--- 处理产品规格信息 重复执行
-update p set AttrValue=REPLACE(AttrValue,ValueID,ValueName) from ProductDetail p 
-join AttrValue a on p.AttrValue like '%'+a.ValueID+'%' and p.ClientID=a.ClientID
-
-update p set SaleAttrValue=REPLACE(SaleAttrValue,ValueID,ValueName) from ProductDetail p 
-join AttrValue a on p.SaleAttrValue like '%'+a.ValueID+'%' and p.ClientID=a.ClientID
-
 --处理分类
 alter table Category add SaleAttrStr nvarchar(4000)
 alter table Category add AttrListStr nvarchar(4000)
@@ -57,13 +51,42 @@ Update CategoryAttr set Sort=1
 
 --产品冗余单位
 alter table Products add UnitName nvarchar(20) 
+alter table Products add SaleAttrStr nvarchar(4000)
+alter table Products add AttrValueStr nvarchar(4000)
 GO
 update p set UnitName=u.UnitName from Products p join ProductUnit u on p.UnitID=u.UnitID
+GO
+Update Products set SaleAttrStr=SaleAttr,AttrValueStr=AttrValueList
+
+--产品属性和规格重复执行
+update p set SaleAttrStr=REPLACE(SaleAttrStr,AttrID,AttrName) from Products p 
+join ProductAttr a on p.SaleAttrStr like '%'+a.AttrID+'%' and p.ClientID=a.ClientID
+
+update p set AttrValueStr=REPLACE(AttrValueStr,AttrID,AttrName) from Products p 
+join ProductAttr a on p.AttrValueStr like '%'+a.AttrID+'%' and p.ClientID=a.ClientID
+
+update p set AttrValueStr=REPLACE(AttrValueStr,ValueID,ValueName) from Products p 
+join AttrValue a on p.AttrValueStr like '%'+a.ValueID+'%' and p.ClientID=a.ClientID
+
+
+-- 处理产品规格信息 重复执行
+update p set SaleAttr=REPLACE(SaleAttr,AttrID,AttrName) from ProductDetail p 
+join ProductAttr a on p.SaleAttr like '%'+a.AttrID+'%' and p.ClientID=a.ClientID
+
+update p set AttrValue=REPLACE(AttrValue,ValueID,ValueName) from ProductDetail p 
+join AttrValue a on p.AttrValue like '%'+a.ValueID+'%' and p.ClientID=a.ClientID
+
+update p set SaleAttrValue=REPLACE(SaleAttrValue,AttrID,AttrName) from ProductDetail p 
+join ProductAttr a on p.SaleAttrValue like '%'+a.AttrID+'%' and p.ClientID=a.ClientID
+
+update p set SaleAttrValue=REPLACE(SaleAttrValue,ValueID,ValueName) from ProductDetail p 
+join AttrValue a on p.SaleAttrValue like '%'+a.ValueID+'%' and p.ClientID=a.ClientID
+
 
 --单据表
  alter table storageDoc add SourceType int default(1)
  go
- update storageDoc set SourceType=1
+ Update storageDoc set SourceType=1
 
  alter table StoragePartDetail add Complete int default(0)
  go

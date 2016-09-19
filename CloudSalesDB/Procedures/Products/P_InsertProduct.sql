@@ -29,6 +29,7 @@ CREATE PROCEDURE [dbo].[P_InsertProduct]
 @AttrList nvarchar(max),
 @ValueList nvarchar(max),
 @AttrValueList nvarchar(max),
+@AttrValueStr nvarchar(max)='',
 @CommonPrice decimal(18,2),
 @Price decimal(18,2),
 @Weight decimal(18,2),
@@ -52,11 +53,11 @@ AS
 
 begin tran
 
-declare @Err int,@PIDList nvarchar(max),@SaleAttr  nvarchar(max),@HasDetails int=0
+declare @Err int,@PIDList nvarchar(max),@SaleAttr  nvarchar(max),@SaleAttrStr nvarchar(max),@HasDetails int=0
 set @Err=0
 set @ProductID=NEWID()
 
-select @PIDList=PIDList,@SaleAttr=SaleAttr from Category where CategoryID=@CategoryID
+select @PIDList=PIDList,@SaleAttr=SaleAttr,@SaleAttrStr=SaleAttrStr from Category where CategoryID=@CategoryID
 
 IF EXISTS(SELECT AutoID FROM [Products] WHERE [ProductCode]=@ProductCode and ClientID=@ClientID and Status<>9)--产品编号唯一，编号不存在时才能执行插入
 BEGIN
@@ -81,12 +82,12 @@ END
 --	set @HasDetails=1
 --end
 
-INSERT INTO [Products]([ProductID],[ProductCode],[ProductName],[GeneralName],[IsCombineProduct],[BrandID],[BigUnitID],[UnitID],[BigSmallMultiple] ,
-						[CategoryID],[CategoryIDList],[SaleAttr],[AttrList],[ValueList],[AttrValueList],[CommonPrice],[Price],[PV],[TaxRate],[Status],
+INSERT INTO [Products]([ProductID],[ProductCode],[ProductName],[GeneralName],[IsCombineProduct],[BrandID],[BigUnitID],[UnitName],[BigSmallMultiple] ,
+						[CategoryID],[CategoryIDList],[SaleAttr],SaleAttrStr,[AttrList],[ValueList],[AttrValueList],AttrValueStr,[CommonPrice],[Price],[PV],[TaxRate],[Status],
 						[OnlineTime],[UseType],[IsNew],[IsRecommend] ,[IsDiscount],[DiscountValue],[SaleCount],[Weight] ,[ProductImage],[EffectiveDays],
 						[ShapeCode] ,[ProviderID],[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID],IsAllow,IsAutoSend,HasDetails,WarnCount,CMGoodsID,CMGoodsCode)
 			VALUES(@ProductID,@ProductCode,@ProductName,@GeneralName,@IsCombineProduct,@BrandID,@BigUnitID,@UnitID,@BigSmallMultiple,
-				@CategoryID,@PIDList,@SaleAttr,@AttrList,@ValueList,@AttrValueList,@CommonPrice,@Price,@Price,0,@Status,
+				@CategoryID,@PIDList,@SaleAttr,@SaleAttrStr,@AttrList,@ValueList,@AttrValueList,@AttrValueStr,@CommonPrice,@Price,@Price,0,@Status,
 				getdate(),0,@Isnew,@IsRecommend,1,@DiscountValue,0,@Weight,@ProductImg,@EffectiveDays,@ShapeCode,@ProviderID,@Description,@CreateUserID,
 				getdate(),getdate(),'',@ClientID,@IsAllow,@IsAutoSend,@HasDetails,@WarnCount,@CMGoodsID,@CMGoodsCode);
 

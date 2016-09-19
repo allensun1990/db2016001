@@ -34,8 +34,8 @@ begin
 	if not exists(select AutoID from OpportunityProduct where ProductDetailID=@ProductDetailID  and OpportunityID=@GUID)
 	begin
 		insert into OpportunityProduct(OpportunityID,ProductDetailID,ProductID,UnitID,Quantity,Price,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,CreateUserID,ClientID,UnitName)
-		select @GUID,@ProductDetailID,@ProductID,p.UnitID,@Quantity,d.Price,@Quantity*d.Price,d.Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,@UserID,p.ClientID,u.UnitName
-	    from ProductDetail d join Products p  on d.ProductID=p.ProductID left join ProductUnit u on p.UnitID=u.UnitID where d.ProductDetailID=@ProductDetailID
+		select @GUID,@ProductDetailID,@ProductID,p.UnitID,@Quantity,d.Price,@Quantity*d.Price,d.Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,@UserID,p.ClientID,p.UnitName
+	    from ProductDetail d join Products p  on d.ProductID=p.ProductID where d.ProductDetailID=@ProductDetailID
 	end
 	else 
 	begin
@@ -51,8 +51,8 @@ begin
 	if not exists(select AutoID from OrderDetail where ProductDetailID=@ProductDetailID  and OrderID=@GUID)
 	begin
 		insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,Quantity,Price,TotalMoney,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,CreateUserID,ClientID,UnitName)
-		select @GUID,@ProductDetailID,@ProductID,p.UnitID,@Quantity,d.Price,@Quantity*d.Price,d.Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,@UserID,p.ClientID,u.UnitName
-	    from ProductDetail d join Products p  on d.ProductID=p.ProductID left join ProductUnit u on p.UnitID=u.UnitID where d.ProductDetailID=@ProductDetailID
+		select @GUID,@ProductDetailID,@ProductID,p.UnitID,@Quantity,d.Price,@Quantity*d.Price,d.Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,@UserID,p.ClientID,p.UnitName
+	    from ProductDetail d join Products p  on d.ProductID=p.ProductID where d.ProductDetailID=@ProductDetailID
 	end
 	else 
 	begin
@@ -69,10 +69,9 @@ begin
 	if not exists(select AutoID from ShoppingCart where ProductDetailID=@ProductDetailID and UserID=@UserID and OrderType=@OrderType and [GUID]=@GUID)
 	begin
 		insert into ShoppingCart(OrderType,ProductDetailID,ProductID,UnitID,IsBigUnit,Quantity,Price,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,ProviderName,CreateTime,UserID,OperateIP,[GUID],UnitName)
-		select @OrderType,@ProductDetailID,@ProductID,p.UnitID,0,@Quantity,d.Price,d.Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,p.ProviderID,pro.Name,GETDATE(),@UserID,@OperateIP,@GUID,u.UnitName 
+		select @OrderType,@ProductDetailID,@ProductID,p.UnitID,0,@Quantity,d.Price,d.Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,p.ProviderID,pro.Name,GETDATE(),@UserID,@OperateIP,@GUID,p.UnitName 
 		from ProductDetail d join Products p on d.ProductID=p.ProductID 
 		left join Providers pro on p.ProviderID=pro.ProviderID
-		left join ProductUnit u on p.UnitID=u.UnitID
 		where d.ProductDetailID=@ProductDetailID 
 	end
 	else
@@ -85,9 +84,8 @@ begin
 	if not exists(select AutoID from ShoppingCart where ProductDetailID=@ProductDetailID and UserID=@UserID and OrderType=@OrderType and [GUID]=@GUID)
 	begin
 		insert into ShoppingCart(OrderType,ProductDetailID,ProductID,UnitID,IsBigUnit,Quantity,Price,Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,ProviderID,ProviderName,CreateTime,UserID,OperateIP,[GUID],UnitName)
-		select @OrderType,@ProductDetailID,@ProductID,p.UnitID,0,@Quantity,d.Price,d.Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,p.ProviderID,'',GETDATE(),@UserID,@OperateIP,@GUID,u.UnitName 
+		select @OrderType,@ProductDetailID,@ProductID,p.UnitID,0,@Quantity,d.Price,d.Remark,ProductName,ProductCode,DetailsCode,ProductImage,ImgS,p.ProviderID,'',GETDATE(),@UserID,@OperateIP,@GUID,p.UnitName 
 		from ProductDetail d join Products p on d.ProductID=p.ProductID 
-		left join ProductUnit u on p.UnitID=u.UnitID
 		where d.ProductDetailID=@ProductDetailID 
 	end
 	else

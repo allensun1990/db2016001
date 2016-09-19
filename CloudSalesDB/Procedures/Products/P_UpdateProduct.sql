@@ -30,6 +30,7 @@ CREATE PROCEDURE [dbo].[P_UpdateProduct]
 @AttrList nvarchar(max),
 @ValueList nvarchar(max),
 @AttrValueList nvarchar(max),
+@AttrValueStr nvarchar(max)='',
 @CommonPrice decimal(18,2),
 @Price decimal(18,2),
 @Weight decimal(18,2),
@@ -66,17 +67,17 @@ BEGIN
 	return
 END
 
-declare @Err int,@PIDList nvarchar(max),@SaleAttr  nvarchar(max),@HasDetails int=0,@DPrice decimal(18,4)
+declare @Err int,@PIDList nvarchar(max),@SaleAttr  nvarchar(max),@SaleAttrStr nvarchar(max),@HasDetails int=0,@DPrice decimal(18,4)
 
 set @Err=0
 
-select @PIDList=PIDList,@SaleAttr=SaleAttr from Category where CategoryID=@CategoryID
+select @PIDList=PIDList,@SaleAttr=SaleAttr,@SaleAttrStr=SaleAttrStr from Category where CategoryID=@CategoryID
 
 select @DPrice=Price from [Products] where ProductID=@ProductID
 
 Update [Products] set [ProductName]=@ProductName,ProductCode=@ProductCode,[GeneralName]=@GeneralName,[IsCombineProduct]=@IsCombineProduct,[BrandID]=@BrandID,
-						[BigUnitID]=@BigUnitID,[UnitID]=@UnitID,[BigSmallMultiple]=@BigSmallMultiple ,CategoryID=@CategoryID,
-						[CategoryIDList]=@PIDList,[SaleAttr]=@SaleAttr,[AttrList]=@AttrList,[ValueList]=@ValueList,[AttrValueList]=@AttrValueList,
+						[BigUnitID]=@BigUnitID,[UnitName]=@UnitID,[BigSmallMultiple]=@BigSmallMultiple ,CategoryID=@CategoryID,SaleAttrStr=@SaleAttrStr,
+						[CategoryIDList]=@PIDList,[SaleAttr]=@SaleAttr,[AttrList]=@AttrList,[ValueList]=@ValueList,[AttrValueList]=@AttrValueList,AttrValueStr=@AttrValueStr,
 						[CommonPrice]=@CommonPrice,[Price]=@Price,[PV]=0,[Status]=@Status,ProductImage=@ProductImg,
 						[IsNew]=@Isnew,[IsRecommend]=@IsRecommend ,[DiscountValue]=@DiscountValue,[Weight]=@Weight ,[EffectiveDays]=@EffectiveDays,
 						IsAllow=@IsAllow,IsAutoSend=@IsAutoSend,WarnCount=@WarnCount,ProviderID=@ProviderID,
