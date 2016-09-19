@@ -86,8 +86,9 @@ begin tran
 		declare @detailstrs nvarchar(4000)
 		set @detailstrs=''
 		while exists(select ID from @TempDetailTable where [Status]=0) 
-		begin
+		begin			
 			declare @tempDetailID varchar(50),@detailID varchar(50),@tempremark varchar(300),@quantity int
+			set @detailID=''
 			select top 1 @tempDetailID=ID,@quantity=Quantity from @TempDetailTable where status=0  
 
 			select  @detailID=ProductDetailID from ProductDetail   where  ProductID=@temppoductid   
@@ -103,6 +104,10 @@ begin tran
 					[Weight],ImgS,ShapeCode,[Description],@UserID,getdate(),getdate(),'',@ClientID from ProductDetail where ProductDetailID=@tempDetailID
 				set @Err+=@@Error
 				Update Products set HasDetails=1 where ProductID=@temppoductid and HasDetails=0 				
+			end
+			else
+			begin
+				update ProductDetail set status=1 where ProductDetailID=@detailID and Status=9
 			end
 			set @detailstrs=@detailID+':'+cast(@quantity as varchar)+','+@detailstrs
 			update @TempDetailTable set [status]=1 where  ID=@tempDetailID
