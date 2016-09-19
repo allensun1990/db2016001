@@ -16,7 +16,7 @@ GO
 ************************************************************/
 CREATE PROCEDURE [dbo].[P_InsertProductDetail]
 @ProductID nvarchar(64),
-@ProductCode nvarchar(200),
+@ProductCode nvarchar(200)='',
 @BigPrice decimal(18,2),
 @AttrList nvarchar(max),
 @ValueList nvarchar(max),
@@ -25,8 +25,8 @@ CREATE PROCEDURE [dbo].[P_InsertProductDetail]
 @Weight decimal(18,2),
 @ProductImg nvarchar(4000),
 @Remark nvarchar(4000)='', 
-@Description text,
-@ShapeCode nvarchar(50),
+@Description text='',
+@ShapeCode nvarchar(50)='',
 @CreateUserID nvarchar(64),
 @ClientID nvarchar(64),
 @DetailID nvarchar(64) output,

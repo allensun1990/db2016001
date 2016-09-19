@@ -30,6 +30,7 @@ CREATE PROCEDURE [dbo].[P_InsertProduct]
 @ValueList nvarchar(max),
 @AttrValueList nvarchar(max),
 @AttrValueStr nvarchar(max)='',
+@SaleAttrStr nvarchar(max)='',
 @CommonPrice decimal(18,2),
 @Price decimal(18,2),
 @Weight decimal(18,2),
@@ -53,11 +54,14 @@ AS
 
 begin tran
 
-declare @Err int,@PIDList nvarchar(max),@SaleAttr  nvarchar(max),@SaleAttrStr nvarchar(max),@HasDetails int=0
+declare @Err int,@PIDList nvarchar(max),@SaleAttr  nvarchar(max),@HasDetails int=0
 set @Err=0
 set @ProductID=NEWID()
 
-select @PIDList=PIDList,@SaleAttr=SaleAttr,@SaleAttrStr=SaleAttrStr from Category where CategoryID=@CategoryID
+if(@CMGoodsID is null or @CMGoodsID='')
+begin
+	select @PIDList=PIDList,@SaleAttr=SaleAttr,@SaleAttrStr=SaleAttrStr from Category where CategoryID=@CategoryID
+end
 
 IF EXISTS(SELECT AutoID FROM [Products] WHERE [ProductCode]=@ProductCode and ClientID=@ClientID and Status<>9)--产品编号唯一，编号不存在时才能执行插入
 BEGIN
