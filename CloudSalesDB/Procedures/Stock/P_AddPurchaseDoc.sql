@@ -41,8 +41,7 @@ begin tran
 	select  @AutoID=1,@NewCode=@DocCode+convert(nvarchar(10),@AutoID),@OrderID=NEWID(),@CustomerID='',@OwnerID='',@PProviderID=''
 	
 	declare	@TempTable table(ID varchar(64),Quantity int)
-	
-	
+	declare	@TempDetailTable table(ID varchar(64),Quantity int,status int default(0)) 	
 
 	if(@WareID='')
 	begin
@@ -56,11 +55,10 @@ begin tran
 		set @sql= replace(@sql,':',''',Quantity=''') 
 		insert into @TempTable(ID,Quantity) exec (@sql)
 		/*自家店铺*/
-		select @ProviderName=Name,@PProviderID=CMClientID,@prociderType=ProviderType  from Providers where ClientID=@ClientID and ProviderType=1
+		select @ProviderName=Name,@PProviderID=CMClientID,@prociderType=ProviderType  from Providers where ClientID=@ClientID and ProviderType=1	
 	end 
 	else
 	begin 
-		declare	@TempDetailTable table(ID varchar(64),Quantity int,status int default(0)) 
 		set @sql='select ID='''+ replace(@ProductDetails,',',''' union all select ''')+''''
 		set @sql= replace(@sql,':',''',Quantity=''') 
 		insert into @TempDetailTable(ID,Quantity) exec (@sql)
@@ -117,12 +115,11 @@ begin tran
 		set @sql= replace(@sql,':',''',Quantity=''') 
 		insert into @TempTable(ID,Quantity) exec (@sql)
 	end
-
+	--1.本地采购单明细生成
 	select identity(int,1,1) as AutoID,ProductDetailID,a.ProductID,UnitID,Quantity,a.Price,a.Remark,
 	ProductName,ProductCode,DetailsCode,ProductImage,ImgS  into #TempDetail
 	from ProductDetail  a join Products b on a.ProductID=b.ProductID join @TempTable c on c.ID=a.ProductDetailID 	
-	where  b.ProductID=@temppoductid   --@ProductID and a.ClientID= case @prociderType when 1 then @ClientID  else @PProviderID end 
-
+	where  b.ProductID=@temppoductid  
 	while exists(select AutoID from #TempDetail where AutoID=@AutoID)
 	begin	
 		select @ProductDetailID=ProductDetailID from #TempDetail where AutoID=@AutoID
@@ -138,23 +135,44 @@ begin tran
 
 		insert into StorageDetail(DocID,ProductDetailID,ProductID,UnitID,UnitName,IsBigUnit,Quantity,Price,TotalMoney,WareID,DepotID,BatchCode,Status,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage)
 		select @DocID,ProductDetailID,@ProductID,UnitID,'',0,Quantity,Price,Price*Quantity,@WareID,@DepotID,'',0,Remark,@ClientID,ProductName,ProductCode,DetailsCode,isnull(ImgS,ProductImage) from #TempDetail  where  AutoID=@AutoID
-		set @Err+=@@Error
-		if(@prociderType=2)
-		 begin
-			insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,UnitName,IsBigUnit,Quantity,Price,TotalMoney,DepotID,BatchCode,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,CreateTime,CreateUserID,ProviderID,ProviderName)
-			select @OrderID,ProductDetailID,@ProductID,UnitID,'',0,Quantity,Price,Price*Quantity,@DepotID,'',Remark,@PProviderID,ProductName,ProductCode,DetailsCode,isnull(ImgS,ProductImage),GETDATE(),@UserID,@ProviderID,@ProviderName from #TempDetail  where  AutoID=@AutoID
-			set @Err+=@@Error
-		end		
+		set @Err+=@@Error		
 		set @AutoID=@AutoID+1
 	end
-	drop table #TempDetail
+	drop table #TempDetail	
 	select @TotalMoney=sum(TotalMoney) from StorageDetail where DocID=@DocID
-
 	insert into StorageDoc(DocID,DocCode,DocType,Status,TotalMoney,CityCode,Address,Remark,WareID,ProviderID,CreateUserID,CreateTime,OperateIP,ClientID,ProviderName,SourceType)
 	values(@DocID,@NewCode,@DocType,0,@TotalMoney,@CityCode,@Address,@Remark,@WareID,@ProviderID,@UserID,GETDATE(),'',@ClientID,@ProviderName,@SourceType) 
 	set @Err+=@@Error
-	 if(@prociderType=2)
-	 begin
+
+	if(@prociderType=2)
+	begin
+		--2.供应商销售订单明细
+		set @AutoID=1
+		select identity(int,1,1) as AutoID,ProductDetailID,a.ProductID,UnitID,Quantity,a.Price,a.Remark,
+		ProductName,ProductCode,DetailsCode,ProductImage,ImgS  into #TempPDetail
+		from ProductDetail  a join Products b on a.ProductID=b.ProductID join @TempDetailTable c on c.ID=a.ProductDetailID 	
+		where  b.ProductID=@ProductID 
+		print @ProductID
+		select * from  #TempPDetail
+		while exists(select AutoID from #TempPDetail where AutoID=@AutoID)
+		begin	
+			select @ProductDetailID=ProductDetailID from #TempPDetail where AutoID=@AutoID		
+			if exists(select AutoID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID)
+			begin
+				select top 1 @DepotID= DepotID from ProductStock where ProductDetailID=@ProductDetailID and WareID=@WareID
+			end
+			else
+			begin
+				select top 1 @DepotID = DepotID from DepotSeat where WareID=@WareID and Status=1
+			end
+			insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,UnitName,IsBigUnit,Quantity,Price,TotalMoney,DepotID,BatchCode,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,CreateTime,CreateUserID,ProviderID,ProviderName)
+			select @OrderID,ProductDetailID,@ProductID,UnitID,'',0,Quantity,Price,Price*Quantity,@DepotID,'',Remark,@PProviderID,ProductName,ProductCode,DetailsCode,isnull(ImgS,ProductImage),GETDATE(),@UserID,@ProviderID,@ProviderName from #TempPDetail  where  AutoID=@AutoID
+			set @Err+=@@Error
+			set @AutoID=@AutoID+1
+		end			
+
+		drop table #TempPDetail	
+
 		declare @TypeID nvarchar(64)
 		select @TypeID=TypeID from OrderType where TypeCode='SelfServicOrder' and Clientid=@PProviderID
 		select top 1 @CustomerID=Customerid,@OwnerID=OwnerID from Customer where ChildClientid=@ClientID and Clientid=@PProviderID
