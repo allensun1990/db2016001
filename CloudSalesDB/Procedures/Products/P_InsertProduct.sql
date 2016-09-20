@@ -15,6 +15,7 @@ GO
 调试记录： exec P_InsertProduct 
 ************************************************************/
 CREATE PROCEDURE [dbo].[P_InsertProduct]
+@SourceType int=0,
 @ProductCode nvarchar(200),
 @ProductName nvarchar(200),
 @GeneralName nvarchar(200),
@@ -86,11 +87,11 @@ END
 --	set @HasDetails=1
 --end
 
-INSERT INTO [Products]([ProductID],[ProductCode],[ProductName],[GeneralName],[IsCombineProduct],[BrandID],[BigUnitID],[UnitName],[BigSmallMultiple] ,
+INSERT INTO [Products](SourceType,[ProductID],[ProductCode],[ProductName],[GeneralName],[IsCombineProduct],[BrandID],[BigUnitID],[UnitName],[BigSmallMultiple] ,
 						[CategoryID],[CategoryIDList],[SaleAttr],SaleAttrStr,[AttrList],[ValueList],[AttrValueList],AttrValueStr,[CommonPrice],[Price],[PV],[TaxRate],[Status],
 						[OnlineTime],[UseType],[IsNew],[IsRecommend] ,[IsDiscount],[DiscountValue],[SaleCount],[Weight] ,[ProductImage],[EffectiveDays],
 						[ShapeCode] ,[ProviderID],[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID],IsAllow,IsAutoSend,HasDetails,WarnCount,CMGoodsID,CMGoodsCode)
-			VALUES(@ProductID,@ProductCode,@ProductName,@GeneralName,@IsCombineProduct,@BrandID,@BigUnitID,@UnitID,@BigSmallMultiple,
+			VALUES(@SourceType,@ProductID,@ProductCode,@ProductName,@GeneralName,@IsCombineProduct,@BrandID,@BigUnitID,@UnitID,@BigSmallMultiple,
 				@CategoryID,@PIDList,@SaleAttr,@SaleAttrStr,@AttrList,@ValueList,@AttrValueList,@AttrValueStr,@CommonPrice,@Price,@Price,0,@Status,
 				getdate(),0,@Isnew,@IsRecommend,1,@DiscountValue,0,@Weight,@ProductImg,@EffectiveDays,@ShapeCode,@ProviderID,@Description,@CreateUserID,
 				getdate(),getdate(),'',@ClientID,@IsAllow,@IsAutoSend,@HasDetails,@WarnCount,@CMGoodsID,@CMGoodsCode);

@@ -47,7 +47,8 @@ begin
 	set @UserID=NEWID()
 end
 
-declare @Err int ,@DepartID nvarchar(64),@RoleID nvarchar(64),@AgentID nvarchar(64),@WareID nvarchar(64),@MDProjectID nvarchar(64)='',@CMClientID nvarchar(64)=''
+declare @Err int ,@DepartID nvarchar(64),@RoleID nvarchar(64),@AgentID nvarchar(64),@WareID nvarchar(64),@MDProjectID nvarchar(64)='',
+	    @CMClientID nvarchar(64)='',@IsMall int=0
 
 select @Err=0,@DepartID=NEWID(),@RoleID=NEWID(),@AgentID=NEWID(),@WareID=NEWID()
 
@@ -109,6 +110,7 @@ begin
 		return
 	end
 	set @CMClientID=@CompanyID
+	set @IsMall=1
 end
 
 --客户端编码不能重复
@@ -124,8 +126,8 @@ insert into Clients(ClientID,CompanyName,ContactName,MobilePhone,Status,Industry
 set @Err+=@@error
 
 --直营代理商
-insert into Agents(AgentID,CompanyName,Status,RegisterType,IsDefault,MDProjectID,ClientID,UserQuantity,EndTime,CMClientID) 
-			values(@AgentID,'公司直营',1,@RegisterType,1,@MDProjectID,@ClientID,20,dateadd(MONTH, 1, GETDATE()),@CMClientID)
+insert into Agents(AgentID,CompanyName,Status,RegisterType,IsDefault,MDProjectID,ClientID,UserQuantity,EndTime,CMClientID,IsMall) 
+			values(@AgentID,'公司直营',1,@RegisterType,1,@MDProjectID,@ClientID,20,dateadd(MONTH, 1, GETDATE()),@CMClientID,@IsMall)
 
 --部门
 insert into Department(DepartID,Name,Status,CreateUserID,AgentID,ClientID) values (@DepartID,'系统管理',1,@UserID,@AgentID,@ClientID)
