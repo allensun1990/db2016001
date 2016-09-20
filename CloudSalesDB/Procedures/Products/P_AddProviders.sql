@@ -36,28 +36,30 @@ if(@CMClientID<>'' and exists(select AutoID from Providers where ClientID=@Clien
 begin
 	return
 end
-else if(@CMClientID<>'' and exists(select AutoID from Providers where ClientID=@ClientID and CMClientID=@CMClientID and Status=9))
-begin
-	Update Providers set Status=1 where ClientID=@ClientID and CMClientID=@CMClientID
-	return
-end
-
-begin tran
 
 declare @Err int=0,@PAgentID nvarchar(64),@SourceType nvarchar(64)
 
-insert into Providers(ProviderID,Name,Contact,MobileTele,Email,Website,CityCode,Address,Remark,CreateTime,CMClientID,CMClientCode,CreateUserID,AgentID,ClientID,ProviderType)
+begin tran
+if(@CMClientID<>'' and exists(select AutoID from Providers where ClientID=@ClientID and CMClientID=@CMClientID and Status=9))
+begin
+	Update Providers set Status=1 where ClientID=@ClientID and CMClientID=@CMClientID
+end
+else
+begin
+	insert into Providers(ProviderID,Name,Contact,MobileTele,Email,Website,CityCode,Address,Remark,CreateTime,CMClientID,CMClientCode,CreateUserID,AgentID,ClientID,ProviderType)
                values(@ProviderID ,@Name,@Contact ,@MobileTele,@Email,'',@CityCode,@Address,@Remark,getdate(),@CMClientID,@CMClientCode,@CreateUserID,@AgentID,@ClientID,@ProviderType)
+end
+
 set @Err+=@@error
 
 if(@CMClientID<>'' and  @ProviderType=1)
 begin
-	Update Agents set CMClientID=@CMClientID where AgentID=@AgentID and (CMClientID ='' or CMClientID is null)
+	Update Agents set CMClientID=@CMClientID,IsMall=1 where AgentID=@AgentID and (CMClientID ='' or CMClientID is null)
 end
 set @Err+=@@error
-if(@CMClientID<>'' and  @ProviderType=2 and not exists(select AutoID from Customer where ChildClientID=@CMClientID and ClientID=@ClientID))
+if(@CMClientID<>'' and  @ProviderType=2 and not exists(select AutoID from Customer where ChildClientID=@ClientID and ClientID=@CMClientID))
 begin
-	
+
 	select @PAgentID=AgentID from Clients where ClientID=@CMClientID
 	select @SourceType=SourceID from CustomSource where SourceCode='Source-Self' and ClientID=@CMClientID
 

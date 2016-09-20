@@ -22,7 +22,7 @@ CREATE PROCEDURE [dbo].[P_AddPurchaseDoc]
 @DocID nvarchar(64),
 @DocCode nvarchar(64),
 @DocType int,
-@SourceType int=1,
+@SourceType int=0,
 @TotalMoney decimal(18,2)=0,
 @PersonName varchar(50)='',
 @MobilePhone varchar(50)='',
@@ -64,6 +64,8 @@ begin tran
 	begin
 		select top 1 @WareID=WareID from WareHouse where Status=1 and ClientID=@ClientID
 	end   
+
+	select @SourceType=SourceType from [Products] where ProductID=@ProductID
 
 	--不存在产品
 	if not exists(select AutoID from Products where ClientID=@ClientID and CMGoodsID=@ProductID)
@@ -144,7 +146,7 @@ begin tran
 	select @TotalMoney=sum(TotalMoney) from StorageDetail where DocID=@DocID
 
 	insert into StorageDoc(DocID,DocCode,DocType,Status,TotalMoney,CityCode,Address,Remark,WareID,ProviderID,CreateUserID,CreateTime,OperateIP,ClientID,ProviderName,SourceType)
-	values(@DocID,@NewCode,@DocType,0,@TotalMoney,@CityCode,@Address,@Remark,@WareID,@ProviderID,@UserID,GETDATE(),'',@ClientID,@ProviderName,2) 
+	values(@DocID,@NewCode,@DocType,0,@TotalMoney,@CityCode,@Address,@Remark,@WareID,@ProviderID,@UserID,GETDATE(),'',@ClientID,@ProviderName,@SourceType) 
 	set @Err+=@@Error
 
 	--销售订单
@@ -157,8 +159,9 @@ begin tran
 	update Customer set OrderCount=OrderCount+1 where CustomerID=@CustomerID
 	 
 	insert into Orders(OrderID,OrderCode,TypeID,Status,SendStatus,OutStatus,ReturnStatus,TotalMoney,CityCode,Address,PersonName,MobileTele,Remark,CreateUserID,CreateTime,OperateIP,AgentID,ClientID,SourceType,CustomerID,OwnerID,OriginalID,OriginalCode)
-	values(@OrderID,@NewCode,'',1,0,0,0,@TotalMoney,@CityCode,@Address,@PersonName,@MobilePhone,@Remark,@UserID,GETDATE(),'',@NewAgentID,@CMClientID,2,@CustomerID,@OwnerID,@DocID,@NewCode)
+	values(@OrderID,@NewCode,'',1,0,0,0,@TotalMoney,@CityCode,@Address,@PersonName,@MobilePhone,@Remark,@UserID,GETDATE(),'',@NewAgentID,@CMClientID,@SourceType,@CustomerID,@OwnerID,@DocID,@NewCode)
 	set @Err+=@@Error
+
 if(@Err>0)
 begin
 	rollback tran
