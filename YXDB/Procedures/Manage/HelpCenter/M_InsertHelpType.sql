@@ -23,6 +23,7 @@ CREATE PROCEDURE [dbo].[M_InsertHelpType]
 	@ModuleType int,
 	@Img nvarchar(200)='',
 	@UserID nvarchar(64),
+	@Sort int,
 	@Result int output --0：失败，1：成功，2 分类名称已存在
 AS
 	if exists(select TypeID from M_HelpType where Status<>9 and Name=@Name and ModuleType=@ModuleType)
@@ -31,7 +32,7 @@ AS
 		return
 	end
 		
-	insert into M_HelpType (TypeID,Name,Remark,ModuleType,Icon,CreateUserID) values(@TypeID,@Name,@Remark,@ModuleType,@Img,@UserID)
-
+	insert into M_HelpType (TypeID,Name,Remark,ModuleType,Icon,CreateUserID,Sort) values(@TypeID,@Name,@Remark,@ModuleType,@Img,@UserID,@Sort)
+	set @Result=1
 GO
 

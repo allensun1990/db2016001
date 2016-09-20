@@ -46,7 +46,7 @@ AS
 	end
 	else
 	begin
-		if(@ModuleType<>'')
+		if(@ModuleType<>-1)
 		begin
 			set @condition +=' and c.TypeID in (select TypeID from M_HelpType where ModuleType='+
 		str(@ModuleType,2)+' and Status<>9) '
