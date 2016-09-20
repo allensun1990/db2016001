@@ -6,6 +6,10 @@ Go
 Update c set RegisterType=a.RegisterType  from Clients c join Agents a on c.AgentID=a.AgentID
 GO
 alter table Agents add CMClientID nvarchar(64)
+alter table Agents add IsMall int default 0
+GO
+Update Agents set IsMall=0
+Update Agents set IsMall=1 where CMClientID is not null and CMClientID<>''
 GO
 alter table Agents drop constraint DF__Agents__IsIntFac__1C3DEE80
 GO
@@ -21,6 +25,8 @@ Update Providers set ProviderType=0
 
 --增加订单来源
 alter table Orders add SourceType int default 1
+alter table Orders add OriginalID nvarchar(64)
+alter table Orders add OriginalCode nvarchar(64)
 GO
 Update Orders set SourceType=1
 
@@ -82,6 +88,12 @@ join ProductAttr a on p.SaleAttrValue like '%'+a.AttrID+'%' and p.ClientID=a.Cli
 update p set SaleAttrValue=REPLACE(SaleAttrValue,ValueID,ValueName) from ProductDetail p 
 join AttrValue a on p.SaleAttrValue like '%'+a.ValueID+'%' and p.ClientID=a.ClientID
 
+--处理产品来源
+alter table Products add SourceType int default 0
+GO
+Update Products set SourceType=0
+Update Products set SourceType=1 where ProviderID in (select ProviderID from Providers where ProviderType=1)
+Update Products set SourceType=2 where ProviderID in (select ProviderID from Providers where ProviderType=2)
 
 --单据表
  alter table storageDoc add SourceType int default(1)

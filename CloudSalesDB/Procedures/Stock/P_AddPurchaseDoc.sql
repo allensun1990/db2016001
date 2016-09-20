@@ -47,7 +47,7 @@ begin tran
 	@ProductDetailID varchar(64),@DepotID nvarchar(64),@NewProductID nvarchar(64),@NewProductDetailID nvarchar(64),@DRemark nvarchar(4000),
 	@ProviderID varchar(64),@ProviderType int,@ProviderName nvarchar(200)
 
-	select  @AutoID=1,@NewCode=@DocCode+convert(nvarchar(10),@AutoID),@OrderID=NEWID()
+	select  @AutoID=1,@NewCode=@DocCode+Convert(nvarchar(10),@AutoID),@OrderID=NEWID()
 	
 	select @ProviderID=ProviderID,@ProviderType=ProviderType,@ProviderName=Name 
 	from Providers where ClientID=@ClientID and CMClientID=@CMClientID and Status=1
@@ -69,11 +69,11 @@ begin tran
 	if not exists(select AutoID from Products where ClientID=@ClientID and CMGoodsID=@ProductID)
 	begin
 		set @NewProductID= NewID()
-		INSERT INTO [Products]([ProductID],[ProductCode],[ProductName],[GeneralName],[IsCombineProduct],[BrandID],[BigUnitID],[UnitName],[BigSmallMultiple] ,
+		INSERT INTO [Products](SourceType,[ProductID],[ProductCode],[ProductName],[GeneralName],[IsCombineProduct],[BrandID],[BigUnitID],[UnitName],[BigSmallMultiple] ,
 						[CategoryID],[CategoryIDList],[SaleAttr],SaleAttrStr,[AttrList],[ValueList],[AttrValueList],AttrValueStr,[CommonPrice],[Price],[PV],[TaxRate],[Status],
 						[OnlineTime],[UseType],[IsNew],[IsRecommend] ,[IsDiscount],[DiscountValue],[SaleCount],[Weight] ,[ProductImage],[EffectiveDays],
 						[ShapeCode] ,[ProviderID],[Description],[CreateUserID],[CreateTime] ,[UpdateTime],[OperateIP] ,[ClientID],IsAllow,IsAutoSend,HasDetails,WarnCount,CMGoodsID,CMGoodsCode)
-			select @NewProductID,[ProductCode],[ProductName],[GeneralName],[IsCombineProduct],'','',[UnitName],1 ,
+			select 2,@NewProductID,[ProductCode],[ProductName],[GeneralName],[IsCombineProduct],'','',[UnitName],1 ,
 						'','','',SaleAttrStr,'','','',AttrValueStr,[CommonPrice],[Price],[PV],[TaxRate],[Status],
 						getdate(),[UseType],1,0 ,1,1,0,[Weight] ,[ProductImage],[EffectiveDays],
 						[ShapeCode] ,@ProviderID,[Description],@UserID,getdate() ,getdate(),[OperateIP] ,@ClientID,0,0,1,WarnCount,ProductID,ProductCode
@@ -133,9 +133,9 @@ begin tran
 		
 		--店铺插入销售订单
 		insert into OrderDetail(OrderID,ProductDetailID,ProductID,UnitID,UnitName,IsBigUnit,Quantity,Price,TotalMoney,DepotID,BatchCode,Remark,ClientID,ProductName,ProductCode,DetailsCode,ProductImage,CreateTime,CreateUserID,ProviderID,ProviderName)
-			select @OrderID,@NewProductDetailID,@NewProductID,p.UnitID,p.UnitName,0,@Quantity,d.Price,d.Price*@Quantity,'','',Remark,@CMClientID,p.ProductName,p.ProductCode,d.DetailsCode,d.ImgS,GETDATE(),@UserID,'','' 
+			select @OrderID,@ProductDetailID,@ProductID,p.UnitID,p.UnitName,0,@Quantity,d.Price,d.Price*@Quantity,'','',Remark,@CMClientID,p.ProductName,p.ProductCode,d.DetailsCode,d.ImgS,GETDATE(),@UserID,'','' 
 			from ProductDetail d join Products p on d.ProductID=p.ProductID 
-			where d.ProductDetailID=@NewProductDetailID
+			where d.ProductDetailID=@ProductDetailID
 
 		set @AutoID=@AutoID+1
 	end
@@ -153,8 +153,11 @@ begin tran
 	begin
 		select @NewAgentID=AgentID from Clients where ClientID=@CMClientID
 	end
-	insert into Orders(OrderID,OrderCode,TypeID,Status,SendStatus,OutStatus,ReturnStatus,TotalMoney,CityCode,Address,PersonName,MobileTele,Remark,CreateUserID,CreateTime,OperateIP,AgentID,ClientID,SourceType,CustomerID,OwnerID)
-	values(@OrderID,@NewCode,'',1,0,0,0,@TotalMoney,@CityCode,@Address,@PersonName,@MobilePhone,@Remark,@UserID,GETDATE(),'',@NewAgentID,@CMClientID,2,@CustomerID,@OwnerID)
+
+	update Customer set OrderCount=OrderCount+1 where CustomerID=@CustomerID
+	 
+	insert into Orders(OrderID,OrderCode,TypeID,Status,SendStatus,OutStatus,ReturnStatus,TotalMoney,CityCode,Address,PersonName,MobileTele,Remark,CreateUserID,CreateTime,OperateIP,AgentID,ClientID,SourceType,CustomerID,OwnerID,OriginalID,OriginalCode)
+	values(@OrderID,@NewCode,'',1,0,0,0,@TotalMoney,@CityCode,@Address,@PersonName,@MobilePhone,@Remark,@UserID,GETDATE(),'',@NewAgentID,@CMClientID,2,@CustomerID,@OwnerID,@DocID,@NewCode)
 	set @Err+=@@Error
 if(@Err>0)
 begin

@@ -36,11 +36,10 @@ begin
 end
 else
 begin
-	select s.AutoID,s.ProductDetailID,s.ProductID,s.Quantity,s.Remark ,p.ProductName,u.UnitID,u.UnitName,s.Price,s.TotalMoney,d.Imgs ,s.ApplyQuantity,s.ReturnQuantity
+	select s.AutoID,s.ProductDetailID,s.ProductID,s.Quantity,s.Remark ,p.ProductName,p.UnitID,p.UnitName,s.Price,s.TotalMoney,d.Imgs ,s.ApplyQuantity,s.ReturnQuantity
 	from AgentsOrderDetail s 
 	join ProductDetail d on d.ProductDetailID=s.ProductDetailID
 	join Products p  on s.ProductID=p.ProductID
-	join ProductUnit u on s.UnitID=u.UnitID
 	where s.OrderID=@OrderID 
 end
 
