@@ -120,8 +120,8 @@ begin
 end
 
 --客户端
-insert into Clients(ClientID,CompanyName,ContactName,MobilePhone,Status,Industry,CityCode,Address,Description,AgentID,CreateUserID,UserQuantity,EndTime,ClientCode,RegisterType) 
-				values(@ClientID,@ClientName,@ContactName,@MobilePhone,1,@Industry,@CityCode,@Address,@Description,@AgentID,@CreateUserID,20,dateadd(MONTH, 1, GETDATE()),@ClientCode,@RegisterType)
+insert into Clients(ClientID,CompanyName,ContactName,MobilePhone,Status,Industry,CityCode,Address,Description,AgentID,CreateUserID,UserQuantity,EndTime,ClientCode,RegisterType,CMClientID,IsMall) 
+				values(@ClientID,@ClientName,@ContactName,@MobilePhone,1,@Industry,@CityCode,@Address,@Description,@AgentID,@CreateUserID,20,dateadd(MONTH, 1, GETDATE()),@ClientCode,@RegisterType,@CMClientID,@IsMall)
 
 set @Err+=@@error
 

@@ -63,6 +63,7 @@ declare @Err int=0
 
 	set @Err+=@@error
 
+	Update Clients set CMClientID=@ProjectID,IsMall=1 where AgentID=@ClientID
 	Update Agents set CMClientID=@ProjectID,IsMall=1 where AgentID=@AgentID
 
 	insert into UserAccounts (AccountName,ProjectID,AccountType,UserID,AgentID,ClientID)
