@@ -38,7 +38,7 @@ AS
 	@key='TypeID',
 	@columns='* ',
 	@condition='Status<>9',	
-	@orderColumn='c.Sort asc,',
+	@orderColumn=',c.Sort asc',
 	@isAsc=0
 
 	if(@types<>-1)

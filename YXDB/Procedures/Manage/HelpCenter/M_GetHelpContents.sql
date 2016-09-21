@@ -39,7 +39,7 @@ AS
 	@columns='c.*,t.name as typename,t.moduletype ',
 	@key='c.ContentID',
 	@condition='c.Status<>9',
-	@orderColumn='c.Sort asc,',
+	@orderColumn=',c.Sort asc',
 	@isAsc=0
 	
 	if(@typeID<>'')
