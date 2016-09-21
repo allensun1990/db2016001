@@ -31,34 +31,39 @@ AS
 	@key nvarchar(100),
 	@columns nvarchar(4000),
 	@condition nvarchar(4000),	
-	@orderColumn nvarchar(4000),
+	@orderColumn nvarchar(4000),	
 	@isAsc int
 
-	select @tableName='M_HelpType',
+	select @tableName='M_HelpType as c',
 	@key='TypeID',
 	@columns='* ',
-	@condition='Status<>9',
-	@orderColumn='M_HelpType.CreateTime desc',
+	@condition='Status<>9',	
+	@orderColumn=',c.Sort asc',
 	@isAsc=0
 
 	if(@types<>-1)
 	begin
-		set @condition +=' and M_HelpType.ModuleType = '+convert(nvarchar(2), @types)
+		set @condition +=' and c.ModuleType = '+convert(nvarchar(2), @types)
 	end
 
 	if(@BeginTime<>'')
 	begin
-		set @condition +=' and M_HelpType.CreateTime >= '''+@BeginTime+' 0:00:00'''
+		set @condition +=' and c.CreateTime >= '''+@BeginTime+' 0:00:00'''
 	end
 
 	if(@EndTime<>'')
 	begin
-		set @condition +=' and M_HelpType.CreateTime <=  '''+@EndTime+' 23:59:59'''
+		set @condition +=' and c.CreateTime <=  '''+@EndTime+' 23:59:59'''
 	end
 
 	if(@keyWords <> '')
 	begin
-		set @condition +=' and (M_HelpType.Name like ''%'+@keyWords+'%'')'
+		set @condition +=' and (c.Name like ''%'+@keyWords+'%'')'
+	end
+
+	if(@orderBy<>'')
+	begin
+		set @orderBy+=''+@orderColumn+''
 	end
 
 	declare @total int,@page int

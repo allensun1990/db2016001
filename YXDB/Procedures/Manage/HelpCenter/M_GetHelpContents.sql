@@ -32,12 +32,14 @@ AS
 	@columns nvarchar(4000),
 	@key nvarchar(100),
 	@condition nvarchar(4000),	
+	@orderColumn nvarchar(4000),	
 	@isAsc int
 	
 	select @tableName ='M_HelpContent as c left join M_Helptype as t on c.typeid=t.typeid',
 	@columns='c.*,t.name as typename,t.moduletype ',
 	@key='c.ContentID',
 	@condition='c.Status<>9',
+	@orderColumn=',c.Sort asc',
 	@isAsc=0
 	
 	if(@typeID<>'')
@@ -65,12 +67,16 @@ AS
 
 	if(@keyWords <> '')
 	begin
-		set @condition +=' and (c.KeyWords like ''%'+@keyWords+'%'' )'
+		set @condition +=' and (c.KeyWords like ''%'+@keyWords+'%'' or c.Title like ''%'+@keyWords+'%'')'
+	end
+
+	if(@orderBy<>'')
+	begin
+		set @orderBy+=''+@orderColumn+''
 	end
 
 	declare @total int,@page int
 	exec P_GetPagerData @tableName,@columns,@condition,@key,@orderBy,@pageSize,@pageIndex,@total out,@page out,@isAsc 
 	select @totalCount=@total,@pageCount =@page
-
 GO
 
