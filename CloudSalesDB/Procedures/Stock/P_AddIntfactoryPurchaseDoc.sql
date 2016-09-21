@@ -13,9 +13,27 @@ GO
 参数说明：	 
 编写日期： 2016/09/20
 程序作者： Allen
-调试记录： exec P_AddIntfactoryPurchaseDoc 
- @SaleAttrStr 颜色,尺码
- @ProductDetails  红色,M|颜色:红色,尺码:M|100|100.00|[颜色：红色][尺码：M]&...
+调试记录： 
+		exec P_AddIntfactoryPurchaseDoc 
+		@GoodsID = N'DF399AAE-782E-4F72-AD97-E55E3204CA96',
+		@GoodsCode = N'NO1232323',
+		@GoodsName = N'最新款',
+		@Price = 66,
+		@SaleAttrStr = N'颜色,尺码',
+		@ProductDetails = N'白色,L|颜色:白色,尺码:L|10|660|[颜色：白色][尺码：L]&红色,M|颜色:红色,尺码:M|20|1320|[颜色：红色][尺码：M]&红色,L|颜色:红色,尺码:L|30|1980|[颜色：红色][尺码：L]',
+		@CMClientID = N'eda082bc-b848-4de8-8776-70235424fc06',
+		@DocID = N'E08E44E3-7E4C-4FAC-80D7-BF6969155025',
+		@DocCode = N'20160920161932190',
+		@DocType = 2,
+		@SourceType = 0,
+		@TotalMoney = 3300,
+		@PersonName = N'剑客',
+		@MobilePhone = N'+8613120611062',
+		@CityCode = N'330411',
+		@Address = N'长宁区中山西路1279弄6号6楼',
+		@UserID = N'f2124924-76cc-4bec-bac3-80ff56fbc753',
+		@AgentID = N'1FCDECFF-B600-4A8B-A3CF-E97BE232952C',
+		@ClientID = N'5e4e595e-ca34-4bb4-be6b-6a437f72159c'
 ************************************************************/
 CREATE PROCEDURE [dbo].[P_AddIntfactoryPurchaseDoc]
 @GoodsID nvarchar(64),
@@ -55,7 +73,7 @@ begin tran
 	@ProviderID varchar(64),@ProviderType int,@ProviderName nvarchar(200)
 
 	select  @AutoID=1,@NewCode=@DocCode+Convert(nvarchar(10),@AutoID),@OrderID=NEWID()
-	
+
 	select @ProviderID=ProviderID,@ProviderType=ProviderType,@ProviderName=Name 
 	from Providers where ClientID=@ClientID and CMClientID=@CMClientID and Status=1
 	--店铺未关注
@@ -64,7 +82,6 @@ begin tran
 		rollback tran
 		return
 	end
-
 	--供应商客户不存在产品
 	if not exists(select AutoID from Products where ClientID=@CMClientID and CMGoodsID=@GoodsID)
 	begin
@@ -124,7 +141,6 @@ begin tran
 	begin
 		select @NewProductID=ProductID from Products where ClientID=@ClientID and CMGoodsID=@ProductID
 	end
-
 
 	declare	@TempDetailTable table(AutoID int identity(1,1), Value nvarchar(4000))
 	create table #TempDetailInfo(AutoID int identity(1,1), Value nvarchar(4000))
