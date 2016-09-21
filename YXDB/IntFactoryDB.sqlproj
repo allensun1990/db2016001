@@ -501,5 +501,7 @@
     <None Include="Procedures\Manage\HelpCenter\M_GetHelpTypes.sql" />
     <None Include="Procedures\Manage\HelpCenter\M_InsertHelpContent.sql" />
     <None Include="Procedures\Manage\HelpCenter\M_InsertHelpType.sql" />
+    <Build Include="Procedures\Manage\HelpCenter\M_UpdateHelpType.sql" />
+    <Build Include="Procedures\Manage\HelpCenter\M_UpdateHelpContent.sql" />
   </ItemGroup>
 </Project>
