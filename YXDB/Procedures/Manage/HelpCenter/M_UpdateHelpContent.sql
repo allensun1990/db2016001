@@ -28,7 +28,7 @@ CREATE PROCEDURE [dbo].[M_UpdateHelpContent]
 AS
 	declare @oldSort int
 
-	select @oldSort=Sort from M_HelpContent where TypeID=@TypeID
+	select @oldSort=Sort from M_HelpContent where ContentID=@ContentID
 	
 	if(@oldSort<@Sort)
 	begin
