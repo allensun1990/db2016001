@@ -19,13 +19,19 @@ CREATE PROCEDURE [dbo].[P_UpdateOrderPrice]
 	@AutoID int ,
 	@Price decimal(18,4)=0 ,
 	@OperateID nvarchar(64)='',
-	@ClientID nvarchar(64)=''
+	@ClientID nvarchar(64)='',
+	@TaskID nvarchar(64)=''
 AS
 	
 begin tran
 
 declare @Err int=0,@Status int,@TotalMoney decimal(18,4),@PurchaseStatus int, @OrderType int,@OrderAttrID nvarchar(64),@AvgPrice decimal(18,4)
 
+if(@TaskID<>'' and exists(select AutoID from OrderTask where TaskID=@TaskID and FinishStatus=2 and LockStatus=1 ))
+begin
+	rollback tran
+	return
+end
 
 select @Status=OrderStatus,@PurchaseStatus=PurchaseStatus,@OrderType=@OrderType 
 from Orders where OrderID=@OrderID 
@@ -46,11 +52,7 @@ begin
 end
 else
 begin
-	if(@Status<>1)
-	begin
-		rollback tran
-		return
-	end
+
 	update OrderDetail set Price=@Price,TotalMoney=@Price*(PlanQuantity+PurchaseQuantity) where OrderID=@OrderID and AutoID=@AutoID
 
 	select @TotalMoney=sum(TotalMoney) from OrderDetail where OrderID=@OrderID

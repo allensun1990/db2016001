@@ -22,10 +22,19 @@ CREATE PROCEDURE [dbo].[P_CreateProductUseQuantity]
 @OperateIP nvarchar(64),
 @ClientID nvarchar(64),
 @Result int output,
-@ErrInfo nvarchar(500) output
+@ErrInfo nvarchar(500) output,
+@TaskID nvarchar(64)=''
 AS
 
 begin tran
+
+if(@TaskID<>'' and exists(select AutoID from OrderTask where TaskID=@TaskID and FinishStatus=2 and LockStatus=1 ))
+begin
+	set @Result=2 
+	set @ErrInfo='任务已完成！'
+	rollback tran
+	return
+end
 
 declare @Err int=0,@Status int,@OrderCode nvarchar(50),@DocID nvarchar(64)=NewID(),
 @DocImage nvarchar(2000),@DocImages nvarchar(4000)

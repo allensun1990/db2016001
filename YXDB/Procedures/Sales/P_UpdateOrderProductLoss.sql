@@ -19,21 +19,22 @@ CREATE PROCEDURE [dbo].[P_UpdateOrderProductLoss]
 	@AutoID int ,
 	@Quantity decimal(18,4)=0 ,
 	@OperateID nvarchar(64)='',
-	@ClientID nvarchar(64)=''
+	@ClientID nvarchar(64)='',
+	@TaskID nvarchar(64)=''
 AS
 	
 begin tran
 
 declare @Err int=0,@Status int,@TotalMoney decimal(18,4),@PurchaseStatus int
 
-select @Status=OrderStatus,@PurchaseStatus=PurchaseStatus from Orders 
-where OrderID=@OrderID  and (ClientID=@ClientID or EntrustClientID=@ClientID)
-
-if(@Status <> 1)
+if(@TaskID<>'' and exists(select AutoID from OrderTask where TaskID=@TaskID and FinishStatus=2 and LockStatus=1 ))
 begin
 	rollback tran
 	return
 end
+
+select @Status=OrderStatus,@PurchaseStatus=PurchaseStatus from Orders 
+where OrderID=@OrderID  and (ClientID=@ClientID or EntrustClientID=@ClientID)
 
 update OrderDetail set Loss=@Quantity,TotalMoney=Price*(Quantity+@Quantity) where OrderID=@OrderID and AutoID=@AutoID
 

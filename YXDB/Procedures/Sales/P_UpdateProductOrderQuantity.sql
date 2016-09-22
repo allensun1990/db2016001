@@ -19,12 +19,19 @@ CREATE PROCEDURE [dbo].[P_UpdateProductOrderQuantity]
 	@AutoID int ,
 	@Quantity int=1 ,
 	@OperateID nvarchar(64)='',
-	@ClientID nvarchar(64)=''
+	@ClientID nvarchar(64)='',
+	@TaskID nvarchar(64)=''
 AS
 	
 begin tran
 
 declare @Err int=0,@Status int,@TotalMoney decimal(18,4),@PurchaseStatus int
+
+if(@TaskID<>'' and exists(select AutoID from OrderTask where TaskID=@TaskID and FinishStatus=2 and LockStatus=1 ))
+begin
+	rollback tran
+	return
+end
 
 select @Status=OrderStatus,@PurchaseStatus=PurchaseStatus from Orders 
 where OrderID=@OrderID  and (ClientID=@ClientID or EntrustClientID=@ClientID)

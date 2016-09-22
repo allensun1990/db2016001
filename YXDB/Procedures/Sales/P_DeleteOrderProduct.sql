@@ -18,22 +18,23 @@ CREATE PROCEDURE [dbo].[P_DeleteOrderProduct]
 	@OrderID nvarchar(64),
 	@AutoID int ,
 	@OperateID nvarchar(64)='',
-	@ClientID nvarchar(64)=''
+	@ClientID nvarchar(64)='',
+	@TaskID nvarchar(64)=''
 AS
 	
 begin tran
 
 declare @Err int=0,@Status int=-1,@TotalMoney decimal(18,4),@OrderType int,@OrderAttrID nvarchar(64),@AvgPrice decimal(18,4)
 
-select @Status=OrderStatus,@OrderType=OrderType from Orders where OrderID=@OrderID  and (ClientID=@ClientID or EntrustClientID=@ClientID)
-
-if(@Status>1 or @Status<0)
+if(@TaskID<>'' and exists(select AutoID from OrderTask where TaskID=@TaskID and FinishStatus=2 and LockStatus=1 ))
 begin
 	rollback tran
 	return
 end
 
-if exists(select AutoID  from OrderDetail where OrderID=@OrderID and AutoID=@AutoID and PurchaseQuantity=0 and InQuantity=0 and UseQuantity=0)
+select @Status=OrderStatus,@OrderType=OrderType from Orders where OrderID=@OrderID  and (ClientID=@ClientID or EntrustClientID=@ClientID)
+
+if @OrderType=1 or exists(select AutoID  from OrderDetail where OrderID=@OrderID and AutoID=@AutoID and PurchaseQuantity=0 and InQuantity=0 and UseQuantity=0)
 begin
 	if(@OrderType=1) --打样单
 	begin
