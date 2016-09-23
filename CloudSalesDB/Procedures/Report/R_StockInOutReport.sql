@@ -69,18 +69,20 @@ create  proc  R_StockInOutReport
 	group by Mark,ProductID,ProductDetailID
 
  set @columns=' d.ProductCode,d.ProductName,d.CategoryID,d.UnitID,a.*,isnull(b.Quantity,0) as InQuantity,isnull(c.Quantity,0) as OutQuantity ,
-	isnull(( select top 1 case mark when 0 then SurplusQuantity+Quantity else SurplusQuantity-Quantity  end as QCQuantity
-		from ProductStream where ProductDetailID=a.ProductDetailID and  CreateTime>='''+@beginTime+''' 
-		 and CreateTime <='''+@endTime+''' and ClientID='''+@clientID+''' order by CreateTime asc 
-	),0)as QCQuantity,
-   isnull((select top 1 case mark when 0 then SurplusQuantity+Quantity else SurplusQuantity-Quantity  end as JYQuantity
-		from ProductStream where ProductDetailID=a.ProductDetailID and  CreateTime>='''+@beginTime +'''
-		 and CreateTime <='''+@endTime+''' and ClientID='''+@clientID+''' order by CreateTime desc 
-	),0)as JYQuantity 
+	 isnull(e.StockIn,0) as StockIn,isnull(e.StockOut,0) as StockOut, 0 as QCQuantity,0 as JYQuantity 
+	--isnull(( select top 1 case mark when 0 then SurplusQuantity+Quantity else SurplusQuantity-Quantity  end as QCQuantity
+	--	from ProductStream where ProductDetailID=a.ProductDetailID and  CreateTime>='''+@beginTime+''' 
+	--	 and CreateTime <='''+@endTime+''' and ClientID='''+@clientID+''' order by CreateTime asc 
+	--),0)as QCQuantity,
+ --  isnull((select top 1 case mark when 0 then SurplusQuantity+Quantity else SurplusQuantity-Quantity  end as JYQuantity
+	--	from ProductStream where ProductDetailID=a.ProductDetailID and  CreateTime>='''+@beginTime +'''
+	--	 and CreateTime <='''+@endTime+''' and ClientID='''+@clientID+''' order by CreateTime asc 
+	--),0)as JYQuantity  
 	from ProductDetail a 
 	join Products d on a.ProductID=d.ProductID 
 	left join (select * from  #InOut where  Mark=0 ) b  on a.ProductDetailID=b.ProductDetailID 
 	left join (select * from  #InOut where  Mark=1 ) c on a.ProductDetailID=c.ProductDetailID 
+	left join ProductStock e on e.ProductDetailID=a.ProductDetailID
 	where a.status<>9 and d.status<>9 ' 
 
 	if(@pageIndex=0 or @pageIndex=1)
