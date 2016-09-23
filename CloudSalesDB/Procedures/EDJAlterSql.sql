@@ -98,7 +98,7 @@ Update Products set SourceType=1 where ProviderID in (select ProviderID from Pro
 Update Products set SourceType=2 where ProviderID in (select ProviderID from Providers where ProviderType=2)
 
 --单据表
- alter table storageDoc add SourceType int default(1)
+ alter table storageDoc add SourceType int default(0)
  go
  Update StorageDoc set SourceType=0
 
