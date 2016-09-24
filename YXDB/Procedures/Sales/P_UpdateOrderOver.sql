@@ -38,8 +38,11 @@ Update Orders set OrderStatus=8 where OrderID=@OrderID
 
 Update OrderTask set Status=8 where OrderID=@OrderID
 
-Update Goods set Status=8 where GoodsID=@GoodsID
+if(@OrderType=1)
+begin
 
+	Update Goods set Status=9 where GoodsID=@GoodsID
+end
 set @Err+=@@error
 
 if(@AliOrderCode is not null and @AliOrderCode<>'')
