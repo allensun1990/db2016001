@@ -38,7 +38,7 @@ AS
 	@key='TypeID',
 	@columns='* ',
 	@condition='Status<>9',	
-	@orderColumn=',c.Sort asc',
+	@orderColumn='c.Sort asc,',
 	@isAsc=0
 
 	if(@types<>-1)
@@ -63,11 +63,11 @@ AS
 
 	if(@orderBy<>'')
 	begin
-		set @orderBy+=''+@orderColumn+''
+		set @orderColumn+=''+@orderBy+''
 	end
 
 	declare @total int,@page int
-	exec P_GetPagerData @tableName,@columns,@condition,@key,@orderBy,@pageSize,@pageIndex,@total out,@page out,@isAsc 
+	exec P_GetPagerData @tableName,@columns,@condition,@key,@orderColumn,@pageSize,@pageIndex,@total out,@page out,@isAsc 
 	select @totalCount=@total,@pageCount =@page
 
 GO
