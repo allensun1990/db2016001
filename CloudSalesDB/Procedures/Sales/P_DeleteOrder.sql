@@ -23,9 +23,10 @@ AS
 	
 begin tran
 
-declare @Err int=0,@Status int,@CustomerID nvarchar(64)
+declare @Err int=0,@Status int,@CustomerID nvarchar(64),@OriginalID nvarchar(64),@SourceType int
 
-select @Status=Status,@CustomerID=CustomerID from Orders where OrderID=@OrderID  and ClientID=@ClientID
+select @Status=Status,@CustomerID=CustomerID, @OriginalID=OriginalID, @SourceType=SourceType
+from Orders where OrderID=@OrderID  and ClientID=@ClientID
 
 if(@Status > 1)
 begin
@@ -37,6 +38,12 @@ end
 Update Orders set Status=9 where OrderID=@OrderID
 
 update Customer set OrderCount=OrderCount-1 where CustomerID=@CustomerID and OrderCount>0
+
+--处理在线采购单据
+if(@SourceType=2 and @OriginalID is not null and @OriginalID<>'')
+begin
+	update StorageDoc set ProgressStatus=8 where DocID=@OriginalID
+end
 
 set @Err+=@@error
 

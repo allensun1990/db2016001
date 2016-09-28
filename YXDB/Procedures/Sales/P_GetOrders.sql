@@ -22,6 +22,7 @@ CREATE PROCEDURE [dbo].[P_GetOrders]
 	@PayStatus int=-1,
 	@WarningStatus int=-1,
 	@OrderStatus int=1,
+	@PublicStatus int=-1,
 	@ReturnStatus int=-1,
 	@SourceType int=-1,
 	@Mark int=-1,
@@ -153,6 +154,11 @@ AS
 	else
 	begin
 		set @condition +=' and o.OrderStatus <> 8 '
+	end
+
+	if(@PublicStatus<>-1)
+	begin
+		set @condition +=' and o.IsPublic =  '+convert(nvarchar(2), @PublicStatus)
 	end
 
 	if(@WarningStatus=2)

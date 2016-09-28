@@ -22,9 +22,9 @@ AS
 	
 begin tran
 
-declare @Err int=0,@Status int,@AliOrderCode nvarchar(64),@OrderType int,@CustomerID nvarchar(64)
+declare @Err int=0,@Status int,@AliOrderCode nvarchar(64),@OrderType int,@CustomerID nvarchar(64),@GoodsID nvarchar(64)
 
-select @Status=OrderStatus,@AliOrderCode=AliOrderCode,@OrderType=OrderType,@CustomerID=CustomerID 
+select @Status=OrderStatus,@AliOrderCode=AliOrderCode,@OrderType=OrderType,@CustomerID=CustomerID,@GoodsID=GoodsID 
 from Orders where OrderID=@OrderID and (ClientID=@ClientID or EntrustClientID=@ClientID)
 
 if(@Status <> 1)
@@ -38,6 +38,11 @@ Update Orders set OrderStatus=8 where OrderID=@OrderID
 
 Update OrderTask set Status=8 where OrderID=@OrderID
 
+if(@OrderType=1)
+begin
+
+	Update Goods set Status=9 where GoodsID=@GoodsID
+end
 set @Err+=@@error
 
 if(@AliOrderCode is not null and @AliOrderCode<>'')

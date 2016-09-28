@@ -45,7 +45,7 @@ begin
 	return
 end 
 
-if(@GoodsID<>'' and  exists(select AutoID from Goods where GoodsID<>@GoodsID and ClientID=@OrderClientID and GoodsCode=@IntGoodsCode))
+if(@GoodsID<>'' and  exists(select AutoID from Goods where GoodsID<>@GoodsID and ClientID=@OrderClientID and GoodsCode=@IntGoodsCode and Status<>9))
 begin
 	set @Result=3
 	rollback tran

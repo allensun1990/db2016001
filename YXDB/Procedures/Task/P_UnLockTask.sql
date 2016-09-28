@@ -22,7 +22,7 @@ as
 	declare @OwnerID nvarchar(64)
 	set @Result=0
 
-	select @OrderID=OrderID,@OwnerID=OwnerID from OrderTask where TaskID=@TaskID and LockStatus=1 and status<>9
+	select @OwnerID=OwnerID from OrderTask where TaskID=@TaskID and LockStatus=1 and status<>9
 	--任务已被解锁
 	if(@OwnerID is null)
 	begin

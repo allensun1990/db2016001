@@ -25,7 +25,8 @@ CREATE PROCEDURE [dbo].[P_AddShoppingCart]
 @UserID nvarchar(64),
 @OrderAttrID nvarchar(64)='',
 @Remark nvarchar(max),
-@OperateIP nvarchar(50)
+@OperateIP nvarchar(50),
+@TaskID nvarchar(64)=''
 AS
 begin tran
 
@@ -35,6 +36,12 @@ declare @Err int=0,@TotalMoney decimal(18,4)=0,@PlanQuantity int,@Type int,@Attr
 if(@OrderType=11)
 begin
 	select @PlanQuantity=PlanQuantity,@Type=OrderType from Orders where OrderID=@GUID
+
+	if(@TaskID<>'' and exists(select AutoID from OrderTask where TaskID=@TaskID and FinishStatus=2 and LockStatus=1 ))
+	begin
+		rollback tran
+		return
+	end
 
 	--打样单单
 	if(@Type=1) 
