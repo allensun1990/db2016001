@@ -30,7 +30,7 @@ AS
 	begin
 		set @Result=2
 		return
-	end
+	end	
 		
 	insert into M_HelpType (TypeID,Name,Remark,ModuleType,Icon,CreateUserID,Sort) values(@TypeID,@Name,@Remark,@ModuleType,@Img,@UserID,@Sort)
 	set @Result=1

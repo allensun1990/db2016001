@@ -55,6 +55,7 @@ set @Err+=@@error
 if(@CMClientID<>'' and  @ProviderType=1)
 begin
 	Update Agents set CMClientID=@CMClientID,IsMall=1 where AgentID=@AgentID and (CMClientID ='' or CMClientID is null)
+	Update Clients set CMClientID=@CMClientID,IsMall=1 where ClientID=@ClientID and (CMClientID ='' or CMClientID is null)
 end
 set @Err+=@@error
 if(@CMClientID<>'' and  @ProviderType=2 and not exists(select AutoID from Customer where ChildClientID=@ClientID and ClientID=@CMClientID))

@@ -2,6 +2,8 @@
 
 --关联智能工厂
 alter table Clients add RegisterType int
+alter table Clients add CMClientID nvarchar(64)
+alter table Clients add IsMall int default 0
 Go
 Update c set RegisterType=a.RegisterType  from Clients c join Agents a on c.AgentID=a.AgentID
 GO
@@ -35,7 +37,7 @@ alter table Customer add ChildClientID nvarchar(64)
 
 --处理客户来源
 insert into CustomSource(SourceID,SourceCode,SourceName,IsSystem,IsChoose,Status,CreateUserID,ClientID)
-					select NEWID(),'Source-Self','关注店铺',1,0,1,CreateUserID,ClientID from Clients
+					select NEWID(),'Source-Self','自助注册',1,0,1,CreateUserID,ClientID from Clients
 
 --处理分类
 alter table Category add SaleAttrStr nvarchar(4000)
@@ -96,7 +98,7 @@ Update Products set SourceType=1 where ProviderID in (select ProviderID from Pro
 Update Products set SourceType=2 where ProviderID in (select ProviderID from Providers where ProviderType=2)
 
 --单据表
- alter table storageDoc add SourceType int default(1)
+ alter table storageDoc add SourceType int default(0)
  go
  Update StorageDoc set SourceType=0
 

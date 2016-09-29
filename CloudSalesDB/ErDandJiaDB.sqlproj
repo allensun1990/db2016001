@@ -278,5 +278,6 @@
     <Build Include="Procedures\Stock\P_InsertStoreDocPart.sql" />
     <Build Include="Procedures\Stock\P_AuditStoreDocPart.sql" />
     <None Include="Procedures\System\P_BindCMClient.sql" />
+    <None Include="Procedures\Stock\P_AddIntfactoryPurchaseDoc.sql" />
   </ItemGroup>
 </Project>

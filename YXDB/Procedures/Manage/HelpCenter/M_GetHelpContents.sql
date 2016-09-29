@@ -67,7 +67,7 @@ AS
 
 	if(@keyWords <> '')
 	begin
-		set @condition +=' and (c.KeyWords like ''%'+@keyWords+'%'' )'
+		set @condition +=' and (c.KeyWords like ''%'+@keyWords+'%'' or c.Title like ''%'+@keyWords+'%'')'
 	end
 
 	if(@orderBy<>'')

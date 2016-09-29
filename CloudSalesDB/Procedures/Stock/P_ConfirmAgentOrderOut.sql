@@ -150,6 +150,13 @@ begin
  exec P_UpdateCustomerIntergeFee  1,@TotalFee,@CustomerID,@AgentID,@ClientID,@UserID,'订单发货积分结算,增加：',@OrderCode
 end
 
+--处理在线采购单据
+declare @OrderOriginalID nvarchar(64),@SourceType int
+select @OrderOriginalID=OriginalID, @SourceType=SourceType from Orders where OrderID=@OldOrderID  
+if(@SourceType=2 and @OrderOriginalID is not null and @OrderOriginalID<>'')
+begin
+	update StorageDoc set ProgressStatus=2 where DocID=@OrderOriginalID
+end
 
 drop table #BatchStock
 drop table #TempProducts

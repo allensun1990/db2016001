@@ -28,8 +28,12 @@ begin tran
 set @Result=0
 
 --订单信息
-declare @Err int=0,@Status int,@OrderAgentID nvarchar(64),@OwnerID nvarchar(64),@OrderCode nvarchar(50),@TotalMoney decimal(18,4),@CustomerID nvarchar(64)
-select @Status=Status,@OrderAgentID=AgentID,@OwnerID=OwnerID,@OrderCode=OrderCode,@TotalMoney=TotalMoney,@CustomerID=CustomerID from Orders where OrderID=@OrderID and ClientID=@ClientID
+declare @Err int=0,@Status int,@OrderAgentID nvarchar(64),@OwnerID nvarchar(64),@OrderCode nvarchar(50),@TotalMoney decimal(18,4),@CustomerID nvarchar(64),
+@OriginalID nvarchar(64),@SourceType int
+
+select @Status=Status,@OrderAgentID=AgentID,@OwnerID=OwnerID,@OrderCode=OrderCode,@TotalMoney=TotalMoney,@CustomerID=CustomerID,@OriginalID=OriginalID,
+	   @SourceType=SourceType 
+from Orders where OrderID=@OrderID and ClientID=@ClientID
 
 if(@Status<>1)
 begin
@@ -157,6 +161,12 @@ insert into Billing(BillingID,BillingCode,OrderID,OrderCode,TotalMoney,Status,Pa
 
 --处理客户阶段
 update Customer set StageStatus=3,OrderTime=getdate(),OpportunityTime=isnull(OpportunityTime,getdate()) where CustomerID=@CustomerID and StageStatus<3
+
+--处理在线采购单据
+if(@SourceType=2 and @OriginalID is not null and @OriginalID<>'')
+begin
+	update StorageDoc set ProgressStatus=1 where DocID=@OriginalID
+end
 
 if(@Err>0)
 begin

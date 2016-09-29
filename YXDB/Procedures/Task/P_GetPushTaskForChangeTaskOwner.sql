@@ -27,6 +27,8 @@ insert into @tmp select Title,EndTime,OwnerID,ClientID,@goodsname,@ordertype fro
 
 if(exists(select OwnerID from @tmp))
 	select t.*,u.ProjectID as OpenID from @tmp as t left join UserAccounts as u on t.OwnerID=u.UserID and u.AccountType=4 and u.ProjectID<>''
+else
+	select * from @tmp
 		 
 
 

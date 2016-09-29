@@ -24,6 +24,8 @@ where  o.OrderID=@OrderID and o.OrderStatus<>2
 
 if(exists(select OwnerID from @tmp))
 	select o.*,u.ProjectID as OpenID from @tmp as o left join UserAccounts as u on o.OwnerID=u.UserID and u.AccountType=4 and u.ProjectID<>''
+else
+	select * from @tmp
 
 		 
 
