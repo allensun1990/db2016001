@@ -20,6 +20,7 @@ GO
 			@Status=-1,
 			@PageSize=20,
 			@PageIndex=1,
+			@ProgressStatus=-1,
 			@ClientID='f24d8a95-5fa4-41ef-b5ad-390b834618c3'
 修改信息： Michaux 2016/08/19 添加下单类型
 ************************************************************/
@@ -32,6 +33,7 @@ CREATE PROCEDURE [dbo].[P_GetPurchases]
 	@BeginTime nvarchar(50)='',
 	@EndTime nvarchar(50)='',
 	@SourceType int =-1,
+	@ProgressStatus int =-1,
 	@PageSize int,
 	@PageIndex int,
 	@TotalCount int=0 output ,
@@ -72,10 +74,15 @@ AS
 		set @condition += ' and s.ProviderID='''+@ProviderID+''''
 	end
 
-	--状态
+	--采购单状态
 	if(@Status<>-1)
 	begin
 		set @condition += ' and s.Status='+str(@Status)
+	end
+	--订单状态
+	if(@ProgressStatus<>-1)
+	begin
+		set @condition += ' and s.ProgressStatus='+str(@ProgressStatus)
 	end
 	if(@BeginTime<>'')
 		set @condition +=' and s.CreateTime >= '''+@BeginTime+' 0:00:00'''
