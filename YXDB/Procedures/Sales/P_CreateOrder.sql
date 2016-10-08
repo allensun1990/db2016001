@@ -69,6 +69,9 @@ begin
 	set @OrderCode=@OrderCode+'1'
 end
 
+if(@BigCategoryID='' or @BigCategoryID is null)
+	select top 1 @BigCategoryID=CategoryID from OrderCategory where ClientID=@ClientID
+
 if(@UserID<>'' and exists(select ProcessID from OrderProcess where  ClientID=@ClientID and ProcessType=@OrderType and CategoryID=@BigCategoryID and OwnerID=@UserID and status<>9 ))
 begin
 	select top 1 @ProcessID=ProcessID,@OwnerID=OwnerID from OrderProcess 
