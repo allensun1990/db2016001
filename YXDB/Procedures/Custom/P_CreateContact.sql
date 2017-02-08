@@ -28,7 +28,6 @@ CREATE PROCEDURE [dbo].[P_CreateContact]
 @CreateUserID nvarchar(64)='',
 @ClientID nvarchar(64)
 AS
-begin tran
 
 declare @Type int=0,@OwnerID nvarchar(64)
 
@@ -43,5 +42,4 @@ insert into Contact(ContactID,Name,Type,MobilePhone,OfficePhone,CityCode,Email,J
 	values(@ContactID,@Name,@Type,@MobilePhone,@OfficePhone,@CityCode,@Email,@Jobs,@Address,1,'',@CustomerID,@CreateUserID,@ClientID,@Description)
 
 
- 
 
