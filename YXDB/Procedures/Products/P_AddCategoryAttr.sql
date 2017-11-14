@@ -28,7 +28,7 @@ set @Err=0
 
 select @CategoryType=CategoryType from Category where CategoryID=@CategoryID
 
-if(@CategoryType=2 and @Type=1 and exists(select AutoID from CategoryAttr where CategoryID=@CategoryID and [Type]=@Type and Status=1))
+if(@CategoryType=2 and exists(select AutoID from CategoryAttr where CategoryID=@CategoryID and [Type]=@Type and Status=1))-- and @Type=1
 begin
 	rollback tran
 	return

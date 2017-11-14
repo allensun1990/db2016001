@@ -18,13 +18,19 @@ CREATE PROCEDURE [dbo].P_UpdateTaskEndTime
 @TaskID nvarchar(64),
 @UserID nvarchar(64),
 @EndTime datetime=null,
-@Result int output --0：失败，1：成功，2: 任务已接受,3:没有权限
+@Result int output --0：失败，1：成功，2: 任务已接受,3:没有权限 9:已终止
 as
 declare @OwnerID nvarchar(64)
-declare @MaxHours int
+declare @MaxHours int,@Status int
 set @Result=0
 
-select @OwnerID=OwnerID,@MaxHours=MaxHours from OrderTask where TaskID=@TaskID
+select @OwnerID=OwnerID,@MaxHours=MaxHours,@Status=Status from OrderTask where TaskID=@TaskID
+
+if(@Status <> 1)
+begin
+	set @Result=9
+	return
+end
 
 --任务不是负责人操作
 if(@OwnerID<>@UserID)

@@ -434,21 +434,20 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="function\fun_getFirstPY.sql" />
-    <PostDeploy Include="Procedures\MichauxAlter.sql" />
-    <Build Include="Procedures\Manage\M_GetM_UserToLogin.sql" />
-    <Build Include="Procedures\Manage\M_Get_Report_AgentAction_Day.sql" />
+    <None Include="Procedures\Manage\M_GetM_UserToLogin.sql" />
+    <None Include="Procedures\Manage\M_Get_Report_AgentAction_Day.sql" />
     <None Include="Procedures\Task\P_AddTaskMembers.sql" />
     <None Include="Procedures\Task\P_GetTaskDetail.sql" />
-    <Build Include="Procedures\Manage\M_UpdateClientOrderAccountStatus.sql" />
+    <None Include="Procedures\Manage\M_UpdateClientOrderAccountStatus.sql" />
     <None Include="Procedures\Manage\M_SetClientProcess.sql" />
-    <Build Include="Procedures\Manage\M_AddClientOrderAccount.sql" />
+    <None Include="Procedures\Manage\M_AddClientOrderAccount.sql" />
     <None Include="Procedures\Manage\M_SetClientCategory.sql" />
-    <Build Include="Procedures\Manage\Report\R_GetClientsActiveReprot.sql" />
+    <None Include="Procedures\Manage\Report\R_GetClientsActiveReprot.sql" />
     <None Include="Procedures\System\P_DeleteDepotSeat.sql" />
     <None Include="Procedures\System\P_CreateDepotSeat.sql" />
     <None Include="Procedures\System\P_UpdateDepotSeatSort.sql" />
     <None Include="Procedures\Andy-Alter.sql" />
-    <Build Include="Procedures\Manage\Report\M_Get_Report_AgentActionDayReport.sql" />
+    <None Include="Procedures\Manage\Report\M_Get_Report_AgentActionDayReport.sql" />
     <None Include="Procedures\Task\P_LockTask.sql" />
     <None Include="Procedures\Task\P_UnLockTask.sql" />
     <None Include="Procedures\Sales\P_GetOrderForFentReport.sql" />
@@ -475,12 +474,12 @@
     <None Include="Procedures\Products\P_DeleteProductDetail.sql" />
     <None Include="Procedures\System\P_CreateProcessCategory.sql" />
     <None Include="Procedures\System\P_DeleteProcessCategory.sql" />
-    <Build Include="Procedures\System\P_UpdateUserAccount.sql" />
+    <None Include="Procedures\System\P_UpdateUserAccount.sql" />
     <None Include="Procedures\System\P_UpdateUserAccountPwd.sql" />
     <None Include="Procedures\System\P_BindOtherAccount.sql" />
     <None Include="Procedures\System\P_UnBindOtherAccount.sql" />
-    <Build Include="Procedures\System\P_InsertOrderColor.sql" />
-    <Build Include="Procedures\System\P_InsertTaskColor.sql" />
+    <None Include="Procedures\System\P_InsertOrderColor.sql" />
+    <None Include="Procedures\System\P_InsertTaskColor.sql" />
     <None Include="Procedures\Sales\P_DeleteOrderProduct.sql" />
     <None Include="Procedures\Sales\P_CreateGoodsDocReturn.sql" />
     <None Include="Procedures\Stock\P_CreateProductUseQuantity.sql" />
@@ -489,7 +488,7 @@
     <None Include="Procedures\System\P_DeletetOrderStage.sql" />
     <None Include="Procedures\Task\P_GetPushTaskForFinishTask.sql" />
     <None Include="Procedures\Task\P_CreateTaskReply.sql" />
-    <Build Include="Procedures\Task\P_GetPushTasksForNewOrder.sql" />
+    <None Include="Procedures\Task\P_GetPushTasksForNewOrder.sql" />
     <None Include="Procedures\Task\P_GetPushTaskForChangeOrderOwner.sql" />
     <None Include="Procedures\Sales\P_UpdateProductPlanQuantity.sql" />
     <None Include="Procedures\Task\P_GetPushTaskForChangeTaskOwner.sql" />
@@ -501,7 +500,9 @@
     <None Include="Procedures\Manage\HelpCenter\M_GetHelpTypes.sql" />
     <None Include="Procedures\Manage\HelpCenter\M_InsertHelpContent.sql" />
     <None Include="Procedures\Manage\HelpCenter\M_InsertHelpType.sql" />
-    <Build Include="Procedures\Manage\HelpCenter\M_UpdateHelpType.sql" />
-    <Build Include="Procedures\Manage\HelpCenter\M_UpdateHelpContent.sql" />
+    <None Include="Procedures\Manage\HelpCenter\M_UpdateHelpType.sql" />
+    <None Include="Procedures\Manage\HelpCenter\M_UpdateHelpContent.sql" />
+    <None Include="Procedures\Sales\P_UpdateOrderPlanTime.sql" />
+    <None Include="Procedures\Sales\P_UpdateOrderAttrName.sql" />
   </ItemGroup>
 </Project>

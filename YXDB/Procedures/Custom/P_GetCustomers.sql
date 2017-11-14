@@ -66,7 +66,7 @@ AS
 			with TempUser(UserID)
 			as
 			(
-				select UserID from Users where ParentID=@UserID and Status<>9
+				select UserID from Users where UserID=@UserID and Status<>9
 				union all
 				select u.UserID from Users u join TempUser t on u.ParentID=t.UserID and Status<>9
 			)

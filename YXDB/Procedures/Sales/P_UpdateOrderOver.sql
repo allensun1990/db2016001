@@ -40,7 +40,6 @@ Update OrderTask set Status=8 where OrderID=@OrderID
 
 if(@OrderType=1)
 begin
-
 	Update Goods set Status=9 where GoodsID=@GoodsID
 end
 set @Err+=@@error

@@ -33,9 +33,14 @@ AS
 declare @GoodsID nvarchar(64),@Status int,@GoodsDetailID nvarchar(64),@Price decimal(18,4),@OriginalPrice decimal(18,4),@OriginalID nvarchar(64),
 @DetailID nvarchar(64),@TotalQuantity decimal(18,4),@TotalMoney decimal(18,4),@OrderClientID nvarchar(64),@OrderType int
 
-select @GoodsID=isnull(GoodsID,''),@Status=Status,@Price=FinalPrice,@OriginalPrice=OriginalPrice,@OrderClientID=ClientID,@OrderType=OrderType,
+select @GoodsID=isnull(GoodsID,''),@Status=OrderStatus,@Price=FinalPrice,@OriginalPrice=OriginalPrice,@OrderClientID=ClientID,@OrderType=OrderType,
 		@OriginalID=OriginalID
 from Orders where OrderID=@OrderID
+
+if(@Status > 2)
+begin
+	return
+end
 
 if (@GoodsID<>'' and exists(select AutoID from GoodsDetail where GoodsID=@GoodsID  and replace(Description,' ','')=replace(@Description,' ','')))
 begin

@@ -17,7 +17,7 @@ GO
 CREATE PROCEDURE [dbo].P_FinishTask
 @TaskID nvarchar(64),
 @UserID nvarchar(64),
-@Result int output --0：失败，1：成功，2: 有前面阶段任务未完成,3:没有权限；4：任务没有接受，不能设置完成;5.任务有未完成步骤
+@Result int output --0：失败，1：成功，2: 有前面阶段任务未完成,3:没有权限；4：任务没有接受，不能设置完成;5.任务有未完成步骤 9:已终止
 as
 	declare @IsShow int
 	declare @OrderID nvarchar(64)
@@ -27,7 +27,7 @@ as
 	declare @FinishStatus int
 	declare @Mark int
 	declare @ProcessID nvarchar(64)
-	declare @OwnerID nvarchar(64)
+	declare @OwnerID nvarchar(64),@Status int
 
 	set @IsShow=0
 	set @Result=0
@@ -39,8 +39,15 @@ as
 		return
 	end
 
-	select @OrderID=OrderID,@OrderType=OrderType,@ProcessID=ProcessID,@Sort=Sort,@OwnerID=OwnerID,@Mark=Mark,@FinishStatus=FinishStatus,@ClientID=ClientID 
+	select @OrderID=OrderID,@OrderType=OrderType,@ProcessID=ProcessID,@Sort=Sort,@OwnerID=OwnerID,@Mark=Mark,
+	@FinishStatus=FinishStatus,@ClientID=ClientID,@Status=Status 
 	from OrderTask where TaskID=@TaskID
+
+	if(@Status <> 1)
+	begin
+		set @Result=9
+		return
+	end
 
 	--任务已标记完成
 	if(@FinishStatus=2)
