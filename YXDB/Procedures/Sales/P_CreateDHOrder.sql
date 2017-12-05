@@ -56,6 +56,8 @@ begin
 	select @ProcessID=ProcessID,@OwnerID=OwnerID from OrderProcess where ClientID=@ClientID and ProcessType=2 and CategoryID=@CategoryID and IsDefault=1 and status<>9
 end
 
+set @OwnerID= @OperateID
+
 declare @SourceType int=2
 if(@YXOrderID<>'')
 begin

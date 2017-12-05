@@ -504,5 +504,8 @@
     <None Include="Procedures\Manage\HelpCenter\M_UpdateHelpContent.sql" />
     <None Include="Procedures\Sales\P_UpdateOrderPlanTime.sql" />
     <None Include="Procedures\Sales\P_UpdateOrderAttrName.sql" />
+    <None Include="Procedures\Sales\P_UpdateOrderGoodsQuantity.sql" />
+    <None Include="Procedures\Report\R_GetUserTaskQuantity.sql" />
+    <None Include="Procedures\Report\R_GetOrderProductionRPT.sql" />
   </ItemGroup>
 </Project>

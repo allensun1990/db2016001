@@ -40,7 +40,7 @@ begin
 end
 
 --任务已接受
-if(exists(select taskid from ordertask where TaskID=@TaskID and FinishStatus<>0))
+if(exists(select taskid from ordertask where TaskID=@TaskID and FinishStatus=2))
 begin
 	set @Result=2
 	return

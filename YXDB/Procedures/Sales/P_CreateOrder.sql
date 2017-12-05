@@ -82,6 +82,8 @@ begin
 	select @ProcessID=ProcessID,@OwnerID=OwnerID from OrderProcess where ClientID=@ClientID and ProcessType=@OrderType and CategoryID=@BigCategoryID and IsDefault=1 and status<>9
 end
 
+set @OwnerID=@UserID
+
 --款号已存在打样单
 if(@SourceType=3 and @GoodsCode<>'' and @OrderType=2 and exists(select AutoID from Orders where OrderType=1 and Status<>9 and GoodsCode=@GoodsCode and ClientID=@ClientID))
 begin
