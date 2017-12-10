@@ -507,5 +507,6 @@
     <None Include="Procedures\Sales\P_UpdateOrderGoodsQuantity.sql" />
     <None Include="Procedures\Report\R_GetUserTaskQuantity.sql" />
     <None Include="Procedures\Report\R_GetOrderProductionRPT.sql" />
+    <None Include="Procedures\Report\R_GetCustomerRateRPT.sql" />
   </ItemGroup>
 </Project>
