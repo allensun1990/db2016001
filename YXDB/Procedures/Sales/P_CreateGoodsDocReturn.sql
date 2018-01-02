@@ -35,12 +35,12 @@ set @Result=0
 
 declare @Err int=0,@OrderStatus int,@OwnerID nvarchar(64),@OrderCode nvarchar(64),@AutoID int=1,@GoodsQuantity nvarchar(200),@sql nvarchar(4000),
 @GoodsDetailID nvarchar(64),@Quantity int,@TotalMoney decimal(18,4),@DocImage nvarchar(4000),@DocImages nvarchar(64),
-@OrderType int,@TotalQuantity int=0,@CreateTime datetime
+@OrderType int,@TotalQuantity int=0,@CreateTime datetime,@ProcessID nvarchar(64)
 
 select @OrderStatus=OrderStatus,@OrderCode=OrderCode,@DocImage=OrderImage,@DocImages=OrderImages,@OrderType=OrderType
 from Orders where OrderID=@OrderID and (ClientID=@ClientID or EntrustClientID=@ClientID)
 
-select @OwnerID=OwnerID,@CreateTime=CreateTime from GoodsDoc where DocID=@OriginalID
+select @OwnerID=OwnerID,@CreateTime=CreateTime,@ProcessID=ProcessID from GoodsDoc where DocID=@OriginalID
 
 --进行的订单才能操作
 if(@OrderStatus<>1)
@@ -82,8 +82,10 @@ begin
 
 			Update GoodsDocDetail set ReturnQuantity=ReturnQuantity+@Quantity where DocID=@OriginalID and  GoodsDetailID=@GoodsDetailID
 
-			Update OrderGoods set Complete=Complete-@Quantity,ApplyQuantity=ApplyQuantity+@Quantity where OrderID=@OrderID and GoodsDetailID=@GoodsDetailID
-
+			if(@ProcessID is null or @ProcessID='')
+			begin
+				Update OrderGoods set Complete=Complete-@Quantity,ApplyQuantity=ApplyQuantity+@Quantity where OrderID=@OrderID and GoodsDetailID=@GoodsDetailID
+			end
 			insert into GoodsDocDetail(DocID,GoodsDetailID,GoodsID,UnitID,Quantity,Complete,SurplusQuantity,Price,TotalMoney,WareID,DepotID,Status,Remark,ClientID)
 				select @DocID,GoodsDetailID,GoodsID,'',@Quantity,0,0,Price,0,'','',0,Remark,@ClientID 
 				from GoodsDocDetail where DocID=@OriginalID and  GoodsDetailID=@GoodsDetailID

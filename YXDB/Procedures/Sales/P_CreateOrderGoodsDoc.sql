@@ -20,6 +20,7 @@ CREATE PROCEDURE [dbo].[P_CreateOrderGoodsDoc]
 	@TaskID nvarchar(64)='',
 	@DocType int,
 	@DocCode nvarchar(50),
+	@ProcessID nvarchar(64)='',
 	@GoodDetails nvarchar(4000),
 	@IsOver int=0,
 	@ExpressID nvarchar(64)='',
@@ -32,12 +33,12 @@ AS
 begin tran
 
 declare @Err int=0,@OrderStatus int,@OrderCode nvarchar(64),@AutoID int=1,@GoodsQuantity nvarchar(200),@sql nvarchar(4000),@CutStatus int,
-@GoodsAutoID int,@Quantity int,@TotalMoney decimal(18,4),@DocImage nvarchar(4000),@DocImages nvarchar(64),@AliOrderCode nvarchar(100)='',@ProcessID nvarchar(64),
+@GoodsAutoID int,@Quantity int,@TotalMoney decimal(18,4),@DocImage nvarchar(4000),@DocImages nvarchar(64),@AliOrderCode nvarchar(100)='',
 @OrderType int,@TotalQuantity int=0
 
 if(@OwnerID='') set @OwnerID=@OperateID
 
-select @OrderStatus=OrderStatus,@OrderCode=OrderCode,@DocImage=OrderImage,@DocImages=OrderImages,@AliOrderCode=AliOrderCode,@ProcessID=ProcessID,@OrderType=OrderType ,@CutStatus=CutStatus
+select @OrderStatus=OrderStatus,@OrderCode=OrderCode,@DocImage=OrderImage,@DocImages=OrderImages,@AliOrderCode=AliOrderCode,@OrderType=OrderType ,@CutStatus=CutStatus
 from Orders where OrderID=@OrderID and (ClientID=@ClientID or EntrustClientID=@ClientID)
 
 --进行的订单才能操作
@@ -98,15 +99,21 @@ begin
 		--车缝
 		else if(@DocType=11)
 		begin
-			--大于最大可完成
-			if exists(select AutoID from OrderGoods where OrderID=@OrderID and AutoID=@GoodsAutoID and Complete+@Quantity>CutQuantity)
+			if(@ProcessID is null or @ProcessID='')
 			begin
-				rollback tran
-				return
+				--大于最大可完成
+				if exists(select AutoID from OrderGoods where OrderID=@OrderID and AutoID=@GoodsAutoID and Complete+@Quantity>CutQuantity)
+				begin
+					rollback tran
+					return
+				end
+
+				Update OrderGoods set Complete=Complete+@Quantity where OrderID=@OrderID and AutoID=@GoodsAutoID
 			end
-
-			Update OrderGoods set Complete=Complete+@Quantity where OrderID=@OrderID and AutoID=@GoodsAutoID
-
+			else
+			begin
+				update OrderCosts set Quantity=Quantity+@Quantity where OrderID=@OrderID and ProcessID=@ProcessID
+			end
 			insert into GoodsDocDetail(DocID,GoodsDetailID,GoodsID,UnitID,Quantity,Complete,SurplusQuantity,Price,TotalMoney,WareID,DepotID,Status,Remark,ClientID)
 				select @DocID,GoodsDetailID,GoodsID,'',@Quantity,Complete,CutQuantity-Complete,Price,Price*@Quantity,'','',0,Remark,@ClientID 
 				from OrderGoods where OrderID=@OrderID and AutoID=@GoodsAutoID
@@ -123,8 +130,8 @@ begin
 
 	select @TotalMoney=sum(TotalMoney) from GoodsDocDetail where DocID=@DocID
 
-	insert into GoodsDoc(DocID,DocCode,DocType,DocImage,DocImages,Status,TotalMoney,Quantity,CityCode,Address,Remark,ExpressID,ExpressCode,WareID,OwnerID,CreateUserID,CreateTime,OperateIP,ClientID,OrderID,OrderCode,TaskID)
-			values(@DocID,@DocCode,@DocType,@DocImage,@DocImages,2,@TotalMoney,@TotalQuantity,'','',@Remark,@ExpressID,@ExpressCode,'',@OwnerID,@OperateID,GETDATE(),'',@ClientID,@OrderID,@OrderCode,@TaskID)
+	insert into GoodsDoc(DocID,DocCode,DocType,DocImage,DocImages,Status,TotalMoney,Quantity,CityCode,Address,Remark,ExpressID,ExpressCode,WareID,OwnerID,CreateUserID,CreateTime,OperateIP,ClientID,OrderID,OrderCode,TaskID,ProcessID)
+			values(@DocID,@DocCode,@DocType,@DocImage,@DocImages,2,@TotalMoney,@TotalQuantity,'','',@Remark,@ExpressID,@ExpressCode,'',@OwnerID,@OperateID,GETDATE(),'',@ClientID,@OrderID,@OrderCode,@TaskID,@ProcessID)
 
 	set @Err+=@@error
 end

@@ -80,6 +80,10 @@ begin
 			GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,@Discount,FinalPrice,IntGoodsCode,GoodsName,TurnTimes+1,@YXOrderID,@OperateID,@CustomerName from Orders where OrderID=@OriginalID
 end
 
+--处理加工成本
+insert into OrderCosts(OrderID,Price,Remark,Status,ClientID,ProcessID)
+select @OrderID,Price,Remark,Status,ClientID,ProcessID from OrderCosts where OrderID=@OriginalID and status=1
+
 Update Orders set TurnTimes=TurnTimes+1 where OrderID=@OriginalID
 
 --处理客户需求单数

@@ -41,7 +41,12 @@ Update Orders set TurnTimes=TurnTimes+1 where OrderID=@OriginalID
 update o set OriginalCode=od.OrderCode,BigCategoryID=od.BigCategoryID,CategoryID=od.CategoryID,FinalPrice=od.FinalPrice,TotalMoney=0,IntGoodsCode=od.IntGoodsCode,GoodsName=od.GoodsName,
 			 Price=0,ProfitPrice=od.ProfitPrice,CostPrice=od.CostPrice,Platemaking=od.Platemaking,GoodsID=od.GoodsID,OriginalPrice=od.FinalPrice,TurnTimes=od.TurnTimes 
 			 from Orders o join Orders od on o.OriginalID=od.OrderID where o.OrderID=@OrderID
+
+delete from OrderCosts where OrderID=@OrderID
 	
+--处理加工成本
+insert into OrderCosts(OrderID,Price,Remark,Status,ClientID,ProcessID)
+select @OrderID,Price,Remark,Status,ClientID,ProcessID from OrderCosts where OrderID=@OriginalID and status=1
 
 set @Err+=@@error
 

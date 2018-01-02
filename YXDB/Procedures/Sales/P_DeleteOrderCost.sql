@@ -23,15 +23,19 @@ AS
 	
 begin tran
 
+if exists(select AutoID from OrderCosts where OrderID=@OrderID and AutoID=@AutoID and Quantity>0)
+begin
+	rollback tran
+	return
+end
+
 declare @Err int=0,@Money decimal(18,4)
 
-Update OrderCosts set Status=9 where OrderID=@OrderID and AutoID=@AutoID
+Update OrderCosts set Status=9 where OrderID=@OrderID and AutoID=@AutoID and Quantity=0
 
 select @Money=sum(Price) from  OrderCosts where OrderID=@OrderID and Status=1
 
 Update Orders set CostPrice=isnull(@Money,0) where OrderID=@OrderID
-
-update Orders set CostPrice=isnull(@Money,0) where OriginalID=@OrderID and OrderStatus=1
 
 set @Err+=@@error
 

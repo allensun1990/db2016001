@@ -57,7 +57,7 @@ update d set DownOrderCount=t.ReportValue from M_Report_AgentAction_Day d join #
 update d set ProductOrderCount=t.ReportValue from M_Report_AgentAction_Day d join #temp t on d.ReportDate=t.ReportDate and d.ClientID=t.ClientID where t.ObjectType=12
 update d set UserNum=UserCount from ( select isnull(Count(ClientID),0) as UserCount ,Users.ClientID from Users where Status=1  group by Users.ClientID) a join  M_Report_AgentAction_Day d  on a.ClientID=d.ClientID where  d.ReportDate=@ReportDate
 update M_Report_AgentAction_Day set Vitality=cast( round((CustomerCount+OrdersCOunt+ ActivityCount+ProductCount+UsersCount+AgentCount+OpportunityCount+PurchaseCount+WarehousingCount+TaskCount+DownOrderCount+ProductCount+ProductOrderCount)
- / cast(UserNum as decimal(18,4)  ),4) as  decimal(18,4)) where ReportDate=@ReportDate
+ / cast(UserNum as decimal(18,4)  ),4) as  decimal(18,4)) where ReportDate=@ReportDate and UserNum!=0
 
 
 --登录日志

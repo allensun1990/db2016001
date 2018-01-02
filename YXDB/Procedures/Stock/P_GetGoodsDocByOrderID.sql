@@ -36,7 +36,7 @@ AS
 		select DocID from GoodsDoc where OrderID=@OrderID and ClientID=@ClientID and DocType=@DocType and TaskID=@TaskID
 	end
 
-	select * from GoodsDoc where DocID in (select DocID from #TempDoc) order by CreateTime desc
+	select g.*,p.Name ProcessName from GoodsDoc g left join TaskProcess p on g.ProcessID=p.ProcessID where g.DocID in (select DocID from #TempDoc) order by g.CreateTime desc
 	--采购单
 	select * from GoodsDocDetail where DocID in (select DocID from #TempDoc)
 
