@@ -39,7 +39,7 @@ Update Orders set OriginalID=@OriginalID where OrderID=@OrderID
 Update Orders set TurnTimes=TurnTimes+1 where OrderID=@OriginalID
 
 update o set OriginalCode=od.OrderCode,BigCategoryID=od.BigCategoryID,CategoryID=od.CategoryID,FinalPrice=od.FinalPrice,TotalMoney=0,IntGoodsCode=od.IntGoodsCode,GoodsName=od.GoodsName,
-			 Price=0,ProfitPrice=od.ProfitPrice,CostPrice=od.CostPrice,Platemaking=od.Platemaking,GoodsID=od.GoodsID,OriginalPrice=od.FinalPrice,TurnTimes=od.TurnTimes 
+			 Price=0,ProfitPrice=od.ProfitPrice,CostPrice=od.CostPrice,Platemaking=od.Platemaking,GoodsID=od.GoodsID,OriginalPrice=od.FinalPrice,TurnTimes=od.TurnTimes,SewnPrice=od.SewnPrice 
 			 from Orders o join Orders od on o.OriginalID=od.OrderID where o.OrderID=@OrderID
 
 delete from OrderCosts where OrderID=@OrderID

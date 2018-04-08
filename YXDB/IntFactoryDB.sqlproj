@@ -446,7 +446,6 @@
     <None Include="Procedures\System\P_DeleteDepotSeat.sql" />
     <None Include="Procedures\System\P_CreateDepotSeat.sql" />
     <None Include="Procedures\System\P_UpdateDepotSeatSort.sql" />
-    <None Include="Procedures\Andy-Alter.sql" />
     <None Include="Procedures\Manage\Report\M_Get_Report_AgentActionDayReport.sql" />
     <None Include="Procedures\Task\P_LockTask.sql" />
     <None Include="Procedures\Task\P_UnLockTask.sql" />
@@ -508,5 +507,8 @@
     <None Include="Procedures\Report\R_GetUserTaskQuantity.sql" />
     <None Include="Procedures\Report\R_GetOrderProductionRPT.sql" />
     <None Include="Procedures\Report\R_GetCustomerRateRPT.sql" />
+    <None Include="Procedures\Report\R_GetUserSewnProcessReport.sql" />
+    <None Include="Procedures\Report\R_GetKanbanRPT.sql" />
+    <None Include="Procedures\Report\R_GetKanbanItemRPT.sql" />
   </ItemGroup>
 </Project>

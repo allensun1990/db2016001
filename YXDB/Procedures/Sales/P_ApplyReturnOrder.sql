@@ -41,6 +41,22 @@ select @OwnerID=OwnerID,@ProcessID=ProcessID from OrderProcess where ClientID=@O
 
 Update Orders set ProcessID=@ProcessID,OwnerID=@OwnerID,EntrustClientID='',EntrustStatus=2 where OrderID=@OrderID
 
+--处理协作工厂
+declare @GoodsNum int=0,@OrderNum int=0
+if(@OrderType=1)
+begin
+	set @GoodsNum=1
+end
+else
+begin
+	set @OrderNum=1
+end
+
+if exists(select * from ProviderClient where ClientID=@OrderClientID and ProviderClientID=@ClientID)
+begin
+	update ProviderClient set GoodsNum=GoodsNum-@GoodsNum,OrderNum=OrderNum-@OrderNum where ClientID=@OrderClientID and ProviderClientID=@ClientID
+end
+
 if(@Err>0)
 begin
 	rollback tran

@@ -43,6 +43,28 @@ select @OwnerID=OwnerID,@ProcessID=ProcessID from OrderProcess where ClientID=@N
 
 Update Orders set ProcessID=@ProcessID,OwnerID=@OwnerID,EntrustClientID=@NewClientID,EntrustStatus=1,EntrustTime=getdate() where OrderID=@OrderID and ClientID=@ClientID
 
+--处理协作工厂
+
+declare @GoodsNum int=0,@OrderNum int=0
+if(@OrderType=1)
+begin
+	set @GoodsNum=1
+end
+else
+begin
+	set @OrderNum=1
+end
+
+if exists(select * from ProviderClient where ClientID=@ClientID and ProviderClientID=@NewClientID)
+begin
+	update ProviderClient set GoodsNum=GoodsNum+@GoodsNum,OrderNum=OrderNum+@OrderNum where ClientID=@ClientID and ProviderClientID=@NewClientID
+end
+else
+begin
+	insert into ProviderClient(ClientID,ProviderClientID,GoodsNum,OrderNum,CreateTime,LastTime)
+	values(@ClientID,@NewClientID,@GoodsNum,@OrderNum,getdate(),getdate())
+end
+
 set @Err+=@@error
 
 if(@Err>0)

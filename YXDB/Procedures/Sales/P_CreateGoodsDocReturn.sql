@@ -69,28 +69,34 @@ begin
 			continue;
 		end
 
+		--大于最大退回数
+		if exists(select AutoID from GoodsDocDetail where DocID=@OriginalID and  GoodsDetailID=@GoodsDetailID and ReturnQuantity+@Quantity>Quantity)
+		begin
+			set @Result=2
+			rollback tran
+			return
+		end
+
+		Update GoodsDocDetail set ReturnQuantity=ReturnQuantity+@Quantity where DocID=@OriginalID and  GoodsDetailID=@GoodsDetailID
 		--车缝退回
 		if(@DocType=6)
 		begin
-			--大于最大退回数
-			if exists(select AutoID from GoodsDocDetail where DocID=@OriginalID and  GoodsDetailID=@GoodsDetailID and ReturnQuantity+@Quantity>Quantity)
-			begin
-				set @Result=2
-				rollback tran
-				return
-			end
-
-			Update GoodsDocDetail set ReturnQuantity=ReturnQuantity+@Quantity where DocID=@OriginalID and  GoodsDetailID=@GoodsDetailID
-
 			if(@ProcessID is null or @ProcessID='')
 			begin
-				Update OrderGoods set Complete=Complete-@Quantity,ApplyQuantity=ApplyQuantity+@Quantity where OrderID=@OrderID and GoodsDetailID=@GoodsDetailID
+				Update OrderGoods set Complete=Complete-@Quantity where OrderID=@OrderID and GoodsDetailID=@GoodsDetailID
 			end
-			insert into GoodsDocDetail(DocID,GoodsDetailID,GoodsID,UnitID,Quantity,Complete,SurplusQuantity,Price,TotalMoney,WareID,DepotID,Status,Remark,ClientID)
+		end
+		else if(@DocType=21)
+		begin
+			Update OrderGoods set CutQuantity=CutQuantity-@Quantity where OrderID=@OrderID and GoodsDetailID=@GoodsDetailID
+		end
+		else if(@DocType=22)
+		begin
+			Update OrderGoods set SendQuantity=SendQuantity-@Quantity,ReturnQuantity=ReturnQuantity+@Quantity where OrderID=@OrderID and GoodsDetailID=@GoodsDetailID
+		end
+		insert into GoodsDocDetail(DocID,GoodsDetailID,GoodsID,UnitID,Quantity,Complete,SurplusQuantity,Price,TotalMoney,WareID,DepotID,Status,Remark,ClientID)
 				select @DocID,GoodsDetailID,GoodsID,'',@Quantity,0,0,Price,0,'','',0,Remark,@ClientID 
 				from GoodsDocDetail where DocID=@OriginalID and  GoodsDetailID=@GoodsDetailID
-		end
-		
 		--汇总数量
 		set @TotalQuantity+=@Quantity
 	end

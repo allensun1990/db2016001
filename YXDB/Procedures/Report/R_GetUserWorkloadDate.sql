@@ -27,7 +27,7 @@ AS
 	create table #TempData(OwnerID nvarchar(64),Quantity int,DocType int)
 	create table #UserID(UserID nvarchar(64))
 
-	set @SqlText ='insert into #TempData select OwnerID, sum(Quantity),DocType  from GoodsDoc where ClientID='''+@ClientID+''''
+	set @SqlText ='insert into #TempData select OwnerID, sum(Quantity),DocType  from GoodsDoc where ClientID='''+@ClientID+''' and (ProcessID is null or ProcessID='''')'
 
 	set @SqlText +=' and CreateTime >= '''+@BeginTime+'''';
 

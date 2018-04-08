@@ -65,19 +65,19 @@ begin
 	SELECT  @CustomerID=CustomerID,@CustomerName=Name FROM Customer where ClientID=@ClientID and YXClientID=@YXClientID and Status<>9
 	insert into Orders(OrderID,OrderCode,CategoryID,OrderType,SourceType,OrderStatus,Status,ProcessID,PlanPrice,FinalPrice,PlanQuantity,TaskCount,TaskOver,OrderImage,OriginalID,OriginalCode ,
 						Price,CostPrice,ProfitPrice,TotalMoney,CityCode,Address,PersonName,MobileTele,Remark,CustomerID,OwnerID,CreateTime,ClientID,Platemaking,
-						GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,Discount,OriginalPrice,IntGoodsCode,GoodsName,TurnTimes,YXOrderID,CreateUserID,CustomerName)
+						GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,Discount,OriginalPrice,IntGoodsCode,GoodsName,TurnTimes,YXOrderID,CreateUserID,CustomerName,SewnPrice)
 	select @OrderID,@OrderCode,CategoryID,2,@SourceType,0,0,@ProcessID,PlanPrice,@Price,0,0,0,OrderImage,OrderID,OrderCode,
 			0,CostPrice,ProfitPrice,0,@CityCode,@Address,@PersonName,@MobileTele,Remark,@CustomerID,@OwnerID,getdate(),@ClientID,Platemaking,
-			GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,@Discount,FinalPrice,IntGoodsCode,GoodsName,TurnTimes+1,@YXOrderID,@OperateID,@CustomerName from Orders where OrderID=@OriginalID
+			GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,@Discount,FinalPrice,IntGoodsCode,GoodsName,TurnTimes+1,@YXOrderID,@OperateID,@CustomerName,SewnPrice from Orders where OrderID=@OriginalID
 end 
 else
 begin
 	insert into Orders(OrderID,OrderCode,CategoryID,OrderType,SourceType,OrderStatus,Status,ProcessID,PlanPrice,FinalPrice,PlanQuantity,TaskCount,TaskOver,OrderImage,OriginalID,OriginalCode ,
 						Price,CostPrice,ProfitPrice,TotalMoney,CityCode,Address,PersonName,MobileTele,Remark,CustomerID,OwnerID,CreateTime,ClientID,Platemaking,
-						GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,Discount,OriginalPrice,IntGoodsCode,GoodsName,TurnTimes,YXOrderID,CreateUserID,CustomerName)
+						GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,Discount,OriginalPrice,IntGoodsCode,GoodsName,TurnTimes,YXOrderID,CreateUserID,CustomerName,SewnPrice)
 	select @OrderID,@OrderCode,CategoryID,2,@SourceType,0,0,@ProcessID,PlanPrice,@Price,0,0,0,OrderImage,OrderID,OrderCode,
 			0,CostPrice,ProfitPrice,0,CityCode,Address,PersonName,MobileTele,Remark,@CustomerID,@OwnerID,getdate(),@ClientID,Platemaking,
-			GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,@Discount,FinalPrice,IntGoodsCode,GoodsName,TurnTimes+1,@YXOrderID,@OperateID,@CustomerName from Orders where OrderID=@OriginalID
+			GoodsCode,Title,BigCategoryID,OrderImages,GoodsID,@Discount,FinalPrice,IntGoodsCode,GoodsName,TurnTimes+1,@YXOrderID,@OperateID,@CustomerName,SewnPrice from Orders where OrderID=@OriginalID
 end
 
 --处理加工成本

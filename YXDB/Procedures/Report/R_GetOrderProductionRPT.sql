@@ -15,6 +15,7 @@ GO
 调试记录： exec R_GetOrderProductionRPT '2016-1-1','2018-1-1','','','','5b2f9fdd-d044-4d6a-9c41-8597fd2faddd'
 ************************************************************/
 CREATE PROCEDURE [dbo].[R_GetOrderProductionRPT]
+	@TimeType int=1,
 	@BeginTime nvarchar(50)='',
 	@EndTime nvarchar(50)='',
 	@KeyWords nvarchar(200)='',
@@ -25,12 +26,21 @@ AS
 
 	declare @SqlText nvarchar(4000)
 
-	set @SqlText =' select o.IntGoodsCode,o.OwnerID,o.CustomerName,SUM(g.Quantity) OrderQuantity,SUM(g.CutQuantity) CutQuantity,SUM(g.Complete) Complete,SUM(g.SendQuantity) SendQuantity ,o.FinalPrice 
+	set @SqlText =' select o.OrderID,o.CustomerID,o.IntGoodsCode,o.OwnerID,o.CustomerName,SUM(g.Quantity) OrderQuantity,SUM(g.CutQuantity) CutQuantity,SUM(g.Complete) Complete,SUM(g.SendQuantity) SendQuantity ,o.FinalPrice 
 					from Orders o join OrderGoods g on o.OrderID=g.OrderID where OrderType=2 and OrderStatus in (1,2) and o.ClientID='''+@ClientID+''''
+	
+	if(@TimeType=1)
+	begin
+		set @SqlText +=' and o.CreateTime >= '''+@BeginTime+'''';
 
-	set @SqlText +=' and o.CreateTime >= '''+@BeginTime+'''';
+		set @SqlText +=' and o.CreateTime < '''+@EndTime+'''';
+	end
+	else
+	begin
+		set @SqlText +=' and o.EndTime >= '''+@BeginTime+'''';
 
-	set @SqlText +=' and o.CreateTime < '''+@EndTime+'''';
+		set @SqlText +=' and o.EndTime < '''+@EndTime+'''';
+	end
 
 	if(@KeyWords<>'')
 	begin
@@ -46,7 +56,7 @@ AS
 		set @SqlText +=' and o.OwnerID in (select UserID from #UserID) '
 	end
 
-	set @SqlText +=' group by o.IntGoodsCode,o.OwnerID,o.CustomerName,o.FinalPrice  '
+	set @SqlText +=' group by o.IntGoodsCode,o.OwnerID,o.CustomerName,o.FinalPrice,o.OrderID,o.CustomerID  '
 
 	exec (@SqlText)
 
