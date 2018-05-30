@@ -16,6 +16,7 @@ GO
 ************************************************************/
 CREATE PROCEDURE [dbo].[R_GetOrderProductionRPT]
 	@TimeType int=1,
+	@EntrustType int=-1,
 	@BeginTime nvarchar(50)='',
 	@EndTime nvarchar(50)='',
 	@KeyWords nvarchar(200)='',
@@ -26,9 +27,26 @@ AS
 
 	declare @SqlText nvarchar(4000)
 
-	set @SqlText =' select o.OrderID,o.CustomerID,o.IntGoodsCode,o.OwnerID,o.CustomerName,SUM(g.Quantity) OrderQuantity,SUM(g.CutQuantity) CutQuantity,SUM(g.Complete) Complete,SUM(g.SendQuantity) SendQuantity ,o.FinalPrice 
-					from Orders o join OrderGoods g on o.OrderID=g.OrderID where OrderType=2 and OrderStatus in (1,2) and o.ClientID='''+@ClientID+''''
+	set @SqlText =' select o.OrderID,o.CustomerID,o.IntGoodsCode,o.OwnerID,o.CustomerName,SUM(g.Quantity) OrderQuantity,SUM(g.CutQuantity) CutQuantity,SUM(g.Complete) Complete,SUM(g.SendQuantity) SendQuantity ,o.FinalPrice ,o.ClientID,o.EntrustClientID
+					from Orders o join OrderGoods g on o.OrderID=g.OrderID where OrderType=2 and OrderStatus in (1,2)'
 	
+	if(@EntrustType = 1)
+	begin
+		set @SqlText +=' and o.ClientID = '''+@ClientID+''' and o.EntrustClientID = '''''
+	end
+	else if(@EntrustType =2)
+	begin
+		set @SqlText +='  and o.EntrustClientID = '''+@ClientID+''''
+	end
+	else if(@EntrustType = 3)
+	begin
+		set @SqlText +=' and o.ClientID = '''+@ClientID+''' and o.EntrustClientID <> '''''
+	end
+	else
+	begin
+		set @SqlText +=' and (o.ClientID = '''+@ClientID+''' or o.EntrustClientID='''+@ClientID+''')'
+	end
+
 	if(@TimeType=1)
 	begin
 		set @SqlText +=' and o.CreateTime >= '''+@BeginTime+'''';
@@ -56,7 +74,7 @@ AS
 		set @SqlText +=' and o.OwnerID in (select UserID from #UserID) '
 	end
 
-	set @SqlText +=' group by o.IntGoodsCode,o.OwnerID,o.CustomerName,o.FinalPrice,o.OrderID,o.CustomerID  '
+	set @SqlText +=' group by o.IntGoodsCode,o.OwnerID,o.CustomerName,o.FinalPrice,o.OrderID,o.CustomerID,o.ClientID,o.EntrustClientID  '
 
 	exec (@SqlText)
 

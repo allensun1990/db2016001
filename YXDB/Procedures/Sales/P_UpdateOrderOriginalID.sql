@@ -25,7 +25,7 @@ begin tran
 
 declare @Err int=0,@Status int=-1,@OrderType int,@PlanQuantity int,@TotalMoney decimal(18,4)
 
-select @Status=Status,@OrderType=OrderType,@PlanQuantity=PlanQuantity from Orders where OrderID=@OrderID and ClientID=@ClientID and OriginalID=''
+select @Status=Status,@OrderType=OrderType,@PlanQuantity=PlanQuantity from Orders where OrderID=@OrderID and (ClientID=@ClientID or EntrustClientID=@ClientID) and OriginalID=''
 
 if(@Status<>0 or @OrderType<>2)
 begin

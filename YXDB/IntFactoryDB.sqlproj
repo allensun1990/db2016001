@@ -510,5 +510,6 @@
     <None Include="Procedures\Report\R_GetUserSewnProcessReport.sql" />
     <None Include="Procedures\Report\R_GetKanbanRPT.sql" />
     <None Include="Procedures\Report\R_GetKanbanItemRPT.sql" />
+    <None Include="Procedures\Report\R_GetUserLoadDetailByOrderID.sql" />
   </ItemGroup>
 </Project>

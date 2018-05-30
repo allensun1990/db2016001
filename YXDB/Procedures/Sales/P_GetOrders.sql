@@ -173,6 +173,14 @@ AS
 	begin
 		set @condition +=' and o.OrderStatus = 1 and o.PlanTime > GetDate() and datediff(hour,o.Ordertime,o.PlanTime) <= datediff(hour,GetDate(),o.PlanTime)*3 '
 	end
+	else if(@WarningStatus=9)
+	begin
+		set @condition +=' and o.OrderStatus = 2 and o.ArchivingStatus=1 '
+	end
+	else
+	begin
+		set @condition +=' and o.ArchivingStatus=0 '
+	end
 
 	if(@Mark<>-1)
 	begin
