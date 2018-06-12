@@ -511,5 +511,7 @@
     <None Include="Procedures\Report\R_GetKanbanRPT.sql" />
     <None Include="Procedures\Report\R_GetKanbanItemRPT.sql" />
     <None Include="Procedures\Report\R_GetUserLoadDetailByOrderID.sql" />
+    <None Include="Procedures\Report\R_GetOrderTabCount.sql" />
+    <None Include="Procedures\Report\R_GetTaskTabCount.sql" />
   </ItemGroup>
 </Project>

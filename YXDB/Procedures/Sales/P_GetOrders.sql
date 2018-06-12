@@ -153,7 +153,7 @@ AS
 	end
 	else
 	begin
-		set @condition +=' and o.OrderStatus <> 8 '
+		set @condition +=' and o.OrderStatus in(1,2) '
 	end
 
 	if(@PublicStatus<>-1)
