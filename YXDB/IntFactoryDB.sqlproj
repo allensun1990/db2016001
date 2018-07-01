@@ -513,5 +513,7 @@
     <None Include="Procedures\Report\R_GetUserLoadDetailByOrderID.sql" />
     <None Include="Procedures\Report\R_GetOrderTabCount.sql" />
     <None Include="Procedures\Report\R_GetTaskTabCount.sql" />
+    <None Include="Procedures\Sales\P_AddOrderMembers.sql" />
+    <None Include="Procedures\Custom\P_AddCustomerMembers.sql" />
   </ItemGroup>
 </Project>

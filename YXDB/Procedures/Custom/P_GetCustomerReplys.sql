@@ -38,7 +38,7 @@ as
 	set @columns='ReplyID'
 	set @key='ReplyID'
 	set @orderColumn='createtime desc'
-	set @condition=' guid='''+@CustomerID+''''
+	set @condition=' guid='''+@CustomerID+''' and status<>9'
 
 	insert into @tmp exec P_GetPagerData @tableName,@columns,@condition,@key,@OrderColumn,@PageSize,@PageIndex,@total out,@page out,0 
 

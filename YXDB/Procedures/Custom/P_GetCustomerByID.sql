@@ -21,6 +21,8 @@ AS
 
 select * from Customer where CustomerID=@CustomerID and ClientID=@ClientID
 
+select * from CustomerMember where CustomerID=@CustomerID  and Status=1
+
 
  
 

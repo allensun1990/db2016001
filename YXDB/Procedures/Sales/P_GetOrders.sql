@@ -70,13 +70,13 @@ AS
 
 	if(@SearchType=1) --我的
 	begin
-		set @condition +=' and (o.OwnerID = '''+@UserID+''' or o.CreateUserID= '''+@UserID+''')'
+		set @condition +=' and (o.OwnerID = '''+@UserID+''' or o.CreateUserID= '''+@UserID+''' or o.OrderID in( select distinct OrderID from OrderMember where Status<>9 and MemberID='''+@UserID+''' ))'
 	end
 	else if(@SearchType=2) --下属
 	begin
 		if(@SearchUserID<>'')
 		begin
-			set @condition +=' and o.OwnerID = '''+@SearchUserID+''''
+			set @condition +=' and (o.OwnerID = '''+@SearchUserID+''')'
 		end
 		else
 		begin
@@ -96,7 +96,7 @@ AS
 	begin
 		if(@SearchUserID<>'')
 		begin
-			set @condition +=' and o.OwnerID = '''+@SearchUserID+''''
+			set @condition +=' and (o.OwnerID = '''+@SearchUserID+''')'
 		end
 		else if(@SearchTeamID<>'')
 		begin

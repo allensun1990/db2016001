@@ -53,7 +53,7 @@ AS
 
 	if(@SearchType=1) --我的
 	begin
-		set @condition +=' and cus.OwnerID = '''+@UserID+''''
+		set @condition +=' and cus.OwnerID = '''+@UserID+''' or cus.CustomerID in( select distinct CustomerID from CustomerMember where Status<>9 and MemberID='''+@UserID+''' )'
 	end
 	else if(@SearchType=2) --下属
 	begin

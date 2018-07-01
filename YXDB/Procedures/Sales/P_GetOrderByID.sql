@@ -29,4 +29,6 @@ select * from OrderTask where OrderID=@OrderID order by Sort
 
 select * from OrderAttrs where OrderID=@OrderID order by Sort
 
+select * from OrderMember where OrderID=@OrderID and Status=1
+
 

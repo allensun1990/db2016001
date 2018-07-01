@@ -24,8 +24,8 @@ CREATE PROCEDURE [dbo].[P_CreateTaskReply]
 @FromReplyUserID nvarchar(64)='',
 @FromReplyAgentID nvarchar(64)=''
 AS
-insert into TaskReply(ReplyID,GUID,Content,CreateUserID,ClientID,FromReplyID,FromReplyUserID,FromReplyAgentID)
-values(@ReplyID,@GUID,@Content,@CreateUserID,@ClientID,@FromReplyID,@FromReplyUserID,@FromReplyAgentID)
+insert into TaskReply(ReplyID,GUID,Content,CreateUserID,ClientID,FromReplyID,FromReplyUserID,FromReplyAgentID,status)
+values(@ReplyID,@GUID,@Content,@CreateUserID,@ClientID,@FromReplyID,@FromReplyUserID,@FromReplyAgentID,1)
 
 
  
